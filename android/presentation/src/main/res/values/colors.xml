@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary">#5973FF</color>
+    <color name="secondPrimary">#889AFF</color>
+    <color name="thirdPrimary">#B1BDFF</color>
+    <color name="fourthPrimary">#D9DFFF</color>
+    <color name="fifthPrimary">#EFF2FF</color>
+    <color name="reversePrimary">#FF76A0</color>
+    <color name="disable">#9F9F9F</color>
+</resources>
