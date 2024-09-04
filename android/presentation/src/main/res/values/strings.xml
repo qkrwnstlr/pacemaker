@@ -17,4 +17,5 @@
     <string name="how_often_run">평소에 얼마나 뛰시나요?</string>
     <string name="mean_cadence">평균 케이던스</string>
     <string name="mean_pace">평균 페이스 (분,초)</string>
+    <string name="_1_4">(1/4)</string>
 </resources>

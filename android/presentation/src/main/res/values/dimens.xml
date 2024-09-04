@@ -3,6 +3,7 @@
 
     <dimen name="text_36">36sp</dimen>
     <dimen name="text_30">30sp</dimen>
+    <dimen name="text_26">26sp</dimen>
     <dimen name="text_24">24sp</dimen>
     <dimen name="text_18">18sp</dimen>
     <dimen name="text_16">16sp</dimen>
@@ -12,12 +13,13 @@
     <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_10">10dp</dimen>
 
-    <dimen name="padding_36">36sp</dimen>
-    <dimen name="padding_24">24sp</dimen>
-    <dimen name="padding_18">18sp</dimen>
-    <dimen name="padding_16">16sp</dimen>
-    <dimen name="padding_14">14sp</dimen>
-    <dimen name="padding_10">10sp</dimen>
+    <dimen name="padding_48">48dp</dimen>
+    <dimen name="padding_36">36dp</dimen>
+    <dimen name="padding_24">24dp</dimen>
+    <dimen name="padding_18">18dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_14">14dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
 
     <dimen name="image_196">196dp</dimen>
 </resources>
