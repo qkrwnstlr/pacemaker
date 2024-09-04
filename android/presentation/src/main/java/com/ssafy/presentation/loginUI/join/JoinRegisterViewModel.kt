@@ -13,7 +13,10 @@ class JoinRegisterViewModel : ViewModel() {
     val genderState: StateFlow<String> = _genderState.asStateFlow()
 
     fun nextOrder() {
-        _orderState.value += 1
+        val prev = _orderState.value
+
+        if (prev > 10) _orderState.value -= 1
+        else _orderState.value += 1
     }
 
     fun resetOrder() {
