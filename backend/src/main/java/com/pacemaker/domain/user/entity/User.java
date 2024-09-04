@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "coach_id", nullable = false)
@@ -40,6 +40,7 @@ public class User {
 	@Column(nullable = false)
 	private Integer year;
 
+	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
