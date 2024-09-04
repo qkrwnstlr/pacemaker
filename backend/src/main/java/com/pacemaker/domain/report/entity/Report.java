@@ -53,11 +53,11 @@ public class Report {
 	private Integer kcal;
 
 	@Lob
-	@Column(name = "heart_zone")
+	@Column(name = "heart_zone", columnDefinition = "TEXT")
 	private String heartZone;
 
 	@Lob
-	@Column(name = "split_data")
+	@Column(name = "split_data", columnDefinition = "TEXT")
 	private String splitData;
 
 	@Column(name = "train_type", nullable = false)
