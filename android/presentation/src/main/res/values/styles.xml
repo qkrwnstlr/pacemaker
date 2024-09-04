@@ -15,4 +15,12 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlayExtended</item>
     </style>
 
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
+
+    <style name="BoldLargeText" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">@dimen/text_24</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
 </resources>

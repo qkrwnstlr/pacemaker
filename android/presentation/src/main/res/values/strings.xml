@@ -1,3 +1,5 @@
 <resources>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="inst_plan_ing">진행중인 플랜</string>
+    <string name="inst_plan_ed">완료된 플랜</string>
 </resources>
