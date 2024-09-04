@@ -7,6 +7,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentInfoRegisterBinding
@@ -45,7 +46,8 @@ class InfoRegisterFragment : BaseFragment<FragmentInfoRegisterBinding>(
     }
 
     private fun moveToInfo() {
-        // TODO 다음 화면 만들기!
+        val action = InfoRegisterFragmentDirections.actionInfoRegisterFragmentToStartFragment()
+        findNavController().navigate(action)
     }
 
     private fun register() = with(binding) {
