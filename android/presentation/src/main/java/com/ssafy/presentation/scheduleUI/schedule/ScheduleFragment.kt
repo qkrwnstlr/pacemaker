@@ -74,22 +74,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         currentMonth: YearMonth,
         daysOfWeek: List<DayOfWeek>,
     ) {
-        class DayViewContainer(view: View) : ViewContainer(view) {
-            lateinit var day: CalendarDay
-            val ly = CalendarDayMonthBinding.bind(view).lyDay
-            val textView = CalendarDayMonthBinding.bind(view).exOneDayText
-            val exThreeDotView = CalendarDayMonthBinding.bind(view).exThreeDotView
-
-            init {
-                view.setOnClickListener {
-                    if (day.position == DayPosition.MonthDate) {
-                        dateClicked(date = day.date)
-                    }
-                }
-            }
-        }
         monthCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
-            override fun create(view: View) = DayViewContainer(view)
+            override fun create(view: View) = DayViewContainer(view, ::dateClicked)
 
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
