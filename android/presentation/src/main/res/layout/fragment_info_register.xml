@@ -10,29 +10,32 @@
         android:id="@+id/tv_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_10"
-        android:layout_marginTop="@dimen/margin_30"
+        android:layout_marginTop="@dimen/padding_36"
+        android:text="@string/_1_4"
         android:textColor="@color/primary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="(1/4)" />
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_title"
         style="@style/TitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_30"
         android:text="@string/how_often_run"
-        app:layout_constraintStart_toStartOf="@id/tv_order"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_order" />
 
     <TextView
         android:id="@+id/tv_explain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_10"
         android:text="@string/use_ai"
         android:textColor="@color/primary"
-        app:layout_constraintStart_toStartOf="@id/tv_order"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -41,6 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_24"
         android:layout_marginTop="@dimen/padding_10"
+        android:textColorHint="@color/gray"
         android:visibility="gone"
         app:boxBackgroundMode="filled"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,7 +60,7 @@
             android:inputType="number"
             android:maxLength="4"
             android:maxLines="1"
-            android:textColorHint="@color/primary" />
+            android:paddingStart="0dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_24"
         android:layout_marginTop="@dimen/padding_18"
+        android:textColorHint="@color/gray"
         android:visibility="gone"
         app:boxBackgroundMode="filled"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +87,7 @@
             android:inputType="numberDecimal"
             android:maxLength="8"
             android:maxLines="1"
-            android:textColorHint="@color/primary" />
+            android:paddingStart="0dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -92,6 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_24"
         android:layout_marginTop="@dimen/padding_18"
+        android:textColorHint="@color/gray"
         android:visibility="gone"
         app:boxBackgroundMode="filled"
         app:endIconDrawable="@drawable/baseline_arrow_drop_down_24"
@@ -108,7 +114,7 @@
             android:inputType="number"
             android:maxLength="5"
             android:maxLines="1"
-            android:textColorHint="@color/primary" />
+            android:paddingStart="0dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -117,6 +123,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/padding_24"
         android:layout_marginTop="@dimen/padding_18"
+        android:textColorHint="@color/gray"
         app:boxBackgroundMode="filled"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -131,7 +138,7 @@
             android:inputType="numberDecimal"
             android:maxLength="5"
             android:maxLines="1"
-            android:textColorHint="@color/primary" />
+            android:paddingStart="0dp" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
