@@ -61,5 +61,4 @@ dependencies {
 
     implementation(libs.view)
     coreLibraryDesugaring(libs.desugar.jdk.libs)
-    implementation(libs.view.v254)
 }

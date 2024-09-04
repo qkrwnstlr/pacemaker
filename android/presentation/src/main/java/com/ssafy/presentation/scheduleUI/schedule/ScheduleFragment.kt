@@ -24,9 +24,7 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.CalendarDayMonthBinding
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
-import com.ssafy.presentation.utils.addStatusBarColorUpdate
 import com.ssafy.presentation.utils.displayText
-import com.ssafy.presentation.utils.setTextColorRes
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -43,13 +41,11 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        addStatusBarColorUpdate(R.color.white)
         val daysOfWeek = daysOfWeek()
         binding.legendLayout.root.children
             .map { it as TextView }
             .forEachIndexed { index, textView ->
-                textView.text = daysOfWeek[index].displayText(false, true)
-                textView.setTextColorRes(R.color.black)
+                textView.text = daysOfWeek[index].displayText(narrow = true)
             }
 
         val currentMonth = YearMonth.now()
@@ -79,7 +75,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         daysOfWeek: List<DayOfWeek>,
     ) {
         class DayViewContainer(view: View) : ViewContainer(view) {
-            // Will be set when this container is bound. See the dayBinder.
             lateinit var day: CalendarDay
             val ly = CalendarDayMonthBinding.bind(view).lyDay
             val textView = CalendarDayMonthBinding.bind(view).exOneDayText
@@ -167,17 +162,14 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             textView.text = date.dayOfMonth.toString()
             when {
                 selectedDate == date -> {
-                    textView.setTextColorRes(R.color.black)
                     layout.setBackgroundResource(R.drawable.day_selected_bg)
                 }
 
                 today == date -> {
-                    textView.setTextColorRes(R.color.black)
                     layout.setBackgroundResource(R.drawable.day_today_bg)
                 }
 
                 else -> {
-                    textView.setTextColorRes(R.color.black)
                     layout.background = null
                 }
             }
