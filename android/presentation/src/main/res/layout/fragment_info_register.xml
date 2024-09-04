@@ -1,14 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".loginUI.info.InfoRegisterFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/tv_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_10"
+        android:layout_marginTop="@dimen/margin_30"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="(1/4)" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/TitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/how_often_run"
+        app:layout_constraintStart_toStartOf="@id/tv_order"
+        app:layout_constraintTop_toBottomOf="@id/tv_order" />
+
+    <TextView
+        android:id="@+id/tv_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/use_ai"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="@id/tv_order"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_cadence"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_10"
+        android:visibility="gone"
+        app:boxBackgroundMode="filled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_explain">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tie_cadence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:hint="@string/mean_cadence"
+            android:inputType="number"
+            android:maxLength="4"
+            android:maxLines="1"
+            android:textColorHint="@color/primary" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_pace"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_18"
+        android:visibility="gone"
+        app:boxBackgroundMode="filled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/til_cadence">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tie_pace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:digits="0123456789,"
+            android:hint="@string/mean_pace"
+            android:inputType="numberDecimal"
+            android:maxLength="8"
+            android:maxLines="1"
+            android:textColorHint="@color/primary" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_18"
+        android:visibility="gone"
+        app:boxBackgroundMode="filled"
+        app:endIconDrawable="@drawable/baseline_arrow_drop_down_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/til_pace">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tie_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:hint="@string/time"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:textColorHint="@color/primary" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_distance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_18"
+        app:boxBackgroundMode="filled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/til_time">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tie_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:hint="@string/distance"
+            android:inputType="numberDecimal"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:textColorHint="@color/primary" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_blue"
+        style="@style/CustomFAB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="@dimen/margin_30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="버튼에 들어갈 텍스트입니다" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
