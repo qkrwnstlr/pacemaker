@@ -27,7 +27,11 @@
         android:id="@+id/infoFragment"
         android:name="com.ssafy.presentation.loginUI.info.InfoFragment"
         android:label="fragment_info"
-        tools:layout="@layout/fragment_info" />
+        tools:layout="@layout/fragment_info" >
+        <action
+            android:id="@+id/action_infoFragment_to_infoRegisterFragment"
+            app:destination="@id/infoRegisterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/connectFragment"
         android:name="com.ssafy.presentation.loginUI.connect.ConnectFragment"
@@ -46,4 +50,9 @@
             android:id="@+id/action_joinRegisterFragment_to_infoFragment"
             app:destination="@id/infoFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/infoRegisterFragment"
+        android:name="com.ssafy.presentation.loginUI.info.InfoRegisterFragment"
+        android:label="fragment_info_register"
+        tools:layout="@layout/fragment_info_register" />
 </navigation>
