@@ -35,7 +35,7 @@ class JoinFragment : BaseFragment<FragmentJoinBinding>(FragmentJoinBinding::infl
 
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
-            val action = JoinFragmentDirections.actionJoinFragmentToInfoFragment()
+            val action = JoinFragmentDirections.actionJoinFragmentToJoinRegisterFragment()
             findNavController().navigate(action)
         }
     }
