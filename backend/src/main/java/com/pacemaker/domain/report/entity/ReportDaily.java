@@ -49,9 +49,10 @@ public class ReportDaily {
 	private String coachMessage;
 
 	@Builder
-	public ReportDaily(Train train, Coach coach, Integer goalDistance, Integer goalTime, Integer totalTime,
-		String trainContent, String coachMessage) {
+	public ReportDaily(Report report, Train train, Coach coach, Integer goalDistance, Integer goalTime,
+		Integer totalTime, String trainContent, String coachMessage) {
 
+		this.report = report;
 		this.train = train;
 		this.coach = coach;
 		this.goalDistance = goalDistance;

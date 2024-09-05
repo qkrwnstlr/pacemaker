@@ -48,16 +48,16 @@ public class Plan {
 
 	@Builder
 	public Plan(User user, LocalDateTime createdAt, LocalDateTime expiredAt, Integer totalCount, Integer completedCount,
-		Integer dayOfWeek, PlanStatus status) {
+		Integer dayOfWeek, PlanStatus status, Integer goalDistance, Integer goalTime) {
 
-        this.user = user;
-        this.createdAt = createdAt;
-        this.expiredAt = expiredAt;
-        this.totalCount = totalCount;
-        this.completedCount = completedCount;
-        this.dayOfWeek = dayOfWeek;
-        this.status = status;
-        this.goalDistance = goalDistance;
-        this.goalTime = goalTime;
+		this.user = user;
+		this.createdAt = createdAt;
+		this.expiredAt = expiredAt;
+		this.totalCount = totalCount;
+		this.completedCount = completedCount;
+		this.dayOfWeek = dayOfWeek;
+		this.status = status;
+		this.goalDistance = goalDistance;
+		this.goalTime = goalTime;
 	}
 }
