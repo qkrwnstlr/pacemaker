@@ -18,4 +18,11 @@
     <string name="mean_cadence">평균 케이던스</string>
     <string name="mean_pace">평균 페이스 (분,초)</string>
     <string name="_1_4">(1/4)</string>
+    <string name="select_coach">코치님을 선택해주세요</string>
+    <string name="mike">Mike 코치</string>
+    <string name="red_tag">#엄격한 #열정 #할 수 있습니다!</string>
+    <string name="jamie">Jamie 코치</string>
+    <string name="yellow_tag">#격려 #칭찬 #함께해봐요</string>
+    <string name="blue_tag">#유머러스 #사투리 #가보입시다</string>
+    <string name="danny">Danny 코치</string>
 </resources>
