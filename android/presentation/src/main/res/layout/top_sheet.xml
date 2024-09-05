@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/top_sheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/top_sheet_background"
+    android:clickable="true"
+    android:elevation="8dp"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_16"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="50dp"
+    app:layout_behavior="com.ssafy.presentation.homeUI.TopSheetBehavior">
+
+    <LinearLayout
+        android:id="@+id/top_sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/XLargeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="오늘의 훈련 목표" />
+
+        <TextView
+            style="@style/LargeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="10km | 06'30&quot; | Easy" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/top_sheet_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <!-- TODO : Add Layout Here -->
+    </LinearLayout>
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/margin_30"
+        android:background="@drawable/top_sheet_control_bar" />
+</LinearLayout>

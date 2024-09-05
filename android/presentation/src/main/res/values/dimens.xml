@@ -20,4 +20,6 @@
     <dimen name="padding_10">10sp</dimen>
 
     <dimen name="image_196">196dp</dimen>
+
+    <dimen name="radius_28">28dp</dimen>
 </resources>

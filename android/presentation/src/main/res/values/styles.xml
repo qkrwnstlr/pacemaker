@@ -20,4 +20,14 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="XLargeText" parent="">
+        <item name="android:textSize">@dimen/text_24</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LargeText" parent="">
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
