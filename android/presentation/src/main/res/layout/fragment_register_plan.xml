@@ -1,15 +1,214 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".planUI.registerPlan.RegisterPlanFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="40sp"
-        android:text="나는야 RegisterPlanFragment" />
+        android:id="@+id/tv_order"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_36"
+        android:text="@string/_1_3"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/TitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_30"
+        android:text="@string/set_goal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_order" />
+
+    <TextView
+        android:id="@+id/tv_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_10"
+        android:textColor="@color/primary"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <TextView
+        android:id="@+id/tv_like_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:text="@string/like_week"
+        android:textColor="@color/primary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/cl_week"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_explain" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_week"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_10"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_like_week">
+
+        <ToggleButton
+            android:id="@+id/tb_sun"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sun"
+            android:textColor="@color/reversePrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_mon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_mon"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/mon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_tue"
+            app:layout_constraintStart_toEndOf="@id/tb_sun"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_tue"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_wed"
+            app:layout_constraintStart_toEndOf="@id/tb_mon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_wed"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/wed"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_thu"
+            app:layout_constraintStart_toEndOf="@id/tb_tue"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_thu"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/thu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_fri"
+            app:layout_constraintStart_toEndOf="@id/tb_wed"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_fri"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/fri"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_sat"
+            app:layout_constraintStart_toEndOf="@id/tb_thu"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_sat"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sat"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/text_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tb_fri"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_18"
+        android:textColorHint="@color/gray"
+        android:visibility="gone"
+        app:boxBackgroundMode="filled"
+        app:endIconDrawable="@drawable/baseline_arrow_drop_down_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_week">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tie_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:hint="@string/time"
+            android:inputType="number"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:paddingStart="0dp" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/til_distance"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_18"
+        android:textColorHint="@color/gray"
+        app:boxBackgroundMode="filled"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/til_time">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/tie_age"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:hint="@string/distance"
+            android:inputType="numberDecimal"
+            android:maxLength="5"
+            android:maxLines="1"
+            android:paddingStart="0dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_blue"
+        style="@style/CustomFAB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginBottom="@dimen/margin_30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="버튼에 들어갈 텍스트입니다" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
