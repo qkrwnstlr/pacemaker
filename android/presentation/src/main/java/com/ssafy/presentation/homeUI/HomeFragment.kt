@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -53,7 +53,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         when (newState) {
 
           // 사용자가 BottomSheet를 위나 아래로 드래그 중인 상태
-          TopSheetBehavior.STATE_DRAGGING -> {}
+          TopSheetBehavior.STATE_DRAGGING -> {
+            val body = topSheet.findViewById<LinearLayout>(R.id.top_sheet_body)
+            if(body.childCount == 0) {
+              val textView = TextView(body.context).apply {
+                text = "동적으로 추가된 TextView"
+                textSize = 18f
+                setPadding(16, 16, 16, 16)
+              }
+              body.addView(textView)
+            }
+          }
 
           // 드래그 동작 후 BottomSheet가 특정 높이로 고정될 때의 상태
           // SETTLING 후 EXPANDED, SETTLING 후 COLLAPSED, SETTLING 후 HIDDEN
@@ -63,7 +73,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
           TopSheetBehavior.STATE_EXPANDED -> {}
 
           // peek 높이 만큼 보이는 상태
-          TopSheetBehavior.STATE_COLLAPSED -> {}
+          TopSheetBehavior.STATE_COLLAPSED -> {
+            val body = topSheet.findViewById<LinearLayout>(R.id.top_sheet_body)
+            body.removeAllViews()
+          }
         }
       }
 

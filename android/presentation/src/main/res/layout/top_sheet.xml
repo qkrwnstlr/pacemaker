@@ -11,7 +11,7 @@
     android:orientation="vertical"
     android:padding="@dimen/padding_16"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="50dp"
+    app:behavior_peekHeight="120dp"
     app:layout_behavior="com.ssafy.presentation.homeUI.TopSheetBehavior">
 
     <LinearLayout
