@@ -6,6 +6,12 @@ import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.WeekDay
@@ -54,7 +60,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
         setupWeekCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
 
-
         binding.btnNextMonth.setOnClickListener {
             binding.exOneCalendar.findFirstVisibleMonth()?.let {
                 binding.exOneCalendar.smoothScrollToMonth(it.yearMonth.nextMonth)
@@ -65,6 +70,59 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             binding.exOneCalendar.findFirstVisibleMonth()?.let {
                 binding.exOneCalendar.smoothScrollToMonth(it.yearMonth.previousMonth)
             }
+        }
+        val trainInfoView = binding.lyResultInfo
+        val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
+        makeChart(barChart)
+    }
+
+    private fun makeChart(barChart: BarChart) {
+
+        val entries = ArrayList<BarEntry>()
+        entries.add(BarEntry(2.5f, 0.2f))
+        entries.add(BarEntry(3.5f, 1.6f))
+        entries.add(BarEntry(4.5f, 1.2f))
+        entries.add(BarEntry(5.5f, 1.6f))
+        entries.add(BarEntry(6.5f, 1.2f))
+        entries.add(BarEntry(7.5f, 1.6f))
+        entries.add(BarEntry(8.5f, 0.2f))
+
+        barChart.run {
+            description.isEnabled = false
+            setMaxVisibleValueCount(7)
+            setPinchZoom(false)
+            setDrawBarShadow(false)
+            setDrawGridBackground(false)
+            axisLeft.run {
+                axisMaximum = 3f
+                axisMinimum = 0f
+                setDrawLabels(false)
+                setDrawGridLines(false)
+                setDrawAxisLine(false)
+            }
+            xAxis.run {
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                setDrawBarShadow(false)
+                setDrawGridLines(false)
+                setDrawLabels(false)
+            }
+            axisRight.isEnabled = false
+            setTouchEnabled(false)
+            animateY(1000)
+            legend.isEnabled = false
+        }
+        var set = BarDataSet(entries, "DataSet") // 데이터셋 초기화
+        set.color = R.color.primary // 바 그래프 색 설정
+
+        val dataSet: ArrayList<IBarDataSet> = ArrayList()
+        dataSet.add(set)
+        val data = BarData(dataSet)
+        data.barWidth = 0.8f //막대 너비 설정
+        barChart.run {
+            this.data = data //차트의 데이터를 data로 설정해줌.
+            setFitBars(true)
+            invalidate()
         }
     }
 
