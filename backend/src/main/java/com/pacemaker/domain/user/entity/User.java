@@ -52,16 +52,16 @@ public class User {
 	@Column(nullable = false)
 	private Integer weight;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
+	@Column(name = "train_count", nullable = false, columnDefinition = "int default 0")
 	private Integer trainCount;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
+	@Column(name = "train_time", nullable = false, columnDefinition = "int default 0")
 	private Integer trainTime;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
+	@Column(name = "train_distance", nullable = false, columnDefinition = "int default 0")
 	private Integer trainDistance;
 
-	@Column(nullable = false, updatable = false)
+	@Column(name = "created_at", nullable = false, updatable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
