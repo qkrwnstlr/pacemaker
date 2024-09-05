@@ -61,4 +61,5 @@ dependencies {
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(libs.view)
+    implementation(libs.mpandroidchart)
 }
