@@ -28,7 +28,7 @@ public class User {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "coach_id", nullable = false)
+	@JoinColumn(name = "coach_id")
 	private Coach coach;
 
 	@Column(nullable = false)
