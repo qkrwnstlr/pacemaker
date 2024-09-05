@@ -25,5 +25,5 @@
     <dimen name="padding_10">10dp</dimen>
 
     <dimen name="image_196">196dp</dimen>
->>>>>>> android/presentation/src/main/res/values/dimens.xml
+    <dimen name="image_128">128dp</dimen>
 </resources>
