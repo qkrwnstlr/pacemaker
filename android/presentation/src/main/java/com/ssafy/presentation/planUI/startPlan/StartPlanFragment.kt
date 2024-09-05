@@ -43,7 +43,7 @@ class StartPlanFragment : BaseFragment<FragmentStartPlanBinding>(
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
             // TODO 여기서 코치 유무 체킹 하고 넘어 가야함.
-            val action = StartPlanFragmentDirections.actionStartPlanFragmentToSelectCoachFragment()
+            val action = StartPlanFragmentDirections.actionStartPlanFragmentToRegisterPlanFragment()
             findNavController().navigate(action)
         }
     }
