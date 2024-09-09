@@ -27,5 +27,16 @@
     <string name="danny">Danny 코치</string>
     <string name="inst_plan_ing">진행중인 플랜</string>
     <string name="inst_plan_ed">완료된 플랜</string>
+    <string name="title_result">훈련결과</string>
+    <string name="title_distance">이동 거리:</string>
+    <string name="title_time">소요 시간:</string>
+    <string name="title_pace">평균 페이스:</string>
+    <string name="title_heart">평균 심박수:</string>
+    <string name="title_step">케이던스:</string>
+    <string name="title_kcal">운동 칼로리:</string>
+    <string name="coach_talk_title">코치의 한마디</string>
+    <string name="pace">페이스</string>
+    <string name="heart">심박수</string>
+    <string name="step">케이던스</string>
 
 </resources>
