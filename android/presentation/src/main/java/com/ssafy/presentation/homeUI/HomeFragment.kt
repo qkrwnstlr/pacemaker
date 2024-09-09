@@ -1,6 +1,7 @@
 package com.ssafy.presentation.homeUI
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -56,6 +57,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     super.onViewCreated(view, savedInstanceState)
     topSheetBehavior = TopSheetBehavior.from(topSheetLayout!!)
     topSheetBehavior.setHideable(false)
+    topSheetBehavior.setHalfable(true)
     topSheetBodyLayout?.visibility = View.GONE
 
     topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
@@ -63,7 +65,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         when (newState) {
           // 사용자가 BottomSheet를 위나 아래로 드래그 중인 상태
           TopSheetBehavior.STATE_DRAGGING -> {
-            topSheetBodyLayout?.visibility = View.VISIBLE
+//            topSheetBodyLayout?.visibility = View.VISIBLE
           }
 
           // 드래그 동작 후 BottomSheet가 특정 높이로 고정될 때의 상태
@@ -75,16 +77,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
           // peek 높이 만큼 보이는 상태
           TopSheetBehavior.STATE_COLLAPSED -> {
-            topSheetBodyLayout?.visibility = View.GONE
+//            topSheetBodyLayout?.visibility = View.GONE
+          }
+
+          TopSheetBehavior.STATE_HALF_EXPANDED -> {
+            Log.d("HomeFragment", "TopSheetBehavior.STATE_HALF_EXPANDED")
           }
         }
       }
 
       var oldOffset = -1f
       override fun onSlide(topSheet: View, slideOffset: Float) {
-        if (oldOffset > slideOffset) {
-          topSheetBodyLayout?.visibility = View.GONE
+//        if (oldOffset > slideOffset) {
+//          topSheetBodyLayout?.visibility = View.GONE
+//        }
+
+        val upperState = if (oldOffset > slideOffset) 0.77 else 0.66
+        val lowerState = if (oldOffset > slideOffset) 0.33 else 0.22
+        if (topSheetBehavior.state == TopSheetBehavior.STATE_SETTLING ) {
+          if(slideOffset >= upperState){
+            topSheetBehavior.state = TopSheetBehavior.STATE_EXPANDED
+          }
+          if(slideOffset > lowerState && slideOffset < upperState){
+            topSheetBehavior.state = TopSheetBehavior.STATE_HALF_EXPANDED
+          }
+          if(slideOffset <= lowerState){
+            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
+          }
         }
+
         oldOffset = slideOffset
       }
     })

@@ -75,8 +75,9 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
     public static final int STATE_EXPANDED = 3;
     public static final int STATE_COLLAPSED = 4;
     public static final int STATE_HIDDEN = 5;
+    public static final int STATE_HALF_EXPANDED = 6;
 
-    @IntDef({STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING, STATE_SETTLING, STATE_HIDDEN})
+    @IntDef({STATE_EXPANDED, STATE_COLLAPSED, STATE_DRAGGING, STATE_SETTLING, STATE_HIDDEN, STATE_HALF_EXPANDED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {
     }
@@ -90,9 +91,13 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
 
     private int mMinOffset;
 
+    private int mHalfOffset;
+
     private int mMaxOffset;
 
     private boolean mHideable;
+
+    private boolean mHalfable;
 
     private boolean mSkipCollapsed;
 
@@ -163,6 +168,7 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
         parent.onLayoutChild(child, layoutDirection);
         // Offset the bottom sheet
         mMinOffset = Math.max(-child.getHeight(), -(child.getHeight() - mPeekHeight));
+        mHalfOffset = mMinOffset / 2;
         mMaxOffset = 0;
         if (mState == STATE_EXPANDED) {
             ViewCompat.offsetTopAndBottom(child, mMaxOffset);
@@ -172,6 +178,8 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
             ViewCompat.offsetTopAndBottom(child, mMinOffset);
         } else if (mState == STATE_DRAGGING || mState == STATE_SETTLING) {
             ViewCompat.offsetTopAndBottom(child, savedTop - child.getTop());
+        } else if (mHalfable && mState == STATE_HALF_EXPANDED) {
+            ViewCompat.offsetTopAndBottom(child, mHalfOffset);
         }
         if (mViewDragHelper == null) {
             mViewDragHelper = ViewDragHelper.create(parent, mDragCallback);
@@ -379,6 +387,10 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
         mHideable = hideable;
     }
 
+    public void setHalfable(boolean halfable) {
+        mHalfable = halfable;
+    }
+
     public void setSkipCollapsed(boolean skipCollapsed) {
         mSkipCollapsed = skipCollapsed;
     }
@@ -426,6 +438,8 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
             top = mMaxOffset;
         } else if (mHideable && state == STATE_HIDDEN) {
             top = -child.getHeight();
+        } else if (mHalfable && state == STATE_HALF_EXPANDED) {
+            top = mHalfOffset;
         } else {
             throw new IllegalArgumentException("Illegal state argument: " + state);
         }
