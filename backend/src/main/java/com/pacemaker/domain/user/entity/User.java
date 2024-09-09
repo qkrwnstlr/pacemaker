@@ -2,6 +2,8 @@ package com.pacemaker.domain.user.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.pacemaker.domain.coach.entity.Coach;
 
 import jakarta.persistence.Column;
@@ -50,16 +52,17 @@ public class User {
 	@Column(nullable = false)
 	private Integer weight;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
+	@Column(name = "train_count", nullable = false, columnDefinition = "int default 0")
 	private Integer trainCount;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
+	@Column(name = "train_time", nullable = false, columnDefinition = "int default 0")
 	private Integer trainTime;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
+	@Column(name = "train_distance", nullable = false, columnDefinition = "int default 0")
 	private Integer trainDistance;
 
-	@Column(nullable = false, columnDefinition = "datetime default now()")
+	@Column(name = "created_at", nullable = false, updatable = false)
+	@CreationTimestamp
 	private LocalDateTime createdAt;
 
 	@Column(nullable = false, columnDefinition = "int default 0")
@@ -75,9 +78,9 @@ public class User {
 		this.gender = gender;
 		this.height = height;
 		this.weight = weight;
-		this.trainCount = trainCount;
-		this.trainTime = trainTime;
-		this.trainDistance = trainDistance;
+		this.trainCount = (trainCount != null) ? trainCount : 0;
+		this.trainTime = (trainTime != null) ? trainTime : 0;
+		this.trainDistance = (trainDistance != null) ? trainDistance : 0;
 		this.createdAt = createdAt;
 		this.vdot = vdot;
 	}
