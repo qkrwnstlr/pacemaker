@@ -125,28 +125,34 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
         // Pie 그래프 생성
         val dataPaceChart = PieData(paceDataSet)
-        paceChart.data = dataPaceChart
-        paceChart.holeRadius = 75f
-        paceChart.transparentCircleRadius = 75f
-        paceChart.setDrawCenterText(false)
-        paceChart.legend.isEnabled = false
-        paceChart.description.isEnabled = false
+        paceChart.apply {
+            data = dataPaceChart
+            holeRadius = 75f
+            transparentCircleRadius = 75f
+            setDrawCenterText(false)
+            legend.isEnabled = false
+            description.isEnabled = false
+        }
 
         val dataHeartChart = PieData(heartDataSet)
-        heartChart.data = dataHeartChart
-        heartChart.holeRadius = 75f
-        heartChart.transparentCircleRadius = 75f
-        heartChart.setDrawCenterText(false)
-        heartChart.legend.isEnabled = false
-        heartChart.description.isEnabled = false
+        heartChart.apply {
+            data = dataHeartChart
+            holeRadius = 75f
+            transparentCircleRadius = 75f
+            setDrawCenterText(false)
+            legend.isEnabled = false
+            description.isEnabled = false
+        }
 
         val dataStepChart = PieData(stepDataSet)
-        stepChart.data = dataStepChart
-        stepChart.holeRadius = 75f
-        stepChart.transparentCircleRadius = 75f
-        stepChart.setDrawCenterText(false)
-        stepChart.legend.isEnabled = false
-        stepChart.description.isEnabled = false
+        stepChart.apply {
+            data = dataStepChart
+            holeRadius = 75f
+            transparentCircleRadius = 75f
+            setDrawCenterText(false)
+            legend.isEnabled = false
+            description.isEnabled = false
+        }
 
         // 그래프 업데이트
         paceChart.invalidate()
@@ -165,20 +171,20 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         entries.add(BarEntry(7.5f, 1.6f))
         entries.add(BarEntry(8.5f, 0.2f))
 
-        barChart.run {
+        barChart.apply {
             description.isEnabled = false
             setMaxVisibleValueCount(7)
             setPinchZoom(false)
             setDrawBarShadow(false)
             setDrawGridBackground(false)
-            axisLeft.run {
+            axisLeft.apply {
                 axisMaximum = 2f
                 axisMinimum = 0f
                 setDrawLabels(false)
                 setDrawGridLines(false)
                 setDrawAxisLine(false)
             }
-            xAxis.run {
+            xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 granularity = 1f
                 setDrawBarShadow(false)
@@ -190,7 +196,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             animateY(1000)
             legend.isEnabled = false
         }
-        var set = BarDataSet(entries, "DataSet") // 데이터셋 초기화
+        val set = BarDataSet(entries, "DataSet")
 
         val colors = List(entries.size) { index ->
             if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
@@ -201,7 +207,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         dataSet.add(set)
         val data = BarData(dataSet)
         data.barWidth = 0.8f //막대 너비 설정
-        barChart.run {
+        barChart.apply {
             this.data = data //차트의 데이터를 data로 설정해줌.
             setFitBars(true)
             invalidate()
