@@ -39,12 +39,12 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@GetMapping("/checkuid")
+	@PostMapping("/checkuid")
 	@Operation(summary = "uid 중복체크")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "UID 중복체크 완료")
 	})
-	public ResponseEntity<CheckUidResponse> checkUid(@ModelAttribute UserRequest userRequest) {
+	public ResponseEntity<CheckUidResponse> checkUid(@RequestBody UserRequest userRequest) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.checkUid(userRequest));
 	}
 }
