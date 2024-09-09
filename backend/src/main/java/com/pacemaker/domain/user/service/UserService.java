@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pacemaker.domain.user.dto.CheckUidResponse;
 import com.pacemaker.domain.user.dto.UserCreateRequest;
+import com.pacemaker.domain.user.dto.UserRequest;
 import com.pacemaker.domain.user.entity.Gender;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
@@ -32,6 +34,12 @@ public class UserService {
 			.vdot(0)
 			.build()
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public CheckUidResponse checkUid(UserRequest userRequest) {
+		boolean isAlreadyExists = userRepository.existsByUid(userRequest.uid());
+		return new CheckUidResponse(isAlreadyExists);
 	}
 
 	private Gender getGender(Integer gender) {
