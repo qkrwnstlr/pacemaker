@@ -134,7 +134,7 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                app:dividerColor="@color/gray" />
+                app:dividerColor="@color/lightGray" />
 
             <com.ssafy.presentation.scheduleUI.schedule.PlanStateView
                 android:id="@+id/ly_plan"
@@ -144,10 +144,25 @@
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                app:dividerColor="@color/gray" />
+                app:dividerColor="@color/lightGray" />
 
             <com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
                 android:id="@+id/ly_result_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.ssafy.presentation.scheduleUI.schedule.TrainResultView
+                android:id="@+id/ly_train_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/map"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <com.ssafy.presentation.scheduleUI.schedule.TrainResultCoachView
+                android:id="@+id/ly_train_result_coach"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>

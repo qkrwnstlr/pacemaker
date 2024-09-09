@@ -1,4 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"></androidx.constraintlayout.widget.ConstraintLayout>
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding_24">
+
+    <TextView
+        android:id="@+id/tv_result_title"
+        style="@style/BoldLargeText"
+        android:text="@string/title_result"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_result_distance_title"
+        style="@style/ResultText"
+        android:layout_marginTop="@dimen/margin_16"
+        android:text="@string/title_distance"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
+
+    <TextView
+        android:id="@+id/tv_result_distance_content"
+        style="@style/PlanText"
+        android:text="10km"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_result_distance_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_distance_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_distance_title" />
+
+    <TextView
+        android:id="@+id/tv_result_time_title"
+        style="@style/ResultText"
+        android:text="@string/title_time"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_distance_title" />
+
+    <TextView
+        android:id="@+id/tv_result_time_content"
+        style="@style/PlanText"
+        android:text="01:08:48"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_result_time_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_time_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_time_title" />
+
+    <TextView
+        android:id="@+id/tv_result_pace_title"
+        style="@style/ResultText"
+        android:text="@string/title_pace"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_time_title" />
+
+    <TextView
+        android:id="@+id/tv_result_pace_content"
+        style="@style/PlanText"
+        android:text="06'48''"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_result_pace_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_pace_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_pace_title" />
+
+    <TextView
+        android:id="@+id/tv_result_heart_title"
+        style="@style/ResultText"
+        android:layout_marginStart="@dimen/margin_100"
+        android:layout_marginTop="@dimen/margin_16"
+        android:text="@string/title_heart"
+        app:layout_constraintStart_toEndOf="@id/tv_result_distance_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
+
+    <TextView
+        android:id="@+id/tv_result_heart_content"
+        style="@style/PlanText"
+        android:text="150bpm"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_result_heart_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_heart_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_heart_title" />
+
+    <TextView
+        android:id="@+id/tv_result_step_title"
+        style="@style/ResultText"
+        android:text="@string/title_step"
+        app:layout_constraintStart_toStartOf="@+id/tv_result_heart_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_result_heart_title" />
+
+    <TextView
+        android:id="@+id/tv_result_step_content"
+        style="@style/PlanText"
+        android:text="130spm"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_result_step_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_step_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_step_title" />
+
+    <TextView
+        android:id="@+id/tv_result_kcal_title"
+        style="@style/ResultText"
+        android:text="@string/title_kcal"
+        app:layout_constraintStart_toStartOf="@+id/tv_result_step_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_result_step_title" />
+
+    <TextView
+        android:id="@+id/tv_result_kcal_content"
+        style="@style/PlanText"
+        android:text="310kcal"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_result_kcal_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_kcal_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_kcal_title" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart_pace"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="@dimen/margin_30"
+        app:layout_constraintEnd_toStartOf="@+id/chart_heart"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_result_pace_title" />
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/SmallBoldText"
+        android:text="@string/pace"
+        app:layout_constraintEnd_toEndOf="@+id/chart_pace"
+        app:layout_constraintStart_toStartOf="@+id/chart_pace"
+        app:layout_constraintTop_toBottomOf="@+id/chart_pace" />
+
+    <TextView
+        android:id="@+id/rank_pace"
+        style="@style/RankText"
+        android:text="A"
+        app:layout_constraintBottom_toBottomOf="@+id/chart_pace"
+        app:layout_constraintEnd_toEndOf="@+id/chart_pace"
+        app:layout_constraintStart_toStartOf="@+id/chart_pace"
+        app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart_heart"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintEnd_toStartOf="@+id/chart_step"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/chart_pace"
+        app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+
+    <TextView
+        style="@style/SmallBoldText"
+        android:text="@string/heart"
+        app:layout_constraintEnd_toEndOf="@+id/chart_heart"
+        app:layout_constraintStart_toStartOf="@+id/chart_heart"
+        app:layout_constraintTop_toBottomOf="@+id/chart_heart" />
+
+    <TextView
+        android:id="@+id/rank_heart"
+        style="@style/RankText"
+        android:text="B"
+        app:layout_constraintBottom_toBottomOf="@+id/chart_heart"
+        app:layout_constraintEnd_toEndOf="@+id/chart_heart"
+        app:layout_constraintStart_toStartOf="@+id/chart_heart"
+        app:layout_constraintTop_toTopOf="@+id/chart_heart" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart_step"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/chart_heart"
+        app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+
+    <TextView
+        style="@style/SmallBoldText"
+        android:text="@string/step"
+        app:layout_constraintEnd_toEndOf="@+id/chart_step"
+        app:layout_constraintStart_toStartOf="@+id/chart_step"
+        app:layout_constraintTop_toBottomOf="@+id/chart_step" />
+
+    <TextView
+        android:id="@+id/rank_step"
+        style="@style/RankText"
+        android:text="A"
+        app:layout_constraintBottom_toBottomOf="@+id/chart_step"
+        app:layout_constraintEnd_toEndOf="@+id/chart_step"
+        app:layout_constraintStart_toStartOf="@+id/chart_step"
+        app:layout_constraintTop_toTopOf="@+id/chart_step" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

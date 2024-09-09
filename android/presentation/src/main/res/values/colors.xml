@@ -10,4 +10,5 @@
     <color name="reversePrimary">#FF76A0</color>
     <color name="reversePrimary2">#E8348B</color>
     <color name="gray">#9F9F9F</color>
+    <color name="lightGray">#D5D5D5</color>
 </resources>

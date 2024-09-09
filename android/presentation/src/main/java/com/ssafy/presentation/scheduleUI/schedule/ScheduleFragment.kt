@@ -1,16 +1,21 @@
 package com.ssafy.presentation.scheduleUI.schedule
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
@@ -74,6 +79,79 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val trainInfoView = binding.lyResultInfo
         val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
         makeChart(barChart)
+        makeResult()
+    }
+
+    private fun makeResult() {
+        // 전체
+        val totalPercent = 100f
+        val pacePercent = 75f
+        val heartPercent = 60f
+        val stepPercent = 70f
+
+        val paceChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_pace)
+        val heartChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_heart)
+        val stepChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_step)
+
+        val paceEntry = ArrayList<PieEntry>()
+        paceEntry.add(PieEntry(totalPercent - pacePercent))
+        paceEntry.add(PieEntry(pacePercent, ""))
+
+        val heartEntry = ArrayList<PieEntry>()
+        heartEntry.add(PieEntry(totalPercent - heartPercent))
+        heartEntry.add(PieEntry(heartPercent, ""))
+
+        val stepEntry = ArrayList<PieEntry>()
+        stepEntry.add(PieEntry(totalPercent - stepPercent))
+        stepEntry.add(PieEntry(stepPercent, ""))
+
+        // 그래프 색상(데이터 순서)
+        val colors = listOf(
+            Color.parseColor("#FFFFFFFF"),
+            Color.parseColor("#5973FF"),
+        )
+
+        val paceDataSet = PieDataSet(paceEntry, "")
+        paceDataSet.colors = colors
+        paceDataSet.setDrawValues(false)
+
+        val heartDataSet = PieDataSet(heartEntry, "")
+        heartDataSet.colors = colors
+        heartDataSet.setDrawValues(false)
+
+        val stepDataSet = PieDataSet(stepEntry, "")
+        stepDataSet.colors = colors
+        stepDataSet.setDrawValues(false)
+
+        // Pie 그래프 생성
+        val dataPaceChart = PieData(paceDataSet)
+        paceChart.data = dataPaceChart
+        paceChart.holeRadius = 75f
+        paceChart.transparentCircleRadius = 75f
+        paceChart.setDrawCenterText(false)
+        paceChart.legend.isEnabled = false
+        paceChart.description.isEnabled = false
+
+        val dataHeartChart = PieData(heartDataSet)
+        heartChart.data = dataHeartChart
+        heartChart.holeRadius = 75f
+        heartChart.transparentCircleRadius = 75f
+        heartChart.setDrawCenterText(false)
+        heartChart.legend.isEnabled = false
+        heartChart.description.isEnabled = false
+
+        val dataStepChart = PieData(stepDataSet)
+        stepChart.data = dataStepChart
+        stepChart.holeRadius = 75f
+        stepChart.transparentCircleRadius = 75f
+        stepChart.setDrawCenterText(false)
+        stepChart.legend.isEnabled = false
+        stepChart.description.isEnabled = false
+
+        // 그래프 업데이트
+        paceChart.invalidate()
+        heartChart.invalidate()
+        stepChart.invalidate()
     }
 
     private fun makeChart(barChart: BarChart) {
@@ -94,7 +172,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             setDrawBarShadow(false)
             setDrawGridBackground(false)
             axisLeft.run {
-                axisMaximum = 3f
+                axisMaximum = 2f
                 axisMinimum = 0f
                 setDrawLabels(false)
                 setDrawGridLines(false)
@@ -113,7 +191,11 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             legend.isEnabled = false
         }
         var set = BarDataSet(entries, "DataSet") // 데이터셋 초기화
-        set.color = R.color.primary // 바 그래프 색 설정
+
+        val colors = List(entries.size) { index ->
+            if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
+        }
+        set.setColors(colors.toIntArray(), barChart.context)
 
         val dataSet: ArrayList<IBarDataSet> = ArrayList()
         dataSet.add(set)
@@ -238,14 +320,14 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         if (isMonthMode) {
             val month = monthCalendarView.findFirstVisibleMonth()?.yearMonth ?: return
             binding.exOneYearText.text = month.year.toString()
-            binding.exOneMonthText.text = month.month.displayText(short = false)
+            binding.exOneMonthText.text = month.month.displayText(short = true)
         } else {
             val week = weekCalendarView.findFirstVisibleWeek() ?: return
             val firstDate = week.days.first().date
             val lastDate = week.days.last().date
             if (firstDate.yearMonth == lastDate.yearMonth) {
                 binding.exOneYearText.text = firstDate.year.toString()
-                binding.exOneMonthText.text = firstDate.month.displayText(short = false)
+                binding.exOneMonthText.text = firstDate.month.displayText(short = true)
             } else {
                 binding.exOneMonthText.text =
                     firstDate.month.displayText(short = false) + " - " +

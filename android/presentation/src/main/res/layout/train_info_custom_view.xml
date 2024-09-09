@@ -6,7 +6,7 @@
     android:padding="@dimen/padding_24">
 
     <TextView
-        android:id="@+id/tv_plan_state"
+        android:id="@+id/tv_result_title"
         style="@style/BoldLargeText"
         android:text="2024.09.02"
         app:layout_constraintStart_toStartOf="parent"
@@ -17,9 +17,9 @@
         style="@style/PlanText"
         android:layout_marginStart="@dimen/margin_16"
         android:text="훈련3회차"
-        app:layout_constraintBottom_toBottomOf="@id/tv_plan_state"
-        app:layout_constraintStart_toEndOf="@id/tv_plan_state"
-        app:layout_constraintTop_toTopOf="@id/tv_plan_state" />
+        app:layout_constraintBottom_toBottomOf="@id/tv_result_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_title" />
 
     <TextView
         android:id="@+id/tv_plan_inst"
@@ -27,23 +27,52 @@
         android:layout_marginTop="@dimen/margin_8"
         android:text="10km | 6'30''| Easy"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_plan_state" />
+        app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
 
     <ImageView
         android:layout_width="@dimen/image_36"
         android:layout_height="@dimen/image_36"
-        android:src="@drawable/baseline_skip_next_24"
+        android:paddingVertical="@dimen/margin_6"
+        android:src="@drawable/baseline_loop_24"
         app:layout_constraintBottom_toBottomOf="@id/tv_plan_inst"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/tv_result_title" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="@dimen/margin_30"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tv_plan_inst" />
+
+    <TextView
+        android:id="@+id/tv_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="5분\n준비\n걷기"
+        app:layout_constraintStart_toStartOf="@+id/barChart"
+        app:layout_constraintTop_toBottomOf="@+id/barChart" />
+
+    <TextView
+        android:id="@+id/tv_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="5분\n마무리\n걷기"
+        app:layout_constraintEnd_toEndOf="@+id/barChart"
+        app:layout_constraintTop_toBottomOf="@+id/barChart" />
+
+    <TextView
+        android:id="@+id/tv_mid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="10km\n1분 천천히 달리기x6\n1분 천천히 걷기x6"
+        app:layout_constraintEnd_toStartOf="@+id/tv_end"
+        app:layout_constraintStart_toEndOf="@+id/tv_start"
+        app:layout_constraintTop_toBottomOf="@+id/barChart" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
