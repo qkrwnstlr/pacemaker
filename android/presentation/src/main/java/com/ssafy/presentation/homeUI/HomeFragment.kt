@@ -1,12 +1,12 @@
 package com.ssafy.presentation.homeUI
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -20,15 +20,13 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
-import com.ssafy.presentation.loginUI.join.JoinRegisterViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
   OnMapReadyCallback {
-  private lateinit var topSheetBehavior: TopSheetBehavior<LinearLayout>
-  private val topSheetLayout by lazy { view?.findViewById<LinearLayout>(R.id.top_sheet_layout) }
+  private lateinit var topSheetBehavior: TopSheetBehavior<ConstraintLayout>
+  private val topSheetLayout by lazy { view?.findViewById<ConstraintLayout>(R.id.top_sheet_layout) }
   private val topSheetBodyLayout by lazy { topSheetLayout?.findViewById<LinearLayout>(R.id.top_sheet_body) }
 
   private val viewModel: HomeViewModel by viewModels()
@@ -55,58 +53,44 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    topSheetBehavior = TopSheetBehavior.from(topSheetLayout!!)
-    topSheetBehavior.setHideable(false)
-    topSheetBehavior.setHalfable(true)
     topSheetBodyLayout?.visibility = View.GONE
+
+    topSheetBehavior = TopSheetBehavior.from(topSheetLayout!!).apply {
+      setHideable(false)
+      setHalfable(true)
+      setHalfHeight(1000)
+    }
 
     topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
       override fun onStateChanged(topSheet: View, newState: Int) {
         when (newState) {
-          // 사용자가 BottomSheet를 위나 아래로 드래그 중인 상태
           TopSheetBehavior.STATE_DRAGGING -> {
-//            topSheetBodyLayout?.visibility = View.VISIBLE
+            topSheetBodyLayout?.visibility = View.VISIBLE
           }
 
-          // 드래그 동작 후 BottomSheet가 특정 높이로 고정될 때의 상태
-          // SETTLING 후 EXPANDED, SETTLING 후 COLLAPSED, SETTLING 후 HIDDEN
           TopSheetBehavior.STATE_SETTLING -> {}
 
           // 최대 높이로 보이는 상태
-          TopSheetBehavior.STATE_EXPANDED -> {}
+          TopSheetBehavior.STATE_EXPANDED -> {
+            topSheetBodyLayout?.visibility = View.VISIBLE
+            // TODO : Plan UI로 옮기기
+          }
 
           // peek 높이 만큼 보이는 상태
           TopSheetBehavior.STATE_COLLAPSED -> {
-//            topSheetBodyLayout?.visibility = View.GONE
+            topSheetBodyLayout?.visibility = View.GONE
           }
 
           TopSheetBehavior.STATE_HALF_EXPANDED -> {
-            Log.d("HomeFragment", "TopSheetBehavior.STATE_HALF_EXPANDED")
+            topSheetBodyLayout?.visibility = View.VISIBLE
           }
+
+          TopSheetBehavior.STATE_HIDDEN -> {}
         }
       }
 
-      var oldOffset = -1f
       override fun onSlide(topSheet: View, slideOffset: Float) {
-//        if (oldOffset > slideOffset) {
-//          topSheetBodyLayout?.visibility = View.GONE
-//        }
 
-        val upperState = if (oldOffset > slideOffset) 0.77 else 0.66
-        val lowerState = if (oldOffset > slideOffset) 0.33 else 0.22
-        if (topSheetBehavior.state == TopSheetBehavior.STATE_SETTLING ) {
-          if(slideOffset >= upperState){
-            topSheetBehavior.state = TopSheetBehavior.STATE_EXPANDED
-          }
-          if(slideOffset > lowerState && slideOffset < upperState){
-            topSheetBehavior.state = TopSheetBehavior.STATE_HALF_EXPANDED
-          }
-          if(slideOffset <= lowerState){
-            topSheetBehavior.state = TopSheetBehavior.STATE_COLLAPSED
-          }
-        }
-
-        oldOffset = slideOffset
       }
     })
 

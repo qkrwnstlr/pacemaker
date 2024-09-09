@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/top_sheet_layout"
     android:layout_width="match_parent"
@@ -18,7 +18,11 @@
         android:id="@+id/top_sheet_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="@dimen/padding_16"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/top_sheet_body"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             style="@style/XLargeText"
@@ -37,14 +41,22 @@
         android:id="@+id/top_sheet_body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/top_sheet_handle"
+        app:layout_constraintBottom_toTopOf="@+id/top_sheet_handle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
         <!-- TODO : Add Layout Here -->
     </LinearLayout>
 
     <View
+        android:id="@+id/top_sheet_handle"
         android:layout_width="40dp"
         android:layout_height="4dp"
         android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_30"
-        android:background="@drawable/top_sheet_control_bar" />
-</LinearLayout>
+        android:layout_marginTop="@dimen/padding_16"
+        android:background="@drawable/top_sheet_control_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

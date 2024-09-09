@@ -89,6 +89,8 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
 
     private int mPeekHeight;
 
+    private int mHalfHeight;
+
     private int mMinOffset;
 
     private int mHalfOffset;
@@ -168,7 +170,7 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
         parent.onLayoutChild(child, layoutDirection);
         // Offset the bottom sheet
         mMinOffset = Math.max(-child.getHeight(), -(child.getHeight() - mPeekHeight));
-        mHalfOffset = mMinOffset / 2;
+        mHalfOffset = Math.max(Math.min(mHalfHeight - child.getHeight() + mPeekHeight, mPeekHeight), mMinOffset);
         mMaxOffset = 0;
         if (mState == STATE_EXPANDED) {
             ViewCompat.offsetTopAndBottom(child, mMaxOffset);
@@ -391,6 +393,10 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
         mHalfable = halfable;
     }
 
+    public void setHalfHeight(int halfHeight) {
+        mHalfHeight = halfHeight;
+    }
+
     public void setSkipCollapsed(boolean skipCollapsed) {
         mSkipCollapsed = skipCollapsed;
     }
@@ -545,25 +551,64 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
         public void onViewReleased(@NonNull View releasedChild, float xvel, float yvel) {
             int top;
             @State int targetState;
-            if (yvel > 0) { // Moving up
-                top = mMaxOffset;
-                targetState = STATE_EXPANDED;
-            } else if (mHideable && shouldHide(releasedChild, yvel)) {
-                top = -mViewRef.get().getHeight();
-                targetState = STATE_HIDDEN;
-            } else if (yvel == 0.f) {
+            if (mHalfable) {
                 int currentTop = releasedChild.getTop();
-                targetState = STATE_EXPANDED;
-                if (Math.abs(currentTop - mMinOffset) > Math.abs(currentTop - mMaxOffset)) {
+                if (yvel < 0) {
+                    if (currentTop < mHalfOffset * 1.1) {
+                        top = mMinOffset;
+                        targetState = STATE_COLLAPSED;
+                    } else if (currentTop <= mHalfOffset * 0.1 && currentTop >= mMinOffset * 0.9) {
+                        top = mHalfOffset;
+                        targetState = STATE_HALF_EXPANDED;
+                    } else {
+                        top = mMaxOffset;
+                        targetState = STATE_EXPANDED;
+                    }
+                } else if (yvel == 0.f) {
+                    if (currentTop < mMinOffset * 0.9) {
+                        top = mMinOffset;
+                        targetState = STATE_COLLAPSED;
+                    } else if (currentTop <= mHalfOffset * 0.1 && currentTop >= mMinOffset * 0.9) {
+                        top = mHalfOffset;
+                        targetState = STATE_HALF_EXPANDED;
+                    } else {
+                        top = mMaxOffset;
+                        targetState = STATE_EXPANDED;
+                    }
+                } else {
+                    if (currentTop < mMinOffset * 0.9) {
+                        top = mMinOffset;
+                        targetState = STATE_COLLAPSED;
+                    } else if (currentTop <= mHalfOffset * 0.9 && currentTop >= mMinOffset * 0.9) {
+                        top = mHalfOffset;
+                        targetState = STATE_HALF_EXPANDED;
+                    } else {
+                        top = mMaxOffset;
+                        targetState = STATE_EXPANDED;
+                    }
+                }
+            } else {
+                if (yvel > 0) { // Moving up
                     top = mMaxOffset;
+                    targetState = STATE_EXPANDED;
+                } else if (mHideable && shouldHide(releasedChild, yvel)) {
+                    top = -mViewRef.get().getHeight();
+                    targetState = STATE_HIDDEN;
+                } else if (yvel == 0.f) {
+                    int currentTop = releasedChild.getTop();
+                    targetState = STATE_EXPANDED;
+                    if (Math.abs(currentTop - mMinOffset) > Math.abs(currentTop - mMaxOffset)) {
+                        top = mMaxOffset;
+                    } else {
+                        top = mMinOffset;
+                        targetState = STATE_COLLAPSED;
+                    }
                 } else {
                     top = mMinOffset;
                     targetState = STATE_COLLAPSED;
                 }
-            } else {
-                top = mMinOffset;
-                targetState = STATE_COLLAPSED;
             }
+
             if (mViewDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top)) {
                 setStateInternal(STATE_SETTLING);
                 ViewCompat.postOnAnimation(releasedChild,
