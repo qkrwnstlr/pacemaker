@@ -30,7 +30,7 @@
         android:id="@+id/infoFragment"
         android:name="com.ssafy.presentation.loginUI.info.InfoFragment"
         android:label="fragment_info"
-        tools:layout="@layout/fragment_info" >
+        tools:layout="@layout/fragment_info">
         <action
             android:id="@+id/action_infoFragment_to_infoRegisterFragment"
             app:destination="@id/infoRegisterFragment" />
@@ -42,7 +42,7 @@
         android:id="@+id/connectFragment"
         android:name="com.ssafy.presentation.loginUI.connect.ConnectFragment"
         android:label="fragment_connect"
-        tools:layout="@layout/fragment_connect" >
+        tools:layout="@layout/fragment_connect">
         <action
             android:id="@+id/action_connectFragment_to_joinFragment"
             app:destination="@id/joinFragment" />
@@ -51,7 +51,7 @@
         android:id="@+id/joinRegisterFragment"
         android:name="com.ssafy.presentation.loginUI.join.JoinRegisterFragment"
         android:label="fragment_join_register"
-        tools:layout="@layout/fragment_join_register" >
+        tools:layout="@layout/fragment_join_register">
         <action
             android:id="@+id/action_joinRegisterFragment_to_infoFragment"
             app:destination="@id/infoFragment" />
@@ -60,7 +60,7 @@
         android:id="@+id/infoRegisterFragment"
         android:name="com.ssafy.presentation.loginUI.info.InfoRegisterFragment"
         android:label="fragment_info_register"
-        tools:layout="@layout/fragment_info_register" >
+        tools:layout="@layout/fragment_info_register">
         <action
             android:id="@+id/action_infoRegisterFragment_to_startFragment"
             app:destination="@id/startFragment" />
@@ -69,7 +69,7 @@
         android:id="@+id/startFragment"
         android:name="com.ssafy.presentation.loginUI.info.StartFragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start" >
+        tools:layout="@layout/fragment_start">
         <action
             android:id="@+id/action_startFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -79,4 +79,26 @@
         android:name="com.ssafy.presentation.homeUI.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/startPlanFragment"
+        android:name="com.ssafy.presentation.planUI.startPlan.StartPlanFragment"
+        android:label="fragment_start_plan"
+        tools:layout="@layout/fragment_start_plan">
+        <action
+            android:id="@+id/action_startPlanFragment_to_selectCoachFragment"
+            app:destination="@id/selectCoachFragment" />
+        <action
+            android:id="@+id/action_startPlanFragment_to_registerPlanFragment"
+            app:destination="@id/registerPlanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/selectCoachFragment"
+        android:name="com.ssafy.presentation.myPageUI.selectCoach.SelectCoachFragment"
+        android:label="fragment_select_coach"
+        tools:layout="@layout/fragment_select_coach" />
+    <fragment
+        android:id="@+id/registerPlanFragment"
+        android:name="com.ssafy.presentation.planUI.registerPlan.RegisterPlanFragment"
+        android:label="fragment_register_plan"
+        tools:layout="@layout/fragment_register_plan" />
 </navigation>
