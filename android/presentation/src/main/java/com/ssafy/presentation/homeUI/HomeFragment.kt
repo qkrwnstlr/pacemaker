@@ -6,6 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -15,12 +19,18 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
+import com.ssafy.presentation.loginUI.join.JoinRegisterViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
   OnMapReadyCallback {
   private lateinit var topSheetBehavior: TopSheetBehavior<LinearLayout>
-  private val bottomSheetLayout by lazy { view?.findViewById<LinearLayout>(R.id.top_sheet_layout) }
+  private val topSheetLayout by lazy { view?.findViewById<LinearLayout>(R.id.top_sheet_layout) }
+  private val topSheetBodyLayout by lazy { topSheetLayout?.findViewById<LinearLayout>(R.id.top_sheet_body) }
+
+  private val viewModel: HomeViewModel by viewModels()
 
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup?,
@@ -44,25 +54,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    val topSheetBehavior = TopSheetBehavior.from(bottomSheetLayout!!)
-    topSheetBehavior.setHideable(false); // STATE_HIDDEN 비활성화
+    topSheetBehavior = TopSheetBehavior.from(topSheetLayout!!)
+    topSheetBehavior.setHideable(false)
+    topSheetBodyLayout?.visibility = View.GONE
 
     topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
       override fun onStateChanged(topSheet: View, newState: Int) {
-        // BottomSheetBehavior의 5가지 상태
         when (newState) {
-
           // 사용자가 BottomSheet를 위나 아래로 드래그 중인 상태
           TopSheetBehavior.STATE_DRAGGING -> {
-            val body = topSheet.findViewById<LinearLayout>(R.id.top_sheet_body)
-            if(body.childCount == 0) {
-              val textView = TextView(body.context).apply {
-                text = "동적으로 추가된 TextView"
-                textSize = 18f
-                setPadding(16, 16, 16, 16)
-              }
-              body.addView(textView)
-            }
+            topSheetBodyLayout?.visibility = View.VISIBLE
           }
 
           // 드래그 동작 후 BottomSheet가 특정 높이로 고정될 때의 상태
@@ -74,16 +75,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
           // peek 높이 만큼 보이는 상태
           TopSheetBehavior.STATE_COLLAPSED -> {
-            val body = topSheet.findViewById<LinearLayout>(R.id.top_sheet_body)
-            body.removeAllViews()
+            topSheetBodyLayout?.visibility = View.GONE
           }
         }
       }
 
-      override fun onSlide(p0: View, slideOffset: Float) {
-        // slideOffset 범위: -1.0 ~ 1.0
-        // -1.0 HIDDEN, 0.0 COLLAPSED, 1.0 EXPANDED
+      var oldOffset = -1f
+      override fun onSlide(topSheet: View, slideOffset: Float) {
+        if (oldOffset > slideOffset) {
+          topSheetBodyLayout?.visibility = View.GONE
+        }
+        oldOffset = slideOffset
       }
     })
+
+    initCollect()
+  }
+
+  private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
+    viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+      collectTrainingState()
+    }
+  }
+
+  private fun CoroutineScope.collectTrainingState() = launch {
+    viewModel.trainingState.collect { training ->
+      topSheetBodyLayout?.let {
+        it.removeAllViews()
+        // TODO : 상태에 맞는 적절한 view로 수정
+        val textView = TextView(it.context).apply {
+          text = if (training) "Is Finished" else "Is not Finished"
+          textSize = 18f
+          setPadding(16, 16, 16, 16)
+        }
+        it.addView(textView)
+      }
+    }
   }
 }
