@@ -80,6 +80,12 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
         makeChart(barChart)
         makeResult()
+        val dialog = PostPoneDialog(::onYesButtonClick)
+        dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
+    }
+
+    private fun onYesButtonClick() {
+        showSnackStringBar("ok버튼 클릭")
     }
 
     private fun makeResult() {
