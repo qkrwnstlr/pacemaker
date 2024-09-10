@@ -27,9 +27,7 @@ public class ReportController {
 
 	@PostMapping("/free")
 	@Tag(name = "Report API")
-	@Operation(
-		summary = "내맘대로 달리기 레포트 생성"
-	)
+	@Operation(summary = "내맘대로 달리기 레포트 생성")
 	@ApiResponses({
 		@ApiResponse(responseCode = "201", description = "내맘대로 달리기 레포트 생성 성공")
 	})
