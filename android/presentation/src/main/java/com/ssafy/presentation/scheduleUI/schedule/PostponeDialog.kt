@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.DialogPostponeBinding
 
-class PostPoneDialog(
+class PostponeDialog(
     val onYesButtonClick: () -> Unit
 ) : DialogFragment() {
     private var _binding: DialogPostponeBinding? = null
