@@ -1,6 +1,7 @@
 package com.ssafy.presentation.homeUI
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,39 +59,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     topSheetBehavior = TopSheetBehavior.from(topSheetLayout!!).apply {
       setHideable(false)
       setHalfable(true)
-      setHalfHeight(1000)
+      setHalfHeight(1500)
     }
 
     topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
       override fun onStateChanged(topSheet: View, newState: Int) {
         when (newState) {
-          TopSheetBehavior.STATE_DRAGGING -> {
-            topSheetBodyLayout?.visibility = View.VISIBLE
-          }
-
-          TopSheetBehavior.STATE_SETTLING -> {}
-
-          // 최대 높이로 보이는 상태
-          TopSheetBehavior.STATE_EXPANDED -> {
-            topSheetBodyLayout?.visibility = View.VISIBLE
-            // TODO : Plan UI로 옮기기
-          }
-
-          // peek 높이 만큼 보이는 상태
           TopSheetBehavior.STATE_COLLAPSED -> {
             topSheetBodyLayout?.visibility = View.GONE
           }
 
-          TopSheetBehavior.STATE_HALF_EXPANDED -> {
-            topSheetBodyLayout?.visibility = View.VISIBLE
+          TopSheetBehavior.STATE_EXPANDED -> {
+            // TODO : Plan UI로 옮기기
           }
 
-          TopSheetBehavior.STATE_HIDDEN -> {}
+          else -> {
+            topSheetBodyLayout?.visibility = View.VISIBLE
+          }
         }
       }
 
       override fun onSlide(topSheet: View, slideOffset: Float) {
-
+        if (slideOffset != 0f) {
+          topSheetBodyLayout?.let {
+            it.layoutParams.height =
+              ((topSheet.height - topSheetBehavior.peekHeight) * slideOffset).toInt()
+            it.requestLayout()
+          }
+        }
       }
     })
 

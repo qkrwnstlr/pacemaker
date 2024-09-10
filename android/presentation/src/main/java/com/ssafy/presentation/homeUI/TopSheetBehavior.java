@@ -385,6 +385,10 @@ public class TopSheetBehavior<V extends View> extends CoordinatorLayout.Behavior
         }
     }
 
+    public final int getPeekHeight() {
+        return mPeekHeight;
+    }
+
     public void setHideable(boolean hideable) {
         mHideable = hideable;
     }
