@@ -78,7 +78,11 @@
         android:id="@+id/homeFragment"
         android:name="com.ssafy.presentation.homeUI.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/startPlanFragment"
         android:name="com.ssafy.presentation.planUI.startPlan.StartPlanFragment"

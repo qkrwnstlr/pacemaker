@@ -74,6 +74,16 @@
         <item name="android:padding">@dimen/margin_8</item>
     </style>
 
+    <style name="XLargeText" parent="">
+        <item name="android:textSize">@dimen/text_24</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="LargeText" parent="">
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="HorizontalProgressBarStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">5dp</item>
