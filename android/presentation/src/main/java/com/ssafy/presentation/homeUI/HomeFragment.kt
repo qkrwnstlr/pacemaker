@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -21,14 +22,15 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
+import com.ssafy.presentation.loginUI.join.JoinFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
   OnMapReadyCallback {
   private lateinit var topSheetBehavior: TopSheetBehavior<ConstraintLayout>
-  private val topSheetLayout by lazy { view?.findViewById<ConstraintLayout>(R.id.top_sheet_layout) }
-  private val topSheetBodyLayout by lazy { topSheetLayout?.findViewById<LinearLayout>(R.id.top_sheet_body) }
+  private lateinit var topSheetLayout: ConstraintLayout
+  private lateinit var topSheetBodyLayout: LinearLayout
 
   private val viewModel: HomeViewModel by viewModels()
 
@@ -54,37 +56,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
-    topSheetBodyLayout?.visibility = View.GONE
+    topSheetLayout = requireView().findViewById(R.id.top_sheet_layout)
 
-    topSheetBehavior = TopSheetBehavior.from(topSheetLayout!!).apply {
+    topSheetBehavior = TopSheetBehavior.from(topSheetLayout).apply {
       setHideable(false)
       setHalfable(true)
       setHalfHeight(1500)
+    }
+
+    topSheetBodyLayout = topSheetLayout.findViewById<LinearLayout?>(R.id.top_sheet_body).apply {
+      visibility = View.GONE
     }
 
     topSheetBehavior.setTopSheetCallback(object : TopSheetBehavior.TopSheetCallback() {
       override fun onStateChanged(topSheet: View, newState: Int) {
         when (newState) {
           TopSheetBehavior.STATE_COLLAPSED -> {
-            topSheetBodyLayout?.visibility = View.GONE
+            topSheetBodyLayout.visibility = View.GONE
           }
 
           TopSheetBehavior.STATE_EXPANDED -> {
-            // TODO : Plan UI로 옮기기
+            val action = HomeFragmentDirections.actionHomeFragmentToRegisterPlanFragment()
+            findNavController().navigate(action)
           }
 
           else -> {
-            topSheetBodyLayout?.visibility = View.VISIBLE
+            topSheetBodyLayout.visibility = View.VISIBLE
           }
         }
       }
 
       override fun onSlide(topSheet: View, slideOffset: Float) {
         if (slideOffset != 0f) {
-          topSheetBodyLayout?.let {
-            it.layoutParams.height =
-              ((topSheet.height - topSheetBehavior.peekHeight) * slideOffset).toInt()
-            it.requestLayout()
+          topSheetBodyLayout.apply {
+            layoutParams.height = ((topSheet.height - topSheetBehavior.peekHeight) * slideOffset).toInt()
+            requestLayout()
           }
         }
       }
@@ -101,15 +107,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
   private fun CoroutineScope.collectTrainingState() = launch {
     viewModel.trainingState.collect { training ->
-      topSheetBodyLayout?.let {
-        it.removeAllViews()
+      topSheetBodyLayout.apply {
+        removeAllViews()
         // TODO : 상태에 맞는 적절한 view로 수정
-        val textView = TextView(it.context).apply {
+        val textView = TextView(context).apply {
           text = if (training) "Is Finished" else "Is not Finished"
           textSize = 18f
           setPadding(16, 16, 16, 16)
         }
-        it.addView(textView)
+        addView(textView)
       }
     }
   }

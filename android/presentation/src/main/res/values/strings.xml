@@ -3,6 +3,8 @@
     <string name="name">이름</string>
     <string name="weight">몸무게 (kg)</string>
     <string name="height">키 (cm)</string>
+    <string name="time">시간 (분)</string>
+    <string name="distance">거리 (km)</string>
     <string name="gender">성별</string>
     <string name="age">나이</string>
 
@@ -12,4 +14,29 @@
     <string name="woman">여성</string>
     <string name="man">남성</string>
     <string name="use_ai">AI 코칭 플랜에 사용됩니다</string>
+    <string name="how_often_run">평소에 얼마나 뛰시나요?</string>
+    <string name="mean_cadence">평균 케이던스</string>
+    <string name="mean_pace">평균 페이스 (분,초)</string>
+    <string name="_1_4">(1/4)</string>
+    <string name="select_coach">코치님을 선택해주세요</string>
+    <string name="mike">Mike 코치</string>
+    <string name="red_tag">#엄격한 #열정 #할 수 있습니다!</string>
+    <string name="jamie">Jamie 코치</string>
+    <string name="yellow_tag">#격려 #칭찬 #함께해봐요</string>
+    <string name="blue_tag">#유머러스 #사투리 #가보입시다</string>
+    <string name="danny">Danny 코치</string>
+    <string name="inst_plan_ing">진행중인 플랜</string>
+    <string name="inst_plan_ed">완료된 플랜</string>
+    <string name="title_result">훈련결과</string>
+    <string name="title_distance">이동 거리:</string>
+    <string name="title_time">소요 시간:</string>
+    <string name="title_pace">평균 페이스:</string>
+    <string name="title_heart">평균 심박수:</string>
+    <string name="title_step">케이던스:</string>
+    <string name="title_kcal">운동 칼로리:</string>
+    <string name="coach_talk_title">코치의 한마디</string>
+    <string name="pace">페이스</string>
+    <string name="heart">심박수</string>
+    <string name="step">케이던스</string>
+
 </resources>

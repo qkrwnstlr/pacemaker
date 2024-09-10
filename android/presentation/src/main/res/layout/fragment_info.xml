@@ -5,5 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".loginUI.info.InfoFragment">
 
+    <include
+        android:id="@+id/base_layout"
+        layout="@layout/base" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

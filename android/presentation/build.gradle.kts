@@ -37,6 +37,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -58,7 +59,7 @@ dependencies {
 
     implementation(libs.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
-    implementation (libs.jakewharton.timber)
+    implementation(libs.jakewharton.timber)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -68,5 +69,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.view)
+    implementation(libs.mpandroidchart)
+
     implementation(libs.play.services.maps)
 }

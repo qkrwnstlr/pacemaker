@@ -6,12 +6,13 @@ import android.view.animation.AnimationUtils
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
-import com.ssafy.presentation.databinding.FragmentInfoBinding
+import com.ssafy.presentation.databinding.FragmentStartBinding
 
-class InfoFragment : BaseFragment<FragmentInfoBinding>(FragmentInfoBinding::inflate) {
+class StartFragment : BaseFragment<FragmentStartBinding>(FragmentStartBinding::inflate) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initView()
         initListener()
     }
@@ -21,26 +22,22 @@ class InfoFragment : BaseFragment<FragmentInfoBinding>(FragmentInfoBinding::infl
         val slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_slide_up)
 
         tvExplain.apply {
-            text = "달리기 정보를 아시나요?"
+            text = "달리기를 시작해볼까요!"
             startAnimation(slideDown)
         }
 
         fabBlue.apply {
-            text = "네, 알고 있어요"
+            text = "좋아요!"
             startAnimation(slideUp)
         }
 
-        fabRed.apply {
-            visibility = View.VISIBLE
-            text = "아니요, 그냥 달릴래요"
-            startAnimation(slideUp)
-        }
     }
 
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
-            val action = InfoFragmentDirections.actionInfoFragmentToInfoRegisterFragment()
+            val action = StartFragmentDirections.actionStartFragmentToHomeFragment()
             findNavController().navigate(action)
         }
     }
+
 }
