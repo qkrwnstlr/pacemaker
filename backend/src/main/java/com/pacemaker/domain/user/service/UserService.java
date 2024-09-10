@@ -17,6 +17,7 @@ import com.pacemaker.domain.user.entity.Gender;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.user.repository.UserRepository;
+import com.pacemaker.global.exception.ConflictException;
 import com.pacemaker.global.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,10 @@ public class UserService {
 	@Transactional
 	public void create(UserCreateRequest userCreateRequest) {
 		// TODO: VDOT 계산
-		// TODO: 동일한 uid 있을 경우 생성 불가
+		if (userRepository.existsByUid(userCreateRequest.uid())) {
+			throw new ConflictException("이미 존재하는 사용자입니다.");
+		}
+
 		Gender gender = getGender(userCreateRequest.gender());
 		userRepository.save(User.builder()
 			.uid(userCreateRequest.uid())

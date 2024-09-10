@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.pacemaker.global.exception.ConflictException;
 import com.pacemaker.global.exception.InvalidUsernameException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.util.mattermost.NotificationManager;
@@ -40,10 +41,17 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(NotFoundException.class)
-	public ResponseEntity<String> handleUserNotFoundException(NotFoundException e, HttpServletRequest req) {
+	public ResponseEntity<String> handleNotFoundException(NotFoundException e, HttpServletRequest req) {
 		notificationManager.sendNotification(e, req.getRequestURI(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(ConflictException.class)
+	public ResponseEntity<String> handleConflictException(ConflictException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(Exception.class)
