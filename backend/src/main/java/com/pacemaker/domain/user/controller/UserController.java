@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
 import com.pacemaker.domain.user.dto.CheckUidResponse;
 import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.user.dto.UserCreateRequest;
@@ -72,7 +73,20 @@ public class UserController {
 
 	@GetMapping("/{uid}/coach")
 	@Operation(summary = "내 코치 정보 요청")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "코치 확인 성공")
+	})
 	public ResponseEntity<CoachNumberResponse> findCoachNumber(@PathVariable String uid) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getCoachNumber(uid));
+	}
+
+	@PutMapping("/{uid}/coach")
+	@Operation(summary = "내 코치 정보 수정")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "내 코치 정보 수정 완료")
+	})
+	public ResponseEntity<?> updateCoach(@PathVariable String uid, @RequestBody CoachUpdateRequest coachUpdateRequest) {
+		userService.updateCoachNumber(uid, coachUpdateRequest);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

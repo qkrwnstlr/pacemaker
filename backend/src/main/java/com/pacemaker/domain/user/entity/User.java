@@ -90,4 +90,8 @@ public class User {
 		this.height = height;
 		this.weight = weight;
 	}
+
+	public void updateCoach(Coach coach) {
+		this.coach = coach;
+	}
 }
