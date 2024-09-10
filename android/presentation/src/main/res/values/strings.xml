@@ -28,8 +28,8 @@
     <string name="danny">Danny 코치</string>
     <string name="inst_plan_ing">진행중인 플랜</string>
     <string name="inst_plan_ed">완료된 플랜</string>
-    <string name="set_goal">목표를 설정해 주세요</string>
-    <string name="like_week">선호 요일</string>
+    <string name="set_goal">코치와 함께 목표를 설정해 주세요</string>
+    <string name="like_week">선호 요일을 선택해 주세요</string>
     <string name="sun">일</string>
     <string name="mon">월</string>
     <string name="tue">화</string>
