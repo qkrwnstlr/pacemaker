@@ -12,7 +12,7 @@ import com.pacemaker.domain.report.entity.TrainType;
 import com.pacemaker.domain.report.repository.ReportRepository;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
-import com.pacemaker.global.exception.UserNotFoundException;
+import com.pacemaker.global.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,7 +31,7 @@ public class ReportService {
 		값이 없는 경우 null 대신 Optional.empty()를 반환
 		 */
 		User user = userRepository.findByUid(reportFreeRequest.uid())
-			.orElseThrow(() -> new UserNotFoundException("해당 사용자가 없습니다."));
+			.orElseThrow(() -> new NotFoundException("해당 사용자가 없습니다."));
 
 		TrainResult tr = reportFreeRequest.trainResult();
 
