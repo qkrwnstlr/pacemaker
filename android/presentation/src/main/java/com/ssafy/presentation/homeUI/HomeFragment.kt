@@ -1,7 +1,6 @@
 package com.ssafy.presentation.homeUI
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,18 +18,27 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.kizitonwose.calendar.core.WeekDay
+import com.kizitonwose.calendar.core.atStartOfMonth
+import com.kizitonwose.calendar.core.daysOfWeek
+import com.kizitonwose.calendar.view.WeekCalendarView
+import com.kizitonwose.calendar.view.WeekDayBinder
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
-import com.ssafy.presentation.loginUI.join.JoinFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.YearMonth
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
   OnMapReadyCallback {
   private lateinit var topSheetBehavior: TopSheetBehavior<ConstraintLayout>
   private lateinit var topSheetLayout: ConstraintLayout
   private lateinit var topSheetBodyLayout: LinearLayout
+
+  private lateinit var weekCalendarView: WeekCalendarView
 
   private val viewModel: HomeViewModel by viewModels()
 
@@ -76,7 +84,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
           }
 
           TopSheetBehavior.STATE_EXPANDED -> {
-            val action = HomeFragmentDirections.actionHomeFragmentToRegisterPlanFragment()
+            val action = HomeFragmentDirections.actionHomeFragmentToScheduleFragment()
             findNavController().navigate(action)
           }
 
@@ -95,6 +103,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
       }
     })
+
+    initWeekCalendar()
 
     initCollect()
   }
@@ -118,5 +128,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         addView(textView)
       }
     }
+  }
+
+  private fun initWeekCalendar() {
+    val today = LocalDate.now()
+    val currentMonth = YearMonth.now()
+    val startMonth = currentMonth.minusMonths(1)
+    val endMonth = currentMonth.plusMonths(1)
+    val daysOfWeek = daysOfWeek()
+
+    weekCalendarView = topSheetLayout.findViewById(R.id.week_calendar)
+
+    weekCalendarView.dayBinder = object : WeekDayBinder<WeekDayViewContainer> {
+      override fun create(view: View): WeekDayViewContainer = WeekDayViewContainer(view)
+      override fun bind(container: WeekDayViewContainer, data: WeekDay) {
+        container.apply {
+          day = data
+          textView.text = data.date.dayOfMonth.toString()
+          if (data.date == today) container.ly.setBackgroundResource(R.drawable.day_selected_bg)
+          setOnClickListener { topSheetBehavior.state = TopSheetBehavior.STATE_EXPANDED }
+        }
+      }
+    }
+
+    weekCalendarView.setup(
+      startMonth.atStartOfMonth(),
+      endMonth.atEndOfMonth(),
+      daysOfWeek.first(),
+    )
+
+    weekCalendarView.scrollToWeek(LocalDate.now())
   }
 }
