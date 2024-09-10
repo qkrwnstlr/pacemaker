@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.user.dto.CheckUidResponse;
+import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.user.dto.UserCreateRequest;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
 import com.pacemaker.domain.user.dto.UserRequest;
@@ -67,5 +68,11 @@ public class UserController {
 	})
 	public ResponseEntity<UserInfoResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserInfo(userUpdateRequest));
+	}
+
+	@GetMapping("/{uid}/coach")
+	@Operation(summary = "내 코치 정보 요청")
+	public ResponseEntity<CoachNumberResponse> findCoachNumber(@PathVariable String uid) {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getCoachNumber(uid));
 	}
 }
