@@ -17,6 +17,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.google.android.material.snackbar.Snackbar
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.WeekDay
@@ -40,8 +41,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
-class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate),
-    PostPoneDialogInterface {
+class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate){
     private val monthCalendarView: CalendarView get() = binding.exOneCalendar
     private val weekCalendarView: WeekCalendarView get() = binding.exOneWeekCalendar
 
@@ -81,10 +81,12 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
         makeChart(barChart)
         makeResult()
-        val dialog = PostPoneDialog(this)
+        val dialog = PostPoneDialog(::onYesButtonClick)
         dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
     }
-
+    private fun onYesButtonClick(view: View) {
+        Snackbar.make(view, "ok버튼 클릭", Snackbar.LENGTH_SHORT).show()
+    }
     private fun makeResult() {
         // 전체
         val totalPercent = 100f
