@@ -105,6 +105,12 @@ public class UserService {
 		user.updateCoach(coach);
 	}
 
+	@Transactional
+	public void deleteUser(UserRequest userRequest) {
+		User user = findUserByUid(userRequest.uid());
+		userRepository.delete(user);
+	}
+
 	private User findUserByUid(String uid) {
 		return userRepository.findByUid(uid)
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
