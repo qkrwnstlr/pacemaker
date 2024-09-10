@@ -13,6 +13,7 @@ import com.pacemaker.domain.report.repository.ReportRepository;
 import com.pacemaker.domain.train.entity.Train;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
+import com.pacemaker.global.exception.UserNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +26,13 @@ public class ReportService {
 
 	@Transactional
 	public void createFree(ReportFreeRequestDto reportFreeRequestDto) {
-		// reportFreeRequestDto의 uid로 User의 id 조회
+		/*
+		reportFreeRequestDto의 uid로 User 객체 조회
+		return -> Optionanl<User>
+		값이 없는 경우 null 대신 Optional.empty()를 반환
+		 */
 		User user = userRepository.findByUid(reportFreeRequestDto.uid())
-			.orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다."));
+			.orElseThrow(() -> new UserNotFoundException("해당 사용자가 없습니다."));
 
 		TrainResultDto tr = reportFreeRequestDto.trainResult();
 
