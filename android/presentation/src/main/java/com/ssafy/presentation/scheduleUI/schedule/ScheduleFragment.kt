@@ -41,7 +41,7 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
-class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate){
+class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate) {
     private val monthCalendarView: CalendarView get() = binding.exOneCalendar
     private val weekCalendarView: WeekCalendarView get() = binding.exOneWeekCalendar
 
@@ -84,9 +84,11 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val dialog = PostPoneDialog(::onYesButtonClick)
         dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
     }
+
     private fun onYesButtonClick(view: View) {
         Snackbar.make(view, "ok버튼 클릭", Snackbar.LENGTH_SHORT).show()
     }
+
     private fun makeResult() {
         // 전체
         val totalPercent = 100f

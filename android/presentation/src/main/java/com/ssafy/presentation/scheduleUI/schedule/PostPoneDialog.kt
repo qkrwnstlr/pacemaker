@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.DialogFragment
-import com.google.android.material.snackbar.Snackbar
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.DialogPostponeBinding
 
 class PostPoneDialog(
-    val onYesButtonClick:(View)->Unit
+    val onYesButtonClick: (View) -> Unit
 ) : DialogFragment() {
     private var _binding: DialogPostponeBinding? = null
     private val binding get() = _binding!!
