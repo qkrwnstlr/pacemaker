@@ -5,13 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -24,11 +29,12 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.WeekCalendarView
 import com.kizitonwose.calendar.view.WeekDayBinder
 import com.ssafy.presentation.R
+import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
+import com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -116,16 +122,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
   }
 
   private fun CoroutineScope.collectTrainingState() = launch {
-    viewModel.trainingState.collect { training ->
+    viewModel.trainingState.collect {
       topSheetBodyLayout.apply {
         removeAllViews()
-        // TODO : 상태에 맞는 적절한 view로 수정
-        val textView = TextView(context).apply {
-          text = if (training) "Is Finished" else "Is not Finished"
-          textSize = 18f
-          setPadding(16, 16, 16, 16)
-        }
-        addView(textView)
+        val trainInfoView  = TrainInfoChartView(context)
+        addView(trainInfoView)
+        makeChart(trainInfoView.findViewById(R.id.barChart))
       }
     }
   }
@@ -158,5 +160,58 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     )
 
     weekCalendarView.scrollToWeek(LocalDate.now())
+  }
+
+  private fun makeChart(barChart: BarChart) {
+    val entries = ArrayList<BarEntry>()
+    entries.add(BarEntry(2.5f, 0.2f))
+    entries.add(BarEntry(3.5f, 1.6f))
+    entries.add(BarEntry(4.5f, 1.2f))
+    entries.add(BarEntry(5.5f, 1.6f))
+    entries.add(BarEntry(6.5f, 1.2f))
+    entries.add(BarEntry(7.5f, 1.6f))
+    entries.add(BarEntry(8.5f, 0.2f))
+
+    barChart.apply {
+      description.isEnabled = false
+      setMaxVisibleValueCount(7)
+      setPinchZoom(false)
+      setDrawBarShadow(false)
+      setDrawGridBackground(false)
+      axisLeft.apply {
+        axisMaximum = 2f
+        axisMinimum = 0f
+        setDrawLabels(false)
+        setDrawGridLines(false)
+        setDrawAxisLine(false)
+      }
+      xAxis.apply {
+        position = XAxis.XAxisPosition.BOTTOM
+        granularity = 1f
+        setDrawBarShadow(false)
+        setDrawGridLines(false)
+        setDrawLabels(false)
+      }
+      axisRight.isEnabled = false
+      setTouchEnabled(false)
+      animateY(1000)
+      legend.isEnabled = false
+    }
+    val set = BarDataSet(entries, "DataSet")
+
+    val colors = List(entries.size) { index ->
+      if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
+    }
+    set.setColors(colors.toIntArray(), barChart.context)
+
+    val dataSet: ArrayList<IBarDataSet> = ArrayList()
+    dataSet.add(set)
+    val data = BarData(dataSet)
+    data.barWidth = 0.8f //막대 너비 설정
+    barChart.apply {
+      this.data = data //차트의 데이터를 data로 설정해줌.
+      setFitBars(true)
+      invalidate()
+    }
   }
 }
