@@ -1,5 +1,6 @@
 package com.ssafy.presentation.homeUI
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -32,7 +37,7 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
-import com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
+import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -75,7 +80,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     topSheetBehavior = TopSheetBehavior.from(topSheetLayout).apply {
       setHideable(false)
       setHalfable(true)
-      setHalfHeight(1500)
+      setHalfHeight(900)
     }
 
     topSheetBodyLayout = topSheetLayout.findViewById<LinearLayout?>(R.id.top_sheet_body).apply {
@@ -103,7 +108,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
       override fun onSlide(topSheet: View, slideOffset: Float) {
         if (slideOffset != 0f) {
           topSheetBodyLayout.apply {
-            layoutParams.height = ((topSheet.height - topSheetBehavior.peekHeight) * slideOffset).toInt()
+            layoutParams.height =
+              ((topSheet.height - topSheetBehavior.peekHeight) * slideOffset).toInt()
             requestLayout()
           }
         }
@@ -125,9 +131,34 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     viewModel.trainingState.collect {
       topSheetBodyLayout.apply {
         removeAllViews()
-        val trainInfoView  = TrainInfoChartView(context)
+        val trainInfoView = when (it) {
+          1 -> {
+            TrainInfoChartView(context).also { makeChart(it.findViewById(R.id.barChart)) }
+          }
+
+          2 -> {
+            TrainResultView(context).also {
+              setPieChart(it.findViewById(R.id.chart_pace), 75f)
+              setPieChart(it.findViewById(R.id.chart_heart), 60f)
+              setPieChart(it.findViewById(R.id.chart_step), 70f)
+            }
+          }
+
+          3 -> {
+            // TODO : 훈련 없음 UI로 변경
+            TrainInfoChartView(context)
+          }
+
+          4 -> {
+            // TODO : 플랜 생성 UI로 변경
+            TrainInfoChartView(context)
+          }
+
+          else -> {
+            return@collect
+          }
+        }
         addView(trainInfoView)
-        makeChart(trainInfoView.findViewById(R.id.barChart))
       }
     }
   }
@@ -211,6 +242,33 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     barChart.apply {
       this.data = data //차트의 데이터를 data로 설정해줌.
       setFitBars(true)
+      invalidate()
+    }
+  }
+
+  private fun setPieChart(chart: PieChart, value: Float) {
+    val maxValue = 100f
+
+    val entry = ArrayList<PieEntry>().apply {
+      add(PieEntry(maxValue - value))
+      add(PieEntry(value, ""))
+    }
+
+    val dataSet = PieDataSet(entry, "").apply {
+      colors = listOf(
+        Color.parseColor("#FFFFFFFF"),
+        Color.parseColor("#5973FF"),
+      )
+      setDrawValues(false)
+    }
+
+    chart.apply {
+      data = PieData(dataSet)
+      holeRadius = 75f
+      transparentCircleRadius = 75f
+      setDrawCenterText(false)
+      legend.isEnabled = false
+      description.isEnabled = false
       invalidate()
     }
   }
