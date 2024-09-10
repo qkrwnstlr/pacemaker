@@ -10,6 +10,7 @@ import com.pacemaker.domain.user.dto.CheckUidResponse;
 import com.pacemaker.domain.user.dto.UserCreateRequest;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
 import com.pacemaker.domain.user.dto.UserRequest;
+import com.pacemaker.domain.user.dto.UserUpdateRequest;
 import com.pacemaker.domain.user.entity.Gender;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.coach.entity.Coach;
@@ -28,6 +29,7 @@ public class UserService {
 	@Transactional
 	public void create(UserCreateRequest userCreateRequest) {
 		// TODO: VDOT 계산
+		// TODO: 동일한 uid 있을 경우 생성 불가
 		Gender gender = getGender(userCreateRequest.gender());
 		userRepository.save(User.builder()
 			.uid(userCreateRequest.uid())
@@ -49,7 +51,7 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public UserInfoResponse getUserInfo(String uid) {
-		User user = userRepository.findByUid(uid).orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
+		User user = findUserByUid(uid);
 		Float trainDistance = convertMetersToKilometers(user.getTrainDistance());
 		Long coachNumber = getCoachId(user);
 
@@ -63,6 +65,31 @@ public class UserService {
 			.trainDistance(trainDistance)
 			.coachNumber(coachNumber)
 			.build();
+	}
+
+	@Transactional
+	public UserInfoResponse updateUserInfo(UserUpdateRequest userUpdateRequest) {
+		User user = findUserByUid(userUpdateRequest.uid());
+		user.update(userUpdateRequest.year(), userUpdateRequest.height(), userUpdateRequest.weight());
+
+		Float trainDistance = convertMetersToKilometers(user.getTrainDistance());
+		Long coachNumber = getCoachId(user);
+
+		return UserInfoResponse.builder()
+			.name(user.getUsername())
+			.year(user.getYear())
+			.height(user.getHeight())
+			.weight(user.getWeight())
+			.trainCount(user.getTrainCount())
+			.trainTime(user.getTrainTime())
+			.trainDistance(trainDistance)
+			.coachNumber(coachNumber)
+			.build();
+	}
+
+	private User findUserByUid(String uid) {
+		return userRepository.findByUid(uid)
+			.orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
 	}
 
 	private Gender getGender(Integer gender) {

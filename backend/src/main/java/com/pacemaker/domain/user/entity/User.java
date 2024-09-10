@@ -84,4 +84,10 @@ public class User {
 		this.createdAt = createdAt;
 		this.vdot = vdot;
 	}
+
+	public void update(Integer year, Integer height, Integer weight) {
+		this.year = year;
+		this.height = height;
+		this.weight = weight;
+	}
 }
