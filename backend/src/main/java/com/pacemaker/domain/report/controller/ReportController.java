@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pacemaker.domain.report.dto.ReportFreeRequestDto;
+import com.pacemaker.domain.report.dto.ReportFreeRequest;
 import com.pacemaker.domain.report.service.ReportService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,8 +34,8 @@ public class ReportController {
 		@ApiResponse(responseCode = "201", description = "내맘대로 달리기 레포트 생성 성공")
 	})
 	public ResponseEntity<?> createFreeReport(@Valid @RequestBody
-	ReportFreeRequestDto reportFreeRequestDto) {
-		reportService.createFree(reportFreeRequestDto);
+	ReportFreeRequest reportFreeRequest) {
+		reportService.createFree(reportFreeRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }
