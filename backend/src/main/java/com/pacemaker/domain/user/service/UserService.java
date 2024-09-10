@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.pacemaker.domain.user.dto.CheckUidResponse;
+import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.user.dto.UserCreateRequest;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
 import com.pacemaker.domain.user.dto.UserRequest;
@@ -82,6 +83,14 @@ public class UserService {
 			.trainTime(user.getTrainTime())
 			.trainDistance(trainDistance)
 			.coachNumber(coachNumber)
+			.build();
+	}
+
+	@Transactional(readOnly = true)
+	public CoachNumberResponse getCoachNumber(String uid) {
+		User user = findUserByUid(uid);
+		return CoachNumberResponse.builder()
+			.coachNumber(getCoachId(user))
 			.build();
 	}
 
