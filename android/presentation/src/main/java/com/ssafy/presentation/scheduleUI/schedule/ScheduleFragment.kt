@@ -17,7 +17,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
-import com.google.android.material.snackbar.Snackbar
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.WeekDay
@@ -85,8 +84,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
     }
 
-    private fun onYesButtonClick(view: View) {
-        Snackbar.make(view, "ok버튼 클릭", Snackbar.LENGTH_SHORT).show()
+    private fun onYesButtonClick() {
+        showSnackStringBar("ok버튼 클릭")
     }
 
     private fun makeResult() {

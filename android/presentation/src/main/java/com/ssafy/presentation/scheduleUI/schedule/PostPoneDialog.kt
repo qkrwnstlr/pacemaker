@@ -9,7 +9,7 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.DialogPostponeBinding
 
 class PostPoneDialog(
-    val onYesButtonClick: (View) -> Unit
+    val onYesButtonClick: () -> Unit
 ) : DialogFragment() {
     private var _binding: DialogPostponeBinding? = null
     private val binding get() = _binding!!
@@ -26,7 +26,7 @@ class PostPoneDialog(
             dismiss()
         }
         binding.btnOk.setOnClickListener {
-            onYesButtonClick(view)
+            onYesButtonClick()
         }
         return view
     }
