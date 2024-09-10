@@ -40,7 +40,8 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
-class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate) {
+class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate),
+    PostPoneDialogInterface {
     private val monthCalendarView: CalendarView get() = binding.exOneCalendar
     private val weekCalendarView: WeekCalendarView get() = binding.exOneWeekCalendar
 
@@ -80,6 +81,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
         makeChart(barChart)
         makeResult()
+        val dialog = PostPoneDialog(this)
+        dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
     }
 
     private fun makeResult() {
