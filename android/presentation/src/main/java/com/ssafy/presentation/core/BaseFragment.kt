@@ -33,4 +33,7 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
         Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT).show()
     }
 
+    fun showSnackStringBar(msg: String) {
+        Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+    }
 }

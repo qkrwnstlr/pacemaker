@@ -78,7 +78,11 @@
         android:id="@+id/homeFragment"
         android:name="com.ssafy.presentation.homeUI.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+    </fragment>
     <fragment
         android:id="@+id/startPlanFragment"
         android:name="com.ssafy.presentation.planUI.startPlan.StartPlanFragment"
@@ -101,4 +105,9 @@
         android:name="com.ssafy.presentation.planUI.registerPlan.RegisterPlanFragment"
         android:label="fragment_register_plan"
         tools:layout="@layout/fragment_register_plan" />
+    <fragment
+        android:id="@+id/scheduleFragment"
+        android:name="com.ssafy.presentation.scheduleUI.schedule.ScheduleFragment"
+        android:label="fragment_schedule"
+        tools:layout="@layout/fragment_schedule" />
 </navigation>
