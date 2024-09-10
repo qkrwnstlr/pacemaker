@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.pacemaker.global.exception.InvalidUsernameException;
-import com.pacemaker.global.exception.UserNotFoundException;
+import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.util.mattermost.NotificationManager;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,8 +39,8 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(jsonResponse, HttpStatus.BAD_REQUEST); // 400
 	}
 
-	@ExceptionHandler(UserNotFoundException.class)
-	public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException e, HttpServletRequest req) {
+	@ExceptionHandler(NotFoundException.class)
+	public ResponseEntity<String> handleUserNotFoundException(NotFoundException e, HttpServletRequest req) {
 		notificationManager.sendNotification(e, req.getRequestURI(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

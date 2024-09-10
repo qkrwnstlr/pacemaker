@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
+import com.pacemaker.domain.coach.repository.CoachRepository;
 import com.pacemaker.domain.user.dto.CheckUidResponse;
 import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.user.dto.UserCreateRequest;
@@ -15,7 +17,7 @@ import com.pacemaker.domain.user.entity.Gender;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.user.repository.UserRepository;
-import com.pacemaker.global.exception.UserNotFoundException;
+import com.pacemaker.global.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final CoachRepository coachRepository;
 
 	@Transactional
 	public void create(UserCreateRequest userCreateRequest) {
@@ -94,9 +97,22 @@ public class UserService {
 			.build();
 	}
 
+	@Transactional
+	public void updateCoachNumber(String uid, CoachUpdateRequest coachUpdateRequest) {
+		User user = findUserByUid(uid);
+		Coach coach = findCoachById(coachUpdateRequest.coachNumber());
+
+		user.updateCoach(coach);
+	}
+
 	private User findUserByUid(String uid) {
 		return userRepository.findByUid(uid)
-			.orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
+			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
+	}
+
+	private Coach findCoachById(Long coachId) {
+		return coachRepository.findById(coachId)
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 코치입니다."));
 	}
 
 	private Gender getGender(Integer gender) {
