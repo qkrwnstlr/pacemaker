@@ -19,4 +19,6 @@ class CoachCreateButton @JvmOverloads constructor(
   }
 
   fun setIconResource(iconResourceId: Int) = binding.createPlanButton.setIconResource(iconResourceId)
+
+  override fun setOnClickListener(l: OnClickListener?) = binding.createPlanButton.setOnClickListener(l)
 }

@@ -159,6 +159,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }.run {
               it.setIconResource(this)
             }
+
+            it.setOnClickListener {
+              val action = HomeFragmentDirections.actionHomeFragmentToStartPlanFragment()
+              findNavController().navigate(action)
+            }
+
             topSheetBehavior.setHalfHeight(350)
           }
 
