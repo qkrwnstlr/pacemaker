@@ -7,6 +7,7 @@
         android:id="@+id/barChart"
         android:layout_width="match_parent"
         android:layout_height="150dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_mid"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -17,6 +18,8 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="5분\n준비\n걷기"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintEnd_toStartOf="@id/tv_mid"
         app:layout_constraintStart_toStartOf="@+id/barChart"
         app:layout_constraintTop_toBottomOf="@+id/barChart" />
 
@@ -27,6 +30,7 @@
         android:gravity="center"
         android:text="5분\n마무리\n걷기"
         app:layout_constraintEnd_toEndOf="@+id/barChart"
+        app:layout_constraintStart_toEndOf="@id/tv_mid"
         app:layout_constraintTop_toBottomOf="@+id/barChart" />
 
     <TextView

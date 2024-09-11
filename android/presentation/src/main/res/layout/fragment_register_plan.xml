@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/tv_title"
         style="@style/TitleText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_30"
         android:layout_marginTop="@dimen/padding_48"
@@ -129,18 +129,19 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!--  list-item-coach, list-item-student, list-item-schedule   -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_plan_chat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:listitem="@layout/list_item_student"
         android:layout_marginHorizontal="@dimen/margin_30"
         android:paddingTop="@dimen/padding_10"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@id/et_chat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cl_week" />
+        app:layout_constraintTop_toBottomOf="@id/cl_week"
+        tools:listitem="@layout/list_item_student" />
 
     <EditText
         android:id="@+id/et_chat"

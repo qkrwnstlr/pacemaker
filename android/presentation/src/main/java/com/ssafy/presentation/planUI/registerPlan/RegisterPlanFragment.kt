@@ -16,6 +16,8 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        val manager = requireActivity().supportFragmentManager
+        ScheduleDialogFragment().show(manager, "ScheduleDialog")
     }
 
     private fun initView() = with(binding) {
