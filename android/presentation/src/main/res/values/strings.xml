@@ -18,6 +18,7 @@
     <string name="mean_cadence">평균 케이던스</string>
     <string name="mean_pace">평균 페이스 (분,초)</string>
     <string name="_1_4">(1/4)</string>
+    <string name="_1_3">(1/3)</string>
     <string name="select_coach">코치님을 선택해주세요</string>
     <string name="mike">Mike 코치</string>
     <string name="red_tag">#엄격한 #열정 #할 수 있습니다!</string>
@@ -27,6 +28,15 @@
     <string name="danny">Danny 코치</string>
     <string name="inst_plan_ing">진행중인 플랜</string>
     <string name="inst_plan_ed">완료된 플랜</string>
+    <string name="set_goal">코치와 함께 목표를 설정해 주세요</string>
+    <string name="like_week">선호 요일을 선택해 주세요</string>
+    <string name="sun">일</string>
+    <string name="mon">월</string>
+    <string name="tue">화</string>
+    <string name="wed">수</string>
+    <string name="thu">목</string>
+    <string name="fri">금</string>
+    <string name="sat">토</string>
     <string name="title_result">훈련결과</string>
     <string name="title_distance">이동 거리:</string>
     <string name="title_time">소요 시간:</string>
