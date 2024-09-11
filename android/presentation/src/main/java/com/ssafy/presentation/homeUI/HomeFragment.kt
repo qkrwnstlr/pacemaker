@@ -2,6 +2,7 @@ package com.ssafy.presentation.homeUI
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.view.WeekCalendarView
 import com.kizitonwose.calendar.view.WeekDayBinder
 import com.ssafy.presentation.R
+import com.ssafy.presentation.component.CoachCreateButton
 import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
@@ -80,7 +82,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     topSheetBehavior = TopSheetBehavior.from(topSheetLayout).apply {
       setHideable(false)
       setHalfable(true)
-      setHalfHeight(900)
     }
 
     topSheetBodyLayout = topSheetLayout.findViewById<LinearLayout?>(R.id.top_sheet_body).apply {
@@ -132,31 +133,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
       topSheetBodyLayout.apply {
         removeAllViews()
         val trainInfoView = when (it) {
-          1 -> {
-            TrainInfoChartView(context).also { makeChart(it.findViewById(R.id.barChart)) }
+          1 -> TrainInfoChartView(context).also {
+            makeChart(it.findViewById(R.id.barChart))
+            topSheetBehavior.setHalfHeight(700)
           }
 
-          2 -> {
-            TrainResultView(context).also {
-              setPieChart(it.findViewById(R.id.chart_pace), 75f)
-              setPieChart(it.findViewById(R.id.chart_heart), 60f)
-              setPieChart(it.findViewById(R.id.chart_step), 70f)
+          2 -> TrainResultView(context).also {
+            setPieChart(it.findViewById(R.id.chart_pace), 75f)
+            setPieChart(it.findViewById(R.id.chart_heart), 60f)
+            setPieChart(it.findViewById(R.id.chart_step), 70f)
+            topSheetBehavior.setHalfHeight(900)
+          }
+
+          // TODO : 훈련 없음 UI로 변경
+          3 -> TrainInfoChartView(context).also {
+            topSheetBehavior.setHalfHeight(900)
+          }
+
+          4 -> CoachCreateButton(context).also {
+            when (viewModel.coachState.value) {
+              1 -> R.drawable.coach_mike_white
+              2 -> R.drawable.coach_jamie_white
+              3 -> R.drawable.coach_danny_white
+              else -> return@also
+            }.run {
+              it.setIconResource(this)
             }
+            topSheetBehavior.setHalfHeight(350)
           }
 
-          3 -> {
-            // TODO : 훈련 없음 UI로 변경
-            TrainInfoChartView(context)
-          }
-
-          4 -> {
-            // TODO : 플랜 생성 UI로 변경
-            TrainInfoChartView(context)
-          }
-
-          else -> {
-            return@collect
-          }
+          else -> return@collect
         }
         addView(trainInfoView)
       }

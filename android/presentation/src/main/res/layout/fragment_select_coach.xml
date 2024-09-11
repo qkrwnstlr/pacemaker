@@ -36,7 +36,7 @@
             android:id="@+id/iv_red"
             android:layout_width="@dimen/image_128"
             android:layout_height="@dimen/image_128"
-            android:src="@drawable/red"
+            android:src="@drawable/coach_mike"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -85,7 +85,7 @@
             android:id="@+id/iv_yellow"
             android:layout_width="@dimen/image_128"
             android:layout_height="@dimen/image_128"
-            android:src="@drawable/yellow"
+            android:src="@drawable/coach_jamie"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -133,7 +133,7 @@
             android:id="@+id/iv_blue"
             android:layout_width="@dimen/image_128"
             android:layout_height="@dimen/image_128"
-            android:src="@drawable/blue"
+            android:src="@drawable/coach_danny"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

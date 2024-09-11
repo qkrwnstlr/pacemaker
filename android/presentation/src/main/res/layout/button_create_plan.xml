@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/create_plan_button"
+        style="@style/CustomFAB"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="2"
+        android:text="AI 코치와 함께\n훈련을 계획해볼까요?"
+        android:textColor="@color/white"
+        app:icon="@drawable/coach_mike_white"
+        app:iconSize="65dp"
+        android:elevation="@dimen/cardview_default_elevation"/>
+</merge>

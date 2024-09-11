@@ -6,6 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class HomeViewModel : ViewModel() {
-  private val _trainingState: MutableStateFlow<Int> = MutableStateFlow(2)
+  private val _trainingState: MutableStateFlow<Int> = MutableStateFlow(4)
   val trainingState: StateFlow<Int> = _trainingState.asStateFlow()
+
+  private val _coachState: MutableStateFlow<Int> = MutableStateFlow(1)
+  val coachState: StateFlow<Int> = _coachState.asStateFlow()
 }
