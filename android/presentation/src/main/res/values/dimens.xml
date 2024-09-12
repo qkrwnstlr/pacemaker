@@ -38,4 +38,6 @@
     <dimen name="image_128">128dp</dimen>
 
     <dimen name="radius_28">28dp</dimen>
+
+    <dimen name="elevation_8">8dp</dimen>
 </resources>

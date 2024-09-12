@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/top_sheet_background"
     android:clickable="true"
-    android:elevation="8dp"
+    android:elevation="@dimen/elevation_8"
     android:focusable="true"
     android:orientation="vertical"
     app:behavior_hideable="true"
