@@ -33,30 +33,23 @@ public class GlobalExceptionHandler {
 		return sb.toString();
 	}
 
-	// handelInvalidUsernameException은 그냥 예시로 넣어둔 것!
-	@ExceptionHandler(InvalidUsernameException.class)
-	public ResponseEntity<String> handleInvalidUsernameException(InvalidUsernameException e) {
-		String jsonResponse = "{\"message\": \"" + e.getMessage() + "\", \"errorCode\": \"4000\"}";
-		return new ResponseEntity<>(jsonResponse, HttpStatus.BAD_REQUEST); // 400
-	}
-
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<String> handleNotFoundException(NotFoundException e, HttpServletRequest req) {
-		notificationManager.sendNotification(e, req.getRequestURI(), getParams(req));
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(ConflictException.class)
 	public ResponseEntity<String> handleConflictException(ConflictException e, HttpServletRequest req) {
-		notificationManager.sendNotification(e, req.getRequestURI(), getParams(req));
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleGeneralException(Exception e, HttpServletRequest req) {
-		notificationManager.sendNotification(e, req.getRequestURI(), getParams(req)); // mattermost log 찍기
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req)); // mattermost log 찍기
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
 	}

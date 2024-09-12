@@ -49,10 +49,11 @@ public class Attachment {
 		this.text = sb.toString();
 	}
 
-	public void addExceptionInfo(Exception e, String uri, String params) {
+	public void addExceptionInfo(Exception e, String uri, String method, String params) {
 		this.addExceptionInfo(e, uri);
 		sb = new StringBuilder(text);
 
+		sb.append("**HTTP Method**").append('\n').append('\n').append(method).append('\n').append('\n');
 		sb.append("**Parameters**").append('\n').append('\n').append(params).append('\n').append('\n');
 
 		this.text = sb.toString();

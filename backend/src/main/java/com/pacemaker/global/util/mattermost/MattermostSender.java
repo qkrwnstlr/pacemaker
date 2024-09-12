@@ -26,7 +26,7 @@ public class MattermostSender {
 	private final WebClient mattermostWebClient;
 	private final MattermostProperties mmProperties;
 
-	public void sendMessage(Exception exception, String uri, String params) {
+	public void sendMessage(Exception exception, String uri, String method, String params) {
 		if (!mmEnabled) {
 			return;
 		}
@@ -43,7 +43,7 @@ public class MattermostSender {
 				.footer(mmProperties.getFooter())
 				.build();
 
-			attachment.addExceptionInfo(exception, uri, params);
+			attachment.addExceptionInfo(exception, uri, method, params);
 			Attachments attachments = new Attachments(attachment);
 			attachments.addProps(exception);
 			String payload = new Gson().toJson(attachments);
