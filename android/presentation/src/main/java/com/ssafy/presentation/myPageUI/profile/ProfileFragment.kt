@@ -13,26 +13,21 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         super.onViewCreated(view, savedInstanceState)
         binding.btnSetting.setOnClickListener {
             PopupMenu(requireContext(), binding.btnSetting).apply {
-
                 menuInflater.inflate(R.menu.profile_menu, this.menu)
-
                 setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.it_fix -> {
-                            val action =
-                                ProfileFragmentDirections.actionProfileFragmentToModifyFragment()
-                            findNavController().navigate(action)
+                            goModify()
                         }
 
                         R.id.it_can -> {
-                            showSnackStringBar("권한설정")
+                            goHealthConnect()
                         }
 
                         R.id.it_logout -> {
-                            showSnackStringBar("로그아웃")
+                            logout()
                         }
                     }
-
                     true
                 }
 
@@ -41,5 +36,19 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         binding.ivProfile.setOnClickListener {
             showSnackStringBar("강사 바꾸는 뷰로 고고")
         }
+    }
+
+    private fun goModify() {
+        val action =
+            ProfileFragmentDirections.actionProfileFragmentToModifyFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun goHealthConnect() {
+        showSnackStringBar("헬커")
+    }
+
+    private fun logout() {
+        showSnackStringBar("로그아웃")
     }
 }
