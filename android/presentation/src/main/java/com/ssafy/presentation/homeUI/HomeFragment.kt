@@ -2,7 +2,6 @@ package com.ssafy.presentation.homeUI
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -40,7 +39,6 @@ import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.component.TrainRestMessageView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
-import com.ssafy.presentation.planUI.startPlan.StartPlanFragmentDirections
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -120,6 +118,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     })
 
     initView()
+    initListener()
     initCollect()
   }
 
@@ -177,7 +176,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
   private fun initView() {
     initWeekCalendar()
-    initButton()
+    when (viewModel.coachState.value) {
+      1 -> R.drawable.coach_mike
+      2 -> R.drawable.coach_jamie
+      3 -> R.drawable.coach_danny
+      else -> return
+    }.run {
+      binding.profileButton.setImageResource(this)
+    }
   }
 
   private fun initWeekCalendar() {
@@ -210,26 +216,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     weekCalendarView.scrollToWeek(LocalDate.now())
   }
 
-  private fun initButton() {
+  private fun initListener() {
     binding.startRunButton.setOnClickListener {
       val action = HomeFragmentDirections.actionHomeFragmentToRunningInfoFragment()
       findNavController().navigate(action)
     }
 
-    with(binding.profileButton) {
-      setOnClickListener {
-        val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()
-        findNavController().navigate(action)
-      }
-
-      when (viewModel.coachState.value) {
-        1 -> R.drawable.coach_mike
-        2 -> R.drawable.coach_jamie
-        3 -> R.drawable.coach_danny
-        else -> return@with
-      }.run {
-        setImageResource(this)
-      }
+    binding.profileButton.setOnClickListener {
+      val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()
+      findNavController().navigate(action)
     }
 
     binding.planButton.setOnClickListener {
