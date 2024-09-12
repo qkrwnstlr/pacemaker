@@ -24,6 +24,7 @@ class ScheduleDialogFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentScheduleDialogBinding.inflate(inflater, container, false)
+        dialog?.window?.setBackgroundDrawableResource(R.drawable.rounded_background_white)
         return binding.root
     }
 

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/startPlanFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -104,10 +104,32 @@
         android:id="@+id/registerPlanFragment"
         android:name="com.ssafy.presentation.planUI.registerPlan.RegisterPlanFragment"
         android:label="fragment_register_plan"
-        tools:layout="@layout/fragment_register_plan" />
+        tools:layout="@layout/fragment_register_plan" >
+        <action
+            android:id="@+id/action_registerPlanFragment_to_planDetailFragment"
+            app:destination="@id/planDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="com.ssafy.presentation.scheduleUI.schedule.ScheduleFragment"
         android:label="fragment_schedule"
-        tools:layout="@layout/fragment_schedule" />
+        tools:layout="@layout/fragment_schedule" >
+        <action
+            android:id="@+id/action_scheduleFragment_to_planDetailFragment2"
+            app:destination="@id/planDetailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/planDetailFragment"
+        android:name="com.ssafy.presentation.planUI.planDetail.PlanDetailFragment"
+        android:label="fragment_plan_detail"
+        tools:layout="@layout/fragment_plan_detail" >
+        <action
+            android:id="@+id/action_planDetailFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/planDetailFragment2"
+        android:name="com.ssafy.presentation.scheduleUI.planDetail.PlanDetailFragment"
+        android:label="fragment_plan_detail2"
+        tools:layout="@layout/fragment_plan_detail2" />
 </navigation>
