@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
@@ -72,6 +73,17 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         makeResult()
         val dialog = PostponeDialog(::onYesButtonClick)
         dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
+
+        initListener()
+    }
+
+    private fun initListener() = with(binding) {
+        lyPlan.setOnClickListener { moveToPlanDetailFragment() }
+    }
+
+    private fun moveToPlanDetailFragment() {
+        val action = ScheduleFragmentDirections.actionScheduleFragmentToPlanDetailFragment2()
+        findNavController().navigate(action)
     }
 
     private fun onYesButtonClick() {

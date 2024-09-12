@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/startTrainFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -78,7 +78,7 @@
         android:id="@+id/homeFragment"
         android:name="com.ssafy.presentation.homeUI.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_scheduleFragment"
             app:destination="@id/scheduleFragment" />
@@ -113,7 +113,11 @@
         android:id="@+id/registerPlanFragment"
         android:name="com.ssafy.presentation.planUI.registerPlan.RegisterPlanFragment"
         android:label="fragment_register_plan"
-        tools:layout="@layout/fragment_register_plan" />
+        tools:layout="@layout/fragment_register_plan">
+        <action
+            android:id="@+id/action_registerPlanFragment_to_planDetailFragment"
+            app:destination="@id/planDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/scheduleFragment"
         android:name="com.ssafy.presentation.scheduleUI.schedule.ScheduleFragment"
@@ -129,4 +133,43 @@
         android:name="com.ssafy.presentation.runningUI.runningInfo.RunningInfoFragment"
         android:label="fragment_running_info"
         tools:layout="@layout/fragment_running_info" />
+        <action
+            android:id="@+id/action_scheduleFragment_to_planDetailFragment2"
+            app:destination="@id/planDetailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/planDetailFragment"
+        android:name="com.ssafy.presentation.planUI.planDetail.PlanDetailFragment"
+        android:label="fragment_plan_detail"
+        tools:layout="@layout/fragment_plan_detail">
+        <action
+            android:id="@+id/action_planDetailFragment_to_scheduleFragment"
+            app:destination="@id/scheduleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/planDetailFragment2"
+        android:name="com.ssafy.presentation.scheduleUI.planDetail.PlanDetailFragment"
+        android:label="fragment_plan_detail2"
+        tools:layout="@layout/fragment_plan_detail2" />
+    <fragment
+        android:id="@+id/startTrainFragment"
+        android:name="com.ssafy.presentation.trainUI.startTrain.StartTrainFragment"
+        android:label="fragment_start_train"
+        tools:layout="@layout/fragment_start_train">
+        <action
+            android:id="@+id/action_startTrainFragment_to_selectCoachFragment"
+            app:destination="@id/selectCoachFragment" />
+        <action
+            android:id="@+id/action_startTrainFragment_to_chatCoachFragment"
+            app:destination="@id/chatCoachFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatCoachFragment"
+        android:name="com.ssafy.presentation.trainUI.chatCoach.ChatCoachFragment"
+        android:label="fragment_chat_coach"
+        tools:layout="@layout/fragment_chat_coach" >
+        <action
+            android:id="@+id/action_chatCoachFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

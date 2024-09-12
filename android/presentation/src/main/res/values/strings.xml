@@ -48,6 +48,21 @@
     <string name="pace">페이스</string>
     <string name="heart">심박수</string>
     <string name="step">케이던스</string>
+
     <string name="train_rest_message">잘 쉬는 것도 훈련이랍니다.\n다리 근육을 풀어주면 어떨까요?</string>
+    <string name="goal">훈련 목표</string>
+    <string name="warning">※ 훈련 목표는 훈련 과정에 따라 재조정 될 수 있습니다.</string>
+    <string name="health_time">운동 시간</string>
+    <string name="health_count">운동 횟수</string>
+    <string name="plan">맞춤형 러닝 플랜</string>
+    <string name="plan_period">훈련 기간</string>
+    <string name="plan_week">훈련 요일</string>
+    <string name="plan_count">훈련 횟수</string>
+    <string name="plan_week_modify">훈련 요일 수정</string>
+    <string name="plan_delete">훈련 삭제</string>
+    <string name="go_back_to_schedule">일정 확인하기</string>
+    <string name="cancel">취소</string>
+    <string name="check">확인</string>
+    <string name="delete_explain">훈련을 삭제하시겠습니까?\n훈련을 삭제하면 다시 복구할 수 없습니다.</string>
 
 </resources>
