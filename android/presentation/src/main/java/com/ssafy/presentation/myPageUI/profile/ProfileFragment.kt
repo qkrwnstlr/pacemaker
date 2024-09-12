@@ -22,6 +22,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         binding.ivProfile.startAnimation(slideRight)
         binding.lyRight.startAnimation(slideRight)
         binding.lyLeft.startAnimation(slideLeft)
+        binding.btnSetting.startAnimation(slideLeft)
     }
 
     private fun initListener() {
