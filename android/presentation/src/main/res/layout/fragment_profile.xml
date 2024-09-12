@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".myPageUI.profile.ProfileFragment">
 
-
     <ImageView
         android:id="@+id/iv_profile"
         android:layout_width="300dp"
@@ -15,144 +14,164 @@
         android:src="@drawable/runnerfull"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title_train_km" />
+        app:layout_constraintTop_toBottomOf="@+id/ly_right" />
 
-    <TextView
-        android:id="@+id/tv_name"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ly_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_24"
-        android:layout_marginTop="@dimen/margin_16"
-        android:text="김싸피"
-        android:textSize="@dimen/margin_36"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_setting" />
+        app:layout_constraintTop_toBottomOf="@id/btn_setting">
 
-    <TextView
-        android:id="@+id/tv_content_train_cnt"
-        style="@style/Large22BoldText"
-        android:layout_marginStart="@dimen/margin_24"
-        android:layout_marginTop="32dp"
-        android:text="127회"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
-    <TextView
-        android:id="@+id/tv_title_train_cnt"
-        style="@style/ExtraSmallGrayText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_24"
-        android:text="@string/train"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_content_train_cnt" />
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_24"
+            android:layout_marginTop="@dimen/margin_16"
+            android:text="김싸피"
+            android:textSize="@dimen/margin_36"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_content_train_time"
-        style="@style/Large22BoldText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_24"
-        android:layout_marginTop="@dimen/margin_24"
-        android:text="21h 32m"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title_train_cnt" />
+        <TextView
+            android:id="@+id/tv_content_train_cnt"
+            style="@style/Large22BoldText"
+            android:layout_marginStart="@dimen/margin_24"
+            android:layout_marginTop="32dp"
+            android:text="127회"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
-    <TextView
-        android:id="@+id/tv_title_train_time"
-        style="@style/ExtraSmallGrayText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_24"
-        android:text="@string/train_time"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_content_train_time" />
+        <TextView
+            android:id="@+id/tv_title_train_cnt"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_24"
+            android:text="@string/train"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_content_train_cnt" />
 
-    <TextView
-        android:id="@+id/tv_content_train_km"
-        style="@style/Large22BoldText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_24"
-        android:layout_marginTop="@dimen/margin_24"
-        android:text="823km"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title_train_time" />
+        <TextView
+            android:id="@+id/tv_content_train_time"
+            style="@style/Large22BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_24"
+            android:layout_marginTop="@dimen/margin_24"
+            android:text="21h 32m"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_train_cnt" />
 
-    <TextView
-        android:id="@+id/tv_title_train_km"
-        style="@style/ExtraSmallGrayText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_24"
-        android:text="@string/train_km"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_content_train_km" />
+        <TextView
+            android:id="@+id/tv_title_train_time"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_24"
+            android:text="@string/train_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_content_train_time" />
 
-    <TextView
-        android:id="@+id/tv_title_age"
-        style="@style/ExtraSmallGrayText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_24"
-        android:text="@string/age"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_age" />
+        <TextView
+            android:id="@+id/tv_content_train_km"
+            style="@style/Large22BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_24"
+            android:layout_marginTop="@dimen/margin_24"
+            android:text="823km"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_train_time" />
 
-    <TextView
-        android:id="@+id/et_age"
-        style="@style/Large22BoldText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_24"
-        android:layout_marginTop="@dimen/margin_24"
-        android:text="26세"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_profile"
-        app:layout_constraintVertical_chainStyle="packed" />
+        <TextView
+            android:id="@+id/tv_title_train_km"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_24"
+            android:text="@string/train_km"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_content_train_km" />
 
-    <TextView
-        android:id="@+id/tv_title_height"
-        style="@style/ExtraSmallGrayText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_24"
-        android:text="@string/plain_height"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_height" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/et_weight"
-        style="@style/Large22BoldText"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ly_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_24"
-        android:layout_marginEnd="@dimen/margin_24"
-        android:text="95kg"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title_height" />
+        app:layout_constraintTop_toTopOf="@+id/iv_profile">
 
-    <TextView
-        android:id="@+id/tv_title_weight"
-        style="@style/ExtraSmallGrayText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/margin_24"
-        android:text="@string/plain_weight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_weight" />
+        <TextView
+            android:id="@+id/et_age"
+            style="@style/Large22BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="26세"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/et_height"
-        style="@style/Large22BoldText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_24"
-        android:layout_marginEnd="@dimen/margin_24"
-        android:text="190cm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title_age" />
+        <TextView
+            android:id="@+id/tv_title_age"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="@string/age"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_age" />
+
+        <TextView
+            android:id="@+id/tv_title_height"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="@string/plain_height"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_height" />
+
+        <TextView
+            android:id="@+id/et_weight"
+            style="@style/Large22BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_24"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="95kg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_height" />
+
+        <TextView
+            android:id="@+id/tv_title_weight"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="@string/plain_weight"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_weight" />
+
+        <TextView
+            android:id="@+id/et_height"
+            style="@style/Large22BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_24"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="190cm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title_age" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
         android:id="@+id/btn_setting"

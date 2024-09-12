@@ -2,6 +2,7 @@ package com.ssafy.presentation.myPageUI.profile
 
 import android.os.Bundle
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
@@ -11,6 +12,19 @@ import com.ssafy.presentation.databinding.FragmentProfileBinding
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
+        initListener()
+    }
+
+    private fun initView() {
+        val slideRight = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_slide_right)
+        val slideLeft = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_slide_left)
+        binding.ivProfile.startAnimation(slideRight)
+        binding.lyRight.startAnimation(slideRight)
+        binding.lyLeft.startAnimation(slideLeft)
+    }
+
+    private fun initListener() {
         binding.btnSetting.setOnClickListener {
             PopupMenu(requireContext(), binding.btnSetting).apply {
                 menuInflater.inflate(R.menu.profile_menu, this.menu)
