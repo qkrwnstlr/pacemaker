@@ -16,6 +16,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/profile_button"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
+            android:contentDescription="Profile"
+            android:padding="@dimen/padding_10"
+            android:scaleType="fitCenter"
+            android:src="@drawable/coach_mike"
+            app:layout_constraintBottom_toBottomOf="@id/start_run_button"
+            app:layout_constraintEnd_toStartOf="@+id/start_run_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/start_run_button"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/start_run_button"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/circle_background"
+            android:text="START"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_18"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/plan_button"
+            app:layout_constraintStart_toEndOf="@+id/profile_button" />
+
+        <ImageButton
+            android:id="@+id/plan_button"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
+            android:contentDescription="Calender"
+            android:padding="@dimen/padding_10"
+            android:scaleType="fitCenter"
+            android:src="@drawable/icon_calendar"
+            app:layout_constraintBottom_toBottomOf="@+id/start_run_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/start_run_button"
+            app:layout_constraintTop_toTopOf="@+id/start_run_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <include layout="@layout/top_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

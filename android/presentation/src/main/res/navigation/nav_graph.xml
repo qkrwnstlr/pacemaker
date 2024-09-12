@@ -82,6 +82,15 @@
         <action
             android:id="@+id/action_homeFragment_to_scheduleFragment"
             app:destination="@id/scheduleFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_startPlanFragment"
+            app:destination="@id/startPlanFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_runningInfoFragment"
+            app:destination="@id/runningInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/startPlanFragment"
@@ -118,6 +127,11 @@
             android:id="@+id/action_scheduleFragment_to_planDetailFragment2"
             app:destination="@id/planDetailFragment2" />
     </fragment>
+    <fragment
+        android:id="@+id/runningInfoFragment"
+        android:name="com.ssafy.presentation.runningUI.runningInfo.RunningInfoFragment"
+        android:label="fragment_running_info"
+        tools:layout="@layout/fragment_running_info" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.ssafy.presentation.myPageUI.profile.ProfileFragment"
@@ -163,7 +177,7 @@
         android:id="@+id/chatCoachFragment"
         android:name="com.ssafy.presentation.trainUI.chatCoach.ChatCoachFragment"
         android:label="fragment_chat_coach"
-        tools:layout="@layout/fragment_chat_coach" >
+        tools:layout="@layout/fragment_chat_coach">
         <action
             android:id="@+id/action_chatCoachFragment_to_homeFragment"
             app:destination="@id/homeFragment" />

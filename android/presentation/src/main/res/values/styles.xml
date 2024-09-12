@@ -15,6 +15,19 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlayExtended</item>
     </style>
 
+    <style name="ShapeAppearanceOverlayExtendedCircle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">100dp</item>
+    </style>
+
+    <style name="CustomCircleFAB" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="android:backgroundTint">@color/primary</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:textSize">@dimen/text_16</item>
+        <item name="android:elevation">0dp</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlayExtendedCircle</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
     <style name="BoldLargeText" parent="Widget.AppCompat.TextView">
