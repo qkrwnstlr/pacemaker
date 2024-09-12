@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingBottom="@dimen/margin_100"
-                    android:text="잘 쉬는 것도 훈련이랍니다.\n다리 근육을 풀어주면 어떨까요?"
+                    android:text="@string/train_rest_message"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"

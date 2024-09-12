@@ -48,5 +48,6 @@
     <string name="pace">페이스</string>
     <string name="heart">심박수</string>
     <string name="step">케이던스</string>
+    <string name="train_rest_message">잘 쉬는 것도 훈련이랍니다.\n다리 근육을 풀어주면 어떨까요?</string>
 
 </resources>

@@ -37,8 +37,10 @@ import com.kizitonwose.calendar.view.WeekDayBinder
 import com.ssafy.presentation.R
 import com.ssafy.presentation.component.CoachCreateButton
 import com.ssafy.presentation.component.TrainInfoChartView
+import com.ssafy.presentation.component.TrainRestMessageView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
+import com.ssafy.presentation.planUI.startPlan.StartPlanFragmentDirections
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -117,8 +119,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
       }
     })
 
-    initWeekCalendar()
-
+    initView()
     initCollect()
   }
 
@@ -145,9 +146,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             topSheetBehavior.setHalfHeight(900)
           }
 
-          // TODO : 훈련 없음 UI로 변경
-          3 -> TrainInfoChartView(context).also {
-            topSheetBehavior.setHalfHeight(900)
+          3 -> TrainRestMessageView(context).also {
+            topSheetBehavior.setHalfHeight(250)
           }
 
           4 -> CoachCreateButton(context).also {
@@ -173,6 +173,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         addView(trainInfoView)
       }
     }
+  }
+
+  private fun initView() {
+    initWeekCalendar()
+    initButton()
   }
 
   private fun initWeekCalendar() {
@@ -203,6 +208,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     )
 
     weekCalendarView.scrollToWeek(LocalDate.now())
+  }
+
+  private fun initButton() {
+    binding.startRunButton.setOnClickListener {
+      val action = HomeFragmentDirections.actionHomeFragmentToRunningInfoFragment()
+      findNavController().navigate(action)
+    }
+
+    binding.profileButton.setOnClickListener {
+      val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()
+      findNavController().navigate(action)
+    }
+
+    binding.planButton.setOnClickListener {
+      val action = HomeFragmentDirections.actionHomeFragmentToScheduleFragment()
+      findNavController().navigate(action)
+    }
   }
 
   private fun makeChart(barChart: BarChart) {
