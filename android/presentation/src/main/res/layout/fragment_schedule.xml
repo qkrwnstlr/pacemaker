@@ -120,15 +120,6 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/margin_10"
                     app:cv_dayViewResource="@layout/calendar_day_month" />
-
-                <com.kizitonwose.calendar.view.WeekCalendarView
-                    android:id="@+id/exOneWeekCalendar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/margin_10"
-                    android:visibility="gone"
-                    app:cv_dayViewResource="@layout/calendar_day_month" />
-
             </FrameLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -145,6 +136,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 app:dividerColor="@color/lightGray" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_16">
+
+                <com.ssafy.presentation.component.TrainInfoTitleView
+                    android:id="@+id/tv_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_nothing"
+                    style="@style/RankText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/margin_100"
+                    android:text="오늘은 훈련이 없어요"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_nothing_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_date" />
+
+                <TextView
+                    android:id="@+id/tv_nothing_content"
+                    style="@style/PlanText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/margin_100"
+                    android:text="잘 쉬는 것도 훈련이랍니다.\n다리 근육을 풀어주면 어떨까요?"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_nothing" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
                 android:id="@+id/ly_result_info"

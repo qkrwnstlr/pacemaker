@@ -1,15 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".planUI.registerPlan.RegisterPlanFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="40sp"
-        android:text="나는야 RegisterPlanFragment" />
+        android:id="@+id/tv_title"
+        style="@style/TitleText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_30"
+        android:layout_marginTop="@dimen/padding_48"
+        android:text="@string/set_goal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_like_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_24"
+        android:layout_marginTop="@dimen/padding_36"
+        android:text="@string/like_week"
+        android:textSize="@dimen/text_18"
+        app:layout_constraintBottom_toTopOf="@id/cl_week"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_week"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_like_week">
+
+        <ToggleButton
+            android:id="@+id/tb_sun"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sun"
+            android:textColor="@color/reversePrimary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_mon"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_mon"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/mon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_tue"
+            app:layout_constraintStart_toEndOf="@id/tb_sun"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_tue"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tue"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_wed"
+            app:layout_constraintStart_toEndOf="@id/tb_mon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_wed"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/wed"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_thu"
+            app:layout_constraintStart_toEndOf="@id/tb_tue"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_thu"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/thu"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_fri"
+            app:layout_constraintStart_toEndOf="@id/tb_wed"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_fri"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/fri"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@id/tb_sat"
+            app:layout_constraintStart_toEndOf="@id/tb_thu"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ToggleButton
+            android:id="@+id/tb_sat"
+            style="@style/DayToggleButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sat"
+            android:textColor="@color/primary"
+            android:textSize="@dimen/text_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tb_fri"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--  list-item-coach, list-item-student, list-item-schedule   -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_plan_chat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/margin_30"
+        android:paddingTop="@dimen/padding_10"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/et_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_week"
+        tools:listitem="@layout/list_item_student" />
+
+    <EditText
+        android:id="@+id/et_chat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/padding_18"
+        android:background="@drawable/rounded_border_chat"
+        android:inputType="textMultiLine"
+        android:maxHeight="@dimen/image_128"
+        android:paddingVertical="@dimen/padding_10"
+        android:paddingStart="@dimen/padding_10"
+        android:textSize="@dimen/text_18"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_send"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_plan_chat" />
+
+    <ImageView
+        android:id="@+id/iv_send"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingHorizontal="@dimen/padding_10"
+        android:src="@drawable/baseline_send_24"
+        app:layout_constraintBottom_toBottomOf="@id/et_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/et_chat"
+        app:layout_constraintTop_toTopOf="@id/et_chat" />
+</androidx.constraintlayout.widget.ConstraintLayout>

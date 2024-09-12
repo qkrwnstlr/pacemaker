@@ -16,6 +16,43 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/profile_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="start"
+            android:textAlignment="textStart"
+            app:layout_constraintBottom_toBottomOf="@id/start_run_button"
+            app:layout_constraintEnd_toStartOf="@+id/start_run_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/start_run_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="start"
+            android:textAlignment="textStart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/plan_button"
+            app:layout_constraintStart_toEndOf="@+id/profile_button" />
+
+        <Button
+            android:id="@+id/plan_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="start"
+            android:textAlignment="textStart"
+            app:layout_constraintBottom_toBottomOf="@+id/start_run_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/start_run_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <include layout="@layout/top_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
