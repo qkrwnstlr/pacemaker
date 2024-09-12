@@ -10,7 +10,7 @@
         <item name="android:backgroundTint">@color/primary</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">@dimen/text_16</item>
+        <item name="android:textSize">@dimen/text_14</item>
         <item name="android:elevation">0dp</item>
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlayExtended</item>
     </style>
@@ -107,6 +107,13 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="DayToggleButton" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:textOn">@null</item>
+        <item name="android:textOff">@null</item>
+        <item name="android:background">@drawable/day_selector</item>
+        <item name="android:textSize">@dimen/text_16</item>
+    </style>
+
     <style name="HorizontalProgressBarStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">5dp</item>
@@ -121,6 +128,12 @@
     <style name="ChatShape">
         <item name="android:textSize">@dimen/text_18</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/rounded_background</item>
+        <item name="android:background">@drawable/rounded_background_coach</item>
+    </style>
+
+    <style name="StudentChatShape">
+        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:background">@drawable/rounded_background_student</item>
     </style>
 </resources>
