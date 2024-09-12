@@ -13,8 +13,8 @@ public class NotificationManager {
 	private Logger log = LoggerFactory.getLogger(NotificationManager.class);
 	private final MattermostSender mmSender;
 
-	public void sendNotification(Exception e, String uri, String params) {
+	public void sendNotification(Exception e, String uri, String method, String params) {
 		log.info("#### SEND Notification");
-		mmSender.sendMessage(e, uri, params);
+		mmSender.sendMessage(e, uri, method, params);
 	}
 }

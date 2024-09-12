@@ -7,10 +7,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
-public class OpenAIConfig {
+public class WebClientConfig {
 
     @Value("${openai.api.key}")
     private String openAIApiKey;
+
+    @Value("${notification.mattermost.webhook-url}")
+    private String webhookUrl;
 
     @Bean
     public WebClient openAIWebClient() {
@@ -18,5 +21,12 @@ public class OpenAIConfig {
                 .baseUrl("https://api.openai.com/v1")
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + openAIApiKey)
                 .build();
+    }
+
+    @Bean
+    public WebClient mattermostWebClient() {
+        return WebClient.builder()
+            .baseUrl(webhookUrl)
+            .build();
     }
 }

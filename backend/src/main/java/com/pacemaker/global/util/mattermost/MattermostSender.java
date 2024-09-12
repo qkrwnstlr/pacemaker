@@ -3,11 +3,10 @@ package com.pacemaker.global.util.mattermost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.google.gson.Gson;
 import com.pacemaker.global.util.mattermost.dto.Attachment;
@@ -23,13 +22,11 @@ public class MattermostSender {
 
 	@Value("${notification.mattermost.enabled}")
 	private boolean mmEnabled;
-	@Value("${notification.mattermost.webhook-url}")
-	private String webhookUrl;
 
-	private final RestTemplate restTemplate;
+	private final WebClient mattermostWebClient;
 	private final MattermostProperties mmProperties;
 
-	public void sendMessage(Exception excpetion, String uri, String params) {
+	public void sendMessage(Exception exception, String uri, String method, String params) {
 		if (!mmEnabled) {
 			return;
 		}
@@ -46,17 +43,21 @@ public class MattermostSender {
 				.footer(mmProperties.getFooter())
 				.build();
 
-			attachment.addExceptionInfo(excpetion, uri, params);
+			attachment.addExceptionInfo(exception, uri, method, params);
 			Attachments attachments = new Attachments(attachment);
-			attachments.addProps(excpetion);
+			attachments.addProps(exception);
 			String payload = new Gson().toJson(attachments);
 
 			HttpHeaders headers = new HttpHeaders();
 			// headers.set("Content-type", MediaType.APPLICATION_JSON_VALUE);
 			headers.setContentType(MediaType.APPLICATION_JSON);
 
-			HttpEntity<String> entity = new HttpEntity<>(payload, headers);
-			restTemplate.postForEntity(webhookUrl, entity, String.class);
+			mattermostWebClient.post()
+				.bodyValue(payload)
+				.headers(httpHeaders -> httpHeaders.addAll(headers))
+				.retrieve()
+				.bodyToMono(String.class)
+				.block();
 
 		} catch (Exception e) {
 			log.error("#### ERROR!! Notification Manager : {}", e.getMessage());
