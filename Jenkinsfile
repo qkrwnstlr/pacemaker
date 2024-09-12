@@ -22,7 +22,7 @@ pipeline {
                         docker run -d \
                             --name pacemaker-backend-container \
                             -e TZ=Asia/Seoul \
-                            --env-file /var/jenkins_home/.env
+                            --env-file /var/jenkins_home/.env \
                             --network pacemaker-network \
                             pacemaker-backend-image
                         '''
