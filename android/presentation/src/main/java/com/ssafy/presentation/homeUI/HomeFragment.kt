@@ -216,9 +216,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
       findNavController().navigate(action)
     }
 
-    binding.profileButton.setOnClickListener {
-      val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()
-      findNavController().navigate(action)
+    with(binding.profileButton) {
+      setOnClickListener {
+        val action = HomeFragmentDirections.actionHomeFragmentToProfileFragment()
+        findNavController().navigate(action)
+      }
+
+      when (viewModel.coachState.value) {
+        1 -> R.drawable.coach_mike
+        2 -> R.drawable.coach_jamie
+        3 -> R.drawable.coach_danny
+        else -> return@with
+      }.run {
+        setImageResource(this)
+      }
     }
 
     binding.planButton.setOnClickListener {
