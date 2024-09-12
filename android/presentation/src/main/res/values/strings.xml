@@ -38,5 +38,14 @@
     <string name="pace">페이스</string>
     <string name="heart">심박수</string>
     <string name="step">케이던스</string>
+    <string name="inst_fix_profile">내 정보 수정</string>
+    <string name="inst_set_can">권한 설정</string>
+    <string name="inst_logout">로그아웃</string>
+    <string name="train">총 훈련 횟수</string>
+    <string name="train_time">누적 훈련 시간</string>
+    <string name="train_km">누적 훈련 거리</string>
+    <string name="plain_height">키</string>
+    <string name="plain_weight">몸무게</string>
+    <string name="modify_done">수정완료</string>
 
 </resources>
