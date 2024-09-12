@@ -5,7 +5,7 @@
     android:padding="@dimen/margin_10"
     android:weightSum="7">
 
-    <include layout="@layout/calendar_day_legend_text" />
+    <include layout="@layout/calendar_day_legend_red_text" />
 
     <include layout="@layout/calendar_day_legend_text" />
 
@@ -17,6 +17,6 @@
 
     <include layout="@layout/calendar_day_legend_text" />
 
-    <include layout="@layout/calendar_day_legend_text" />
+    <include layout="@layout/calendar_day_legend_blue_text" />
 
 </LinearLayout>
