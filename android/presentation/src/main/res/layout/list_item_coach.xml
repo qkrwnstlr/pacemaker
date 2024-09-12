@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:padding="@dimen/margin_10"
             android:scaleType="fitXY"
-            android:src="@drawable/red" />
+            android:src="@drawable/coach_mike" />
 
     </androidx.cardview.widget.CardView>
 
