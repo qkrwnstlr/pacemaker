@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="text_82">82sp</dimen>
     <dimen name="text_36">36sp</dimen>
     <dimen name="text_30">30sp</dimen>
     <dimen name="text_26">26sp</dimen>
@@ -10,6 +11,7 @@
 
     <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
     <dimen name="margin_6">6dp</dimen>
     <dimen name="margin_8">8dp</dimen>
     <dimen name="margin_16">16dp</dimen>
@@ -43,7 +45,7 @@
     <dimen name="image_24">24dp</dimen>
     <dimen name="image_128">128dp</dimen>
     <dimen name="image_300">300dp</dimen>
-    
+
     <dimen name="radius_18">18dp</dimen>
     <dimen name="radius_28">28dp</dimen>
 

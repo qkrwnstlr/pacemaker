@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:text="00:11:36"
         android:textColor="@color/black"
+        android:textSize="@dimen/text_22"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,8 +23,10 @@
         style="@style/PlanText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_4"
         android:text="@string/time"
         android:textColor="@color/black"
+        android:textSize="@dimen/text_14"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_running_content" />
