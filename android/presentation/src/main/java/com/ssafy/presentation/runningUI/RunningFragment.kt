@@ -41,13 +41,13 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
         btnMap.setOnClickListener {
             btnMap.showAnimate(false)
-            btnText.showAnimate(true)
+            btnInfo.showAnimate(true)
             runningMap.root.visibility = View.VISIBLE
             runningText.root.visibility = View.INVISIBLE
         }
 
-        btnText.setOnClickListener {
-            btnText.showAnimate(false)
+        btnInfo.setOnClickListener {
+            btnInfo.showAnimate(false)
             btnMap.showAnimate(true)
             runningText.root.visibility = View.VISIBLE
             runningMap.root.visibility = View.INVISIBLE
