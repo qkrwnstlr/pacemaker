@@ -137,36 +137,61 @@
         android:layout_marginHorizontal="@dimen/margin_30"
         android:paddingTop="@dimen/padding_10"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/et_chat"
+        app:layout_constraintBottom_toTopOf="@id/cv_chat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_week"
         tools:listitem="@layout/list_item_student" />
 
-    <EditText
-        android:id="@+id/et_chat"
-        android:layout_width="0dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_chat"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/padding_18"
-        android:background="@drawable/rounded_border_chat"
-        android:inputType="textMultiLine"
-        android:maxHeight="@dimen/image_128"
+        android:layout_marginHorizontal="@dimen/margin_24"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:backgroundTint="@color/fifthPrimary"
+        android:elevation="0dp"
+        android:outlineProvider="none"
         android:paddingVertical="@dimen/padding_10"
-        android:paddingStart="@dimen/padding_10"
-        android:textSize="@dimen/text_18"
+        app:cardCornerRadius="@dimen/radius_20"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/iv_send"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/rv_plan_chat" />
-
-    <ImageView
-        android:id="@+id/iv_send"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:paddingHorizontal="@dimen/padding_10"
-        android:src="@drawable/baseline_send_24"
-        app:layout_constraintBottom_toBottomOf="@id/et_chat"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/et_chat"
-        app:layout_constraintTop_toTopOf="@id/et_chat" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_plan_chat"
+        app:strokeWidth="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_chat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:inputType="textMultiLine"
+                android:maxHeight="@dimen/max_height_128"
+                android:padding="@dimen/padding_10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_send"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingStart="@dimen/padding_22"
+                android:paddingEnd="@dimen/padding_10"
+                android:src="@drawable/baseline_send_24"
+                app:layout_constraintBottom_toBottomOf="@id/et_chat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/et_chat"
+                app:layout_constraintTop_toTopOf="@id/et_chat" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

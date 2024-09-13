@@ -74,5 +74,6 @@
     <string name="check">확인</string>
     <string name="delete_explain">훈련을 삭제하시겠습니까?\n훈련을 삭제하면 다시 복구할 수 없습니다.</string>
     <string name="km">km</string>
+    <string name="send">전송</string>
 
 </resources>

@@ -16,6 +16,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         initView()
+        initListener()
         val manager = requireActivity().supportFragmentManager
         ScheduleDialogFragment().show(manager, "ScheduleDialog")
     }
@@ -31,4 +32,11 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         clWeek.startAnimation(slideDown)
     }
 
+    private fun initListener() = with(binding) {
+        ivSend.setOnClickListener {
+            val text = etChat.text.toString()
+            etChat.text = null
+            showSnackStringBar(text)
+        }
+    }
 }
