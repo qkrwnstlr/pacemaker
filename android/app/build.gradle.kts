@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
 }
-
 android {
     namespace = "com.ssafy.pacemaker"
     compileSdk = 34
@@ -42,4 +43,6 @@ dependencies {
     implementation(project(":presentation"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+
 }

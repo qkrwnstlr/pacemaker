@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 secrets {
@@ -75,4 +76,13 @@ dependencies {
     implementation(libs.mpandroidchart)
 
     implementation(libs.play.services.maps)
+
+    // firebase
+    implementation("com.google.firebase:firebase-database-ktx:20.0.5")
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+
+    // firebase auth 에서 필요한 의존성 추가
+    implementation ("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+
 }

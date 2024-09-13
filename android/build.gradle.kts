@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.ksp) apply false
+    id("com.google.gms.google-services") version "4.4.1" apply false
 }
 
 buildscript {
@@ -15,5 +16,6 @@ buildscript {
     dependencies {
         classpath(libs.androidx.navigation.safe.args.gradle.plugin)
         classpath("com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1")
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
