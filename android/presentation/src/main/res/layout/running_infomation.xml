@@ -12,7 +12,6 @@
         android:layout_margin="@dimen/margin_6"
         app:layout_constraintBottom_toTopOf="@+id/box_pace"
         app:layout_constraintEnd_toStartOf="@+id/box_bpm"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,7 +24,6 @@
         android:layout_margin="@dimen/margin_6"
         app:layout_constraintBottom_toTopOf="@+id/box_kcal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/box_time"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,7 +35,6 @@
         android:layout_margin="@dimen/margin_6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/box_kcal"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/box_time" />
 
@@ -49,7 +46,6 @@
         android:layout_margin="@dimen/margin_6"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/box_pace"
         app:layout_constraintTop_toBottomOf="@+id/box_bpm" />
 
