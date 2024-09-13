@@ -49,4 +49,11 @@
         app:layout_constraintStart_toEndOf="@+id/box_pace"
         app:layout_constraintTop_toBottomOf="@+id/box_bpm" />
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/box_kcal" />
 </androidx.constraintlayout.widget.ConstraintLayout>

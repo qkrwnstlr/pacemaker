@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".runningUI.RunningFragment">
+
+
+    <include
+        android:id="@+id/running_text"
+        layout="@layout/running_text"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/margin_48"
+        app:layout_constraintBottom_toTopOf="@id/btn_play"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/running_map"
+        layout="@layout/running_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageButton
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:background="@drawable/ripple_button_primary"
+        android:elevation="4dp"
+        android:padding="@dimen/padding_22"
+        android:src="@drawable/baseline_play_arrow_24"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_stop"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:background="@drawable/ripple_button_primary"
+        android:elevation="4dp"
+        android:padding="@dimen/padding_22"
+        android:src="@drawable/baseline_pause_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:background="@drawable/ripple_button_reverse"
+        android:elevation="4dp"
+        android:padding="@dimen/padding_22"
+        android:src="@drawable/baseline_stop_24"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:background="@drawable/ripple_button_fourth_primary"
+        android:elevation="4dp"
+        android:padding="@dimen/padding_10"
+        android:src="@drawable/map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_stop" />
+
+    <ImageButton
+        android:id="@+id/btn_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:background="@drawable/ripple_button_fourth_primary"
+        android:elevation="4dp"
+        android:padding="@dimen/padding_10"
+        android:src="@drawable/outline_home_24"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_stop" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
