@@ -1,4 +1,4 @@
-package com.ssafy.watch.presentation.utils
+package com.ssafy.watch.utils
 
 import android.app.AlertDialog
 import android.content.DialogInterface

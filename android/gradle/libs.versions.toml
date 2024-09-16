@@ -1,8 +1,10 @@
 [versions]
 agp = "8.5.2"
+datastorePreferences = "1.1.1"
 desugar_jdk_libs = "2.1.1"
 fragmentKtx = "1.8.2"
 healthServicesClient = "1.1.0-alpha03"
+hiltNavigationCompose = "1.0.0"
 kotlin = "2.0.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -12,6 +14,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.1"
 constraintlayout = "2.1.4"
+materialIconsExtended = "1.7.1"
 mpandroidchart = "v3.1.0"
 navigationFragmentVersion = "2.8.0"
 playServicesMaps = "19.0.0"
@@ -43,8 +46,11 @@ junit4 = "1.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-health-services-client = { module = "androidx.health:health-services-client", version.ref = "healthServicesClient" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationFragmentVersion" }
 androidx-navigation-ui = { module = "androidx.navigation:navigation-ui", version.ref = "navigationFragmentVersion" }
 androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
@@ -53,6 +59,7 @@ androidx-wear-input-testing = { module = "androidx.wear:wear-input-testing", ver
 androidx-wear-ongoing = { module = "androidx.wear:wear-ongoing", version.ref = "wearOngoing" }
 androidx-wear-phone-interactions = { module = "androidx.wear:wear-phone-interactions", version.ref = "wearPhoneInteractions" }
 androidx-wear-remote-interactions = { module = "androidx.wear:wear-remote-interactions", version.ref = "wearOngoing" }
+androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntimeKtxVersion" }
 androidx-work-runtime-ktx-v291 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 jakewharton-timber = { module = "com.jakewharton.timber:timber", version.ref = "timberVersion" }

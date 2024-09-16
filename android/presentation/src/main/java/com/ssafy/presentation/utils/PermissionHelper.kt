@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -59,6 +60,7 @@ class PermissionHelper(
 
     private fun checkPermissions(): Boolean {
         return permissions.all {
+            Log.d("PermissionHelper", "$it : ${ActivityCompat.checkSelfPermission(activity, it)}")
             ActivityCompat.checkSelfPermission(activity, it) == PackageManager.PERMISSION_GRANTED
         }
     }

@@ -67,6 +67,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.wear)
+    implementation("androidx.wear:wear-tooling-preview:1.0.0")
 
     // Add support for wearable specific inputs
     implementation(libs.androidx.wear.input)
@@ -83,7 +84,15 @@ dependencies {
     // Add for use health service
     implementation(libs.androidx.health.services.client)
 
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.work.runtime.ktx.v291)
+
+    implementation(libs.androidx.datastore.preferences)
+
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    implementation(libs.androidx.material.icons.extended)
 }

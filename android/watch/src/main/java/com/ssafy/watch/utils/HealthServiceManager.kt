@@ -1,6 +1,7 @@
-package com.ssafy.watch.presentation.utils
+package com.ssafy.watch.utils
 
 import android.content.Context
+import android.util.Log
 import androidx.health.services.client.HealthServices
 import androidx.health.services.client.MeasureCallback
 import androidx.health.services.client.data.Availability
@@ -18,11 +19,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.runBlocking
 
+private const val TAG = "HealthServiceManager_PACEMAKER"
+
 class HealthServicesManager(context: Context) {
     private val measureClient = HealthServices.getClient(context).measureClient
 
     suspend fun hasHeartRateCapability() = runCatching {
-            val capabilities = measureClient.getCapabilities()
+        val capabilities = measureClient.getCapabilities()
         (DataType.HEART_RATE_BPM in capabilities.supportedDataTypesMeasure)
     }.getOrDefault(false)
 
@@ -48,6 +51,7 @@ class HealthServicesManager(context: Context) {
 
             override fun onDataReceived(data: DataPointContainer) {
                 val heartRateBpm = data.getData(DataType.HEART_RATE_BPM)
+                Log.d(TAG, "onDataReceived: ${heartRateBpm.last()}")
                 trySendBlocking(MeasureMessage.MeasureData(heartRateBpm))
             }
         }
