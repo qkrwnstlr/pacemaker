@@ -29,10 +29,6 @@ import com.ssafy.watch.data.PassiveDataRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
-/**
- * Background data subscriptions are not persisted across device restarts. This receiver checks if
- * we enabled background data and, if so, registers again.
- */
 class StartupReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val repository = PassiveDataRepository(context)
@@ -40,15 +36,12 @@ class StartupReceiver : BroadcastReceiver() {
 
         runBlocking {
             if (repository.passiveDataEnabled.first()) {
-                // Make sure we have permission.
                 PERMISSIONS.all {
                     context.checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED
                 }.run {
                     if (this) {
                         scheduleWorker(context)
                     } else {
-                        // We may have lost the permission somehow. Mark that background data is
-                        // disabled so the state is consistent the next time the user opens the app UI.
                         repository.setPassiveDataEnabled(false)
                     }
                 }
@@ -57,10 +50,6 @@ class StartupReceiver : BroadcastReceiver() {
     }
 
     private fun scheduleWorker(context: Context) {
-        // BroadcastReceiver's onReceive must complete within 10 seconds. During device startup,
-        // sometimes the call to register for background data takes longer than that and our
-        // BroadcastReceiver gets destroyed before it completes. Instead we schedule a WorkManager
-        // job to perform the registration.
         WorkManager.getInstance(context).enqueue(
             OneTimeWorkRequestBuilder<RegisterForBackgroundDataWorker>().build()
         )
@@ -74,7 +63,7 @@ class RegisterForBackgroundDataWorker(
 
     override suspend fun doWork(): Result {
         val healthServicesRepository = HealthServicesRepository(appContext)
-        healthServicesRepository.registerForHeartRateData()
+        healthServicesRepository.registerForHealthService()
         return Result.success()
     }
 }
