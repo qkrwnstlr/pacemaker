@@ -7,10 +7,7 @@ import com.kizitonwose.calendar.view.ViewContainer
 import com.ssafy.presentation.databinding.CalendarDayMonthMiniBinding
 import java.time.LocalDate
 
-class MiniDateContainer(
-    view: View,
-    dateClicked: ((LocalDate) -> (Unit))? = null
-) : ViewContainer(view) {
+class MiniDateContainer(view: View, dateClicked: (LocalDate) -> (Unit)) : ViewContainer(view) {
 
     lateinit var day: CalendarDay
     val binding = CalendarDayMonthMiniBinding.bind(view)
@@ -18,7 +15,7 @@ class MiniDateContainer(
     init {
         view.setOnClickListener {
             if (day.position == DayPosition.MonthDate) {
-                dateClicked?.invoke(day.date)
+                dateClicked(day.date)
             }
         }
     }

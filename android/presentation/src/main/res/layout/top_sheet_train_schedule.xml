@@ -16,10 +16,10 @@
         android:layout_width="@dimen/image_24"
         android:layout_height="@dimen/image_24"
         android:layout_marginTop="@dimen/margin_24"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1"
         app:layout_constraintBottom_toTopOf="@id/ll_legend"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"
         app:srcCompat="@drawable/chevron_left_black" />
 
     <TextView
@@ -74,13 +74,26 @@
         android:id="@+id/cv_days"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin_24"
         android:padding="@dimen/margin_10"
         app:cv_dayViewResource="@layout/calendar_day_month_mini"
-        app:layout_constraintBottom_toTopOf="@+id/top_sheet_handle"
+        app:layout_constraintBottom_toTopOf="@+id/fab_blue"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ll_legend" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_blue"
+        style="@style/CustomFAB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_16"
+        android:layout_marginTop="@dimen/margin_10"
+        android:layout_marginBottom="@dimen/margin_30"
+        android:text="@string/create"
+        app:layout_constraintBottom_toTopOf="@id/top_sheet_handle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_days" />
 
     <View
         android:id="@+id/top_sheet_handle"
