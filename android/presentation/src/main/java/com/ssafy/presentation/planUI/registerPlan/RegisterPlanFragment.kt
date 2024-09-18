@@ -6,6 +6,7 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -17,6 +18,7 @@ import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRegisterPlanBinding
 import com.ssafy.presentation.utils.displayText
 import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.YearMonth
 
 class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
@@ -30,7 +32,6 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         initView()
         initTopSheet()
         initListener()
-        showScheduleDialog()
     }
 
     private fun initView() = with(binding.chatUi) {
@@ -44,11 +45,16 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         clWeek.startAnimation(slideDown)
     }
 
-    private fun initListener() = with(binding.chatUi) {
-        ivSend.setOnClickListener {
-            val text = etChat.text.toString()
-            etChat.text = null
+    private fun initListener() = with(binding) {
+        chatUi.ivSend.setOnClickListener {
+            val text = chatUi.etChat.text.toString()
+            chatUi.etChat.text = null
             showSnackStringBar(text)
+        }
+
+        topSheetTrain.fabBlue.setOnClickListener {
+            val action = RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
+            findNavController().navigate(action)
         }
     }
 
@@ -87,7 +93,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 
         dayBinder = object : MonthDayBinder<MiniDateContainer> {
             override fun create(view: View): MiniDateContainer =
-                MiniDateContainer(view)
+                MiniDateContainer(view, ::dateClicked)
 
             override fun bind(container: MiniDateContainer, data: CalendarDay) {
                 container.day = data
@@ -111,9 +117,9 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         tvMonth.text = month.month.displayText(short = true)
     }
 
-    private fun showScheduleDialog() {
+    private fun dateClicked(date: LocalDate) {
         val manager = requireActivity().supportFragmentManager
-        ScheduleDialogFragment().show(manager, "ScheduleDialog")
+        ScheduleDialogFragment(date).show(manager, "ScheduleDialog")
     }
 
 }
