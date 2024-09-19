@@ -6,11 +6,11 @@ import retrofit2.Response
 const val NO_RESPONSE = "서버 응답 없음"
 const val ERROR = "에러 발생"
 
-inline fun <reified T> Response<ApiResponse<T>>.toResponseResult(): ResponseResult<T> {
+inline fun <reified T> Response<T>.toResponseResult(): ResponseResult<T> {
 
     body()?.let {
-        if (isSuccessful) return ResponseResult.Success(it.data, it.message ?: "")
-        else return ResponseResult.Error(message = it.message ?: ERROR)
+        if (isSuccessful) return ResponseResult.Success(it, "")
+        else return ResponseResult.Error(message = ERROR)
     }
 
     errorBody()?.let {
