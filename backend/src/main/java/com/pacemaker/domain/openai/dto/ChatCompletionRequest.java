@@ -26,6 +26,7 @@ public record ChatCompletionRequest(
 	@JsonProperty("frequency_penalty") Double frequencyPenalty, // 0과 1 사이의 값으로, 해당 텍스트에서 이미 등장한 빈도에 따라 새로운 토큰에 페널티를 부과
 	@JsonProperty("best_of") Integer bestOf, // 서버 측에서 가장 좋은 결과를 선택하고 반환하는 방식으로, "best" (토큰당 가장 낮은 로그 확률을 가진 것)를 선택함
 	@JsonProperty("logit_bias") Map<String, Integer> logitBias, // 지정된 토큰이 생성될 확률을 수정함
-	String user // OpenAI가 남용을 감시하고 탐지할 수 있도록 도와주는 고유한 사용자 식별자
+	String user, // OpenAI가 남용을 감시하고 탐지할 수 있도록 도와주는 고유한 사용자 식별자
+	@JsonProperty("response_format") String responseFormat // response_format
 ) {
 }

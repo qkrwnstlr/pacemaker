@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.pacemaker.domain.openai.dto.ChatRequest;
 import com.pacemaker.domain.openai.service.OpenAiService;
 
 import jakarta.validation.Valid;
@@ -50,5 +52,39 @@ public class OpenAiController {
                     System.out.println("Request processing time: " + timeElapsed + " milliseconds");
                     return ResponseEntity.ok(response);
                 });
+    }
+
+    @PostMapping("/test/mini")
+    public Mono<ResponseEntity<String>> getTestMini(@RequestBody ChatRequest chatRequest) {
+
+        System.out.println("Received message: " + chatRequest.getMessage());
+        System.out.println("Goal: " + chatRequest.getContext().getGoal());
+
+        Instant start = Instant.now(); // 요청 시작 시간 기록
+
+        return openAiService.getTestMini(new Gson().toJson(chatRequest))
+            .map(response -> {
+                Instant finish = Instant.now(); // 응답 완료 시간 기록
+                long timeElapsed = Duration.between(start, finish).toMillis(); // 시간 차이 계산
+                System.out.println("Request processing time: " + timeElapsed + " milliseconds");
+                return ResponseEntity.ok(response);
+            });
+    }
+
+    @PostMapping("/test/4o")
+    public Mono<ResponseEntity<String>> getTest4o(@RequestBody ChatRequest chatRequest) {
+
+        System.out.println("Received message: " + chatRequest.getMessage());
+        System.out.println("Goal: " + chatRequest.getContext().getGoal());
+
+        Instant start = Instant.now(); // 요청 시작 시간 기록
+
+        return openAiService.getTest4o(new Gson().toJson(chatRequest))
+            .map(response -> {
+                Instant finish = Instant.now(); // 응답 완료 시간 기록
+                long timeElapsed = Duration.between(start, finish).toMillis(); // 시간 차이 계산
+                System.out.println("Request processing time: " + timeElapsed + " milliseconds");
+                return ResponseEntity.ok(response);
+            });
     }
 }
