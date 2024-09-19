@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "202604819546",
+    "project_id": "pacemaker-87169",
+    "storage_bucket": "pacemaker-87169.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:202604819546:android:31d6ef49384116f0379463",
+        "android_client_info": {
+          "package_name": "com.ssafy.pacemaker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "202604819546-7rjegrt6a83sqp80or87ad9fjjafahqo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ssafy.pacemaker",
+            "certificate_hash": "c011740e87af0f010fe583f411bf4bdde803528a"
+          }
+        },
+        {
+          "client_id": "202604819546-jqds6rht7f3it6d9hcm9q390966i7mmr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5msZsc0cBCDCsyjz_9wjJyHxBiYiPNUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "202604819546-jqds6rht7f3it6d9hcm9q390966i7mmr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
