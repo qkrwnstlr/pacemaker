@@ -89,10 +89,17 @@ dependencies {
 
     implementation(libs.androidx.datastore.preferences)
 
-
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation("androidx.lifecycle:lifecycle-service:2.8.5")
+    implementation("com.google.android.horologist:horologist-compose-layout:0.5.28")
+    implementation("com.google.android.horologist:horologist-compose-material:0.5.28")
+    implementation("com.google.android.horologist:horologist-health-composables:0.5.28")
+    implementation("com.google.android.horologist:horologist-health-service:0.5.28")
+    implementation("com.google.android.horologist:horologist-roboscreenshots:0.5.28")
+
     implementation(libs.androidx.material.icons.extended)
+    implementation(kotlin("script-runtime"))
 }

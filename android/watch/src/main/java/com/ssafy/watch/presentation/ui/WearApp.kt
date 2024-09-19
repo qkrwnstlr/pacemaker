@@ -13,7 +13,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.TimeText
 import com.ssafy.watch.presentation.component.HeartRateCard
 import com.ssafy.watch.presentation.viewmodel.HealthDataViewModel
-import com.ssafy.watch.theme.PaceMakerTheme
+import com.ssafy.watch.presentation.theme.PaceMakerTheme
 
 @Composable
 fun WearApp() {

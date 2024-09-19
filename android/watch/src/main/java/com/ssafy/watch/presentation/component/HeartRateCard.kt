@@ -20,7 +20,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.ssafy.watch.R
-import com.ssafy.watch.theme.PaceMakerTheme
+import com.ssafy.watch.presentation.theme.PaceMakerTheme
 import kotlin.math.roundToInt
 
 @Composable

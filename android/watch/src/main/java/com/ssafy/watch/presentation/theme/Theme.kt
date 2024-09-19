@@ -1,4 +1,4 @@
-package com.ssafy.watch.theme
+package com.ssafy.watch.presentation.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme

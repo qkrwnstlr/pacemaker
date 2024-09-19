@@ -11,10 +11,8 @@ val PERMISSIONS = listOf(
     Manifest.permission.ACTIVITY_RECOGNITION,
     Manifest.permission.BODY_SENSORS,
     Manifest.permission.BODY_SENSORS_BACKGROUND,
-    Manifest.permission.ACCESS_BACKGROUND_LOCATION,
     Manifest.permission.FOREGROUND_SERVICE,
 )
 
 @HiltAndroidApp
-class PaceMakerApplication : Application() {
-}
+class PaceMakerApplication : Application()

@@ -1,37 +1,85 @@
 package com.ssafy.watch.data
 
 import android.content.Context
-import androidx.health.services.client.HealthServices
-import androidx.health.services.client.data.DataType
-import androidx.health.services.client.data.PassiveListenerConfig
-import com.ssafy.watch.service.PassiveDataService
-import kotlinx.coroutines.guava.await
+import com.ssafy.watch.di.bindService
+import com.ssafy.watch.service.ExerciseService
+import com.ssafy.watch.service.ExerciseServiceState
+import dagger.hilt.android.ActivityRetainedLifecycle
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HealthServicesRepository(context: Context) {
-    private val healthServicesClient = HealthServices.getClient(context)
-    private val passiveMonitoringClient = healthServicesClient.passiveMonitoringClient
-    private val dataTypes = setOf(DataType.HEART_RATE_BPM)
+@ActivityRetainedScoped
+class HealthServicesRepository @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
+    private val exerciseClientManager: ExerciseClientManager,
+    private val coroutineScope: CoroutineScope,
+    lifecycle: ActivityRetainedLifecycle
+) {
+    private val binderConnection =
+        lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
-    private val passiveListenerConfig = PassiveListenerConfig(
-        dataTypes = dataTypes,
-        shouldUserActivityInfoBeRequested = false,
-        dailyGoals = setOf(),
-        healthEventTypes = setOf()
-    )
+    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> =
+        binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
 
-    suspend fun hasHeartRateCapability(): Boolean {
-        val capabilities = passiveMonitoringClient.getCapabilitiesAsync().await()
-        return DataType.HEART_RATE_BPM in capabilities.supportedDataTypesPassiveMonitoring
+    private var errorState: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    val serviceState: StateFlow<ServiceState> =
+        exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
+            ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+        }.stateIn(
+            coroutineScope,
+            started = SharingStarted.Eagerly,
+            initialValue = ServiceState.Disconnected
+        )
+
+    suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
+
+    private suspend fun getExerciseCapabilities() = exerciseClientManager.getExerciseCapabilities()
+
+    suspend fun isExerciseInProgress(): Boolean = exerciseClientManager.isExerciseInProgress()
+
+    suspend fun isTrackingExerciseInAnotherApp(): Boolean =
+        exerciseClientManager.isTrackingExerciseInAnotherApp()
+
+    private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
+        binderConnection.runWhenConnected {
+            function(it.getService())
+        }
     }
 
-    suspend fun registerForHealthService() {
-        passiveMonitoringClient.setPassiveListenerServiceAsync(
-            PassiveDataService::class.java,
-            passiveListenerConfig
-        ).await()
+    fun prepareExercise() = serviceCall { prepareExercise() }
+
+    fun startExercise() = serviceCall {
+        try {
+            errorState.value = null
+            startExercise()
+        } catch (e: Exception) {
+            errorState.value = e.message
+        }
     }
 
-    suspend fun unregisterForHealthService() {
-        passiveMonitoringClient.clearPassiveListenerServiceAsync().await()
-    }
+    fun pauseExercise() = serviceCall { pauseExercise() }
+    fun endExercise() = serviceCall { endExercise() }
+    fun resumeExercise() = serviceCall { resumeExercise() }
 }
+
+sealed class ServiceState {
+    data object Disconnected : ServiceState()
+
+    data class Connected(val exerciseServiceState: ExerciseServiceState) : ServiceState()
+}
+
+
+
+
+
+

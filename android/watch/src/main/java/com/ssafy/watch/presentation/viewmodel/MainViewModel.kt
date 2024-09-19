@@ -2,7 +2,7 @@ package com.ssafy.watch.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssafy.watch.data.HealthServicesRepository
+import com.ssafy.watch.data.HealthServicesBackgroundRepository
 import com.ssafy.watch.data.PassiveDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HealthDataViewModel @Inject constructor(
-    private val healthServicesRepository: HealthServicesRepository,
+    private val healthServicesBackgroundRepository: HealthServicesBackgroundRepository,
     private val passiveDataRepository: PassiveDataRepository
 ) : ViewModel() {
     val hrValue = passiveDataRepository.latestHeartRate
@@ -21,7 +21,7 @@ class HealthDataViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val supported = healthServicesRepository.hasHeartRateCapability()
+            val supported = healthServicesBackgroundRepository.hasHeartRateCapability()
 
             passiveDataRepository.setPassiveDataEnabled(supported)
             if (!supported) {
@@ -32,9 +32,9 @@ class HealthDataViewModel @Inject constructor(
         viewModelScope.launch {
             passiveDataRepository.passiveDataEnabled.distinctUntilChanged().collect { enabled ->
                 if (enabled) {
-                    healthServicesRepository.registerForHealthService()
+                    healthServicesBackgroundRepository.registerForHealthService()
                 } else {
-                    healthServicesRepository.unregisterForHealthService()
+                    healthServicesBackgroundRepository.unregisterForHealthService()
                 }
             }
         }
