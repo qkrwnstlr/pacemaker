@@ -3,14 +3,21 @@ package com.ssafy.presentation.planUI.startPlan
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentStartPlanBinding
+import com.ssafy.presentation.utils.ERROR
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+@AndroidEntryPoint
 class StartPlanFragment : BaseFragment<FragmentStartPlanBinding>(
     FragmentStartPlanBinding::inflate
 ) {
+    private val viewModel: StartPlanViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,10 +49,31 @@ class StartPlanFragment : BaseFragment<FragmentStartPlanBinding>(
 
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
-            // TODO 여기서 코치 유무 체킹 하고 넘어 가야함.
-            val action = StartPlanFragmentDirections.actionStartPlanFragmentToRegisterPlanFragment()
-            findNavController().navigate(action)
+            viewModel.checkCoach(
+                getUid(),
+                ::moveToRegisterPlanFragment,
+                ::moveToSelectCoachFragment,
+                ::failToGetCoach
+            )
         }
+
+        fabRed.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
+
+    private suspend fun moveToRegisterPlanFragment() = withContext(Dispatchers.Main) {
+        val action = StartPlanFragmentDirections.actionStartPlanFragmentToRegisterPlanFragment()
+        findNavController().navigate(action)
+    }
+
+    private suspend fun moveToSelectCoachFragment() = withContext(Dispatchers.Main) {
+        val action = StartPlanFragmentDirections.actionStartPlanFragmentToSelectCoachFragment()
+        findNavController().navigate(action)
+    }
+
+    private suspend fun failToGetCoach() = withContext(Dispatchers.Main) {
+        showSnackStringBar(ERROR)
     }
 
     companion object {
