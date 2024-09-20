@@ -76,7 +76,6 @@ dependencies {
     implementation(libs.mpandroidchart)
 
     implementation(libs.play.services.maps)
-    implementation(libs.androidx.work.runtime.ktx.v291)
 
     implementation(libs.play.services.location)
 }

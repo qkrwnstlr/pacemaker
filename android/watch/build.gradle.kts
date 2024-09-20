@@ -86,7 +86,6 @@ dependencies {
     implementation(libs.androidx.health.services.client)
 
     implementation(libs.androidx.work.runtime)
-    implementation(libs.androidx.work.runtime.ktx.v291)
 
     implementation(libs.androidx.datastore.preferences)
 

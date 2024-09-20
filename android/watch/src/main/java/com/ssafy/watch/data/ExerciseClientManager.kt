@@ -138,20 +138,12 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
         exerciseClient.resumeExercise()
     }
 
-    /** Wear OS 3.0 reserves two buttons for the OS. For devices with more than 2 buttons,
-     * consider implementing a "press" to mark lap feature**/
     suspend fun markLap() {
         if (exerciseClient.isExerciseInProgress()) {
             exerciseClient.markLap()
         }
     }
 
-    /**
-     * When the flow starts, it will register an [ExerciseUpdateCallback] and start to emit
-     * messages. When there are no more subscribers, or when the coroutine scope is
-     * cancelled, this flow will unregister the listener.
-     * [callbackFlow] is used to bridge between a callback-based API and Kotlin flows.
-     */
     val exerciseUpdateFlow = callbackFlow {
         val callback = object : ExerciseUpdateCallback {
             override fun onExerciseUpdateReceived(update: ExerciseUpdate) {

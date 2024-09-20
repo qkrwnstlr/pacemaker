@@ -67,7 +67,6 @@ androidx-wear-phone-interactions = { module = "androidx.wear:wear-phone-interact
 androidx-wear-remote-interactions = { module = "androidx.wear:wear-remote-interactions", version.ref = "wearOngoing" }
 androidx-wear-tooling-preview = { module = "androidx.wear:wear-tooling-preview", version.ref = "wearToolingPreview" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntimeKtxVersion" }
-androidx-work-runtime-ktx-v291 = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtxVersion" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologistComposeLayout" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologistComposeLayout" }
