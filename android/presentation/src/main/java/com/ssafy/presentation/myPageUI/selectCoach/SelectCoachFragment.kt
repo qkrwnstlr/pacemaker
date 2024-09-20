@@ -3,13 +3,22 @@ package com.ssafy.presentation.myPageUI.selectCoach
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentSelectCoachBinding
+import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companion.DANNY
+import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companion.JAMIE
+import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companion.MIKE
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
+@AndroidEntryPoint
 class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     FragmentSelectCoachBinding::inflate
 ) {
+    private val viewModel: SelectCoachViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,21 +39,18 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     }
 
     private fun initListener() = with(binding) {
-        // TODO 코치 변경 로직 추가!
-        clRed.setOnClickListener {
-
-            findNavController().popBackStack()
-        }
-
-        clYellow.setOnClickListener {
-
-
-            findNavController().popBackStack()
-        }
-
-        clBlue.setOnClickListener {
-
-            findNavController().popBackStack()
-        }
+        val uid = getUid()
+        clRed.setOnClickListener { viewModel.setCoach(uid, MIKE, ::popBack, ::failToSetCoach) }
+        clYellow.setOnClickListener { viewModel.setCoach(uid, JAMIE, ::popBack, ::failToSetCoach) }
+        clBlue.setOnClickListener { viewModel.setCoach(uid, DANNY, ::popBack, ::failToSetCoach) }
     }
+
+    private suspend fun popBack() = withContext(Dispatchers.Main) {
+        findNavController().popBackStack()
+    }
+
+    private suspend fun failToSetCoach(message: String) = withContext(Dispatchers.Main) {
+        showSnackStringBar(message)
+    }
+
 }

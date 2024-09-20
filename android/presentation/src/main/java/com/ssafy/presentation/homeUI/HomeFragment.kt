@@ -165,7 +165,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                             findNavController().navigate(action)
                         }
 
-                        topSheetBehavior.setHalfHeight(350)
+                        topSheetBehavior.setHalfHeight(400)
                     }
 
                     else -> return@collect
