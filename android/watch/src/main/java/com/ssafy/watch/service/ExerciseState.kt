@@ -12,6 +12,8 @@ data class ExerciseMetrics(
     val distance: Double? = null,
     val calories: Double? = null,
     val heartRateAverage: Double? = null,
+    val pace: Double? = null,
+    val paceAverage: Double? = null,
 ) {
     fun update(latestMetrics: DataPointContainer): ExerciseMetrics {
         return copy(
@@ -21,6 +23,8 @@ data class ExerciseMetrics(
             calories = latestMetrics.getData(DataType.CALORIES_TOTAL)?.total ?: calories,
             heartRateAverage = latestMetrics.getData(DataType.HEART_RATE_BPM_STATS)?.average
                 ?: heartRateAverage,
+            pace = latestMetrics.getData(DataType.PACE).lastOrNull()?.value ?: pace,
+            paceAverage = latestMetrics.getData(DataType.PACE_STATS)?.average ?: paceAverage
         )
     }
 }

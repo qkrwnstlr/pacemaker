@@ -1,4 +1,4 @@
-package com.ssafy.watch.presentation.viewmodel
+package com.ssafy.watch.presentation.passive
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HealthDataViewModel @Inject constructor(
+class PassiveDataViewModel @Inject constructor(
     private val healthServicesBackgroundRepository: HealthServicesBackgroundRepository,
     private val passiveDataRepository: PassiveDataRepository
 ) : ViewModel() {

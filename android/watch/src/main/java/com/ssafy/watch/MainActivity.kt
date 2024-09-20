@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.ssafy.watch.presentation.ui.WearApp
+import com.ssafy.watch.presentation.WearApp
 import com.ssafy.watch.utils.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.ssafy.watch.presentation.ui
+package com.ssafy.watch.presentation.passive
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -12,23 +12,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.TimeText
 import com.ssafy.watch.presentation.component.HeartRateCard
-import com.ssafy.watch.presentation.viewmodel.HealthDataViewModel
-import com.ssafy.watch.presentation.theme.PaceMakerTheme
 
 @Composable
-fun WearApp() {
-    val viewModel: HealthDataViewModel = hiltViewModel<HealthDataViewModel>()
+fun PassiveScreen(modifier: Modifier = Modifier) {
+    val viewModel: PassiveDataViewModel = hiltViewModel<PassiveDataViewModel>()
     val hrState by viewModel.hrValue.collectAsState()
 
-    PaceMakerTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            TimeText()
-            HeartRateCard(heartRate = hrState)
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background),
+        contentAlignment = Alignment.Center
+    ) {
+        TimeText()
+        HeartRateCard(heartRate = hrState)
     }
 }

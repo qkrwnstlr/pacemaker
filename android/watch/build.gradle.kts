@@ -61,13 +61,14 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.material3.android)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.wear)
-    implementation("androidx.wear:wear-tooling-preview:1.0.0")
+    implementation(libs.androidx.wear.tooling.preview)
 
     // Add support for wearable specific inputs
     implementation(libs.androidx.wear.input)
@@ -93,12 +94,12 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    implementation("androidx.lifecycle:lifecycle-service:2.8.5")
-    implementation("com.google.android.horologist:horologist-compose-layout:0.5.28")
-    implementation("com.google.android.horologist:horologist-compose-material:0.5.28")
-    implementation("com.google.android.horologist:horologist-health-composables:0.5.28")
-    implementation("com.google.android.horologist:horologist-health-service:0.5.28")
-    implementation("com.google.android.horologist:horologist-roboscreenshots:0.5.28")
+    implementation(libs.androidx.lifecycle.service)
+    implementation(libs.horologist.compose.layout)
+    implementation(libs.horologist.compose.material)
+    implementation(libs.horologist.health.composables)
+    implementation(libs.horologist.health.service)
+    implementation(libs.horologist.roboscreenshots)
 
     implementation(libs.androidx.material.icons.extended)
     implementation(kotlin("script-runtime"))
