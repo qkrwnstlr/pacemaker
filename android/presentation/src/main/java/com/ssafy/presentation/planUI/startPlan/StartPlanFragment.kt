@@ -24,18 +24,18 @@ class StartPlanFragment : BaseFragment<FragmentStartPlanBinding>(
         val slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_slide_up)
 
         tvExplain.apply {
-            text = "AI 코칭을 받아볼까요?"
+            text = WANT_AI_COACH
             startAnimation(slideDown)
         }
 
         fabBlue.apply {
-            text = "좋아요!"
+            text = GOOD
             startAnimation(slideUp)
         }
 
         fabRed.apply {
             visibility = View.VISIBLE
-            text = "아니요, 다음에 알아볼게요"
+            text = BAD
             startAnimation(slideUp)
         }
     }
@@ -46,5 +46,11 @@ class StartPlanFragment : BaseFragment<FragmentStartPlanBinding>(
             val action = StartPlanFragmentDirections.actionStartPlanFragmentToRegisterPlanFragment()
             findNavController().navigate(action)
         }
+    }
+
+    companion object {
+        const val WANT_AI_COACH = "AI 코칭을 받아볼까요?"
+        const val GOOD = "좋아요!"
+        const val BAD = "아니요, 다음에 알아볼게요"
     }
 }
