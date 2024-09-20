@@ -6,6 +6,10 @@ import com.ssafy.domain.response.ResponseResult
 import javax.inject.Inject
 
 class SetCoachUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend operator fun invoke(uid: String, coach: Coach): ResponseResult<Unit> =
-        userRepository.setCoach(uid, coach)
+
+    suspend operator fun invoke(uid: String, coachIndex: Long): ResponseResult<Unit> {
+        val coach = Coach(coachIndex)
+        return userRepository.setCoach(uid, coach)
+    }
+
 }

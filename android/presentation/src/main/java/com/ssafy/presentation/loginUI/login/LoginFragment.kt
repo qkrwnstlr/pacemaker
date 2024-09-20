@@ -46,8 +46,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun initCheck() {
-        // TODO 구글 계정 확인하고, 사용자 정보 있으면 실행해야함!!
-        viewModel.checkUser("testtest", ::moveToHomeFragment)
+        val uid = getUid()
+        if (uid.isNotBlank()) viewModel.checkUser(uid, ::moveToHomeFragment)
     }
 
     private fun moveToConnectFragment() {

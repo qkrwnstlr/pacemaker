@@ -12,13 +12,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
-import java.lang.reflect.Type
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -46,30 +43,12 @@ object NetworkModule {
 
     @Singleton
     @Provides
-    fun provideNullConvertFactory(): Converter.Factory = object : Converter.Factory() {
-        override fun responseBodyConverter(
-            type: Type,
-            annotations: Array<out Annotation>,
-            retrofit: Retrofit
-        ): Converter<ResponseBody, *> {
-            val delegate = retrofit.nextResponseBodyConverter<Any>(this, type, annotations)
-            return Converter<ResponseBody, Any> { body ->
-                if (body.contentLength() == 0L) null
-                else delegate.convert(body)
-            }
-        }
-    }
-
-    @Singleton
-    @Provides
     fun provideUserRetrofit(
         okHttpClient: OkHttpClient,
         gson: Gson,
-        nullConverterFactory: Converter.Factory
     ): Retrofit = Retrofit.Builder()
         .baseUrl(BuildConfig.BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(nullConverterFactory)
         .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
