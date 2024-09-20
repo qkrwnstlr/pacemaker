@@ -11,6 +11,9 @@ import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentJoinRegisterBinding
+import com.ssafy.presentation.myPageUI.modify.GenderButtonSheetFragment
+import com.ssafy.presentation.utils.MAN
+import com.ssafy.presentation.utils.WOMAN
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -118,10 +121,5 @@ class JoinRegisterFragment : BaseFragment<FragmentJoinRegisterBinding>(
     private fun showGenderBottomSheet() = with(binding.tieGender) {
         GenderButtonSheetFragment(text.toString(), viewModel::setGender)
             .show(parentFragmentManager, null)
-    }
-
-    companion object {
-        const val MAN = "남자"
-        const val WOMAN = "여자"
     }
 }

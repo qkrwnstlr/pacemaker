@@ -13,8 +13,12 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.FragmentScheduleDialogBinding
+import com.ssafy.presentation.utils.displayText
+import java.time.LocalDate
 
-class ScheduleDialogFragment : DialogFragment() {
+class ScheduleDialogFragment(
+    private val date: LocalDate
+) : DialogFragment() {
     private var _binding: FragmentScheduleDialogBinding? = null
     private val binding: FragmentScheduleDialogBinding get() = _binding!!
 
@@ -36,6 +40,7 @@ class ScheduleDialogFragment : DialogFragment() {
     private fun initView() = with(binding) {
         trainInfoTitle.ivNext.visibility = View.GONE
         root.layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
+        trainInfoTitle.tvResultTitle.text = date.displayText()
         makeChart(trainInfoChart.barChart)
     }
 

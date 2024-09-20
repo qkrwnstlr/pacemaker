@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".runningUI.runningInfo.RunningInfoFragment">
+    tools:context=".runningUI.RunningFragment">
 
 
     <include
@@ -16,6 +16,17 @@
         app:layout_constraintBottom_toTopOf="@id/btn_play"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <include
+        android:id="@+id/running_map"
+        layout="@layout/running_map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageButton
         android:id="@+id/btn_play"
@@ -23,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_24"
         android:background="@drawable/ripple_button_primary"
+        android:elevation="@dimen/elevation_4"
         android:padding="@dimen/padding_22"
         android:src="@drawable/baseline_play_arrow_24"
         android:visibility="invisible"
@@ -36,6 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_24"
         android:background="@drawable/ripple_button_primary"
+        android:elevation="@dimen/elevation_4"
         android:padding="@dimen/padding_22"
         android:src="@drawable/baseline_pause_24"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -48,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_24"
         android:background="@drawable/ripple_button_reverse"
+        android:elevation="@dimen/elevation_4"
         android:padding="@dimen/padding_22"
         android:src="@drawable/baseline_stop_24"
         android:visibility="invisible"
@@ -61,8 +75,23 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_24"
         android:background="@drawable/ripple_button_fourth_primary"
+        android:elevation="@dimen/elevation_4"
         android:padding="@dimen/padding_10"
         android:src="@drawable/map"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_stop" />
+
+    <ImageButton
+        android:id="@+id/btn_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="@dimen/margin_24"
+        android:background="@drawable/ripple_button_fourth_primary"
+        android:elevation="@dimen/elevation_4"
+        android:padding="@dimen/padding_10"
+        android:src="@drawable/outline_home_24"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_stop" />

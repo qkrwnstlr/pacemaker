@@ -104,19 +104,39 @@
         android:id="@+id/ly_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/iv_profile">
+        app:layout_constraintTop_toBottomOf="@id/ly_right">
+
+        <TextView
+            android:id="@+id/et_gender"
+            style="@style/Large22BoldText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="남자"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_title_gender"
+            style="@style/ExtraSmallGrayText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin_24"
+            android:text="@string/gender"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/et_gender" />
 
         <TextView
             android:id="@+id/et_age"
             style="@style/Large22BoldText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_24"
             android:layout_marginEnd="@dimen/margin_24"
             android:text="26세"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/tv_title_gender" />
 
         <TextView
             android:id="@+id/tv_title_age"

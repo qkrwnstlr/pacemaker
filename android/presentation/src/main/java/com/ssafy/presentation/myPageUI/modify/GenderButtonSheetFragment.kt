@@ -1,4 +1,4 @@
-package com.ssafy.presentation.loginUI.join
+package com.ssafy.presentation.myPageUI.modify
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.FragmentGenderButtonSheetBinding
+import com.ssafy.presentation.utils.MAN
+import com.ssafy.presentation.utils.WOMAN
 
 class GenderButtonSheetFragment(
     private val gender: String,
@@ -36,11 +38,11 @@ class GenderButtonSheetFragment(
         val check = ContextCompat.getDrawable(requireContext(), R.drawable.baseline_check_24)
 
         when (gender) {
-            JoinRegisterFragment.WOMAN -> {
+            WOMAN -> {
                 tvWoman.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null)
             }
 
-            JoinRegisterFragment.MAN -> {
+            MAN -> {
                 tvMan.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, check, null)
             }
         }
@@ -48,12 +50,12 @@ class GenderButtonSheetFragment(
 
     private fun initListener() = with(binding) {
         tvWoman.setOnClickListener {
-            setGender(JoinRegisterFragment.WOMAN)
+            setGender(WOMAN)
             dismiss()
         }
 
         tvMan.setOnClickListener {
-            setGender(JoinRegisterFragment.MAN)
+            setGender(MAN)
             dismiss()
         }
     }

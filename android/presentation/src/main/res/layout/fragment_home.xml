@@ -22,8 +22,8 @@
 
         <ImageButton
             android:id="@+id/profile_button"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="@dimen/image_56"
+            android:layout_height="@dimen/image_56"
             android:background="@drawable/circle_background"
             android:backgroundTint="@color/white"
             android:contentDescription="Profile"
@@ -38,24 +38,24 @@
 
         <Button
             android:id="@+id/start_run_button"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/margin_48"
             android:background="@drawable/circle_background"
             android:text="START"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_18"
+            android:textSize="@dimen/text_14"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@+id/plan_button"
             app:layout_constraintStart_toEndOf="@+id/profile_button" />
 
         <ImageButton
             android:id="@+id/plan_button"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="@dimen/image_56"
+            android:layout_height="@dimen/image_56"
             android:background="@drawable/circle_background"
             android:backgroundTint="@color/white"
-            android:contentDescription="Calender"
             android:padding="@dimen/padding_10"
             android:scaleType="fitCenter"
             android:src="@drawable/icon_calendar"

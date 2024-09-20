@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_background_skyblue"
+    android:elevation="@dimen/elevation_6"
     android:padding="@dimen/padding_24">
 
     <TextView

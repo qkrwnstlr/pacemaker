@@ -15,7 +15,9 @@
             app:destination="@id/connectFragment" />
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/joinFragment"
@@ -89,8 +91,8 @@
             android:id="@+id/action_homeFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_runningInfoFragment"
-            app:destination="@id/runningInfoFragment" />
+            android:id="@+id/action_homeFragment_to_runningFragment"
+            app:destination="@id/runningFragment" />
     </fragment>
     <fragment
         android:id="@+id/startPlanFragment"
@@ -128,11 +130,6 @@
             app:destination="@id/planDetailFragment2" />
     </fragment>
     <fragment
-        android:id="@+id/runningInfoFragment"
-        android:name="com.ssafy.presentation.runningUI.runningInfo.RunningInfoFragment"
-        android:label="fragment_running_info"
-        tools:layout="@layout/fragment_running_info" />
-    <fragment
         android:id="@+id/profileFragment"
         android:name="com.ssafy.presentation.myPageUI.profile.ProfileFragment"
         android:label="fragment_profile"
@@ -140,12 +137,25 @@
         <action
             android:id="@+id/action_profileFragment_to_modifyFragment"
             app:destination="@id/modifyFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_selectCoachFragment"
+            app:destination="@id/selectCoachFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/modifyFragment"
         android:name="com.ssafy.presentation.myPageUI.modify.ModifyFragment"
         android:label="fragment_modify"
-        tools:layout="@layout/fragment_modify" />
+        tools:layout="@layout/fragment_modify">
+        <argument
+            android:name="profile"
+            app:argType="com.ssafy.presentation.myPageUI.data.Profile"
+            app:nullable="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/planDetailFragment"
@@ -182,4 +192,9 @@
             android:id="@+id/action_chatCoachFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/runningFragment"
+        android:name="com.ssafy.presentation.runningUI.RunningFragment"
+        android:label="fragment_running"
+        tools:layout="@layout/fragment_running" />
 </navigation>

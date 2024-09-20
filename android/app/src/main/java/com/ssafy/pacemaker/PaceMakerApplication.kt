@@ -1,8 +1,10 @@
-package com.ssafy.presentation.core
+package com.ssafy.pacemaker
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+@HiltAndroidApp
 class PaceMakerApplication : Application() {
 
     override fun onCreate() {
