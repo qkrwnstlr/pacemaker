@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -42,4 +44,9 @@ dependencies {
     implementation(project(":presentation"))
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+    implementation(libs.jakewharton.timber)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }

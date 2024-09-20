@@ -8,6 +8,7 @@ import com.ssafy.presentation.databinding.CalendarDayMonthMiniBinding
 import java.time.LocalDate
 
 class MiniDateContainer(view: View, dateClicked: (LocalDate) -> (Unit)) : ViewContainer(view) {
+
     lateinit var day: CalendarDay
     val binding = CalendarDayMonthMiniBinding.bind(view)
 

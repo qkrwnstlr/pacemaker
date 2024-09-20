@@ -168,7 +168,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                             findNavController().navigate(action)
                         }
 
-                        topSheetBehavior.setHalfHeight(350)
+                        topSheetBehavior.setHalfHeight(400)
                     }
 
                     else -> return@collect
@@ -222,7 +222,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun initListener() {
         binding.startRunButton.setOnClickListener {
-            val action = HomeFragmentDirections.actionHomeFragmentToRunningInfoFragment()
+            val action = HomeFragmentDirections.actionHomeFragmentToRunningFragment()
             findNavController().navigate(action)
         }
 

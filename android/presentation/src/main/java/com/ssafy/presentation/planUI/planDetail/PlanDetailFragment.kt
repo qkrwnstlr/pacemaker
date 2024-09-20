@@ -93,7 +93,7 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetailBinding>(
 
     private fun dateClicked(date: LocalDate) {
         val manager = requireActivity().supportFragmentManager
-        ScheduleDialogFragment().show(manager, "ScheduleDialog")
+        ScheduleDialogFragment(date).show(manager, "ScheduleDialog")
     }
 
     private fun updateTitle() = with(binding.basePlanLayout) {

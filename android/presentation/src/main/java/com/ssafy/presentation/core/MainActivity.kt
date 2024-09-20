@@ -14,8 +14,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
+import dagger.hilt.android.AndroidEntryPoint
 import com.ssafy.presentation.utils.PermissionHelper
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
 
