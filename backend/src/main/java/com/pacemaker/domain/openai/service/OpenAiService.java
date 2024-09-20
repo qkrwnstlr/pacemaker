@@ -46,10 +46,11 @@ public class OpenAiService {
 			.model("gpt-4o-mini")
 			.messages(List.of(Message.createSystem(), Message.createUser(content),
 				// Message.createResponseFormat(ResponseFormatString.responseFormat)))
-			Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
+				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
+			// .responseFormat("{\"type\": \"json_object\"}")
 			.build();
 
 		return openAIWebClient.post()
@@ -61,9 +62,9 @@ public class OpenAiService {
 
 	public Mono<String> getTest4o(String content) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-			.model("gpt-4")
+			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createSystem(), Message.createUser(content),
-				Message.createResponseFormat(ResponseFormatString.responseFormat)))
+				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))

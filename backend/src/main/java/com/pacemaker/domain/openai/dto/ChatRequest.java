@@ -41,7 +41,10 @@ public class ChatRequest {
 			private Integer height;
 			private Integer weight;
 			private Integer gender;
-			private String injuries;
+			private List<String> injuries;
+			private Integer recentRunPace;
+			private Integer recentRunDistance;
+			private Integer recentRunHeartRate;
 		}
 	}
 
@@ -51,18 +54,26 @@ public class ChatRequest {
 		private Integer totalDays;
 		private Integer totalTimes;
 		private List<TrainDetail> trainDetails;
-
+// "plan": {
+// 			"totalDays": null,
+// 				"totalTimes": null,
+// 				"trainDetails": {
+// 					"iT": null,
+// 					"tP": null,
+// 					"tT": null,
+// 			}
+// 		}
 		@Data
 		@Builder
 		public static class TrainDetail {
-			private Integer index;
-			private String trainDate;
-			private Integer pace;
-			private Integer trainDistance;
-			private Integer trainDuration;
-			private Integer trainParam;
-			private Integer repeat;
-			private Integer interParam;
+			private Integer idx; // 인덱스
+			private String tD; // trainDate
+			private Integer pace; // pace
+			private Integer tDist; // trainDistance
+			private Integer tDur; // trainDuration
+			private Integer tP; // trainParam
+			private Integer r; // repeat
+			private Integer interParam; // interParam
 		}
 	}
 }
