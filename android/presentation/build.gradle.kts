@@ -76,4 +76,6 @@ dependencies {
     implementation(libs.mpandroidchart)
 
     implementation(libs.play.services.maps)
+
+    implementation(libs.play.services.location)
 }
