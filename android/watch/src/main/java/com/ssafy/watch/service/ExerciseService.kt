@@ -148,9 +148,11 @@ class ExerciseService : LifecycleService() {
                 exerciseNotificationManager.buildNotification(
                     serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
                 ),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or if
-                                                                        (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-                    ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH else 0
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+                            ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
+                        else
+                            0
             )
         }
     }

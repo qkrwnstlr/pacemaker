@@ -71,7 +71,7 @@ class ExerciseNotificationManager @Inject constructor(
         private const val NOTIFICATION_CHANNEL =
             "com.ssafy.watch.ONGOING_EXERCISE"
         private const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Exercise"
-        private const val NOTIFICATION_TITLE = "Exercise Sample"
+        private const val NOTIFICATION_TITLE = "PaceMaker"
         private const val NOTIFICATION_TEXT = "Ongoing Exercise"
         private const val ONGOING_STATUS_TEMPLATE = "Ongoing Exercise #duration#"
     }
