@@ -1,13 +1,17 @@
 package com.pacemaker.domain.openai.service;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
+import com.pacemaker.domain.openai.dto.ChatRequest;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 
@@ -69,6 +73,36 @@ public class OpenAiService {
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
 			.build();
+
+		return openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class);
+	}
+
+	public Mono<String> planChat(ChatRequest chatRequest) {
+		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+			.model("gpt-4o-2024-08-06")
+			.messages(List.of(Message.createSystem(), Message.createUser(new Gson().toJson(chatRequest)),
+				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
+			.build();
+
+		Mono<String> response = openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class);
+
+
+
+		return openAiService.getTest4o(new Gson().toJson(chatRequest))
+			.map(response -> {
+				Instant finish = Instant.now(); // 응답 완료 시간 기록
+				long timeElapsed = Duration.between(start, finish).toMillis(); // 시간 차이 계산
+				System.out.println("Request processing time: " + timeElapsed + " milliseconds");
+				return ResponseEntity.ok(response);
+			});
 
 		return openAIWebClient.post()
 			.uri("/chat/completions")
