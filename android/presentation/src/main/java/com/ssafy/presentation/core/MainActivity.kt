@@ -1,6 +1,8 @@
 package com.ssafy.presentation.core
 
+import android.Manifest
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -12,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.ssafy.presentation.R
 import dagger.hilt.android.AndroidEntryPoint
+import com.ssafy.presentation.utils.PermissionHelper
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -26,13 +29,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        if (savedInstanceState == null) {
-            val navHostFragment = NavHostFragment.create(R.navigation.nav_graph)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, navHostFragment)
-                .setPrimaryNavigationFragment(navHostFragment)
-                .commit()
-        }
+
+        val permissions = mutableListOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
+        PermissionHelper(this, permissions, ::finish).launchPermission()
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {

@@ -26,6 +26,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kizitonwose.calendar.core.WeekDay
@@ -71,7 +72,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onMapReady(map: GoogleMap) {
         val point = LatLng(37.514655, 126.979974)
-        map.addMarker(MarkerOptions().position(point).title("현위치"))
+        val marker = MarkerOptions().position(point).title("현위치")
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+        map.addMarker(marker)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 12f))
     }
 

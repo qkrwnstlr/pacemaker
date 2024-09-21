@@ -37,7 +37,7 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
 
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
-            val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
+            val action = ConnectFragmentDirections.actionConnectFragmentToJoinFragment()
             findNavController().navigate(action)
         }
     }
