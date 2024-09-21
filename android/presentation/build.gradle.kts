@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -22,13 +25,15 @@ android {
     namespace = "com.ssafy.presentation"
     compileSdk = 34
 
+    val properties = Properties()
+    properties.load(FileInputStream(rootProject.file("local.properties")))
     defaultConfig {
         minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "server_client_id", properties.getProperty("server_client_id"))
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -83,7 +88,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
 
     // firebase auth 에서 필요한 의존성 추가
-    implementation ("com.google.firebase:firebase-auth-ktx")
-    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
 }

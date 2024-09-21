@@ -111,8 +111,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun logout() {
-        clearUid()
-        moveToLoginFragment()
+        lifecycleScope.launch {
+            auth.signOut()
+            clearUid()
+            moveToLoginFragment()
+        }
     }
-
 }
