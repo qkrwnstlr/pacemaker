@@ -3,7 +3,6 @@ package com.pacemaker.domain.openai.controller;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.springframework.ai.openai.api.OpenAiApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,10 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.pacemaker.domain.openai.dto.ChatRequest;
+import com.pacemaker.domain.openai.dto.ChatDTO;
 import com.pacemaker.domain.openai.service.OpenAiService;
 
-import jakarta.validation.Valid;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -55,10 +53,10 @@ public class OpenAiController {
     }
 
     @PostMapping("/test/mini")
-    public Mono<ResponseEntity<String>> getTestMini(@RequestBody ChatRequest chatRequest) {
+    public Mono<ResponseEntity<String>> getTestMini(@RequestBody ChatDTO chatRequest) {
 
-        System.out.println("Received message: " + chatRequest.getMessage());
-        System.out.println("Goal: " + chatRequest.getContext().getGoal());
+        System.out.println("Received message: " + chatRequest.message());
+        System.out.println("Goal: " + chatRequest.context().goal());
 
         Instant start = Instant.now(); // 요청 시작 시간 기록
 
@@ -72,10 +70,10 @@ public class OpenAiController {
     }
 
     @PostMapping("/test/4o")
-    public Mono<ResponseEntity<String>> getTest4o(@RequestBody ChatRequest chatRequest) {
+    public Mono<ResponseEntity<String>> getTest4o(@RequestBody ChatDTO chatRequest) {
 
-        System.out.println("Received message: " + chatRequest.getMessage());
-        System.out.println("Goal: " + chatRequest.getContext().getGoal());
+        System.out.println("Received message: " + chatRequest.message());
+        System.out.println("Goal: " + chatRequest.context().goal());
 
         Instant start = Instant.now(); // 요청 시작 시간 기록
 
