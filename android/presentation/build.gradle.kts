@@ -78,4 +78,10 @@ dependencies {
     implementation(libs.play.services.maps)
 
     implementation(libs.play.services.location)
+    implementation(libs.play.services.wearable)
+
+    implementation(libs.gson)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

@@ -3,6 +3,7 @@ package com.ssafy.presentation.runningUI
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import androidx.fragment.app.viewModels
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -12,12 +13,16 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRunningBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBinding::inflate),
     OnMapReadyCallback {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    private val viewModel: RunningViewModel by viewModels()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.initWearableClient()
         initListener()
         initMapView()
     }
@@ -27,16 +32,19 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
             btnPlay.showAnimate(true)
             btnStop.showAnimate(true)
             btnPause.showAnimate(false)
+            viewModel.pauseExercise()
         }
 
         btnPlay.setOnClickListener {
             btnPause.showAnimate(true)
             btnPlay.showAnimate(false)
             btnStop.showAnimate(false)
+            viewModel.resumeExercise()
         }
 
         btnStop.setOnClickListener {
             showSnackStringBar("훈련 종료!")
+            viewModel.endExercise()
         }
 
         btnMap.setOnClickListener {
