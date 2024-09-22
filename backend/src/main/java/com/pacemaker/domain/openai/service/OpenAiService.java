@@ -1,11 +1,7 @@
 package com.pacemaker.domain.openai.service;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -13,6 +9,8 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatRequest;
 import com.pacemaker.domain.openai.dto.Message;
+import com.pacemaker.domain.openai.dto.OpenAiResponse;
+import com.pacemaker.domain.openai.dto.ResponseContent;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 
 import reactor.core.publisher.Mono;
@@ -88,26 +86,27 @@ public class OpenAiService {
 				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
 			.build();
 
-		Mono<String> response = openAIWebClient.post()
-			.uri("/chat/completions")
-			.bodyValue(chatCompletionRequest)
-			.retrieve()
-			.bodyToMono(String.class);
-
-
-
-		return openAiService.getTest4o(new Gson().toJson(chatRequest))
-			.map(response -> {
-				Instant finish = Instant.now(); // 응답 완료 시간 기록
-				long timeElapsed = Duration.between(start, finish).toMillis(); // 시간 차이 계산
-				System.out.println("Request processing time: " + timeElapsed + " milliseconds");
-				return ResponseEntity.ok(response);
-			});
-
 		return openAIWebClient.post()
 			.uri("/chat/completions")
 			.bodyValue(chatCompletionRequest)
 			.retrieve()
-			.bodyToMono(String.class);
+			.bodyToMono(String.class)
+			.map(response -> {
+				// int startIdx = KMP.getStartIndex("\\\"context\\\":", response);
+				// System.out.println("responseLen: " + response.length());
+				// System.out.println("startIdx = " + startIdx);
+				// return response + " | startIdx: " + startIdx;
+
+				OpenAiResponse request = new Gson().fromJson(response, OpenAiResponse.class);
+				System.out.println(request.choices().get(0));
+				System.out.println(request.choices().get(0).index());
+				System.out.println(request.choices().get(0).message());
+				// System.out.println(request.choices.get(0).message.content.toString());
+				ResponseContent responseContent = new Gson().fromJson(request.choices().get(0).message().content(),
+					ResponseContent.class);
+				System.out.println("ResponseContent = " + responseContent);
+
+				return new Gson().toJson(responseContent);
+			});
 	}
 }
