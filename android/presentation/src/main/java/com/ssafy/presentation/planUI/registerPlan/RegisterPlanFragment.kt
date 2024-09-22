@@ -6,7 +6,11 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -17,8 +21,11 @@ import com.ssafy.presentation.component.MiniDateContainer
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRegisterPlanBinding
 import com.ssafy.presentation.homeUI.TopSheetBehavior
+import com.ssafy.presentation.planUI.registerPlan.adapter.ChatAdapter
 import com.ssafy.presentation.utils.displayText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -29,6 +36,16 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 ) {
     private val viewModel: RegisterPlanViewModel by viewModels()
     private val behavior by lazy { TopSheetBehavior.from(binding.topSheetTrain.root) }
+    private val adapter by lazy {
+        ChatAdapter().apply {
+            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    binding.chatUi.rvPlanChat.scrollToPosition(positionStart)
+                    super.onItemRangeInserted(positionStart, itemCount)
+                }
+            })
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,6 +53,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         initView()
         initTopSheet()
         initListener()
+        initCollect()
     }
 
     private fun initView() = with(binding.chatUi) {
@@ -47,19 +65,28 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 
         tvTitle.startAnimation(slideDown)
         viewModel.getCoach(uid)
+        rvPlanChat.adapter = adapter
     }
 
     private fun initListener() = with(binding) {
         chatUi.ivSend.setOnClickListener {
             val text = chatUi.etChat.text.toString()
             chatUi.etChat.text = null
-            showSnackStringBar(text)
+            viewModel.sendMyMessage(text)
         }
 
         topSheetTrain.fabBlue.setOnClickListener {
             val action =
                 RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
             findNavController().navigate(action)
+        }
+    }
+
+    private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.planData.collectLatest { chatList ->
+                adapter.submitList(chatList)
+            }
         }
     }
 
