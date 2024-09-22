@@ -35,7 +35,7 @@ class HealthServicesRepository @Inject constructor(
 
     val serviceState: StateFlow<ServiceState> =
         exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
-            wearableClientManager.sendToHandheldDevice(WearableClientManager.EXERCISE_DATA_PATH, exerciseServiceState)
+            wearableClientManager.sendToMobileDevice(WearableClientManager.EXERCISE_DATA_PATH, exerciseServiceState)
             ServiceState.Connected(exerciseServiceState.copy(error = errorString))
         }.stateIn(
             coroutineScope,

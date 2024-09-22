@@ -22,7 +22,7 @@ class WearableClientManager @Inject constructor(
     private val messageClient by lazy { Wearable.getMessageClient(context) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(context) }
 
-    suspend fun <T> sendToHandheldDevice(path: String, data: T): DataItem {
+    suspend fun <T> sendToMobileDevice(path: String, data: T): DataItem {
         val request = PutDataMapRequest
             .create("$path")
             .apply { dataMap.putString("data", Gson().toJson(data)) }
@@ -34,9 +34,9 @@ class WearableClientManager @Inject constructor(
         return dataClient.putDataItem(request).await()
     }
 
-    suspend fun startWearableActivity() {
+    suspend fun startMobileActivity() {
         val nodes = capabilityClient
-            .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
+            .getCapability(MOBILE_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
             .await()
             .nodes
 
@@ -55,6 +55,6 @@ class WearableClientManager @Inject constructor(
         const val RESUME_RUN_PATH = "/resume-run"
         const val EXERCISE_DATA_PATH = "/exercise-data"
 
-        private const val WEAR_CAPABILITY = "wear"
+        private const val MOBILE_CAPABILITY = "mobile"
     }
 }

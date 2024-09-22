@@ -47,29 +47,29 @@ class ExerciseViewModel @Inject constructor(
 
     fun startExercise() {
         viewModelScope.launch {
-            wearableClientManager.startWearableActivity()
-            wearableClientManager.sendToHandheldDevice(WearableClientManager.START_RUN_PATH, Unit)
+            wearableClientManager.startMobileActivity()
+            wearableClientManager.sendToMobileDevice(WearableClientManager.START_RUN_PATH, Unit)
         }
         healthServicesRepository.startExercise()
     }
 
     fun pauseExercise() {
         viewModelScope.launch {
-            wearableClientManager.sendToHandheldDevice(WearableClientManager.PAUSE_RUN_PATH, Unit)
+            wearableClientManager.sendToMobileDevice(WearableClientManager.PAUSE_RUN_PATH, Unit)
         }
         healthServicesRepository.pauseExercise()
     }
 
     fun endExercise() {
         viewModelScope.launch {
-            wearableClientManager.sendToHandheldDevice(WearableClientManager.END_RUN_PATH, Unit)
+            wearableClientManager.sendToMobileDevice(WearableClientManager.END_RUN_PATH, Unit)
         }
         healthServicesRepository.endExercise()
     }
 
     fun resumeExercise() {
         viewModelScope.launch {
-            wearableClientManager.sendToHandheldDevice(WearableClientManager.RESUME_RUN_PATH, Unit)
+            wearableClientManager.sendToMobileDevice(WearableClientManager.RESUME_RUN_PATH, Unit)
         }
         healthServicesRepository.resumeExercise()
     }
