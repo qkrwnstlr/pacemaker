@@ -16,15 +16,19 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.ssafy.presentation.component.MiniDateContainer
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRegisterPlanBinding
+import com.ssafy.presentation.homeUI.TopSheetBehavior
 import com.ssafy.presentation.utils.displayText
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
+@AndroidEntryPoint
 class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     FragmentRegisterPlanBinding::inflate
 ) {
     private val viewModel: RegisterPlanViewModel by viewModels()
+    private val behavior by lazy { TopSheetBehavior.from(binding.topSheetTrain.root) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -121,6 +125,14 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun dateClicked(date: LocalDate) {
         val manager = requireActivity().supportFragmentManager
         ScheduleDialogFragment(date).show(manager, "ScheduleDialog")
+    }
+
+    private fun scrollUpCalender() {
+        behavior.state = TopSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun scrollDownCalendar() {
+        behavior.state = TopSheetBehavior.STATE_EXPANDED
     }
 
 }
