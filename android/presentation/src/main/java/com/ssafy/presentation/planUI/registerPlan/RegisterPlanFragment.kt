@@ -35,14 +35,14 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     }
 
     private fun initView() = with(binding.chatUi) {
+        val uid = getUid()
         val slideDown = AnimationUtils.loadAnimation(
             requireContext(),
             com.ssafy.presentation.R.anim.fade_slide_down
         )
 
         tvTitle.startAnimation(slideDown)
-        tvLikeWeek.startAnimation(slideDown)
-        clWeek.startAnimation(slideDown)
+        viewModel.getCoach(uid)
     }
 
     private fun initListener() = with(binding) {
@@ -53,7 +53,8 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         }
 
         topSheetTrain.fabBlue.setOnClickListener {
-            val action = RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
+            val action =
+                RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
             findNavController().navigate(action)
         }
     }
