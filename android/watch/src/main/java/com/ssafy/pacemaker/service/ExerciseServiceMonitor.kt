@@ -1,12 +1,15 @@
 package com.ssafy.pacemaker.service
 
 import android.app.Service
+import android.util.Log
 import androidx.health.services.client.data.ExerciseUpdate
 import com.ssafy.pacemaker.data.ExerciseClientManager
 import com.ssafy.pacemaker.data.ExerciseMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+
+private const val TAG = "ExerciseServiceMonitor_PACEMAKER"
 
 class ExerciseServiceMonitor @Inject constructor(
     private val exerciseClientManager: ExerciseClientManager,

@@ -1,5 +1,6 @@
 package com.ssafy.pacemaker.data
 
+import android.util.Log
 import androidx.health.services.client.ExerciseClient
 import androidx.health.services.client.ExerciseUpdateCallback
 import androidx.health.services.client.HealthServicesClient
@@ -29,6 +30,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
 
+private const val TAG = "ExerciseClientManager_PACEMAKER"
+
 @Singleton
 class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServicesClient) {
     private val exerciseClient: ExerciseClient = healthServicesClient.exerciseClient
@@ -55,6 +58,8 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
 
     suspend fun startExercise() {
         val capabilities = getExerciseCapabilities() ?: return
+
+        Log.d(TAG, "startExercise: ")
 
         val dataTypes = setOf(
             DataType.HEART_RATE_BPM,

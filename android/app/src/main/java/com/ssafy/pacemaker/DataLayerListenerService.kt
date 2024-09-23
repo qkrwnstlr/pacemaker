@@ -17,7 +17,7 @@ class DataLayerListenerService : WearableListenerService() {
 
         when (messageEvent.path) {
             START_ACTIVITY_PATH -> {
-                startService(Intent(this, ExerciseService::class.java))
+                startForegroundService(Intent(this, ExerciseService::class.java))
             }
         }
     }

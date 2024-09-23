@@ -11,6 +11,7 @@ val PERMISSIONS = listOf(
     Manifest.permission.BODY_SENSORS,
     Manifest.permission.BODY_SENSORS_BACKGROUND,
     Manifest.permission.FOREGROUND_SERVICE,
+    Manifest.permission.POST_NOTIFICATIONS
 )
 
 @HiltAndroidApp

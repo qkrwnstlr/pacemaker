@@ -5,6 +5,7 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.Lifecycle
@@ -21,6 +22,8 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
+
+private const val TAG = "ExerciseService_PACEMAKER"
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -54,7 +57,7 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
-        postOngoingActivityNotification()
+        wearableClientManager.startMobileActivity()
         exerciseClientManager.startExercise()
     }
 
@@ -81,11 +84,14 @@ class ExerciseService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
+        Log.d(TAG, "onStartCommand: ")
+
         if (!isStarted) {
             isStarted = true
 
             if (!isBound) stopSelfIfNotRunning()
 
+            postOngoingActivityNotification()
             exerciseMonitor.connect()
 
             lifecycleScope.launch(Dispatchers.Default) {
@@ -127,7 +133,7 @@ class ExerciseService : LifecycleService() {
     private fun handleBind() {
         if (!isBound) {
             isBound = true
-            startService(Intent(this, this::class.java))
+            startForegroundService(Intent(this, this::class.java))
         }
     }
 
@@ -157,7 +163,7 @@ class ExerciseService : LifecycleService() {
                 exerciseNotificationManager.buildNotification(
                     serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
                 ),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK or
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
                             ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
                         else

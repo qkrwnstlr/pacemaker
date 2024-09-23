@@ -41,12 +41,9 @@ class ExerciseService : LifecycleService() {
         if (!isStarted) {
             isStarted = true
 
-            if (!isBound) stopSelfIfNotRunning()
-
             startForeground()
 
             lifecycleScope.launch(Dispatchers.Default) {
-                wearableClientManager.startWearableActivity()
                 exerciseMonitor.connect()
             }
         }
@@ -83,7 +80,7 @@ class ExerciseService : LifecycleService() {
     private fun handleBind() {
         if (!isBound) {
             isBound = true
-            startService(Intent(this, this::class.java))
+            startForegroundService(Intent(this, this::class.java))
         }
     }
 
@@ -106,6 +103,7 @@ class ExerciseService : LifecycleService() {
     private fun startForeground() {
         exerciseNotificationManager.createNotificationChannel()
         val notification = exerciseNotificationManager.buildNotification()
+
         ServiceCompat.startForeground(
             this,
             ExerciseNotificationManager.NOTIFICATION_ID,
@@ -118,6 +116,7 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
+        wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
     }
 

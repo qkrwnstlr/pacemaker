@@ -52,7 +52,7 @@ class ExerciseNotificationManager @Inject constructor(
     }
 
     companion object {
-        const val NOTIFICATION_ID = 1
+        const val NOTIFICATION_ID = 100001
         private const val NOTIFICATION_CHANNEL =
             "com.ssafy.pacemaker.ONGOING_EXERCISE"
         private const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Exercise"
