@@ -1,6 +1,8 @@
 package com.pacemaker.domain.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -16,6 +18,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,21 +39,25 @@ public class User {
 	@Column(nullable = false)
 	private String uid;
 
-	@Column(nullable = false, length = 20)
+	@Column(nullable = false)
 	private String username;
 
-	@Column(nullable = false)
-	private Integer year;
+	@Column(nullable = false, columnDefinition = "int default 0")
+	private Integer age;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "int default 0")
 	private Integer height;
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "int default 0")
 	private Integer weight;
+
+	@Lob
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private List<String> injuries;
 
 	@Column(name = "train_count", nullable = false, columnDefinition = "int default 0")
 	private Integer trainCount;
@@ -65,28 +72,25 @@ public class User {
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-	@Column(nullable = false, columnDefinition = "int default 0")
-	private Integer vdot;
-
 	@Builder
-	public User(Coach coach, String uid, String username, Integer year, Gender gender, Integer height, Integer weight,
-		Integer trainCount, Integer trainTime, Integer trainDistance, LocalDateTime createdAt, Integer vdot) {
+	public User(Coach coach, String uid, String username, Integer age, Gender gender, Integer height, Integer weight,
+		List<String> injuries, Integer trainCount, Integer trainTime, Integer trainDistance, LocalDateTime createdAt) {
 		this.coach = coach;
 		this.uid = uid;
 		this.username = username;
-		this.year = year;
-		this.gender = gender;
-		this.height = height;
-		this.weight = weight;
+		this.age = (age != null) ? age : 0;
+		this.gender = (gender != null) ? gender : Gender.UNKNOWN;
+		this.height = (height != null) ? height : 0;
+		this.weight = (weight != null) ? weight : 0;
+		this.injuries = (injuries != null) ? injuries : new ArrayList<>();
 		this.trainCount = (trainCount != null) ? trainCount : 0;
 		this.trainTime = (trainTime != null) ? trainTime : 0;
 		this.trainDistance = (trainDistance != null) ? trainDistance : 0;
 		this.createdAt = createdAt;
-		this.vdot = vdot;
 	}
 
-	public void update(Integer year, Integer height, Integer weight) {
-		this.year = year;
+	public void update(Integer age, Integer height, Integer weight) {
+		this.age = age;
 		this.height = height;
 		this.weight = weight;
 	}
