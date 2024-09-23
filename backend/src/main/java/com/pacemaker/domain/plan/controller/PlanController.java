@@ -36,4 +36,9 @@ public class PlanController {
 				return ResponseEntity.ok(response);
 			});
 	}
+
+	// @PostMapping("/create")
+	// public Mono<ResponseEntity<?>> createPlanCreate(@RequestBody ContentDTO contentRequest, @RequestBody String uid) {
+	// 	return ResponseEntity.created(null);
+	// }
 }
