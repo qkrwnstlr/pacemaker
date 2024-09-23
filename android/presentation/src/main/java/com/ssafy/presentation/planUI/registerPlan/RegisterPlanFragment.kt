@@ -24,6 +24,7 @@ import com.ssafy.presentation.homeUI.TopSheetBehavior
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatAdapter
 import com.ssafy.presentation.utils.displayText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
@@ -84,9 +85,13 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.planData.collectLatest { chatList ->
-                adapter.submitList(chatList)
-            }
+            collectChatList()
+        }
+    }
+
+    private fun CoroutineScope.collectChatList() = launch {
+        viewModel.planData.collectLatest { chatList ->
+            adapter.submitList(chatList)
         }
     }
 
