@@ -5,6 +5,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -16,6 +17,7 @@ import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.core.MainViewModel
 import com.ssafy.presentation.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -65,13 +67,16 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
         val currentUser = auth.currentUser
 
         if (currentUser != null) {
-            viewModel.checkUser(
-                currentUser.uid,
-                currentUser.displayName,
-                ::moveToConnectFragment,
-                ::moveToHomeFragment,
-                ::saveUid
-            )
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.checkUser(
+                    currentUser.uid,
+                    currentUser.displayName,
+                    currentUser.photoUrl.toString(),
+                    ::moveToConnectFragment,
+                    ::moveToHomeFragment,
+                    ::saveUid
+                )
+            }
         }
     }
 
@@ -96,6 +101,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                         viewModel.checkUser(
                             user.uid,
                             user.displayName,
+                            user.photoUrl.toString(),
                             ::moveToConnectFragment,
                             ::moveToHomeFragment,
                             ::saveUid

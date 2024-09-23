@@ -13,7 +13,7 @@ data class Profile(
     val age: Int = 0,
     val height: Int = 0,
     val weight: Int = 0,
-    val gender: Int? = null
+    val gender: String? = "UNKNOWN"
 ) : Parcelable
 
 fun User.toProfile(): Profile = Profile(
@@ -31,5 +31,5 @@ fun Profile.toUser(): User = User(
     year = age.toYear(),
     height = height,
     weight = weight,
-    gender = gender
+    gender = gender ?: "UNKNOWN"
 )

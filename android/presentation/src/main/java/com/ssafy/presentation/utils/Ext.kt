@@ -39,16 +39,10 @@ fun Int.toTime(): String {
     return "${hour}h ${minute}m"
 }
 
-fun String.toGenderIndex(): Int? = when (this) {
-    WOMAN -> 0
-    MAN -> 1
-    else -> null
-}
-
 fun Long?.toCoachIndex(): Int = when (this) {
-    1L -> R.drawable.coach_mike
-    2L -> R.drawable.coach_jamie
-    3L -> R.drawable.coach_danny
+    1L -> R.drawable.mikefull
+    2L -> R.drawable.jamiefull
+    3L -> R.drawable.dannyfull
     else -> R.drawable.runnerfull
 }
 

@@ -8,7 +8,6 @@ import com.ssafy.domain.usecase.user.ModifyUserUseCase
 import com.ssafy.presentation.myPageUI.data.Profile
 import com.ssafy.presentation.myPageUI.data.toUser
 import com.ssafy.presentation.utils.ERROR
-import com.ssafy.presentation.utils.toGenderIndex
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +46,7 @@ class ModifyViewModel @Inject constructor(
     }
 
     fun setGender(gender: String) {
-        profile = profile.copy(gender = gender.toGenderIndex())
+        profile = profile.copy(gender = gender)
     }
 
     fun modifyProfile(
