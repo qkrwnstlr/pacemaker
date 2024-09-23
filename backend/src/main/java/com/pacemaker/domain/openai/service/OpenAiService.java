@@ -1,6 +1,5 @@
 package com.pacemaker.domain.openai.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,7 +7,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
+import com.pacemaker.domain.openai.dto.ChatDTO;
 import com.pacemaker.domain.openai.dto.Message;
+import com.pacemaker.domain.openai.dto.OpenAiResponse;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 
 import reactor.core.publisher.Mono;
@@ -46,7 +47,25 @@ public class OpenAiService {
 			.model("gpt-4o-mini")
 			.messages(List.of(Message.createSystem(), Message.createUser(content),
 				// Message.createResponseFormat(ResponseFormatString.responseFormat)))
-			Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
+				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
+			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
+			// .responseFormat(ResponseFormatString.responseFormat)
+			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
+			// .responseFormat("{\"type\": \"json_object\"}")
+			.build();
+
+		return openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class);
+	}
+
+	public Mono<String> getTest4o(String content) {
+		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+			.model("gpt-4o-2024-08-06")
+			.messages(List.of(Message.createSystem(), Message.createUser(content),
+				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
@@ -59,20 +78,34 @@ public class OpenAiService {
 			.bodyToMono(String.class);
 	}
 
-	public Mono<String> getTest4o(String content) {
+	public Mono<String> planChat(ChatDTO chatRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
-			.model("gpt-4")
-			.messages(List.of(Message.createSystem(), Message.createUser(content),
-				Message.createResponseFormat(ResponseFormatString.responseFormat)))
-			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
-			// .responseFormat(ResponseFormatString.responseFormat)
-			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
+			.model("gpt-4o-2024-08-06")
+			.messages(List.of(Message.createSystem(), Message.createUser(new Gson().toJson(chatRequest)),
+				Message.createResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
 			.build();
 
 		return openAIWebClient.post()
 			.uri("/chat/completions")
 			.bodyValue(chatCompletionRequest)
 			.retrieve()
-			.bodyToMono(String.class);
+			.bodyToMono(String.class)
+			.map(response -> {
+				// int startIdx = KMP.getStartIndex("\\\"context\\\":", response);
+				// System.out.println("responseLen: " + response.length());
+				// System.out.println("startIdx = " + startIdx);
+				// return response + " | startIdx: " + startIdx;
+
+				OpenAiResponse request = new Gson().fromJson(response, OpenAiResponse.class);
+				// System.out.println(request.choices().get(0));
+				// System.out.println(request.choices().get(0).index());
+				// System.out.println(request.choices().get(0).message());
+				// System.out.println(request.choices.get(0).message.content.toString());
+				ChatDTO chatResponse = new Gson().fromJson(request.choices().get(0).message().content(),
+					ChatDTO.class);
+				System.out.println("chatResponse = " + chatResponse);
+
+				return new Gson().toJson(chatResponse);
+			});
 	}
 }
