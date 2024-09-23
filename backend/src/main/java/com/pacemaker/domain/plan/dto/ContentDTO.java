@@ -1,4 +1,4 @@
-package com.pacemaker.domain.openai.dto;
+package com.pacemaker.domain.plan.dto;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +10,7 @@ import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-public record ChatDTO(@NotNull String message, @NotNull Context context, @NotNull Plan plan) {
+public record ContentDTO(@NotNull String message, @NotNull Context context, @NotNull Plan plan) {
 
 	@Builder
 	public record Context(
