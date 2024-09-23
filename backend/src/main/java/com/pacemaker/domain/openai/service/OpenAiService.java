@@ -9,9 +9,12 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
+import com.pacemaker.domain.openai.dto.RealTimeResponseFormatString;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 import com.pacemaker.domain.plan.dto.ContentResponse;
+import com.pacemaker.domain.realtime.dto.RealTimeRequest;
+import com.pacemaker.domain.realtime.dto.RealTimeResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -54,7 +57,7 @@ public class OpenAiService {
 				// System.out.println(contentResponse.plan().planTrains().get(0).trainDate());
 				// System.out.println("LocalDate: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()));
 				// System.out.println("LocalDateTime: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()).atTime(0, 0));
-				
+
 				return new Gson().toJson(contentResponse);
 			});
 	}
@@ -103,5 +106,27 @@ public class OpenAiService {
 			.bodyValue(chatCompletionRequest)
 			.retrieve()
 			.bodyToMono(String.class);
+	}
+
+	public Mono<String> createRealTimeChatCompletions(RealTimeRequest realTimeRequest) {
+		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+			.model("gpt-4o-2024-08-06")
+			.messages(List.of(Message.createRealTimeSystem(), Message.createUser(new Gson().toJson(realTimeRequest)),
+				Message.createRealTimeResponseFormat(RealTimeResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
+			.build();
+
+		return openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class)
+			.map(response -> {
+				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
+				RealTimeResponse realTimeResponse = new Gson().fromJson(request.choices().get(0).message().content(),
+					RealTimeResponse.class);
+				System.out.println("realTimeResponse = " + realTimeResponse);
+
+				return new Gson().toJson(realTimeResponse);
+			});
 	}
 }
