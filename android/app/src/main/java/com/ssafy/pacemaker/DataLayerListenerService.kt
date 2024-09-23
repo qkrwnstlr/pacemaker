@@ -4,7 +4,6 @@ import android.content.Intent
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
 import com.ssafy.presentation.core.ExerciseService
-import com.ssafy.presentation.core.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

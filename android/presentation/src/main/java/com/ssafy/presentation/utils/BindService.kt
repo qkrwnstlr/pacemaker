@@ -10,6 +10,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import dagger.hilt.android.ActivityRetainedLifecycle
+import dagger.hilt.android.ViewModelLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
@@ -61,6 +62,15 @@ class BinderConnection<T : IBinder>(
     }
 
     companion object {
+        inline fun <reified T : IBinder, reified S : Service> ViewModelLifecycle.bindService(context: Context): BinderConnection<T> {
+            val connection = BinderConnection(context, T::class)
+            bindService(context, S::class, connection)
+            addOnClearedListener {
+                connection.unbind()
+            }
+            return connection
+        }
+
         inline fun <reified T : IBinder, reified S : Service> Lifecycle.bindService(
             context: Context,
         ): BinderConnection<T> {

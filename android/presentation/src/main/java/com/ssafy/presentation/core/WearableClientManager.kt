@@ -2,10 +2,7 @@ package com.ssafy.presentation.core
 
 import android.content.Context
 import com.google.android.gms.wearable.CapabilityClient
-import com.google.android.gms.wearable.DataItem
-import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
-import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -16,13 +13,18 @@ class WearableClientManager @Inject constructor(
     @ApplicationContext val context: Context
 ) {
     val dataClient by lazy { Wearable.getDataClient(context) }
-    val messageClient by lazy { Wearable.getMessageClient(context) }
-    val capabilityClient by lazy { Wearable.getCapabilityClient(context) }
+    private val messageClient by lazy { Wearable.getMessageClient(context) }
+    private val capabilityClient by lazy { Wearable.getCapabilityClient(context) }
 
-    suspend fun sendToWearableDevice(path: String): DataItem {
-        val request = PutDataRequest.create(path)
+    suspend fun sendToWearableDevice(path: String) {
+        val nodes = capabilityClient
+            .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
+            .await()
+            .nodes
 
-        return dataClient.putDataItem(request).await()
+        nodes.map { node ->
+            messageClient.sendMessage(node.id, path, byteArrayOf()).await()
+        }
     }
 
     suspend fun startWearableActivity() {

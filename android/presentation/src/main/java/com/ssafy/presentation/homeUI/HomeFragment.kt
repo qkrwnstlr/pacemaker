@@ -41,11 +41,13 @@ import com.ssafy.presentation.component.TrainRestMessageView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
     OnMapReadyCallback {
     private lateinit var topSheetBehavior: TopSheetBehavior<ConstraintLayout>
@@ -222,6 +224,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun initListener() {
         binding.startRunButton.setOnClickListener {
+            viewModel.startExercise()
             val action = HomeFragmentDirections.actionHomeFragmentToRunningFragment()
             findNavController().navigate(action)
         }

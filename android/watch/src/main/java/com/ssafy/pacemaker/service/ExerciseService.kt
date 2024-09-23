@@ -12,6 +12,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ssafy.pacemaker.data.ExerciseClientManager
+import com.ssafy.pacemaker.data.WearableClientManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -20,7 +21,6 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
-
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -36,6 +36,9 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var exerciseMonitor: ExerciseMonitor
+
+    @Inject
+    lateinit var wearableClientManager: WearableClientManager
 
     private var isBound = false
     private var isStarted = false
@@ -86,6 +89,7 @@ class ExerciseService : LifecycleService() {
             exerciseMonitor.connect()
 
             lifecycleScope.launch(Dispatchers.Default) {
+                wearableClientManager.startMobileActivity()
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                     exerciseServiceMonitor.monitor()
                 }

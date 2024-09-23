@@ -5,7 +5,6 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseState
@@ -22,11 +21,16 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
-class ExerciseService @Inject constructor(
-    private val exerciseNotificationManager: ExerciseNotificationManager,
-    private val wearableClientManager: WearableClientManager,
-    private val exerciseMonitor: ExerciseMonitor
-) : LifecycleService() {
+class ExerciseService : LifecycleService() {
+    @Inject
+    lateinit var exerciseNotificationManager: ExerciseNotificationManager
+
+    @Inject
+    lateinit var wearableClientManager: WearableClientManager
+
+    @Inject
+    lateinit var exerciseMonitor: ExerciseMonitor
+
     private var isBound = false
     private var isStarted = false
     private val localBinder = LocalBinder()
@@ -42,6 +46,7 @@ class ExerciseService @Inject constructor(
             startForeground()
 
             lifecycleScope.launch(Dispatchers.Default) {
+                wearableClientManager.startWearableActivity()
                 exerciseMonitor.connect()
             }
         }
@@ -78,10 +83,6 @@ class ExerciseService @Inject constructor(
     private fun handleBind() {
         if (!isBound) {
             isBound = true
-            Log.d("PACEMAKER", "handleBind: wearableClientManager.startWearableActivity")
-            lifecycleScope.launch {
-                wearableClientManager.startWearableActivity()
-            }
             startService(Intent(this, this::class.java))
         }
     }
@@ -110,14 +111,13 @@ class ExerciseService @Inject constructor(
             ExerciseNotificationManager.NOTIFICATION_ID,
             notification,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
             else
                 0
         )
     }
 
     suspend fun startExercise() {
-        wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
     }
 

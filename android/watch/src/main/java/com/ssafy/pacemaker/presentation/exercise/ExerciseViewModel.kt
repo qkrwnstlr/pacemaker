@@ -4,19 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.pacemaker.data.HealthServicesRepository
 import com.ssafy.pacemaker.data.ServiceState
-import com.ssafy.pacemaker.data.WearableClientManager
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
-    private val wearableClientManager: WearableClientManager
 ) : ViewModel() {
     init {
         viewModelScope.launch {
@@ -46,9 +44,6 @@ class ExerciseViewModel @Inject constructor(
     )
 
     fun startExercise() {
-        viewModelScope.launch {
-            wearableClientManager.startMobileActivity()
-        }
         healthServicesRepository.startExercise()
     }
 

@@ -15,13 +15,12 @@ import javax.inject.Singleton
 class WearableClientManager @Inject constructor(
     @ApplicationContext val context: Context
 ) {
-    val dataClient by lazy { Wearable.getDataClient(context) }
-    private val messageClient by lazy { Wearable.getMessageClient(context) }
+    private val dataClient by lazy { Wearable.getDataClient(context) }
+    val messageClient by lazy { Wearable.getMessageClient(context) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(context) }
 
     suspend fun <T> sendToMobileDevice(path: String, data: T): DataItem {
-        val request = PutDataRequest
-            .create("$path")
+        val request = PutDataRequest.create(path)
             .apply { setData(Gson().toJson(data).toByteArray()) }
 
         return dataClient.putDataItem(request).await()
