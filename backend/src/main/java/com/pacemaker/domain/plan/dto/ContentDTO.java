@@ -28,7 +28,7 @@ public record ContentDTO(@NotNull String message, @NotNull Context context, @Not
 		Integer totalDays, Integer totalTimes, Integer totalDistances, List<PlanTrain> planTrains
 	) {
 		public record PlanTrain(
-			Integer index, Date trainDate, String trainType, Integer sessionTime, Integer sessionDistance,
+			Integer index, Date trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
 			Integer repeat, Integer trainParam, Integer trainPace, Integer interParam
 		) {
 		}
