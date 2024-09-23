@@ -137,7 +137,7 @@ public class ResponseFormatString {
 		                  "format": "date",
 		                  "description": "train date in `date` format"
 		                },
-		                "trainType": {
+		                "paramType": {
 		                  "type": "string",
 		                  "enum": [
 		                    "time",
@@ -165,7 +165,7 @@ public class ResponseFormatString {
 		              "required": [
 		                "index",
 		                "trainDate",
-		                "trainType",
+		                "paramType",
 		                "repeat",
 		                "trainParam",
 		                "trainPace",
