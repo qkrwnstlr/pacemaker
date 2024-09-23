@@ -1,5 +1,5 @@
 package com.pacemaker.domain.report.entity;
 
-public enum TrainType {
+public enum ReportType {
 	PLAN, DAILY, FREE
 }

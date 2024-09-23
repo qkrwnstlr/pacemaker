@@ -31,7 +31,7 @@ public class Report {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "train_date", columnDefinition = "datetime default now()", nullable = false)
+	@Column(name = "train_date", nullable = false, columnDefinition = "datetime default now()")
 	private LocalDateTime trainDate;
 
 	@Column(name = "train_distance", nullable = false)
@@ -60,23 +60,28 @@ public class Report {
 	@Column(name = "split_data", columnDefinition = "TEXT")
 	private String splitData;
 
-	@Column(name = "train_type", nullable = false)
+	@Lob
+	@Column(name = "train_map", columnDefinition = "TEXT")
+	private String trainMap;
+
+	@Column(name = "report_type", nullable = false)
 	@Enumerated(EnumType.STRING)
-	private TrainType trainType;
+	private ReportType reportType;
 
 	@Builder
 	public Report(User user, LocalDateTime trainDate, Integer trainDistance, Integer trainTime, Integer heartRate,
-		Integer pace, Integer cadence, Integer kcal, String heartZone, String splitData, TrainType trainType) {
-			this.user = user;
-			this.trainDate = trainDate;
-			this.trainDistance = trainDistance;
-			this.trainTime = trainTime;
-			this.heartRate = heartRate;
-			this.pace = pace;
-			this.cadence = cadence;
-			this.kcal = kcal;
-			this.heartZone = heartZone;
-			this.splitData = splitData;
-			this.trainType = trainType;
+		Integer pace, Integer cadence, Integer kcal, String heartZone, String splitData, String trainMap, ReportType reportType) {
+		this.user = user;
+		this.trainDate = trainDate;
+		this.trainDistance = trainDistance;
+		this.trainTime = trainTime;
+		this.heartRate = heartRate;
+		this.pace = pace;
+		this.cadence = cadence;
+		this.kcal = kcal;
+		this.heartZone = heartZone;
+		this.splitData = splitData;
+		this.trainMap = trainMap;
+		this.reportType = reportType;
 	}
 }
