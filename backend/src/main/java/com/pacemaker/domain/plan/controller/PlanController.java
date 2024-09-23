@@ -25,16 +25,13 @@ public class PlanController {
 
 	@PostMapping("/chat")
 	public Mono<ResponseEntity<?>> createPlanChat(@RequestBody ContentDTO contentRequest) {
-
-		System.out.println("Received message: " + contentRequest.message());
-		System.out.println("Goal: " + contentRequest.context().goal());
-
+		
 		Instant start = Instant.now();
 
 		return openAiService.createPlanChatCompletions(contentRequest)
 			.map(response -> {
 				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
-				System.out.println("Request processing time: " + timeElapsed + " milliseconds");
+				System.out.println("Request processing time: " + timeElapsed + " milliseconds"); // 나중에 log로 바꾸기
 
 				return ResponseEntity.ok(response);
 			});
