@@ -9,6 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
 
@@ -39,7 +42,9 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
         Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
     }
 
-    fun getUid() = viewModel.uid
-    fun clearUid() = viewModel.clearUid()
+    fun getUid() = viewModel.uid.value
+    suspend fun clearUid() = viewModel.clearUid()
+
+    var auth: FirebaseAuth = Firebase.auth
 
 }

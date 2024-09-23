@@ -1,6 +1,8 @@
 package com.ssafy.data.api
 
+import com.ssafy.domain.dto.CheckUid
 import com.ssafy.domain.dto.Coach
+import com.ssafy.domain.dto.Exist
 import com.ssafy.domain.dto.User
 import retrofit2.Response
 import retrofit2.http.Body
@@ -14,6 +16,9 @@ interface UserAPI {
 
     @POST("users")
     suspend fun signUp(@Body user: User): Response<Unit>
+
+    @POST("users/checkuid")
+    suspend fun checkUid(@Body uid: CheckUid): Response<Exist>
 
     @PUT("users")
     suspend fun modify(@Body user: User): Response<User>

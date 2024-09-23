@@ -3,7 +3,9 @@ package com.ssafy.data.repository
 import com.ssafy.data.di.IoDispatcher
 import com.ssafy.data.response.toResponseResult
 import com.ssafy.data.source.user.UserDataSource
+import com.ssafy.domain.dto.CheckUid
 import com.ssafy.domain.dto.Coach
+import com.ssafy.domain.dto.Exist
 import com.ssafy.domain.dto.User
 import com.ssafy.domain.repository.UserRepository
 import com.ssafy.domain.response.ResponseResult
@@ -20,6 +22,11 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun signUp(user: User): ResponseResult<Unit> {
         val response = withContext(ioDispatcher) { userDataSource.signUp(user) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun checkUid(checkUid: CheckUid): ResponseResult<Exist> {
+        val response = withContext(ioDispatcher) { userDataSource.checkUid(checkUid) }
         return response.toResponseResult()
     }
 
