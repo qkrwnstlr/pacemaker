@@ -27,8 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data android:name="default_web_client_id"
-            android:value="156591172472-ul73b36oa7v7oipjhtkrn5u71f47bv2b.apps.googleusercontent.com"/>
     </application>
 
 </manifest>

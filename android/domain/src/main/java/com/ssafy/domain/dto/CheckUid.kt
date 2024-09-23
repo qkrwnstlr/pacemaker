@@ -1,5 +1,5 @@
 package com.ssafy.domain.dto
 
-class CheckUid(
+data class CheckUid(
     val uid: String
 )
