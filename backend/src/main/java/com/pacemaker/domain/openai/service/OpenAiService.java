@@ -10,7 +10,6 @@ import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatDTO;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.OpenAiResponse;
-import com.pacemaker.domain.openai.dto.ResponseContent;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 
 import reactor.core.publisher.Mono;
@@ -98,15 +97,15 @@ public class OpenAiService {
 				// return response + " | startIdx: " + startIdx;
 
 				OpenAiResponse request = new Gson().fromJson(response, OpenAiResponse.class);
-				System.out.println(request.choices().get(0));
-				System.out.println(request.choices().get(0).index());
-				System.out.println(request.choices().get(0).message());
+				// System.out.println(request.choices().get(0));
+				// System.out.println(request.choices().get(0).index());
+				// System.out.println(request.choices().get(0).message());
 				// System.out.println(request.choices.get(0).message.content.toString());
-				ResponseContent responseContent = new Gson().fromJson(request.choices().get(0).message().content(),
-					ResponseContent.class);
-				System.out.println("ResponseContent = " + responseContent);
+				ChatDTO chatResponse = new Gson().fromJson(request.choices().get(0).message().content(),
+					ChatDTO.class);
+				System.out.println("chatResponse = " + chatResponse);
 
-				return new Gson().toJson(responseContent);
+				return new Gson().toJson(chatResponse);
 			});
 	}
 }

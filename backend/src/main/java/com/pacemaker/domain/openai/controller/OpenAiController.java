@@ -85,4 +85,21 @@ public class OpenAiController {
                 return ResponseEntity.ok(response);
             });
     }
+
+    @PostMapping("/test/kim")
+    public Mono<ResponseEntity<?>> getStartIdx(@RequestBody ChatDTO chatRequest) {
+
+        System.out.println("Received message: " + chatRequest.message());
+        System.out.println("Goal: " + chatRequest.context().goal());
+
+        Instant start = Instant.now();
+
+        return openAiService.planChat(chatRequest)
+            .map(response -> {
+                Instant finish = Instant.now();
+                long timeElapsed = Duration.between(start, finish).toMillis();
+                System.out.println("Request processing time: " + timeElapsed + " milliseconds");
+                return ResponseEntity.ok(response);
+            });
+    }
 }
