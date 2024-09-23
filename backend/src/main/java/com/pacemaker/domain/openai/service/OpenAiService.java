@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
-import com.pacemaker.domain.openai.dto.ChatRequest;
+import com.pacemaker.domain.openai.dto.ChatDTO;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.OpenAiResponse;
 import com.pacemaker.domain.openai.dto.ResponseContent;
@@ -79,7 +79,7 @@ public class OpenAiService {
 			.bodyToMono(String.class);
 	}
 
-	public Mono<String> planChat(ChatRequest chatRequest) {
+	public Mono<String> planChat(ChatDTO chatRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createSystem(), Message.createUser(new Gson().toJson(chatRequest)),
