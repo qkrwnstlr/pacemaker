@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -21,43 +21,43 @@ public class Plan {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "created_at", nullable = false, columnDefinition = "datetime default now()")
-	private LocalDateTime createdAt;
+	@Column(name = "created_at", nullable = false)
+	private LocalDate createdAt;
 
-	@Column(name = "expired_at", nullable = false, columnDefinition = "datetime")
-	private LocalDateTime expiredAt;
+	@Column(name = "expired_at", nullable = false)
+	private LocalDate expiredAt;
 
-	@Column(name = "total_count", nullable = false)
-	private Integer totalCount;
+	@Column(name = "total_days", nullable = false)
+	private Integer totalDays;
 
-	@Column(name = "completed_count", nullable = false)
+	@Column(name = "total_times", nullable = false)
+	private Integer totalTimes;
+
+	@Column(name = "total_distances", nullable = false)
+	private Integer totalDistances;
+
+	@Lob
+	@Column(nullable = false, columnDefinition = "TEXT")
+	private String context;
+
+	@Column(name = "completed_count", nullable = false, columnDefinition = "int default 0")
 	private Integer completedCount;
 
-	@Column(name = "day_of_week", nullable = false)
-	private Integer dayOfWeek;
-
-	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private PlanStatus status;
 
-	@Column(name = "goal_distance", nullable = false, columnDefinition = "int default 0")
-	private Integer goalDistance;
-
-	@Column(name = "goal_time", nullable = false, columnDefinition = "int default 0")
-	private Integer goalTime;
-
 	@Builder
-	public Plan(User user, LocalDateTime createdAt, LocalDateTime expiredAt, Integer totalCount, Integer completedCount,
-		Integer dayOfWeek, PlanStatus status, Integer goalDistance, Integer goalTime) {
-
+	public Plan(User user, LocalDate createdAt, LocalDate expiredAt, Integer totalDays, Integer totalTimes,
+		Integer totalDistances, String context, Integer completedCount, PlanStatus status) {
 		this.user = user;
 		this.createdAt = createdAt;
 		this.expiredAt = expiredAt;
-		this.totalCount = totalCount;
-		this.completedCount = completedCount;
-		this.dayOfWeek = dayOfWeek;
-		this.status = status;
-		this.goalDistance = goalDistance;
-		this.goalTime = goalTime;
+		this.totalDays = totalDays;
+		this.totalTimes = totalTimes;
+		this.totalDistances = totalDistances;
+		this.context = context;
+		this.completedCount = (completedCount != null) ? completedCount : 0;
+		this.status = (status != null) ? status : PlanStatus.ACTIVE;
 	}
 }
