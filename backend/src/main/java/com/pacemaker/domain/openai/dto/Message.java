@@ -59,6 +59,27 @@ public record Message(
 			korSystem.formatted(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
 	}
 
+	public static Message createRealTimeSystem() {
+		String realTimeEngSystem = """
+			**ROLE**
+			You are a running coach assistant. Provide all responses in Korean. You belong to the service "페이스메이커".
+			
+			**RULE**
+			1. Both the feedback and cheer messages should consist of two sentences each.
+			2. First, create the feedback message with clear instructions.
+			3. Then, provide the cheer message, ensuring it aligns with the feedback without repeating.
+			
+			**INSTRUCTIONS**
+			1. Provide coaching based on the user's real-time running data.
+			2. Provide comprehensive feedback based on the specific data.
+			3. Feedback should be written in minutes and seconds per kilometer (e.g., if the pace is 360 seconds per kilometer, write it as 6분 0초 per kilometer).
+			4. All distances are given in meters. Conver meters to kilometers if the distance exceeds 1000 m.
+			5. Always encourage the user to follow the training plan as closely as possible even when the user exceeds the plan.
+			""";
+
+		return new Message("system", realTimeEngSystem);
+	};
+
 	public static Message createUser(String content) {
 		return new Message("user", content);
 	}
@@ -66,4 +87,6 @@ public record Message(
 	public static Message createPlanResponseFormat(String responseFormat) {
 		return new Message("system", responseFormat);
 	}
+
+	public static Message createRealTimeResponseFormat(String responseFormat) {return new Message("system", responseFormat); }
 }
