@@ -11,13 +11,15 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.FragmentScheduleDialogBinding
 import com.ssafy.presentation.utils.displayText
 import java.time.LocalDate
 
 class ScheduleDialogFragment(
-    private val date: LocalDate
+    private val date: LocalDate,
+    private val planTrain: PlanTrain? = null
 ) : DialogFragment() {
     private var _binding: FragmentScheduleDialogBinding? = null
     private val binding: FragmentScheduleDialogBinding get() = _binding!!
@@ -41,6 +43,7 @@ class ScheduleDialogFragment(
         trainInfoTitle.ivNext.visibility = View.GONE
         root.layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
         trainInfoTitle.tvResultTitle.text = date.displayText()
+        // TODO 차트 만들 때 훈련 데이터 가지고 만들어야 함
         makeChart(trainInfoChart.barChart)
     }
 

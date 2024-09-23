@@ -16,23 +16,10 @@ class CoachChatViewHolder(
 
     fun bind(data: ChatData.CoachData, isFirstItem: Boolean) = with(binding) {
         tvCoachTalk.text = data.text
-        isChatMaking()
 
         if (!isFirstItem) return@with
         ivCoach.setImageResource(data.coachIndex.toCoachIndex())
         cvCoach.visibility = View.VISIBLE
-    }
-
-    private fun isChatMaking() = CoroutineScope(Dispatchers.Main).launch {
-        while (true) {
-            val text = binding.tvCoachTalk.text.toString()
-            if (!text.startsWith(RegisterPlanViewModel.COACH_CHATTING)) return@launch
-
-            delay(500)
-            val dotCount = text.count { it == '.' }
-            val newText = if (dotCount < 5) "$text." else text.substringBefore(".")
-            binding.tvCoachTalk.text = newText
-        }
     }
 
 }

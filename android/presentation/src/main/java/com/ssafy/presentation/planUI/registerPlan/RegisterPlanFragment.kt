@@ -25,11 +25,15 @@ import com.ssafy.presentation.planUI.registerPlan.adapter.ChatAdapter
 import com.ssafy.presentation.utils.displayText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.SortedSet
 
 @AndroidEntryPoint
 class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
@@ -76,8 +80,9 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun initListener() = with(binding) {
         chatUi.ivSend.setOnClickListener {
             val text = chatUi.etChat.text.toString()
+            if(text.isBlank()) return@setOnClickListener
             chatUi.etChat.text = null
-            viewModel.sendMyMessage(text)
+            viewModel.sendMyMessage(text, ::makeFailMessage)
         }
         setSendClickable(false)
 
@@ -91,12 +96,32 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             collectChatList()
+            collectContext()
+            collectPlan()
         }
     }
 
     private fun CoroutineScope.collectChatList() = launch {
-        viewModel.planData.collectLatest { chatList ->
+        viewModel.chatData.collectLatest { chatList ->
             adapter.submitList(chatList)
+        }
+    }
+
+    private fun CoroutineScope.collectContext() = launch {
+        viewModel.contextData.collectLatest { context ->
+            val userInfo = context.userInfo
+            // TODO userInfo 화면에 표출해야함
+        }
+    }
+
+    private fun CoroutineScope.collectPlan() = launch {
+        viewModel.planData.collectLatest { plan ->
+            val dateList = plan.planTrains.map { it.trainDate.toLocalDate() }.toSortedSet()
+            setUpCalendar(dateList)
+            binding.topSheetTrain.fabBlue.isEnabled = !dateList.isEmpty()
+
+            if (dateList.isEmpty()) scrollUpCalender()
+            else scrollDownCalendar()
         }
     }
 
@@ -107,11 +132,6 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             .forEachIndexed { index, textView ->
                 textView.text = daysOfWeek[index].displayText(narrow = true)
             }
-
-        val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(0)
-        val endMonth = currentMonth.plusMonths(1)
-        setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
 
         ivRight.setOnClickListener {
             cvDays.findFirstVisibleMonth()?.let {
@@ -126,13 +146,9 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         }
     }
 
-    private fun setupMonthCalendar(
-        startMonth: YearMonth,
-        endMonth: YearMonth,
-        currentMonth: YearMonth,
-        daysOfWeek: List<DayOfWeek>,
+    private fun setUpCalendar(
+        dateList: SortedSet<LocalDate>
     ) = with(binding.topSheetTrain.cvDays) {
-
         dayBinder = object : MonthDayBinder<MiniDateContainer> {
             override fun create(view: View): MiniDateContainer =
                 MiniDateContainer(view, ::dateClicked)
@@ -141,6 +157,10 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
                 container.day = data
                 if (data.position == DayPosition.MonthDate) {
                     container.binding.exOneDayText.text = data.date.dayOfMonth.toString()
+
+                    if (dateList.contains(data.date)) return
+                    container.binding.exThreeDotView.visibility = View.GONE
+                    container.binding.root.isEnabled = false
                 } else {
                     container.binding.root.background = null
                     container.binding.exThreeDotView.visibility = View.GONE
@@ -148,9 +168,15 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             }
         }
 
+        val currentDate = YearMonth.now()
+        val firstMonth = dateList.firstOrNull()?.month ?: currentDate.month
+        val lastMonth = dateList.lastOrNull()?.month ?: currentDate.month
+
+        val startMonth = YearMonth.of(currentDate.year, firstMonth)
+        val endMonth = YearMonth.of(currentDate.year, lastMonth)
         monthScrollListener = { updateTitle() }
-        setup(startMonth, endMonth, daysOfWeek.first())
-        scrollToMonth(currentMonth)
+        setup(startMonth, endMonth, daysOfWeek().first())
+        scrollToMonth(currentDate)
     }
 
     private fun updateTitle() = with(binding.topSheetTrain) {
@@ -161,7 +187,12 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 
     private fun dateClicked(date: LocalDate) {
         val manager = requireActivity().supportFragmentManager
-        ScheduleDialogFragment(date).show(manager, "ScheduleDialog")
+        val planTrain = viewModel.planData.value.planTrains.find { it.trainDate.toLocalDate() == date }
+        ScheduleDialogFragment(date, planTrain).show(manager, "ScheduleDialog")
+    }
+
+    private suspend fun makeFailMessage(message: String) = withContext(Dispatchers.Main) {
+        showSnackStringBar(message)
     }
 
     private fun scrollUpCalender() {
