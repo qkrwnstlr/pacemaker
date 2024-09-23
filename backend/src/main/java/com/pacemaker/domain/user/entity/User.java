@@ -1,8 +1,6 @@
 package com.pacemaker.domain.user.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -57,7 +55,7 @@ public class User {
 
 	@Lob
 	@Column(nullable = false, columnDefinition = "TEXT")
-	private List<String> injuries;
+	private String injuries;
 
 	@Column(name = "train_count", nullable = false, columnDefinition = "int default 0")
 	private Integer trainCount;
@@ -73,26 +71,27 @@ public class User {
 	private LocalDateTime createdAt;
 
 	@Builder
-	public User(Coach coach, String uid, String username, Integer age, Gender gender, Integer height, Integer weight,
-		List<String> injuries, Integer trainCount, Integer trainTime, Integer trainDistance, LocalDateTime createdAt) {
-		this.coach = coach;
+	public User(String uid, String username, Integer age, Gender gender, Integer height, Integer weight,
+		String injuries, Integer trainCount, Integer trainTime, Integer trainDistance) {
 		this.uid = uid;
 		this.username = username;
 		this.age = (age != null) ? age : 0;
 		this.gender = (gender != null) ? gender : Gender.UNKNOWN;
 		this.height = (height != null) ? height : 0;
 		this.weight = (weight != null) ? weight : 0;
-		this.injuries = (injuries != null) ? injuries : new ArrayList<>();
+		this.injuries = (injuries != null) ? injuries : "[]";
 		this.trainCount = (trainCount != null) ? trainCount : 0;
 		this.trainTime = (trainTime != null) ? trainTime : 0;
 		this.trainDistance = (trainDistance != null) ? trainDistance : 0;
-		this.createdAt = createdAt;
 	}
 
-	public void update(Integer age, Integer height, Integer weight) {
+	public void update(String username, Integer age, Integer height, Integer weight, Gender gender, String injuries) {
+		this.username = username;
 		this.age = age;
 		this.height = height;
 		this.weight = weight;
+		this.gender = gender;
+		this.injuries = injuries;
 	}
 
 	public void updateCoach(Coach coach) {

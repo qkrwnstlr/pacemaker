@@ -11,12 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
-import com.pacemaker.domain.user.dto.CheckUidResponse;
 import com.pacemaker.domain.coach.dto.CoachNumberResponse;
-import com.pacemaker.domain.user.dto.UserCreateRequest;
+import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
+import com.pacemaker.domain.user.dto.GoogleLoginRequest;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
-import com.pacemaker.domain.user.dto.UserRequest;
 import com.pacemaker.domain.user.dto.UserUpdateRequest;
 import com.pacemaker.domain.user.service.UserService;
 
@@ -24,71 +22,67 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "User API", description = "User API 입니다.")
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/users/{uid}")
 @RestController
 public class UserController {
 
 	private final UserService userService;
 
 	@PostMapping
-	@Operation(summary = "회원가입")
+	@Operation(summary = "구글 로그인")
 	@ApiResponses({
-		@ApiResponse(responseCode = "201", description = "회원가입 성공")
+		@ApiResponse(responseCode = "200", description = "구글 로그인 성공")
 	})
-	public ResponseEntity<?> createUser(@Valid @RequestBody UserCreateRequest userCreateRequest) {
-		userService.create(userCreateRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<UserInfoResponse> googleLogin(@PathVariable String uid,
+		@RequestBody GoogleLoginRequest googleLoginRequest) {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.googleLogin(uid, googleLoginRequest));
 	}
 
-	@PostMapping("/checkuid")
-	@Operation(summary = "uid 중복체크")
-	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "UID 중복체크 완료")
-	})
-	public ResponseEntity<CheckUidResponse> checkUid(@RequestBody UserRequest userRequest) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.checkUid(userRequest));
-	}
-
-	@GetMapping("/{uid}")
+	@GetMapping
 	@Operation(summary = "회원정보 조회")
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "회원정보 확인 성공")
+		@ApiResponse(responseCode = "200", description = "회원정보 조회 성공"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패")
 	})
-	public ResponseEntity<UserInfoResponse> findUser(@PathVariable String uid) {
+	public ResponseEntity<UserInfoResponse> getUserInfo(@PathVariable String uid) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserInfo(uid));
 	}
 
 	@PutMapping
 	@Operation(summary = "회원정보 수정")
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "회원정보 수정 성공")
+		@ApiResponse(responseCode = "200", description = "회원정보 수정 성공"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패")
 	})
-	public ResponseEntity<UserInfoResponse> updateUser(@RequestBody UserUpdateRequest userUpdateRequest) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserInfo(userUpdateRequest));
+	public ResponseEntity<UserInfoResponse> updateUser(@PathVariable String uid,
+		@RequestBody UserUpdateRequest userUpdateRequest) {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.updateUserInfo(uid, userUpdateRequest));
 	}
 
-	@GetMapping("/{uid}/coach")
+	@GetMapping("/coach")
 	@Operation(summary = "내 코치 정보 요청")
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "코치 확인 성공")
+		@ApiResponse(responseCode = "200", description = "코치 확인 성공"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패")
 	})
 	public ResponseEntity<CoachNumberResponse> findCoachNumber(@PathVariable String uid) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getCoachNumber(uid));
 	}
 
-	@PutMapping("/{uid}/coach")
+	@PutMapping("/coach")
 	@Operation(summary = "내 코치 정보 수정")
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "내 코치 정보 수정 완료")
+		@ApiResponse(responseCode = "200", description = "내 코치 정보 수정 완료"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패"),
+		@ApiResponse(responseCode = "404", description = "코치정보 조회 실패")
 	})
 	public ResponseEntity<?> updateCoach(@PathVariable String uid, @RequestBody CoachUpdateRequest coachUpdateRequest) {
 		userService.updateCoachNumber(uid, coachUpdateRequest);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 
 	@DeleteMapping
@@ -96,8 +90,8 @@ public class UserController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "204", description = "회원 탈퇴 완료")
 	})
-	public ResponseEntity<?> deleteUser(@RequestBody UserRequest userRequest) {
-		userService.deleteUser(userRequest);
-		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	public ResponseEntity<?> deleteUser(@PathVariable String uid) {
+		userService.deleteUser(uid);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 }
