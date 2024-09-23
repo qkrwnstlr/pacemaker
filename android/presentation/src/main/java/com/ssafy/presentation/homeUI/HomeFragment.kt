@@ -44,6 +44,7 @@ import com.ssafy.presentation.databinding.FragmentHomeBinding
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -181,16 +182,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
         initWeekCalendar()
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.profileUrlFlow()
-                .collect {
-                    Glide.with(requireContext())
-                        .load(it)
-                        .circleCrop()
-                        .into(binding.profileButton)
-                }
+            val imgUrl = viewModel.profileUrlFlow().firstOrNull()
+            Glide.with(root)
+                .load(imgUrl)
+                .circleCrop()
+                .into(profileButton)
         }
     }
 

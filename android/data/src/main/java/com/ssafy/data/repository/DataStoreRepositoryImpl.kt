@@ -53,4 +53,10 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext val contex
     override fun getImgUrl(): Flow<String> =
         context.datastore.data.catch { emit(emptyPreferences()) }
             .map { preference -> preference[imgUrlKey] ?: "" }
+
+    override suspend fun clearImgUrl() {
+        context.datastore.edit {
+            it.clear()
+        }
+    }
 }
