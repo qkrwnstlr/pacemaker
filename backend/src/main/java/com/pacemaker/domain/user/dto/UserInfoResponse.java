@@ -1,5 +1,6 @@
 package com.pacemaker.domain.user.dto;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ public record UserInfoResponse(String name, Integer age, Integer height, Integer
 		}
 
 		String content = injuries.substring(1, injuries.length() - 1);
-		return List.of(content.split(", ")).stream()
+		return Arrays.stream(content.split(", "))
 			.map(String::trim)
 			.collect(Collectors.toList());
 	}
