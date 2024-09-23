@@ -20,7 +20,7 @@ public class RealTimeResponseFormatString {
 		        "type": "string",
 		        "description": "Cheer-up message within 2 sentences in Korean"
 		      },
-		      "textFeedBack": {
+		      "textFeedback": {
 		        "type": "string",
 		        "description": "Feedback message of the about the user's run within 2 sentences in Korean"
 		      }
