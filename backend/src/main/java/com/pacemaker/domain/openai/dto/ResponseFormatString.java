@@ -123,7 +123,7 @@ public class ResponseFormatString {
 		      "plan": {
 		        "type": "object",
 		        "properties": {
-		          "trainDetails": {
+		          "planTrains": {
 		            "type": "array",
 		            "items": {
 		              "type": "object",
@@ -175,7 +175,7 @@ public class ResponseFormatString {
 		          }
 		        },
 		        "required": [
-		          "trainDetails"
+		          "planTrains"
 		        ]
 		      }
 		    },

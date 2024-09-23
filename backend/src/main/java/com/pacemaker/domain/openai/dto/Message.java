@@ -44,7 +44,7 @@ public record Message(
 		3-3. Training days of week should be at least 1, maximum 3 days.
 		4. The date of today is : "%s".
 		5. Save the user info in the "userInfo" field if the user provides it.
-		6. "plan", "trainDetails", "trainDate" should be in "date" format.
+		6. "plan", "planTrains", "trainDate" should be in "date" format.
 		7. Provide a plan with at least 1 month, and maximum of 6 months.
 		""";
 
