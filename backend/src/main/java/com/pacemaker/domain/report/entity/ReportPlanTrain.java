@@ -1,7 +1,7 @@
 package com.pacemaker.domain.report.entity;
 
 import com.pacemaker.domain.coach.entity.Coach;
-import com.pacemaker.domain.plan.entity.PlanDetail;
+import com.pacemaker.domain.plan.entity.PlanTrain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,10 +17,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@IdClass(ReportPlanDetailId.class) // 복합키
+@IdClass(ReportPlanTrainId.class) // 복합키
 @Getter
 @NoArgsConstructor
-public class ReportPlanDetail {
+public class ReportPlanTrain {
 	@Id
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "report_id", nullable = false)
@@ -28,8 +28,8 @@ public class ReportPlanDetail {
 
 	@Id
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "plan_detail_id", nullable = false)
-	private PlanDetail planDetail;
+	@JoinColumn(name = "plan_train_id", nullable = false)
+	private PlanTrain planTrain;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "coach_id", nullable = false)
@@ -40,10 +40,9 @@ public class ReportPlanDetail {
 	private String coachMessage;
 
 	@Builder
-	public ReportPlanDetail(Report report, PlanDetail planDetail, Coach coach, String coachMessage) {
-
+	public ReportPlanTrain(Report report, PlanTrain planTrain, Coach coach, String coachMessage) {
 		this.report = report;
-		this.planDetail = planDetail;
+		this.planTrain = planTrain;
 		this.coach = coach;
 		this.coachMessage = coachMessage;
 	}

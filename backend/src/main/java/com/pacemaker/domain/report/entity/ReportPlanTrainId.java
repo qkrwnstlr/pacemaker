@@ -8,21 +8,21 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReportPlanDetailId implements Serializable {
+public class ReportPlanTrainId implements Serializable {
 	private Long report;
-	private Long planDetail;
+	private Long planTrain;
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		ReportPlanDetailId that = (ReportPlanDetailId) o;
+		ReportPlanTrainId that = (ReportPlanTrainId) o;
 		return Objects.equals(report, that.report) &&
-			Objects.equals(planDetail, that.planDetail);
+			Objects.equals(planTrain, that.planTrain);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(report, planDetail);
+		return Objects.hash(report, planTrain);
 	}
 }
