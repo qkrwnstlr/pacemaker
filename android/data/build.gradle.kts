@@ -16,7 +16,7 @@ android {
     properties.load(FileInputStream(rootProject.file("local.properties")))
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 30
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")

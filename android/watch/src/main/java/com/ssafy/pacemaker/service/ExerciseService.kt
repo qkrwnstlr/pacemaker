@@ -34,6 +34,9 @@ class ExerciseService : LifecycleService() {
     @Inject
     lateinit var exerciseServiceMonitor: ExerciseServiceMonitor
 
+    @Inject
+    lateinit var exerciseMonitor: ExerciseMonitor
+
     private var isBound = false
     private var isStarted = false
     private val localBinder = LocalBinder()
@@ -61,6 +64,7 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun endExercise() {
+        exerciseMonitor.disconnect()
         exerciseClientManager.endExercise()
         removeOngoingActivityNotification()
     }
@@ -78,6 +82,8 @@ class ExerciseService : LifecycleService() {
             isStarted = true
 
             if (!isBound) stopSelfIfNotRunning()
+
+            exerciseMonitor.connect()
 
             lifecycleScope.launch(Dispatchers.Default) {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {

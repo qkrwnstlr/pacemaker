@@ -1,18 +1,15 @@
 package com.ssafy.presentation.core
 
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.DataItem
-import com.google.android.gms.wearable.PutDataMapRequest
+import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.gson.Gson
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 import javax.inject.Singleton
-
-private const val TAG = "WearableClientManager_PACEMAKER"
 
 @Singleton
 class WearableClientManager @Inject constructor(
@@ -22,11 +19,8 @@ class WearableClientManager @Inject constructor(
     val messageClient by lazy { Wearable.getMessageClient(context) }
     val capabilityClient by lazy { Wearable.getCapabilityClient(context) }
 
-    suspend fun <T> sendToHandheldDevice(path: String, data: T): DataItem {
-        val request = PutDataMapRequest.create("$path")
-            .apply { dataMap.putString("data", Gson().toJson(data)) }
-            .asPutDataRequest()
-            .setUrgent()
+    suspend fun sendToWearableDevice(path: String): DataItem {
+        val request = PutDataRequest.create(path)
 
         return dataClient.putDataItem(request).await()
     }
@@ -36,8 +30,6 @@ class WearableClientManager @Inject constructor(
             .getCapability(WEAR_CAPABILITY, CapabilityClient.FILTER_REACHABLE)
             .await()
             .nodes
-
-        Log.d(TAG, "startWearableActivity: ${nodes.size}")
 
         nodes.map { node ->
             messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf()).await()

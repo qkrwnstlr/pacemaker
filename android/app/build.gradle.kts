@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ssafy.pacemaker"
-        minSdk = 24
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
