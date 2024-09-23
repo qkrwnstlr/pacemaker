@@ -18,7 +18,6 @@ import com.ssafy.presentation.utils.toAgeString
 import com.ssafy.presentation.utils.toCoachIndex
 import com.ssafy.presentation.utils.toCount
 import com.ssafy.presentation.utils.toDistance
-import com.ssafy.presentation.utils.toGender
 import com.ssafy.presentation.utils.toHeight
 import com.ssafy.presentation.utils.toTime
 import com.ssafy.presentation.utils.toWeight
@@ -61,7 +60,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     etAge.text = user.year.toAge().toAgeString()
                     etHeight.text = user.height.toHeight()
                     etWeight.text = user.weight.toWeight()
-                    etGender.text = user.gender.toGender()
+                    etGender.text = user.gender
 
                     val coachIndex = user.coachNumber.toCoachIndex()
                     ivProfile.setImageResource(coachIndex)

@@ -13,6 +13,6 @@ data class User(
     val trainCount: Int = 0,
     val trainTime: Int = 0,
     val trainDistance: Float = 0f,
-    val gender: Int? = 1,//null, todo:백에서 null처리해주면 이것도 null로
-    val coachNumber: Long? = null
+    val gender: String = "UNKNOWN",
+    val coachNumber: Long = 0
 )

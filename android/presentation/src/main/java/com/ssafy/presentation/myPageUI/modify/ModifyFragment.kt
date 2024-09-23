@@ -8,7 +8,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentModifyBinding
-import com.ssafy.presentation.utils.toGender
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -31,7 +30,7 @@ class ModifyFragment : BaseFragment<FragmentModifyBinding>(FragmentModifyBinding
         if (age != 0) binding.tieAge.setText(age.toString())
         if (height != 0) binding.tieHeight.setText(height.toString())
         if (weight != 0) binding.tieWeight.setText(weight.toString())
-        if (gender != null) binding.tieGender.setText(gender.toGender())
+        if (gender != null) binding.tieGender.setText(gender)
     }
 
     private fun initListener() = with(binding) {
