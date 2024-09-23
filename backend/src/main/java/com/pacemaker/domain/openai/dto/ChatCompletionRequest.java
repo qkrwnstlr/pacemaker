@@ -13,7 +13,7 @@ import lombok.Builder;
 @Builder
 public record ChatCompletionRequest(
 	@NotNull String model, // 사용할 모델의 이름 ("gpt-3.5-turbo", "gpt-4o-mini")
-	@NotNull List<Message> messages, // 대화 메시지 배열
+	@NotNull List<Object> messages, // 대화 메시지 배열
 	@JsonProperty("max_tokens") Integer maxTokens, // 생성할 최대 토큰 수
 	Double temperature, // 샘플링 온도를 설정하는 것. 값이 높을수록 모델이 더 많은 리스크를 감수함
 	@JsonProperty("top_p") Double topP, // 온도 샘플링에 대한 대안으로, 누적 확률 질량의 상위 p%에 해당하는 토큰들만 고려하는 nucleus 샘플링 방식
