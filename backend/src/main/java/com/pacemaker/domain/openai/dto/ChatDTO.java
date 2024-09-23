@@ -25,9 +25,9 @@ public record ChatDTO(@NotNull String message, @NotNull Context context, @NotNul
 
 	@Builder
 	public record Plan(
-		Integer totalDays, Integer totalTimes, Integer totalDistances, List<TrainDetail> trainDetails
+		Integer totalDays, Integer totalTimes, Integer totalDistances, List<PlanTrain> planTrains
 	) {
-		public record TrainDetail(
+		public record PlanTrain(
 			Integer index, Date trainDate, String trainType, Integer sessionTime, Integer sessionDistance,
 			Integer repeat, Integer trainParam, Integer trainPace, Integer interParam
 		) {
