@@ -31,7 +31,6 @@ public class UserService {
 
 	@Transactional
 	public void create(UserCreateRequest userCreateRequest) {
-		// TODO: VDOT 계산
 		if (userRepository.existsByUid(userCreateRequest.uid())) {
 			throw new ConflictException("이미 존재하는 사용자입니다.");
 		}
@@ -40,11 +39,10 @@ public class UserService {
 		userRepository.save(User.builder()
 			.uid(userCreateRequest.uid())
 			.username(userCreateRequest.name())
-			.year(userCreateRequest.year())
+			.age(userCreateRequest.age())
 			.gender(gender)
 			.height(userCreateRequest.height())
 			.weight(userCreateRequest.weight())
-			.vdot(0)
 			.build()
 		);
 	}
@@ -63,7 +61,7 @@ public class UserService {
 
 		return UserInfoResponse.builder()
 			.name(user.getUsername())
-			.year(user.getYear())
+			.age(user.getAge())
 			.height(user.getHeight())
 			.weight(user.getWeight())
 			.trainCount(user.getTrainCount())
@@ -76,14 +74,14 @@ public class UserService {
 	@Transactional
 	public UserInfoResponse updateUserInfo(UserUpdateRequest userUpdateRequest) {
 		User user = findUserByUid(userUpdateRequest.uid());
-		user.update(userUpdateRequest.year(), userUpdateRequest.height(), userUpdateRequest.weight());
+		user.update(userUpdateRequest.age(), userUpdateRequest.height(), userUpdateRequest.weight());
 
 		Float trainDistance = convertMetersToKilometers(user.getTrainDistance());
 		Long coachNumber = getCoachId(user);
 
 		return UserInfoResponse.builder()
 			.name(user.getUsername())
-			.year(user.getYear())
+			.age(user.getAge())
 			.height(user.getHeight())
 			.weight(user.getWeight())
 			.trainCount(user.getTrainCount())
