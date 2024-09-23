@@ -1,18 +1,21 @@
 package com.ssafy.presentation.core
 
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class MainViewModel : ViewModel() {
 
-    var uid: String = "testtest"
+    private val _uid: MutableStateFlow<String> = MutableStateFlow("")
+    var uid: StateFlow<String> = _uid.asStateFlow()
 
-    // TODO 파이어베이스 uid 가져와야함!!
-    fun setNewUid(newUid: String) {
-        uid = newUid
+    suspend fun setNewUid(newUid: String) {
+        _uid.emit(newUid)
     }
 
-    fun clearUid() {
-        uid = ""
+    suspend fun clearUid() {
+        _uid.emit("")
     }
 
 }

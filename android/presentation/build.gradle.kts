@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -6,6 +9,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("kotlin-parcelize")
+    id("com.google.gms.google-services")
 }
 
 secrets {
@@ -21,13 +25,15 @@ android {
     namespace = "com.ssafy.presentation"
     compileSdk = 34
 
+    val properties = Properties()
+    properties.load(FileInputStream(rootProject.file("local.properties")))
     defaultConfig {
         minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "server_client_id", properties.getProperty("server_client_id"))
     }
-
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -76,6 +82,14 @@ dependencies {
     implementation(libs.mpandroidchart)
 
     implementation(libs.play.services.maps)
+
+    // firebase
+    implementation("com.google.firebase:firebase-database-ktx:20.0.5")
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+
+    // firebase auth 에서 필요한 의존성 추가
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     implementation(libs.play.services.location)
     implementation(libs.play.services.wearable)
