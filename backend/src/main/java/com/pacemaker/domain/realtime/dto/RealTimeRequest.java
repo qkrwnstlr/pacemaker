@@ -9,9 +9,9 @@ import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-public record RealtimeDTO(@NotNull String coachId, @NotNull Integer meanHeartRate,
-						  @NotNull Integer meanPace, @NotNull Integer meanCadence, @NotNull float nowDistance,
-						  @NotNull PlanTrain planTrain) {
+public record RealTimeRequest(@NotNull String coachId, @NotNull Integer meanHeartRate,
+							  @NotNull Integer meanPace, @NotNull Integer meanCadence, @NotNull float nowDistance,
+							  @NotNull PlanTrain planTrain) {
 
 	@Builder
 	public record PlanTrain(
