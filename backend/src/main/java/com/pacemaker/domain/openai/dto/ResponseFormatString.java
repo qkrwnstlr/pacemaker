@@ -74,9 +74,9 @@ public class ResponseFormatString {
 		              "gender": {
 		                "type": "string",
 		                "enum": [
-		                  "male",
-		                  "female"
-		                  "",
+		                  "MALE",
+		                  "FEMALE",
+		                  ""
 		                ],
 		                "description": "user's gender"
 		              },
