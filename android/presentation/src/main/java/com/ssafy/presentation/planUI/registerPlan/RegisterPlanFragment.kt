@@ -65,8 +65,12 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         )
 
         tvTitle.startAnimation(slideDown)
-        viewModel.getCoach(uid)
+        viewModel.getCoach(uid, ::setSendClickable)
         rvPlanChat.adapter = adapter
+    }
+
+    private fun setSendClickable(able: Boolean) = with(binding.chatUi) {
+        ivSend.isClickable = able
     }
 
     private fun initListener() = with(binding) {
@@ -75,6 +79,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             chatUi.etChat.text = null
             viewModel.sendMyMessage(text)
         }
+        setSendClickable(false)
 
         topSheetTrain.fabBlue.setOnClickListener {
             val action =
