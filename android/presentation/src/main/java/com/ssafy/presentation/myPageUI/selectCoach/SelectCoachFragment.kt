@@ -5,6 +5,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentSelectCoachBinding
 import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companion.DANNY
@@ -30,8 +31,9 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     private fun initView() = with(binding) {
         val slideDown = AnimationUtils.loadAnimation(
             requireContext(),
-            com.ssafy.presentation.R.anim.fade_slide_down
+            R.anim.fade_slide_down
         )
+
         tvExplain.startAnimation(slideDown)
         clRed.startAnimation(slideDown)
         clYellow.startAnimation(slideDown)
@@ -40,9 +42,24 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
 
     private fun initListener() = with(binding) {
         val uid = getUid()
-        clRed.setOnClickListener { viewModel.setCoach(uid, MIKE, ::popBack, ::failToSetCoach) }
-        clYellow.setOnClickListener { viewModel.setCoach(uid, JAMIE, ::popBack, ::failToSetCoach) }
-        clBlue.setOnClickListener { viewModel.setCoach(uid, DANNY, ::popBack, ::failToSetCoach) }
+        clRed.setOnClickListener { viewModel.setCoach(uid, MIKE, next(), ::failToSetCoach) }
+        clYellow.setOnClickListener { viewModel.setCoach(uid, JAMIE, next(), ::failToSetCoach) }
+        clBlue.setOnClickListener { viewModel.setCoach(uid, DANNY, next(), ::failToSetCoach) }
+    }
+
+    private fun next(): suspend () -> Unit {
+        val previousDestination = findNavController().previousBackStackEntry?.destination
+
+        return when (previousDestination?.id) {
+            R.id.startPlanFragment -> ::moveToRegisterPlanFragment
+            R.id.profileFragment -> ::popBack
+            else -> throw IllegalArgumentException(ILLEGAL_DESTINATION)
+        }
+    }
+
+    private suspend fun moveToRegisterPlanFragment() = withContext(Dispatchers.Main) {
+        val action = SelectCoachFragmentDirections.actionSelectCoachFragmentToRegisterPlanFragment()
+        findNavController().navigate(action)
     }
 
     private suspend fun popBack() = withContext(Dispatchers.Main) {
@@ -53,4 +70,7 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
         showSnackStringBar(message)
     }
 
+    companion object {
+        const val ILLEGAL_DESTINATION = "잘못된 목적지입니다."
+    }
 }

@@ -18,12 +18,16 @@ class SelectCoachViewModel @Inject constructor(
     fun setCoach(
         uid: String,
         coachIndex: Long,
-        popBack: suspend () -> Unit,
+        moveToNextFragment: suspend () -> Unit,
         failToSetCoach: suspend (String) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
         runCatching { setCoachUseCase(uid, coachIndex) }
-            .onSuccess { if (it is ResponseResult.Success) popBack() else failToSetCoach(it.message) }
-            .onFailure { failToSetCoach(ERROR) }
+            .onSuccess {
+                if (it is ResponseResult.Success) moveToNextFragment()
+                else failToSetCoach(it.message)
+            }.onFailure {
+                failToSetCoach(ERROR)
+            }
     }
 
     companion object {
