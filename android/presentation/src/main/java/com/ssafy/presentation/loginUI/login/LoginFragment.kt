@@ -68,7 +68,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
         if (currentUser != null) {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.checkUser(
+                viewModel.signUp(
                     currentUser.uid,
                     currentUser.displayName,
                     currentUser.photoUrl.toString(),
@@ -98,7 +98,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null) {
-                        viewModel.checkUser(
+                        viewModel.signUp(
                             user.uid,
                             user.displayName,
                             user.photoUrl.toString(),
@@ -118,7 +118,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun moveToHomeFragment() {
-        showSnackStringBar("uid: ${getUid()}")
         val action = LoginFragmentDirections.actionLoginFragmentToHomeFragment()
         findNavController().navigate(action)
     }
