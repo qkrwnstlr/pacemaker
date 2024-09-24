@@ -1,17 +1,22 @@
 package com.ssafy.presentation.homeUI
 
 import androidx.lifecycle.ViewModel
-import com.ssafy.domain.repository.DataStoreRepository
+import androidx.lifecycle.viewModelScope
+import com.ssafy.presentation.core.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
+import com.ssafy.domain.repository.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: DataStoreRepository,
+    private val exerciseRepository: ExerciseRepository
 ) : ViewModel() {
     private val _trainingState: MutableStateFlow<Int> = MutableStateFlow(4)
     val trainingState: StateFlow<Int> = _trainingState.asStateFlow()
@@ -21,5 +26,11 @@ class HomeViewModel @Inject constructor(
 
     fun profileUrlFlow(): Flow<String> {
         return dataStoreRepository.getImgUrl()
+    }
+    fun startExercise() {
+        viewModelScope.launch {
+            delay(3_000)
+            exerciseRepository.startExercise()
+        }
     }
 }

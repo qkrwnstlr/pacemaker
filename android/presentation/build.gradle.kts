@@ -28,7 +28,7 @@ android {
     val properties = Properties()
     properties.load(FileInputStream(rootProject.file("local.properties")))
     defaultConfig {
-        minSdk = 24
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -96,5 +96,13 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.14.2")
     //Data Store
 
+    implementation(libs.play.services.wearable)
 
+    implementation(libs.gson)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.play.services)
+
+    implementation(libs.androidx.health.services.client)
+    implementation(libs.androidx.lifecycle.service)
 }

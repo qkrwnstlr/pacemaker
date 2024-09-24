@@ -225,6 +225,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun initListener() {
         binding.startRunButton.setOnClickListener {
+            viewModel.startExercise()
             val action = HomeFragmentDirections.actionHomeFragmentToRunningFragment()
             findNavController().navigate(action)
         }
