@@ -57,13 +57,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleIntent(intent: Intent?) {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         val navController = navHostFragment.navController
         when (intent?.action) {
             NOTIFICATION_ACTION -> {
                 navController.navigate(R.id.runningFragment)
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
     }
 
     companion object {

@@ -17,7 +17,6 @@ class ExerciseMonitor @Inject constructor(
     private val coroutineScope: CoroutineScope
 ) : MessageClient.OnMessageReceivedListener {
     fun connect() {
-        Log.d(TAG, "connect: ")
         wearableClientManager.messageClient.addListener(this)
     }
 

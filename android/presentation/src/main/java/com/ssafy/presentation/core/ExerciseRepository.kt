@@ -6,6 +6,7 @@ import dagger.hilt.android.ActivityRetainedLifecycle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +21,13 @@ class ExerciseRepository @Inject constructor(
     private val coroutineScope: CoroutineScope,
     lifecycle: ActivityRetainedLifecycle
 ) {
-    private val binderConnection =
+    private val binderConnection by lazy {
         lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
+    }
 
-    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> =
+    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> by lazy {
         binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
+    }
 
     val serviceState: StateFlow<ServiceState> by lazy {
         exerciseServiceStateUpdates.map { exerciseServiceState ->
@@ -36,7 +39,7 @@ class ExerciseRepository @Inject constructor(
         )
     }
 
-    private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch {
+    private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch(Dispatchers.Main) {
         binderConnection.runWhenConnected {
             function(it.getService())
         }

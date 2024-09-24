@@ -11,6 +11,9 @@ import androidx.health.services.client.data.DataTypeCondition
 import androidx.health.services.client.data.ExerciseConfig
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseLapSummary
+import androidx.health.services.client.data.ExerciseTrackedStatus.Companion.NO_EXERCISE_IN_PROGRESS
+import androidx.health.services.client.data.ExerciseTrackedStatus.Companion.OTHER_APP_IN_PROGRESS
+import androidx.health.services.client.data.ExerciseTrackedStatus.Companion.OWNED_EXERCISE_IN_PROGRESS
 import androidx.health.services.client.data.ExerciseType
 import androidx.health.services.client.data.ExerciseTypeCapabilities
 import androidx.health.services.client.data.ExerciseUpdate
@@ -26,6 +29,7 @@ import androidx.health.services.client.startExercise
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.guava.await
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
@@ -59,68 +63,72 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
     suspend fun startExercise() {
         val capabilities = getExerciseCapabilities() ?: return
 
-        Log.d(TAG, "startExercise: ")
-
-        val dataTypes = setOf(
-            DataType.HEART_RATE_BPM,
-            DataType.HEART_RATE_BPM_STATS,
-            DataType.CALORIES_TOTAL,
-            DataType.DISTANCE_TOTAL,
-            DataType.PACE,
-            DataType.PACE_STATS,
-        ).intersect(capabilities.supportedDataTypes)
-        val exerciseGoals = mutableListOf<ExerciseGoal<*>>()
-        if (supportsCalorieGoal(capabilities)) {
-            // Create a one-time goal.
-            exerciseGoals.add(
-                ExerciseGoal.createOneTimeGoal(
-                    DataTypeCondition(
-                        dataType = DataType.CALORIES_TOTAL,
-                        threshold = CALORIES_THRESHOLD,
-                        comparisonType = ComparisonType.GREATER_THAN_OR_EQUAL
+        val exerciseInfo = exerciseClient.getCurrentExerciseInfoAsync().await()
+        when (exerciseInfo.exerciseTrackedStatus) {
+            OTHER_APP_IN_PROGRESS -> {}
+            OWNED_EXERCISE_IN_PROGRESS -> {}
+            NO_EXERCISE_IN_PROGRESS -> {
+                val dataTypes = setOf(
+                    DataType.HEART_RATE_BPM,
+                    DataType.HEART_RATE_BPM_STATS,
+                    DataType.CALORIES_TOTAL,
+                    DataType.DISTANCE_TOTAL,
+                    DataType.PACE,
+                    DataType.PACE_STATS,
+                ).intersect(capabilities.supportedDataTypes)
+                val exerciseGoals = mutableListOf<ExerciseGoal<*>>()
+                if (supportsCalorieGoal(capabilities)) {
+                    // Create a one-time goal.
+                    exerciseGoals.add(
+                        ExerciseGoal.createOneTimeGoal(
+                            DataTypeCondition(
+                                dataType = DataType.CALORIES_TOTAL,
+                                threshold = CALORIES_THRESHOLD,
+                                comparisonType = ComparisonType.GREATER_THAN_OR_EQUAL
+                            )
+                        )
                     )
-                )
-            )
-        }
+                }
 
-        // Set a distance goal if it's supported by the exercise and the user has entered one
-        if (supportsDistanceMilestone(capabilities) && thresholds.distanceIsSet) {
-            exerciseGoals.add(
-                ExerciseGoal.createOneTimeGoal(
-                    condition = DataTypeCondition(
-                        dataType = DataType.DISTANCE_TOTAL,
-                        threshold = thresholds.distance * 1000, //our app uses kilometers
-                        comparisonType = ComparisonType.GREATER_THAN_OR_EQUAL
+                // Set a distance goal if it's supported by the exercise and the user has entered one
+                if (supportsDistanceMilestone(capabilities) && thresholds.distanceIsSet) {
+                    exerciseGoals.add(
+                        ExerciseGoal.createOneTimeGoal(
+                            condition = DataTypeCondition(
+                                dataType = DataType.DISTANCE_TOTAL,
+                                threshold = thresholds.distance * 1000, //our app uses kilometers
+                                comparisonType = ComparisonType.GREATER_THAN_OR_EQUAL
+                            )
+                        )
                     )
-                )
-            )
-        }
+                }
 
-        // Set a duration goal if it's supported by the exercise and the user has entered one
-        if (supportsDurationMilestone(capabilities) && thresholds.durationIsSet) {
-            exerciseGoals.add(
-                ExerciseGoal.createOneTimeGoal(
-                    DataTypeCondition(
-                        dataType = DataType.ACTIVE_EXERCISE_DURATION_TOTAL,
-                        threshold = thresholds.duration.inWholeSeconds,
-                        comparisonType = ComparisonType.GREATER_THAN_OR_EQUAL
+                // Set a duration goal if it's supported by the exercise and the user has entered one
+                if (supportsDurationMilestone(capabilities) && thresholds.durationIsSet) {
+                    exerciseGoals.add(
+                        ExerciseGoal.createOneTimeGoal(
+                            DataTypeCondition(
+                                dataType = DataType.ACTIVE_EXERCISE_DURATION_TOTAL,
+                                threshold = thresholds.duration.inWholeSeconds,
+                                comparisonType = ComparisonType.GREATER_THAN_OR_EQUAL
+                            )
+                        )
                     )
+                }
+
+                val supportsAutoPauseAndResume = capabilities.supportsAutoPauseAndResume
+
+                val config = ExerciseConfig(
+                    exerciseType = ExerciseType.RUNNING,
+                    dataTypes = dataTypes,
+                    isAutoPauseAndResumeEnabled = supportsAutoPauseAndResume,
+                    isGpsEnabled = true,
+                    exerciseGoals = exerciseGoals
                 )
-            )
+
+                exerciseClient.startExercise(config)
+            }
         }
-
-
-        val supportsAutoPauseAndResume = capabilities.supportsAutoPauseAndResume
-
-        val config = ExerciseConfig(
-            exerciseType = ExerciseType.RUNNING,
-            dataTypes = dataTypes,
-            isAutoPauseAndResumeEnabled = supportsAutoPauseAndResume,
-            isGpsEnabled = true,
-            exerciseGoals = exerciseGoals
-        )
-
-        exerciseClient.startExercise(config)
     }
 
     suspend fun prepareExercise() {
@@ -132,7 +140,15 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
     }
 
     suspend fun endExercise() {
-        exerciseClient.endExercise()
+        val exerciseInfo = exerciseClient.getCurrentExerciseInfoAsync().await()
+        when (exerciseInfo.exerciseTrackedStatus) {
+            OTHER_APP_IN_PROGRESS -> {}
+            OWNED_EXERCISE_IN_PROGRESS -> {
+                exerciseClient.endExercise()
+            }
+
+            NO_EXERCISE_IN_PROGRESS -> {}
+        }
     }
 
     suspend fun pauseExercise() {
