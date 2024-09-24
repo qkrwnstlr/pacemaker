@@ -5,10 +5,12 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record ContentRequest(@NotNull String message, @NotNull Context context, @NotNull Plan plan) {
 
+	@Builder
 	public record Context(
 		String goal, Integer goalTime, Integer goalDistance, List<String> trainDayOfWeek, UserInfo userInfo
 	) {
