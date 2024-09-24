@@ -21,7 +21,7 @@ class ModifyFragment : BaseFragment<FragmentModifyBinding>(FragmentModifyBinding
         initListener()
     }
 
-    private fun setData() = viewModel.setNewProfile(::initView)
+    private fun setData() = viewModel.setProfile(::initView)
 
     private fun initView() = with(viewModel.user) {
         if (name.isNotBlank()) binding.tieName.setText(name)
