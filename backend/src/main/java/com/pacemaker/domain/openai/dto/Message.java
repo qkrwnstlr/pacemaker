@@ -37,7 +37,7 @@ public record Message(
 			3-4. The number of training days should be up to 3.
 			3-5. If the provided training days are valid (not adjacent and up to 3 days), save them in the trainDayOfWeek field. You don't need to tell the user if the days are valid.
 			</steps>
-			4. The date of today is : "2024-09-24".
+			4. The date of today is : "%s".
 			5. Save the user info in the "userInfo" field if the user provides it.
 			6. "plan", "planTrains", "trainDate" should be in "date" format.
 			7. Provide a plan with at least 1 month, and maximum of 6 months.

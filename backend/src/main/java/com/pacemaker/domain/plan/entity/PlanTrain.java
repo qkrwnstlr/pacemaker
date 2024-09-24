@@ -12,18 +12,21 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class PlanTrain {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Setter
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "plan_id", nullable = false)
 	private Plan plan;
@@ -34,11 +37,11 @@ public class PlanTrain {
 	@Column(name = "param_type", nullable = false)
 	private String paramType;
 
-	@Column(name = "train_time", nullable = false)
-	private Integer trainTime;
+	@Column(name = "session_time", nullable = false)
+	private Integer sessionTime;
 
-	@Column(name = "train_distance", nullable = false)
-	private Integer trainDistance;
+	@Column(name = "session_distance", nullable = false)
+	private Integer sessionDistance;
 
 	@Column(nullable = false)
 	private Integer repetition;
@@ -57,17 +60,22 @@ public class PlanTrain {
 	private TrainStatus status;
 
 	@Builder
-	public PlanTrain(Plan plan, LocalDate trainDate, String paramType, Integer trainTime, Integer trainDistance,
+	public PlanTrain(Plan plan, LocalDate trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
 		Integer repetition, Integer trainParam, Integer trainPace, Integer interParam, TrainStatus status) {
 		this.plan = plan;
 		this.trainDate = trainDate;
 		this.paramType = paramType;
-		this.trainTime = trainTime;
-		this.trainDistance = trainDistance;
+		this.sessionTime = sessionTime;
+		this.sessionDistance = sessionDistance;
 		this.repetition = repetition;
 		this.trainParam = trainParam;
 		this.trainPace = trainPace;
 		this.interParam = interParam;
 		this.status = (status != null) ? status : TrainStatus.BEFORE;
 	}
+
+	// 연관관계 편의 메서드
+	// public void setPlan(Plan plan) { // lombok으로 대체
+	// 	this.plan = plan;
+	// }
 }
