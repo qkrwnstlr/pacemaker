@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
@@ -29,11 +30,14 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
 import com.ssafy.presentation.utils.displayText
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
+@AndroidEntryPoint
 class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate) {
+    private val viewModel: ScheduleViewModel by viewModels()
     private val monthCalendarView: CalendarView get() = binding.exOneCalendar
 
     private var selectedDate = LocalDate.now()
@@ -54,7 +58,9 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(100)
         val endMonth = currentMonth.plusMonths(100)
-        setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
+
+        viewModel.setMonthHasTrain(getUid(), currentMonth.year, currentMonth.monthValue)
+        setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek, viewModel.dotList.value)
 
         binding.btnNextMonth.setOnClickListener {
             binding.exOneCalendar.findFirstVisibleMonth()?.let {
@@ -227,6 +233,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         endMonth: YearMonth,
         currentMonth: YearMonth,
         daysOfWeek: List<DayOfWeek>,
+        thisMonthList: List<LocalDate>
     ) {
         monthCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view, ::dateClicked)
@@ -238,7 +245,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                     container.textView,
                     container.ly,
                     container.exThreeDotView,
-                    data.position == DayPosition.MonthDate
+                    data.position == DayPosition.MonthDate,
+                    thisMonthList.contains(data.date)
                 )
             }
         }
@@ -252,7 +260,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         textView: TextView,
         layout: ConstraintLayout,
         hasTrain: View,
-        isSelectable: Boolean
+        isSelectable: Boolean,
+        isVisibleTrain: Boolean
     ) {
         if (isSelectable) {
             textView.text = date.dayOfMonth.toString()
@@ -271,6 +280,10 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             }
         } else {
             layout.background = null
+        }
+        if (isVisibleTrain) {
+            hasTrain.visibility = View.VISIBLE
+        } else {
             hasTrain.visibility = View.GONE
         }
     }
