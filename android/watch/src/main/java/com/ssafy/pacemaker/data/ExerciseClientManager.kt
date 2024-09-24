@@ -72,6 +72,7 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     DataType.DISTANCE_TOTAL,
                     DataType.PACE,
                     DataType.PACE_STATS,
+                    DataType.RUNNING_STEPS_TOTAL,
                     DataType.STEPS_PER_MINUTE,
                     DataType.STEPS_PER_MINUTE_STATS,
                     DataType.VO2_MAX,

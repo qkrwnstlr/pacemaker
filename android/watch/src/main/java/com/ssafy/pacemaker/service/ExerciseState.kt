@@ -15,6 +15,7 @@ data class ExerciseMetrics(
     val heartRateAverage: Double? = null,
     val pace: Double? = null,
     val paceAverage: Double? = null,
+    val steps: Long? = null,
     val cadence: Long? = null,
     val cadenceAverage: Long? = null,
     val vo2: Double? = null,
@@ -31,6 +32,7 @@ data class ExerciseMetrics(
                 ?: heartRateAverage,
             pace = latestMetrics.getData(DataType.PACE).lastOrNull()?.value ?: pace,
             paceAverage = latestMetrics.getData(DataType.PACE_STATS)?.average ?: paceAverage,
+            steps = latestMetrics.getData(DataType.RUNNING_STEPS_TOTAL)?.total ?: steps,
             cadence = latestMetrics.getData(DataType.STEPS_PER_MINUTE).lastOrNull()?.value
                 ?: cadence,
             cadenceAverage = latestMetrics.getData(DataType.STEPS_PER_MINUTE_STATS)?.average
