@@ -12,8 +12,8 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentJoinRegisterBinding
 import com.ssafy.presentation.myPageUI.modify.GenderButtonSheetFragment
-import com.ssafy.presentation.utils.MAN
-import com.ssafy.presentation.utils.WOMAN
+import com.ssafy.presentation.utils.FEMALE
+import com.ssafy.presentation.utils.MALE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -57,8 +57,8 @@ class JoinRegisterFragment : BaseFragment<FragmentJoinRegisterBinding>(
 
     private fun CoroutineScope.collectGenderState() = launch {
         viewModel.genderState.collectLatest { gender ->
-            if (gender == MAN) binding.tieGender.setText(MAN)
-            else if (gender == WOMAN) binding.tieGender.setText(WOMAN)
+            if (gender == MALE) binding.tieGender.setText(MALE)
+            else if (gender == FEMALE) binding.tieGender.setText(FEMALE)
         }
     }
 

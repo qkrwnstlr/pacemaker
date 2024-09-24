@@ -6,7 +6,11 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -16,15 +20,33 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.ssafy.presentation.component.MiniDateContainer
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRegisterPlanBinding
+import com.ssafy.presentation.homeUI.TopSheetBehavior
+import com.ssafy.presentation.planUI.registerPlan.adapter.ChatAdapter
 import com.ssafy.presentation.utils.displayText
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 
+@AndroidEntryPoint
 class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     FragmentRegisterPlanBinding::inflate
 ) {
     private val viewModel: RegisterPlanViewModel by viewModels()
+    private val behavior by lazy { TopSheetBehavior.from(binding.topSheetTrain.root) }
+    private val adapter by lazy {
+        ChatAdapter().apply {
+            registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    binding.chatUi.rvPlanChat.scrollToPosition(positionStart)
+                    super.onItemRangeInserted(positionStart, itemCount)
+                }
+            })
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -32,29 +54,49 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         initView()
         initTopSheet()
         initListener()
+        initCollect()
     }
 
     private fun initView() = with(binding.chatUi) {
+        val uid = getUid()
         val slideDown = AnimationUtils.loadAnimation(
             requireContext(),
             com.ssafy.presentation.R.anim.fade_slide_down
         )
 
         tvTitle.startAnimation(slideDown)
-        tvLikeWeek.startAnimation(slideDown)
-        clWeek.startAnimation(slideDown)
+        viewModel.getCoach(uid, ::setSendClickable)
+        rvPlanChat.adapter = adapter
+    }
+
+    private fun setSendClickable(able: Boolean) = with(binding.chatUi) {
+        ivSend.isClickable = able
     }
 
     private fun initListener() = with(binding) {
         chatUi.ivSend.setOnClickListener {
             val text = chatUi.etChat.text.toString()
             chatUi.etChat.text = null
-            showSnackStringBar(text)
+            viewModel.sendMyMessage(text)
         }
+        setSendClickable(false)
 
         topSheetTrain.fabBlue.setOnClickListener {
-            val action = RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
+            val action =
+                RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
             findNavController().navigate(action)
+        }
+    }
+
+    private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            collectChatList()
+        }
+    }
+
+    private fun CoroutineScope.collectChatList() = launch {
+        viewModel.planData.collectLatest { chatList ->
+            adapter.submitList(chatList)
         }
     }
 
@@ -120,6 +162,14 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun dateClicked(date: LocalDate) {
         val manager = requireActivity().supportFragmentManager
         ScheduleDialogFragment(date).show(manager, "ScheduleDialog")
+    }
+
+    private fun scrollUpCalender() {
+        behavior.state = TopSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun scrollDownCalendar() {
+        behavior.state = TopSheetBehavior.STATE_EXPANDED
     }
 
 }

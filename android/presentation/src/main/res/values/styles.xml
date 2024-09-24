@@ -139,13 +139,11 @@
     </style>
 
     <style name="ChatShape">
-        <item name="android:textSize">@dimen/text_18</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:background">@drawable/rounded_background_coach</item>
     </style>
 
     <style name="StudentChatShape">
-        <item name="android:textSize">@dimen/text_18</item>
         <item name="android:textColor">@color/primary</item>
         <item name="android:background">@drawable/rounded_background_student</item>
     </style>

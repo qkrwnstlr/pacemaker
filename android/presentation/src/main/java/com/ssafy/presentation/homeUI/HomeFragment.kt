@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
@@ -43,6 +44,7 @@ import com.ssafy.presentation.databinding.FragmentHomeBinding
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -180,15 +182,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
         initWeekCalendar()
-        when (viewModel.coachState.value) {
-            1 -> R.drawable.coach_mike
-            2 -> R.drawable.coach_jamie
-            3 -> R.drawable.coach_danny
-            else -> return
-        }.run {
-            binding.profileButton.setImageResource(this)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val imgUrl = viewModel.profileUrlFlow().firstOrNull()
+            Glide.with(root)
+                .load(imgUrl)
+                .circleCrop()
+                .into(profileButton)
         }
     }
 

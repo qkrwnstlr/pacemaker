@@ -114,7 +114,13 @@
         android:id="@+id/selectCoachFragment"
         android:name="com.ssafy.presentation.myPageUI.selectCoach.SelectCoachFragment"
         android:label="fragment_select_coach"
-        tools:layout="@layout/fragment_select_coach" />
+        tools:layout="@layout/fragment_select_coach">
+        <action
+            android:id="@+id/action_selectCoachFragment_to_registerPlanFragment"
+            app:destination="@id/registerPlanFragment"
+            app:popUpTo="@id/selectCoachFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/registerPlanFragment"
         android:name="com.ssafy.presentation.planUI.registerPlan.RegisterPlanFragment"
@@ -154,12 +160,7 @@
         android:id="@+id/modifyFragment"
         android:name="com.ssafy.presentation.myPageUI.modify.ModifyFragment"
         android:label="fragment_modify"
-        tools:layout="@layout/fragment_modify">
-        <argument
-            android:name="profile"
-            app:argType="com.ssafy.presentation.myPageUI.data.Profile"
-            app:nullable="false" />
-    </fragment>
+        tools:layout="@layout/fragment_modify" />
     <fragment
         android:id="@+id/planDetailFragment"
         android:name="com.ssafy.presentation.planUI.planDetail.PlanDetailFragment"
