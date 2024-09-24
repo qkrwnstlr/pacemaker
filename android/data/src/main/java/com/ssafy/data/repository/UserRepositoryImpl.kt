@@ -28,13 +28,13 @@ class UserRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
-    override suspend fun modify(user: User): ResponseResult<User> {
-        val response = withContext(ioDispatcher) { userDataSource.modify(user) }
+    override suspend fun modify(uid: String, user: User): ResponseResult<User> {
+        val response = withContext(ioDispatcher) { userDataSource.modify(uid, user) }
         return response.toResponseResult()
     }
 
-    override suspend fun delete(user: User): ResponseResult<Unit> {
-        val response = withContext(ioDispatcher) { userDataSource.delete(user) }
+    override suspend fun delete(uid: String): ResponseResult<Unit> {
+        val response = withContext(ioDispatcher) { userDataSource.delete(uid) }
         return response.toResponseResult()
     }
 

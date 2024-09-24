@@ -15,5 +15,5 @@ data class User(
     val trainDistance: Float = 0f,
     val gender: String = "UNKNOWN",
     val coachNumber: Long = 0,
-
-    )
+    val injuries: List<String> = arrayListOf()
+)

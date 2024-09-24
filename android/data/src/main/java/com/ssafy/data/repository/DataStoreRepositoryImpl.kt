@@ -15,6 +15,7 @@ import com.ssafy.domain.repository.DataStoreRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,6 +48,8 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext val contex
             preferences[floatPreferencesKey("trainDistance")] = user.trainDistance
             preferences[stringPreferencesKey("gender")] = user.gender
             preferences[longPreferencesKey("coachNumber")] = user.coachNumber
+            preferences[longPreferencesKey("coachNumber")] = user.coachNumber
+            preferences[stringPreferencesKey("injuries")] = user.injuries.joinToString(", ")
         }
     }
 
@@ -59,4 +62,29 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext val contex
             it.clear()
         }
     }
+
+    override suspend fun getUser(): User {
+        return context.datastore.data
+            .map { preferences ->
+                User(
+                    uid = preferences[stringPreferencesKey("user_id")] ?: "",
+                    name = preferences[stringPreferencesKey("user_name")] ?: "",
+                    cadence = preferences[intPreferencesKey("cadence")] ?: 0,
+                    distance = preferences[intPreferencesKey("distance")] ?: 0,
+                    height = preferences[intPreferencesKey("height")] ?: 0,
+                    minute = preferences[intPreferencesKey("minute")] ?: 0,
+                    pace = preferences[intPreferencesKey("pace")] ?: 0,
+                    weight = preferences[intPreferencesKey("weight")] ?: 0,
+                    age = preferences[intPreferencesKey("age")] ?: 0,
+                    trainCount = preferences[intPreferencesKey("trainCount")] ?: 0,
+                    trainTime = preferences[intPreferencesKey("trainTime")] ?: 0,
+                    trainDistance = preferences[floatPreferencesKey("trainDistance")] ?: 0f,
+                    gender = preferences[stringPreferencesKey("gender")] ?: "",
+                    coachNumber = preferences[longPreferencesKey("coachNumber")] ?: 0L,
+                    injuries = (preferences[stringPreferencesKey("injuries")] ?: "").split(","),
+                )
+            }
+            .first() // 코루틴에서 첫 번째 값을 반환
+    }
+
 }

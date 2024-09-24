@@ -10,9 +10,9 @@ interface UserRepository {
 
     suspend fun signUp(uid: String, name: LoginRequestBody): ResponseResult<LoginResponseBody>
 
-    suspend fun modify(user: User): ResponseResult<User>
+    suspend fun modify(uid: String, user: User): ResponseResult<User>
 
-    suspend fun delete(user: User): ResponseResult<Unit>
+    suspend fun delete(uid: String): ResponseResult<Unit>
 
     suspend fun getInfo(uid: String): ResponseResult<User>
 

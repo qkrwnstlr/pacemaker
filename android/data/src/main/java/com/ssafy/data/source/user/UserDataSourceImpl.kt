@@ -15,11 +15,11 @@ class UserDataSourceImpl @Inject constructor(private val userAPI: UserAPI) : Use
     override suspend fun signUp(uid: String, name: LoginRequestBody): Response<LoginResponseBody> =
         userAPI.signUp(uid, name)
 
-    override suspend fun modify(user: User): Response<User> =
-        userAPI.modify(user)
+    override suspend fun modify(uid: String, user: User): Response<User> =
+        userAPI.modify(uid, user)
 
-    override suspend fun delete(user: User): Response<Unit> =
-        userAPI.delete(user)
+    override suspend fun delete(uid: String): Response<Unit> =
+        userAPI.delete(uid)
 
     override suspend fun getInfo(uid: String): Response<User> =
         userAPI.getInfo(uid)

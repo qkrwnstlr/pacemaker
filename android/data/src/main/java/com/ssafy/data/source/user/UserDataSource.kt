@@ -10,9 +10,9 @@ interface UserDataSource {
 
     suspend fun signUp(uid: String, name: LoginRequestBody): Response<LoginResponseBody>
 
-    suspend fun modify(user: User): Response<User>
+    suspend fun modify(uid: String, user: User): Response<User>
 
-    suspend fun delete(user: User): Response<Unit>
+    suspend fun delete(uid: String): Response<Unit>
 
     suspend fun getInfo(uid: String): Response<User>
 

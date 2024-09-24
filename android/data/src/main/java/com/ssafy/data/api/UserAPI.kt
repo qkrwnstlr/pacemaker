@@ -20,11 +20,11 @@ interface UserAPI {
         @Body name: LoginRequestBody
     ): Response<LoginResponseBody>
 
-    @PUT("users")
-    suspend fun modify(@Body user: User): Response<User>
+    @PUT("users/{uid}")
+    suspend fun modify(@Path("uid") uid: String, @Body user: User): Response<User>
 
-    @DELETE("users")
-    suspend fun delete(@Body user: User): Response<Unit>
+    @DELETE("users/{uid}")
+    suspend fun delete(@Path("uid") uid: String): Response<Unit>
 
     @GET("users/{uid}")
     suspend fun getInfo(@Path("uid") uid: String): Response<User>

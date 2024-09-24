@@ -3,10 +3,9 @@ package com.ssafy.presentation.myPageUI.modify
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.User
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.user.ModifyUserUseCase
-import com.ssafy.presentation.myPageUI.data.Profile
-import com.ssafy.presentation.myPageUI.data.toUser
 import com.ssafy.presentation.utils.ERROR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,37 +15,39 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ModifyViewModel @Inject constructor(
-    private val modifyUserUseCase: ModifyUserUseCase
+    private val modifyUserUseCase: ModifyUserUseCase,
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    var profile: Profile = Profile()
+    var user: User = User()
 
-    fun setNewProfile(newProfile: Profile) {
-        profile = newProfile
-    }
-
-    private fun setUid(uid: String) {
-        profile = profile.copy(uid = uid)
+    fun setNewProfile(initView: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        runCatching { user = dataStoreRepository.getUser() }
+            .onSuccess {
+                withContext(Dispatchers.Main) {
+                    initView()
+                }
+            }
     }
 
     fun setName(name: String) {
-        profile = profile.copy(name = name)
+        user = user.copy(name = name)
     }
 
     fun setAge(age: Int) {
-        profile = profile.copy(age = age)
+        user = user.copy(age = age)
     }
 
     fun setHeight(height: Int) {
-        profile = profile.copy(height = height)
+        user = user.copy(height = height)
     }
 
     fun setWeight(weight: Int) {
-        profile = profile.copy(weight = weight)
+        user = user.copy(weight = weight)
     }
 
     fun setGender(gender: String) {
-        profile = profile.copy(gender = gender)
+        user = user.copy(gender = gender)
     }
 
     fun modifyProfile(
@@ -54,10 +55,9 @@ class ModifyViewModel @Inject constructor(
         popBack: () -> Unit,
         failToSetProfile: (String) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
-        setUid(uid)
-        val user = profile.toUser()
+        val user = user
 
-        runCatching { modifyUserUseCase(user) }
+        runCatching { modifyUserUseCase(uid, user) }
             .onSuccess { response -> checkResponse(response, popBack, failToSetProfile) }
             .onFailure { failToSetProfile(ERROR) }
     }
@@ -74,7 +74,10 @@ class ModifyViewModel @Inject constructor(
             }
 
             is ResponseResult.Success -> {
-                responseResult.data?.let { popBack() } ?: failToSetProfile(ERROR)
+                responseResult.data?.let {
+                    dataStoreRepository.saveUser(it)
+                    popBack()
+                } ?: failToSetProfile(ERROR)
             }
         }
     }

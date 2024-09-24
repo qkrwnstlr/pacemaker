@@ -39,6 +39,9 @@ fun Int.toTime(): String {
     return "${hour}h ${minute}m"
 }
 
+fun String.toGenderString(): String =
+    if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
+
 fun Long?.toCoachIndex(): Int = when (this) {
     1L -> R.drawable.mikefull
     2L -> R.drawable.jamiefull
@@ -54,14 +57,14 @@ fun Long?.toCoachMessage(): List<String> = when (this) {
 }
 
 fun Int?.toGender(): String = when (this) {
-    0 -> WOMAN
-    1 -> MAN
+    0 -> FEMALE
+    1 -> MALE
     else -> UNKNOWN
 }
 
 const val ERROR = "에러 발생!"
-const val MAN = "남자"
-const val WOMAN = "여자"
+const val MALE = "남자"
+const val FEMALE = "여자"
 const val UNKNOWN = "미상"
 
 val START_WITH_MIKE = listOf(
