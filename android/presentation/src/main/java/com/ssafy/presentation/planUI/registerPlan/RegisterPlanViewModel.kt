@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.Context
 import com.ssafy.domain.dto.plan.Plan
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
-import com.ssafy.domain.usecase.user.GetCoachUseCase
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.toCoachMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class RegisterPlanViewModel @Inject constructor(
-    private val getCoachUseCase: GetCoachUseCase,
+    private val dataStoreRepository: DataStoreRepository,
     private val chatForPlanUseCase: ChatForPlanUseCase
 ) : ViewModel() {
 
@@ -59,13 +59,11 @@ class RegisterPlanViewModel @Inject constructor(
         }
     }
 
-    fun getCoach(uid: String, sendAble: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-        runCatching { getCoachUseCase(uid) }
+    fun getCoach(sendAble: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        runCatching { dataStoreRepository.getUser() }
             .onSuccess {
-                it.data?.coachNumber?.let { number ->
-                    coachIndex = number
-                    initChatMessage(number, sendAble)
-                }
+                coachIndex = it.coachNumber
+                initChatMessage(it.coachNumber, sendAble)
             }
     }
 

@@ -68,14 +68,13 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     }
 
     private fun initView() = with(binding.chatUi) {
-        val uid = getUid()
         val slideDown = AnimationUtils.loadAnimation(
             requireContext(),
             com.ssafy.presentation.R.anim.fade_slide_down
         )
 
         tvTitle.startAnimation(slideDown)
-        viewModel.getCoach(uid, ::setSendClickable)
+        viewModel.getCoach(::setSendClickable)
         rvPlanChat.adapter = adapter
     }
 
@@ -210,7 +209,6 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             it.trainDate.toLocalDate() == date
         }
 
-        println(planTrain)
         ScheduleDialogFragment(date, planTrain).show(manager, "ScheduleDialog")
     }
 

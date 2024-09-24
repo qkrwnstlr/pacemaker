@@ -32,27 +32,21 @@ fun Int.toHeight(): String = "${toString()}cm"
 fun Int.toWeight(): String = "${toString()}kg"
 fun Int.toDistance(): String = "${toString()}회"
 fun Int.toAgeString(): String = "${toString()}세"
-fun Int.toAge(): Int = if (this == 0) 0 else LocalDate.now().year - this
-fun Int.toYear(): Int = if (this == 0) 0 else LocalDate.now().year - this
 fun Int.toTime(): String {
     val hour = this / 60
     val minute = this % 60
     return "${hour}h ${minute}m"
 }
 
-fun String.toGenderString(): String = if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
+fun String.toGenderString(): String =
+    if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
+
 fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
 fun Int.toEmptyOrHeight(): String = if (this == 0) "" else "${toString()}cm"
 fun Int.toEmptyOrWeight(): String = if (this == 0) "" else "${toString()}kg"
 fun List<String>.toInjuries(): String {
     val injuries = joinToString()
     return if (injuries.length > 15) "${injuries}..." else injuries
-}
-
-fun String.toGenderIndex(): Int? = when (this) {
-    WOMAN -> 0
-    MAN -> 1
-    else -> null
 }
 
 fun Long?.toCoachIndex(): Int = when (this) {
@@ -67,12 +61,6 @@ fun Long?.toCoachMessage(): List<String> = when (this) {
     2L -> START_WITH_JAMIE
     3L -> START_WITH_DANNY
     else -> START_WITH_MIKE
-}
-
-fun Int?.toGender(): String = when (this) {
-    0 -> FEMALE
-    1 -> MALE
-    else -> UNKNOWN
 }
 
 fun String.toLocalDate(): LocalDate {
