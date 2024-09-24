@@ -3,14 +3,17 @@ package com.pacemaker.domain.plan.entity;
 import com.pacemaker.domain.user.entity.User;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Plan {
 	@Id
@@ -47,6 +50,9 @@ public class Plan {
 	@Enumerated(EnumType.STRING)
 	private PlanStatus status;
 
+	@OneToMany(mappedBy = "plan", cascade = CascadeType.PERSIST, orphanRemoval = true)
+	private List<PlanTrain> planTrains = new ArrayList<>();
+
 	@Builder
 	public Plan(User user, LocalDate createdAt, LocalDate expiredAt, Integer totalDays, Integer totalTimes,
 		Integer totalDistances, String context, Integer completedCount, PlanStatus status) {
@@ -59,5 +65,15 @@ public class Plan {
 		this.context = context;
 		this.completedCount = (completedCount != null) ? completedCount : 0;
 		this.status = (status != null) ? status : PlanStatus.ACTIVE;
+	}
+
+	// 연관관계 편의 메서드
+	public void addPlanTrain(PlanTrain planTrain) {
+		planTrains.add(planTrain);
+		planTrain.setPlan(this);
+	}
+
+	public void removePlanTrain(PlanTrain planTrain) {
+		planTrains.remove(planTrain);
 	}
 }

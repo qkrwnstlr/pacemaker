@@ -97,4 +97,37 @@ public class User {
 	public void updateCoach(Coach coach) {
 		this.coach = coach;
 	}
+
+	public void update(String username, Integer age, Integer height, Integer weight, String gender, String injuries) {
+		this.username = username;
+		this.age = age;
+		this.height = height;
+		this.weight = weight;
+		this.gender = stringToGender(gender);
+		this.injuries = injuries;
+	}
+
+	public Gender stringToGender(String gender) {
+		if ("MALE".equals(gender)) {
+			return Gender.MALE;
+		}
+
+		if ("FEMALE".equals(gender)) {
+			return Gender.FEMALE;
+		}
+
+		return Gender.UNKNOWN;
+	}
+
+	public String genderToString(Gender gender) {
+		if (gender == Gender.MALE) {
+			return "MALE";
+		}
+
+		if (gender == Gender.FEMALE) {
+			return "FEMALE";
+		}
+
+		return "UNKNOWN";
+	}
 }

@@ -49,12 +49,17 @@ public class PlanController {
 
 	@Operation(summary = "플랜 생성")
 	@ApiResponses({
-		@ApiResponse(responseCode = "201", description = "플랜 생성 성공")
+		@ApiResponse(responseCode = "201", description = "플랜 생성 성공"),
+		@ApiResponse(responseCode = "400", description = "훈련 리스트 존재하지 않음"),
+		@ApiResponse(responseCode = "404", description = "해당 사용자 존재하지 않음"),
+		@ApiResponse(responseCode = "409", description = "해당 사용자의 플랜이 이미 존재함")
 	})
 	@PostMapping("/create")
-	public ResponseEntity<?> createPlanCreate(@RequestBody CreatePlanRequest createPlanRequest) {
+	public ResponseEntity<?> createPlan(@RequestBody CreatePlanRequest createPlanRequest) {
 
-		planService.createPlan(createPlanRequest);
+		Long id = planService.createPlan(createPlanRequest);
+
+		System.out.println("최종 생성 Plan Id: " + id);
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
