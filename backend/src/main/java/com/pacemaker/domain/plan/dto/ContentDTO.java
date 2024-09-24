@@ -1,5 +1,6 @@
 package com.pacemaker.domain.plan.dto;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public record ContentDTO(@NotNull String message, @NotNull Context context, @Not
 		Integer totalDays, Integer totalTimes, Integer totalDistances, List<PlanTrain> planTrains
 	) {
 		public record PlanTrain(
-			Integer index, Date trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
+			Integer index, String trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
 			Integer repeat, Integer trainParam, Integer trainPace, Integer interParam
 		) {
 		}

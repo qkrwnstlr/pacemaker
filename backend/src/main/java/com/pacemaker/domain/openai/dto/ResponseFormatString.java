@@ -133,9 +133,9 @@ public class ResponseFormatString {
 		                  "description": "index"
 		                },
 		                "trainDate": {
-		                  "type": "string",
-		                  "format": "date",
-		                  "description": "train date in `date` format"
+		                  "type": "date",
+		                  "format": "yyyy-MM-dd",
+		                  "description": "train date"
 		                },
 		                "paramType": {
 		                  "type": "string",
