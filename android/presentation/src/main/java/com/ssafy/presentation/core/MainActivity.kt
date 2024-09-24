@@ -11,10 +11,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.ssafy.presentation.R
-import com.ssafy.presentation.homeUI.HomeFragmentDirections
 import com.ssafy.presentation.utils.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,7 +59,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         val navController = navHostFragment.navController
         when (intent?.action) {
-            NOTIFICATION_ACTION -> {
+            RUNNING_ACTION -> {
                 navController.navigate(R.id.runningFragment)
             }
         }
@@ -73,6 +71,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val NOTIFICATION_ACTION = "com.ssafy.pacemaker.action.notification"
+        const val RUNNING_ACTION = "com.ssafy.pacemaker.action.running"
     }
 }

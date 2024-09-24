@@ -6,14 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.SystemClock
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import com.ssafy.presentation.core.MainActivity
 import com.ssafy.presentation.R
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.time.Duration
 import javax.inject.Inject
 
 class ExerciseNotificationManager @Inject constructor(
@@ -32,7 +27,7 @@ class ExerciseNotificationManager @Inject constructor(
 
     fun buildNotification(): Notification {
         val notificationIntent = Intent(applicationContext, MainActivity::class.java).apply {
-            action = MainActivity.NOTIFICATION_ACTION
+            action = MainActivity.RUNNING_ACTION
         }
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,

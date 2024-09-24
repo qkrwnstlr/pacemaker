@@ -8,10 +8,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseState
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.ssafy.pacemaker.data.ExerciseClientManager
 import com.ssafy.pacemaker.data.WearableClientManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +51,7 @@ class ExerciseService : LifecycleService() {
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()
 
     suspend fun prepareExercise() {
+        exerciseServiceMonitor.monitor()
         exerciseClientManager.prepareExercise()
     }
 
@@ -96,9 +95,6 @@ class ExerciseService : LifecycleService() {
 
             lifecycleScope.launch(Dispatchers.Default) {
                 wearableClientManager.startMobileActivity()
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    exerciseServiceMonitor.monitor()
-                }
             }
         }
 
