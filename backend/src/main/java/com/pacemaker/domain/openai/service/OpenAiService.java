@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
-import com.pacemaker.domain.openai.dto.RealTimeResponseFormatString;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 import com.pacemaker.domain.plan.dto.ContentResponse;
@@ -31,7 +30,7 @@ public class OpenAiService {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),
-				Message.createPlanResponseFormat(ResponseFormatString.responseFormat.replaceAll("\\s+", ""))))
+				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			.build();
 
 		return openAIWebClient.post()
