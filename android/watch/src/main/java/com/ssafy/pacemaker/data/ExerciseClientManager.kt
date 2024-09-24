@@ -72,6 +72,11 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     DataType.DISTANCE_TOTAL,
                     DataType.PACE,
                     DataType.PACE_STATS,
+                    DataType.STEPS_PER_MINUTE,
+                    DataType.STEPS_PER_MINUTE_STATS,
+                    DataType.VO2_MAX,
+                    DataType.VO2_MAX_STATS,
+                    DataType.LOCATION,
                 ).intersect(capabilities.supportedDataTypes)
                 val exerciseGoals = mutableListOf<ExerciseGoal<*>>()
                 if (supportsCalorieGoal(capabilities)) {
