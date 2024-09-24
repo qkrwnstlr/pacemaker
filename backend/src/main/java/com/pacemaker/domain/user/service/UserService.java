@@ -1,23 +1,21 @@
 package com.pacemaker.domain.user.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
 import com.pacemaker.domain.coach.repository.CoachRepository;
-import com.pacemaker.domain.user.dto.CheckUidResponse;
-import com.pacemaker.domain.coach.dto.CoachNumberResponse;
-import com.pacemaker.domain.user.dto.UserCreateRequest;
+import com.pacemaker.domain.user.dto.GoogleLoginRequest;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
-import com.pacemaker.domain.user.dto.UserRequest;
 import com.pacemaker.domain.user.dto.UserUpdateRequest;
+import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.user.entity.Gender;
 import com.pacemaker.domain.user.entity.User;
-import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.user.repository.UserRepository;
-import com.pacemaker.global.exception.ConflictException;
 import com.pacemaker.global.exception.NotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -30,65 +28,34 @@ public class UserService {
 	private final CoachRepository coachRepository;
 
 	@Transactional
-	public void create(UserCreateRequest userCreateRequest) {
-		if (userRepository.existsByUid(userCreateRequest.uid())) {
-			throw new ConflictException("이미 존재하는 사용자입니다.");
-		}
-
-		Gender gender = getGender(userCreateRequest.gender());
-		userRepository.save(User.builder()
-			.uid(userCreateRequest.uid())
-			.username(userCreateRequest.name())
-			.age(userCreateRequest.age())
-			.gender(gender)
-			.height(userCreateRequest.height())
-			.weight(userCreateRequest.weight())
-			.build()
-		);
-	}
-
-	@Transactional(readOnly = true)
-	public CheckUidResponse checkUid(UserRequest userRequest) {
-		boolean isAlreadyExists = userRepository.existsByUid(userRequest.uid());
-		return new CheckUidResponse(isAlreadyExists);
+	public UserInfoResponse googleLogin(String uid, GoogleLoginRequest googleLoginRequest) {
+		return userRepository.findByUid(uid)
+			.map(UserInfoResponse::of)
+			.orElseGet(() -> {
+				User newUser = User.builder()
+					.uid(uid)
+					.username(googleLoginRequest.name())
+					.build();
+				return UserInfoResponse.of(userRepository.save(newUser));
+			});
 	}
 
 	@Transactional(readOnly = true)
 	public UserInfoResponse getUserInfo(String uid) {
-		User user = findUserByUid(uid);
-		Float trainDistance = convertMetersToKilometers(user.getTrainDistance());
-		Long coachNumber = getCoachId(user);
-
-		return UserInfoResponse.builder()
-			.name(user.getUsername())
-			.age(user.getAge())
-			.height(user.getHeight())
-			.weight(user.getWeight())
-			.trainCount(user.getTrainCount())
-			.trainTime(user.getTrainTime())
-			.trainDistance(trainDistance)
-			.coachNumber(coachNumber)
-			.build();
+		return UserInfoResponse.of(findUserByUid(uid));
 	}
 
 	@Transactional
-	public UserInfoResponse updateUserInfo(UserUpdateRequest userUpdateRequest) {
-		User user = findUserByUid(userUpdateRequest.uid());
-		user.update(userUpdateRequest.age(), userUpdateRequest.height(), userUpdateRequest.weight());
+	public UserInfoResponse updateUserInfo(String uid, UserUpdateRequest userUpdateRequest) {
+		User user = findUserByUid(uid);
 
-		Float trainDistance = convertMetersToKilometers(user.getTrainDistance());
-		Long coachNumber = getCoachId(user);
+		Gender gender = getGender(userUpdateRequest.gender());
+		String injuries = convertStringInjuries(userUpdateRequest.injuries());
 
-		return UserInfoResponse.builder()
-			.name(user.getUsername())
-			.age(user.getAge())
-			.height(user.getHeight())
-			.weight(user.getWeight())
-			.trainCount(user.getTrainCount())
-			.trainTime(user.getTrainTime())
-			.trainDistance(trainDistance)
-			.coachNumber(coachNumber)
-			.build();
+		user.update(userUpdateRequest.name(), userUpdateRequest.age(), userUpdateRequest.height(),
+			userUpdateRequest.weight(), gender, injuries);
+
+		return UserInfoResponse.of(user);
 	}
 
 	@Transactional(readOnly = true)
@@ -108,8 +75,8 @@ public class UserService {
 	}
 
 	@Transactional
-	public void deleteUser(UserRequest userRequest) {
-		User user = findUserByUid(userRequest.uid());
+	public void deleteUser(String uid) {
+		User user = findUserByUid(uid);
 		userRepository.delete(user);
 	}
 
@@ -118,16 +85,18 @@ public class UserService {
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
 	}
 
-	private Coach findCoachById(Long coachId) {
-		return coachRepository.findById(coachId)
-			.orElseThrow(() -> new NotFoundException("존재하지 않는 코치입니다."));
-	}
-
-	private Gender getGender(Integer gender) {
-		if (gender == 0) {
+	private Gender getGender(String gender) {
+		if (gender.equals("MALE")) {
+			return Gender.MALE;
+		}
+		if (gender.equals("FEMALE")) {
 			return Gender.FEMALE;
 		}
-		return Gender.MALE;
+		return Gender.UNKNOWN;
+	}
+
+	private String convertStringInjuries(List<String> injuries) {
+		return injuries.toString();
 	}
 
 	private Long getCoachId(User user) {
@@ -136,7 +105,8 @@ public class UserService {
 			.orElse(null);
 	}
 
-	private Float convertMetersToKilometers(Integer trainDistance) {
-		return Math.round(trainDistance / 10.0f) / 100.0f;
+	private Coach findCoachById(Long coachId) {
+		return coachRepository.findById(coachId)
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 코치입니다."));
 	}
 }
