@@ -8,9 +8,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
-import com.pacemaker.domain.plan.dto.ContentDTO;
+import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
+import com.pacemaker.domain.plan.dto.ContentResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -23,7 +24,7 @@ public class OpenAiService {
 		this.openAIWebClient = openAIWebClient;
 	}
 
-	public Mono<String> createPlanChatCompletions(ContentDTO contentRequest) {
+	public Mono<String> createPlanChatCompletions(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),
@@ -42,19 +43,33 @@ public class OpenAiService {
 				// return response + " | startIdx: " + startIdx;
 
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
-				// System.out.println(request.choices().get(0));
-				// System.out.println(request.choices().get(0).index());
-				// System.out.println(request.choices().get(0).message());
-				// System.out.println(request.choices.get(0).message.content.toString());
-				ContentDTO contentResponse = new Gson().fromJson(request.choices().get(0).message().content(),
-					ContentDTO.class);
+				ContentResponse contentResponse = new Gson().fromJson(request.choices().get(0).message().content(),
+					ContentResponse.class);
 				System.out.println("contentResponse = " + contentResponse);
 
+				// session 구하기
+				calculateSession(contentResponse);
+
+				// 날짜 변환
+				// System.out.println(contentResponse.plan().planTrains().get(0).trainDate());
+				// System.out.println("LocalDate: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()));
+				// System.out.println("LocalDateTime: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()).atTime(0, 0));
+				
 				return new Gson().toJson(contentResponse);
 			});
 	}
 
-	public Mono<String> testMini(ContentDTO contentRequest) {
+	private void calculateSession(ContentResponse contentResponse) {
+		List<ContentResponse.PlanTrain> planTrains = contentResponse.getPlan().getPlanTrains();
+
+		if (planTrains != null && !planTrains.isEmpty()) {
+			for (ContentResponse.PlanTrain planTrain : planTrains) {
+				planTrain.calculateSession();
+			}
+		}
+	}
+
+	public Mono<String> testMini(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-mini")
 			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),
@@ -73,7 +88,7 @@ public class OpenAiService {
 			.bodyToMono(String.class);
 	}
 
-	public Mono<String> test4o(ContentDTO contentRequest) {
+	public Mono<String> test4o(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),

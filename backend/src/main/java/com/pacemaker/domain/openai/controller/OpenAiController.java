@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.openai.service.OpenAiService;
-import com.pacemaker.domain.plan.dto.ContentDTO;
+import com.pacemaker.domain.plan.dto.ContentRequest;
 
 import reactor.core.publisher.Mono;
 
@@ -24,7 +24,7 @@ public class OpenAiController {
     }
 
     @PostMapping("/test/mini")
-    public Mono<ResponseEntity<String>> testMini(@RequestBody ContentDTO contentRequest) {
+    public Mono<ResponseEntity<String>> testMini(@RequestBody ContentRequest contentRequest) {
 
         System.out.println("Received message: " + contentRequest.message());
         System.out.println("Goal: " + contentRequest.context().goal());
@@ -41,7 +41,7 @@ public class OpenAiController {
     }
 
     @PostMapping("/test/4o")
-    public Mono<ResponseEntity<String>> getTest4o(@RequestBody ContentDTO contentRequest) {
+    public Mono<ResponseEntity<String>> getTest4o(@RequestBody ContentRequest contentRequest) {
 
         System.out.println("Received message: " + contentRequest.message());
         System.out.println("Goal: " + contentRequest.context().goal());
