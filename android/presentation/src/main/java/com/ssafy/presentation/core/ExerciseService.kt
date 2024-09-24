@@ -54,10 +54,8 @@ class ExerciseService : LifecycleService() {
     private fun stopSelfIfNotRunning() {
         lifecycleScope.launch {
             if (exerciseMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
-                lifecycleScope.launch {
-                    exerciseMonitor.disconnect()
-                    stopForeground(STOP_FOREGROUND_REMOVE)
-                }
+                exerciseMonitor.disconnect()
+                stopForeground(STOP_FOREGROUND_REMOVE)
             }
             stopSelf()
         }
