@@ -92,4 +92,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
     implementation(libs.play.services.location)
+
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+    //Data Store
+
+
 }

@@ -12,13 +12,11 @@ import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentProfileBinding
-import com.ssafy.presentation.myPageUI.data.toProfile
-import com.ssafy.presentation.utils.toAge
 import com.ssafy.presentation.utils.toAgeString
 import com.ssafy.presentation.utils.toCoachIndex
 import com.ssafy.presentation.utils.toCount
 import com.ssafy.presentation.utils.toDistance
-import com.ssafy.presentation.utils.toGender
+import com.ssafy.presentation.utils.toGenderString
 import com.ssafy.presentation.utils.toHeight
 import com.ssafy.presentation.utils.toTime
 import com.ssafy.presentation.utils.toWeight
@@ -41,13 +39,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     private fun initView() = with(binding) {
         val slideRight = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_slide_right)
         val slideLeft = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_slide_left)
-        val uid = getUid()
 
         ivProfile.startAnimation(slideRight)
         lyRight.startAnimation(slideRight)
         lyLeft.startAnimation(slideLeft)
         btnSetting.startAnimation(slideLeft)
-        viewModel.getUserInfo(uid, ::failToGetUserInfo)
+        viewModel.getUserInfo()
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -58,10 +55,10 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     tvContentTrainCnt.text = user.trainCount.toCount()
                     tvContentTrainTime.text = user.minute.toTime()
                     tvContentTrainKm.text = user.distance.toDistance()
-                    etAge.text = user.year.toAge().toAgeString()
+                    etAge.text = user.age.toAgeString()
                     etHeight.text = user.height.toHeight()
                     etWeight.text = user.weight.toWeight()
-                    etGender.text = user.gender.toGender()
+                    etGender.text = user.gender.toGenderString()
 
                     val coachIndex = user.coachNumber.toCoachIndex()
                     ivProfile.setImageResource(coachIndex)
@@ -88,16 +85,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
         binding.ivProfile.setOnClickListener { moveToSelectCoachFragment() }
     }
 
-    private fun failToGetUserInfo(message: String) = showSnackStringBar(message)
-
     private fun moveToSelectCoachFragment() {
         val action = ProfileFragmentDirections.actionProfileFragmentToSelectCoachFragment()
         findNavController().navigate(action)
     }
 
     private fun moveToModifyFragment() {
-        val profile = viewModel.userInfo.value.toProfile()
-        val action = ProfileFragmentDirections.actionProfileFragmentToModifyFragment(profile)
+        val action = ProfileFragmentDirections.actionProfileFragmentToModifyFragment()
         findNavController().navigate(action)
     }
 

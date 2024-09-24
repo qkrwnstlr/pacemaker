@@ -40,8 +40,8 @@ fun Int.toTime(): String {
     return "${hour}h ${minute}m"
 }
 
+fun String.toGenderString(): String = if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
 fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
-fun String.toGenderString(): String = ifBlank { "" }
 fun Int.toEmptyOrHeight(): String = if (this == 0) "" else "${toString()}cm"
 fun Int.toEmptyOrWeight(): String = if (this == 0) "" else "${toString()}kg"
 fun List<String>.toInjuries(): String {
@@ -56,9 +56,9 @@ fun String.toGenderIndex(): Int? = when (this) {
 }
 
 fun Long?.toCoachIndex(): Int = when (this) {
-    1L -> R.drawable.coach_mike
-    2L -> R.drawable.coach_jamie
-    3L -> R.drawable.coach_danny
+    1L -> R.drawable.mikefull
+    2L -> R.drawable.jamiefull
+    3L -> R.drawable.dannyfull
     else -> R.drawable.runnerfull
 }
 
@@ -70,14 +70,10 @@ fun Long?.toCoachMessage(): List<String> = when (this) {
 }
 
 fun Int?.toGender(): String = when (this) {
-    0 -> WOMAN
-    1 -> MAN
+    0 -> FEMALE
+    1 -> MALE
     else -> UNKNOWN
 }
-
-//fun Date.toLocalDate(): LocalDate = Instant.ofEpochMilli(time)
-//    .atZone(ZoneId.systemDefault())
-//    .toLocalDate()
 
 fun String.toLocalDate(): LocalDate {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd")
@@ -115,8 +111,8 @@ fun PlanTrain?.toTrainText(): String {
 }
 
 const val ERROR = "에러 발생!"
-const val MAN = "남자"
-const val WOMAN = "여자"
+const val MALE = "남자"
+const val FEMALE = "여자"
 const val UNKNOWN = "미상"
 
 val START_WITH_MIKE = listOf(

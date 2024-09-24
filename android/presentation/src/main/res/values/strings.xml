@@ -12,8 +12,8 @@
 
     <string name="is_empty">공백을 확인해주세요!</string>
     <string name="get_gender">성별을 알려주세요</string>
-    <string name="woman">여성</string>
-    <string name="man">남성</string>
+    <string name="FEMALE">여성</string>
+    <string name="MALE">남성</string>
     <string name="use_ai">AI 코칭 플랜에 사용됩니다</string>
     <string name="how_often_run">평소에 얼마나 뛰시나요?</string>
     <string name="mean_cadence">평균 케이던스</string>
