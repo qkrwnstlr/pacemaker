@@ -9,4 +9,5 @@ interface DataStoreRepository {
     suspend fun saveUser(user: User)
     fun getImgUrl(): Flow<String>
     suspend fun clearImgUrl()
+    suspend fun getUser(): User
 }

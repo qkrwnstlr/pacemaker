@@ -6,5 +6,6 @@ import com.ssafy.domain.response.ResponseResult
 import javax.inject.Inject
 
 class ModifyUserUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend operator fun invoke(user: User): ResponseResult<User> = userRepository.modify(user)
+    suspend operator fun invoke(uid: String, user: User): ResponseResult<User> =
+        userRepository.modify(uid, user)
 }

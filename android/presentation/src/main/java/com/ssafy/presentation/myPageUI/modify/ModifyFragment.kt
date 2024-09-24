@@ -5,32 +5,30 @@ import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentModifyBinding
+import com.ssafy.presentation.utils.toGenderString
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ModifyFragment : BaseFragment<FragmentModifyBinding>(FragmentModifyBinding::inflate) {
-    private val args: ModifyFragmentArgs by navArgs()
     private val viewModel: ModifyViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setData()
-        initView()
         initListener()
     }
 
-    private fun setData() = viewModel.setNewProfile(args.profile)
+    private fun setData() = viewModel.setProfile(::initView)
 
-    private fun initView() = with(viewModel.profile) {
+    private fun initView() = with(viewModel.user) {
         if (name.isNotBlank()) binding.tieName.setText(name)
         if (age != 0) binding.tieAge.setText(age.toString())
         if (height != 0) binding.tieHeight.setText(height.toString())
         if (weight != 0) binding.tieWeight.setText(weight.toString())
-        if (gender != null) binding.tieGender.setText(gender)
+        binding.tieGender.setText(gender.toGenderString())
     }
 
     private fun initListener() = with(binding) {
@@ -70,7 +68,7 @@ class ModifyFragment : BaseFragment<FragmentModifyBinding>(FragmentModifyBinding
     }
 
     private fun setGender(gender: String) {
-        binding.tieGender.setText(gender)
+        binding.tieGender.setText(gender.toGenderString())
         viewModel.setGender(gender)
     }
 

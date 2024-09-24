@@ -3,8 +3,8 @@ package com.ssafy.presentation.myPageUI.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.User
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.response.ResponseResult
-import com.ssafy.domain.usecase.user.GetUserInfoUseCase
 import com.ssafy.presentation.utils.ERROR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -17,19 +17,15 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val getUserInfoUseCase: GetUserInfoUseCase
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
     private val _userInfo: MutableStateFlow<User> = MutableStateFlow(User())
     val userInfo: StateFlow<User> = _userInfo.asStateFlow()
 
     fun getUserInfo(
-        uid: String,
-        failToGetInfo: (String) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
-        runCatching { getUserInfoUseCase(uid) }
-            .onSuccess { response -> checkResponse(response, failToGetInfo) }
-            .onFailure { failToGetInfo(ERROR) }
+        runCatching { _userInfo.emit(dataStoreRepository.getUser()) }
     }
 
     private suspend fun checkResponse(
