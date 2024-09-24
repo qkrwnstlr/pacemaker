@@ -1,5 +1,6 @@
 package com.ssafy.presentation.utils
 
+import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.presentation.R
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -39,6 +40,15 @@ fun Int.toTime(): String {
     return "${hour}h ${minute}m"
 }
 
+fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
+fun String.toGenderString(): String = ifBlank { "" }
+fun Int.toEmptyOrHeight(): String = if (this == 0) "" else "${toString()}cm"
+fun Int.toEmptyOrWeight(): String = if (this == 0) "" else "${toString()}kg"
+fun List<String>.toInjuries(): String {
+    val injuries = joinToString()
+    return if (injuries.length > 15) "${injuries}..." else injuries
+}
+
 fun String.toGenderIndex(): Int? = when (this) {
     WOMAN -> 0
     MAN -> 1
@@ -63,6 +73,45 @@ fun Int?.toGender(): String = when (this) {
     0 -> WOMAN
     1 -> MAN
     else -> UNKNOWN
+}
+
+//fun Date.toLocalDate(): LocalDate = Instant.ofEpochMilli(time)
+//    .atZone(ZoneId.systemDefault())
+//    .toLocalDate()
+
+fun String.toLocalDate(): LocalDate {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd")
+    return LocalDate.parse(this, formatter)
+}
+
+fun Int.toTrainPace(): String {
+    val minute = this / 60
+    val second = this % 60
+    return "${minute}'${second}\""
+}
+
+fun Int.toTotalTime(): String {
+    val trainTime = this / 60
+    return "${trainTime}분"
+}
+
+fun PlanTrain?.toPlanInst(): String {
+    if (this == null) return ""
+
+    val totalTime = ((trainParam + interParam) * repeat).toTotalTime()
+    val meanPace = trainPace.toTrainPace()
+    return "$totalTime  |  $meanPace"
+}
+
+fun PlanTrain?.toTrainText(): String {
+    if (this == null) return ""
+
+    val totalDistance = sessionDistance / 1000f
+    val distanceString = String.format(Locale.KOREAN, "%.2f", totalDistance)
+
+    val runCount = "러닝 ${repeat}회"
+    val interCount = if (repeat > 1) "천천히 걷기 ${repeat - 1}회" else ""
+    return "${distanceString}km\n${runCount}\n${interCount}"
 }
 
 const val ERROR = "에러 발생!"

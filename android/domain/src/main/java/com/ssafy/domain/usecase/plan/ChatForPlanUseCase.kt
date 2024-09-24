@@ -7,6 +7,14 @@ import javax.inject.Inject
 
 class ChatForPlanUseCase @Inject constructor(private val planRepository: PlanRepository) {
 
-    suspend operator fun invoke(chat: Chat): ResponseResult<Chat> = planRepository.chatForPlan(chat)
+    suspend operator fun invoke(chat: Chat): ResponseResult<Chat> {
+        val newPlanTrains = chat.plan.planTrains.map {
+            val repeat = if (it.repeat == 0) 1 else it.repeat
+            it.copy(repeat = repeat)
+        }
+        val newPlan = chat.plan.copy(planTrains = newPlanTrains)
+        val newChat = chat.copy(plan = newPlan)
+        return planRepository.chatForPlan(newChat)
+    }
 
 }

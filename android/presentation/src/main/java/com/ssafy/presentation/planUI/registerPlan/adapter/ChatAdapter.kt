@@ -22,7 +22,7 @@ class ChatAdapter : ListAdapter<ChatData, ViewHolder>(ChatItemCallBack()) {
         val item = currentList[position]
         when (holder) {
             is MyChatViewHolder -> holder.bind(item as ChatData.MyData)
-            is CoachChatViewHolder -> holder.bind(item as ChatData.CoachData, position == 0)
+            is CoachChatViewHolder -> holder.bind(item as ChatData.CoachData)
         }
     }
 
@@ -45,6 +45,14 @@ class ChatAdapter : ListAdapter<ChatData, ViewHolder>(ChatItemCallBack()) {
     ): MyChatViewHolder {
         val binding = ListItemStudentBinding.inflate(inflater, parent, false)
         return MyChatViewHolder(binding)
+    }
+
+    override fun onViewRecycled(holder: ViewHolder) {
+        super.onViewRecycled(holder)
+
+        if (holder is CoachChatViewHolder) {
+            holder.onRecycled()
+        }
     }
 
     companion object {
