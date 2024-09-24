@@ -10,6 +10,7 @@ import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
 import com.pacemaker.domain.coach.repository.CoachRepository;
 import com.pacemaker.domain.user.dto.GoogleLoginRequest;
+import com.pacemaker.domain.user.dto.GoogleLoginResponse;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
 import com.pacemaker.domain.user.dto.UserUpdateRequest;
 import com.pacemaker.domain.coach.entity.Coach;
@@ -28,15 +29,15 @@ public class UserService {
 	private final CoachRepository coachRepository;
 
 	@Transactional
-	public UserInfoResponse googleLogin(String uid, GoogleLoginRequest googleLoginRequest) {
+	public GoogleLoginResponse googleLogin(String uid, GoogleLoginRequest googleLoginRequest) {
 		return userRepository.findByUid(uid)
-			.map(UserInfoResponse::of)
+			.map(user -> GoogleLoginResponse.of(user, true))
 			.orElseGet(() -> {
 				User newUser = User.builder()
 					.uid(uid)
 					.username(googleLoginRequest.name())
 					.build();
-				return UserInfoResponse.of(userRepository.save(newUser));
+				return GoogleLoginResponse.of(userRepository.save(newUser), false);
 			});
 	}
 

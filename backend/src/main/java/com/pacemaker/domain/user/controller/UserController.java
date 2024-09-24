@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
 import com.pacemaker.domain.user.dto.GoogleLoginRequest;
+import com.pacemaker.domain.user.dto.GoogleLoginResponse;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
 import com.pacemaker.domain.user.dto.UserUpdateRequest;
 import com.pacemaker.domain.user.service.UserService;
@@ -37,7 +38,7 @@ public class UserController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "구글 로그인 성공")
 	})
-	public ResponseEntity<UserInfoResponse> googleLogin(@PathVariable String uid,
+	public ResponseEntity<GoogleLoginResponse> googleLogin(@PathVariable String uid,
 		@RequestBody GoogleLoginRequest googleLoginRequest) {
 		return ResponseEntity.status(HttpStatus.OK).body(userService.googleLogin(uid, googleLoginRequest));
 	}
