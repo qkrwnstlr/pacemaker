@@ -13,7 +13,6 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentProfileBinding
 import com.ssafy.presentation.myPageUI.data.toProfile
-import com.ssafy.presentation.utils.toAge
 import com.ssafy.presentation.utils.toAgeString
 import com.ssafy.presentation.utils.toCoachIndex
 import com.ssafy.presentation.utils.toCount
@@ -57,7 +56,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                     tvContentTrainCnt.text = user.trainCount.toCount()
                     tvContentTrainTime.text = user.minute.toTime()
                     tvContentTrainKm.text = user.distance.toDistance()
-                    etAge.text = user.year.toAge().toAgeString()
+                    etAge.text = user.age.toAgeString()
                     etHeight.text = user.height.toHeight()
                     etWeight.text = user.weight.toWeight()
                     etGender.text = user.gender

@@ -41,7 +41,7 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext val contex
             preferences[intPreferencesKey("minute")] = user.minute
             preferences[intPreferencesKey("pace")] = user.pace
             preferences[intPreferencesKey("weight")] = user.weight
-            preferences[intPreferencesKey("year")] = user.year
+            preferences[intPreferencesKey("age")] = user.age
             preferences[intPreferencesKey("trainCount")] = user.trainCount
             preferences[intPreferencesKey("trainTime")] = user.trainTime
             preferences[floatPreferencesKey("trainDistance")] = user.trainDistance

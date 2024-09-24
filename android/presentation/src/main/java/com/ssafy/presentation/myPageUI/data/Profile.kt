@@ -2,8 +2,6 @@ package com.ssafy.presentation.myPageUI.data
 
 import android.os.Parcelable
 import com.ssafy.domain.dto.User
-import com.ssafy.presentation.utils.toAge
-import com.ssafy.presentation.utils.toYear
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -19,7 +17,7 @@ data class Profile(
 fun User.toProfile(): Profile = Profile(
     uid = uid,
     name = name,
-    age = year.toAge(),
+    age = age,
     height = height,
     weight = weight,
     gender = gender
@@ -28,7 +26,7 @@ fun User.toProfile(): Profile = Profile(
 fun Profile.toUser(): User = User(
     uid = uid,
     name = name,
-    year = age.toYear(),
+    age = age,
     height = height,
     weight = weight,
     gender = gender ?: "UNKNOWN"
