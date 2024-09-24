@@ -8,9 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.google.gson.Gson;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
-import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
+import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.ContentResponse;
 import com.pacemaker.domain.realtime.dto.RealTimeRequest;
 import com.pacemaker.domain.realtime.dto.RealTimeResponse;
@@ -62,6 +62,11 @@ public class OpenAiService {
 	}
 
 	private void calculateSession(ContentResponse contentResponse) {
+		if (contentResponse.getPlan() == null) {
+			// 나중에 다른 서비스 처리 로직이 정해지면 Exception으로 처리해서 변경하든 하기!
+			return;
+		}
+
 		List<ContentResponse.PlanTrain> planTrains = contentResponse.getPlan().getPlanTrains();
 
 		if (planTrains != null && !planTrains.isEmpty()) {
@@ -111,7 +116,8 @@ public class OpenAiService {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createRealTimeSystem(), Message.createUser(new Gson().toJson(realTimeRequest)),
-				Message.createRealTimeResponseFormat(ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
+				Message.createRealTimeResponseFormat(
+					ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
 			.build();
 
 		return openAIWebClient.post()
