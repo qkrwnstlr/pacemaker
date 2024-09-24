@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentProfileBinding
-import com.ssafy.presentation.myPageUI.data.toProfile
 import com.ssafy.presentation.utils.toAgeString
 import com.ssafy.presentation.utils.toCoachIndex
 import com.ssafy.presentation.utils.toCount
@@ -92,8 +91,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun moveToModifyFragment() {
-        val profile = viewModel.userInfo.value.toProfile()
-        val action = ProfileFragmentDirections.actionProfileFragmentToModifyFragment(profile)
+        val action = ProfileFragmentDirections.actionProfileFragmentToModifyFragment()
         findNavController().navigate(action)
     }
 

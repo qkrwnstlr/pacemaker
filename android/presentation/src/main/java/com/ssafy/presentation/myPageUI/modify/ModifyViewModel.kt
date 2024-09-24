@@ -21,9 +21,10 @@ class ModifyViewModel @Inject constructor(
 
     var user: User = User()
 
-    fun setNewProfile(initView: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-        runCatching { user = dataStoreRepository.getUser() }
+    fun setProfile(initView: () -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        runCatching { dataStoreRepository.getUser() }
             .onSuccess {
+                user = it
                 withContext(Dispatchers.Main) {
                     initView()
                 }
@@ -55,7 +56,6 @@ class ModifyViewModel @Inject constructor(
         popBack: () -> Unit,
         failToSetProfile: (String) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
-        val user = user
 
         runCatching { modifyUserUseCase(uid, user) }
             .onSuccess { response -> checkResponse(response, popBack, failToSetProfile) }
