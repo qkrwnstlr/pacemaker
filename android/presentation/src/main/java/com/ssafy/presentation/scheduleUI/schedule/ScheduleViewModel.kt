@@ -22,6 +22,9 @@ class ScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching { getPlanDotUseCase.invoke(uid, year, month) }
                 .onSuccess { response ->
+                    resultList.add(LocalDate.parse("2024-09-24"))
+                    resultList.add(LocalDate.parse("2024-09-27"))
+                    _dotList.emit(resultList)
                     response.data?.let {
                         resultList.clear()
                         resultList.addAll(it.trainDateList)

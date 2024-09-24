@@ -8,6 +8,9 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.PieChart
@@ -18,7 +21,6 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -31,6 +33,8 @@ import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
 import com.ssafy.presentation.utils.displayText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -41,26 +45,25 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private val monthCalendarView: CalendarView get() = binding.exOneCalendar
 
     private var selectedDate = LocalDate.now()
-
     private var predate = LocalDate.now()
-
     private val today = LocalDate.now()
+
+    private var currentMonth = YearMonth.now()
+    private val startMonth = currentMonth.minusMonths(100)
+    private val endMonth = currentMonth.plusMonths(100)
+    private val daysOfWeek = daysOfWeek()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val daysOfWeek = daysOfWeek()
         binding.legendLayout.root.children
             .map { it as TextView }
             .forEachIndexed { index, textView ->
                 textView.text = daysOfWeek[index].displayText(narrow = true)
             }
 
-        val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(100)
-        val endMonth = currentMonth.plusMonths(100)
-
         viewModel.setMonthHasTrain(getUid(), currentMonth.year, currentMonth.monthValue)
-        setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek, viewModel.dotList.value)
+        setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
+        initCollect()
 
         binding.btnNextMonth.setOnClickListener {
             binding.exOneCalendar.findFirstVisibleMonth()?.let {
@@ -77,8 +80,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
         makeChart(barChart)
         makeResult()
-        val dialog = PostponeDialog(::onYesButtonClick)
-        dialog.show(requireActivity().supportFragmentManager, "ConfirmDialog")
 
         initListener()
     }
@@ -87,13 +88,24 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         lyPlan.setOnClickListener { moveToPlanDetailFragment() }
     }
 
+    private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            var previousDotList = emptyList<LocalDate>()
+            viewModel.dotList.collectLatest { newDotList ->
+                val changedDates = newDotList.filterNot { previousDotList.contains(it) } +
+                        previousDotList.filterNot { newDotList.contains(it) }
+
+                for (date in changedDates) {
+                    monthCalendarView.notifyDateChanged(date)
+                }
+                previousDotList = newDotList
+            }
+        }
+    }
+
     private fun moveToPlanDetailFragment() {
         val action = ScheduleFragmentDirections.actionScheduleFragmentToPlanDetailFragment2()
         findNavController().navigate(action)
-    }
-
-    private fun onYesButtonClick() {
-        showSnackStringBar("ok버튼 클릭")
     }
 
     private fun makeResult() {
@@ -107,85 +119,63 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val heartChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_heart)
         val stepChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_step)
 
-        val paceEntry = ArrayList<PieEntry>()
-        paceEntry.add(PieEntry(totalPercent - pacePercent))
-        paceEntry.add(PieEntry(pacePercent, ""))
-
-        val heartEntry = ArrayList<PieEntry>()
-        heartEntry.add(PieEntry(totalPercent - heartPercent))
-        heartEntry.add(PieEntry(heartPercent, ""))
-
-        val stepEntry = ArrayList<PieEntry>()
-        stepEntry.add(PieEntry(totalPercent - stepPercent))
-        stepEntry.add(PieEntry(stepPercent, ""))
-
-        // 그래프 색상(데이터 순서)
         val colors = listOf(
             Color.parseColor("#FFFFFFFF"),
             Color.parseColor("#5973FF"),
         )
 
-        val paceDataSet = PieDataSet(paceEntry, "")
-        paceDataSet.colors = colors
-        paceDataSet.setDrawValues(false)
+        setupPieChart(paceChart, pacePercent, totalPercent, colors)
+        setupPieChart(heartChart, heartPercent, totalPercent, colors)
+        setupPieChart(stepChart, stepPercent, totalPercent, colors)
+    }
 
-        val heartDataSet = PieDataSet(heartEntry, "")
-        heartDataSet.colors = colors
-        heartDataSet.setDrawValues(false)
+    private fun setupPieChart(
+        chart: PieChart,
+        valuePercent: Float,
+        totalPercent: Float,
+        colors: List<Int>
+    ) {
+        val entries = ArrayList<PieEntry>().apply {
+            add(PieEntry(totalPercent - valuePercent))
+            add(PieEntry(valuePercent, ""))
+        }
 
-        val stepDataSet = PieDataSet(stepEntry, "")
-        stepDataSet.colors = colors
-        stepDataSet.setDrawValues(false)
+        val dataSet = PieDataSet(entries, "").apply {
+            this.colors = colors
+            setDrawValues(false)
+        }
 
-        // Pie 그래프 생성
-        val dataPaceChart = PieData(paceDataSet)
-        paceChart.apply {
-            data = dataPaceChart
+        chart.apply {
+            data = PieData(dataSet)
             holeRadius = 75f
             transparentCircleRadius = 75f
             setDrawCenterText(false)
             legend.isEnabled = false
             description.isEnabled = false
+            invalidate()
         }
-
-        val dataHeartChart = PieData(heartDataSet)
-        heartChart.apply {
-            data = dataHeartChart
-            holeRadius = 75f
-            transparentCircleRadius = 75f
-            setDrawCenterText(false)
-            legend.isEnabled = false
-            description.isEnabled = false
-        }
-
-        val dataStepChart = PieData(stepDataSet)
-        stepChart.apply {
-            data = dataStepChart
-            holeRadius = 75f
-            transparentCircleRadius = 75f
-            setDrawCenterText(false)
-            legend.isEnabled = false
-            description.isEnabled = false
-        }
-
-        // 그래프 업데이트
-        paceChart.invalidate()
-        heartChart.invalidate()
-        stepChart.invalidate()
     }
 
     private fun makeChart(barChart: BarChart) {
+        val entries = ArrayList<BarEntry>().apply {
+            add(BarEntry(2.5f, 0.2f))
+            add(BarEntry(3.5f, 1.6f))
+            add(BarEntry(4.5f, 1.2f))
+            add(BarEntry(5.5f, 1.6f))
+            add(BarEntry(6.5f, 1.2f))
+            add(BarEntry(7.5f, 1.6f))
+            add(BarEntry(8.5f, 0.2f))
+        }
 
-        val entries = ArrayList<BarEntry>()
-        entries.add(BarEntry(2.5f, 0.2f))
-        entries.add(BarEntry(3.5f, 1.6f))
-        entries.add(BarEntry(4.5f, 1.2f))
-        entries.add(BarEntry(5.5f, 1.6f))
-        entries.add(BarEntry(6.5f, 1.2f))
-        entries.add(BarEntry(7.5f, 1.6f))
-        entries.add(BarEntry(8.5f, 0.2f))
+        val barDataSet = BarDataSet(entries, "DataSet").apply {
+            val colors = List(entries.size) { index ->
+                if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
+            }
+            setColors(colors.toIntArray(), barChart.context)
+        }
 
         barChart.apply {
+            data = BarData(barDataSet).apply { barWidth = 0.8f }
             description.isEnabled = false
             setMaxVisibleValueCount(7)
             setPinchZoom(false)
@@ -209,21 +199,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             setTouchEnabled(false)
             animateY(1000)
             legend.isEnabled = false
-        }
-        val set = BarDataSet(entries, "DataSet")
-
-        val colors = List(entries.size) { index ->
-            if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
-        }
-        set.setColors(colors.toIntArray(), barChart.context)
-
-        val dataSet: ArrayList<IBarDataSet> = ArrayList()
-        dataSet.add(set)
-        val data = BarData(dataSet)
-        data.barWidth = 0.8f //막대 너비 설정
-        barChart.apply {
-            this.data = data //차트의 데이터를 data로 설정해줌.
-            setFitBars(true)
             invalidate()
         }
     }
@@ -232,8 +207,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         startMonth: YearMonth,
         endMonth: YearMonth,
         currentMonth: YearMonth,
-        daysOfWeek: List<DayOfWeek>,
-        thisMonthList: List<LocalDate>
+        daysOfWeek: List<DayOfWeek>
     ) {
         monthCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view, ::dateClicked)
@@ -246,7 +220,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                     container.ly,
                     container.exThreeDotView,
                     data.position == DayPosition.MonthDate,
-                    thisMonthList.contains(data.date)
+                    viewModel.dotList.value.contains(data.date)
                 )
             }
         }
@@ -265,27 +239,18 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     ) {
         if (isSelectable) {
             textView.text = date.dayOfMonth.toString()
-            when {
-                selectedDate == date -> {
-                    layout.setBackgroundResource(R.drawable.day_selected_bg)
+            layout.setBackgroundResource(
+                when {
+                    selectedDate == date -> R.drawable.day_selected_bg
+                    today == date -> R.drawable.day_today_bg
+                    else -> 0 // null equivalent
                 }
-
-                today == date -> {
-                    layout.setBackgroundResource(R.drawable.day_today_bg)
-                }
-
-                else -> {
-                    layout.background = null
-                }
-            }
+            )
         } else {
             layout.background = null
         }
-        if (isVisibleTrain) {
-            hasTrain.visibility = View.VISIBLE
-        } else {
-            hasTrain.visibility = View.GONE
-        }
+        hasTrain.visibility = if (isVisibleTrain) View.VISIBLE else View.INVISIBLE
+
     }
 
     private fun dateClicked(date: LocalDate) {
