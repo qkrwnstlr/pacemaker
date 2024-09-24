@@ -1,8 +1,8 @@
 package com.ssafy.presentation.core
 
 import android.Manifest
+import android.content.Intent
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.inputmethod.InputMethodManager
@@ -11,10 +11,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.ssafy.presentation.R
-import dagger.hilt.android.AndroidEntryPoint
+import com.ssafy.presentation.homeUI.HomeFragmentDirections
 import com.ssafy.presentation.utils.PermissionHelper
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -35,6 +37,8 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION,
         )
         PermissionHelper(this, permissions, ::finish).launchPermission()
+
+        handleIntent(intent)
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -52,4 +56,17 @@ class MainActivity : AppCompatActivity() {
         return super.dispatchTouchEvent(ev)
     }
 
+    private fun handleIntent(intent: Intent?) {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
+        val navController = navHostFragment.navController
+        when (intent?.action) {
+            NOTIFICATION_ACTION -> {
+                navController.navigate(R.id.runningFragment)
+            }
+        }
+    }
+
+    companion object {
+        const val NOTIFICATION_ACTION = "com.ssafy.pacemaker.action.notification"
+    }
 }

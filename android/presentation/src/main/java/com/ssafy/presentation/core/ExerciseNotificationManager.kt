@@ -31,7 +31,9 @@ class ExerciseNotificationManager @Inject constructor(
     }
 
     fun buildNotification(): Notification {
-        val notificationIntent = Intent(applicationContext, MainActivity::class.java)
+        val notificationIntent = Intent(applicationContext, MainActivity::class.java).apply {
+            action = MainActivity.NOTIFICATION_ACTION
+        }
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             0,
