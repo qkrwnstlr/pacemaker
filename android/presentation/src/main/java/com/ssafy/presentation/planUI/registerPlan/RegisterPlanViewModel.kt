@@ -10,6 +10,7 @@ import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.toCoachMessage
+import com.ssafy.presentation.utils.toUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -64,6 +65,8 @@ class RegisterPlanViewModel @Inject constructor(
             .onSuccess {
                 coachIndex = it.coachNumber
                 initChatMessage(it.coachNumber, sendAble)
+                val context = contextData.value.copy(userInfo = it.toUserInfo())
+                _contextData.emit(context)
             }
     }
 

@@ -1,6 +1,8 @@
 package com.ssafy.presentation.utils
 
+import com.ssafy.domain.dto.User
 import com.ssafy.domain.dto.plan.PlanTrain
+import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.presentation.R
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -64,7 +66,7 @@ fun Long?.toCoachMessage(): List<String> = when (this) {
 }
 
 fun String.toLocalDate(): LocalDate {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd")
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return LocalDate.parse(this, formatter)
 }
 
@@ -98,10 +100,20 @@ fun PlanTrain?.toTrainText(): String {
     return "${distanceString}km\n${runCount}\n${interCount}"
 }
 
+fun User.toUserInfo() = UserInfo(
+    age = age.toString(),
+    height = height,
+    weight = weight,
+    gender = gender,
+    injuries = injuries,
+    recentRunPace = 0,
+    recentRunDistance = 0,
+    recentRunHeartRate = 0
+)
+
 const val ERROR = "에러 발생!"
 const val MALE = "남자"
 const val FEMALE = "여자"
-const val UNKNOWN = "미상"
 
 val START_WITH_MIKE = listOf(
     "안녕하세요, 열정 넘치는 마이크 러닝 코치입니다! \uD83C\uDFC3\u200D♂\uFE0F\uD83D\uDCA8",
