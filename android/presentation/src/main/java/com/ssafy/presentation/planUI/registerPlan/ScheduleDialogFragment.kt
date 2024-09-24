@@ -11,13 +11,17 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.FragmentScheduleDialogBinding
 import com.ssafy.presentation.utils.displayText
+import com.ssafy.presentation.utils.toPlanInst
+import com.ssafy.presentation.utils.toTrainText
 import java.time.LocalDate
 
 class ScheduleDialogFragment(
-    private val date: LocalDate
+    private val date: LocalDate,
+    private val planTrain: PlanTrain? = null
 ) : DialogFragment() {
     private var _binding: FragmentScheduleDialogBinding? = null
     private val binding: FragmentScheduleDialogBinding get() = _binding!!
@@ -41,22 +45,53 @@ class ScheduleDialogFragment(
         trainInfoTitle.ivNext.visibility = View.GONE
         root.layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
         trainInfoTitle.tvResultTitle.text = date.displayText()
-        makeChart(trainInfoChart.barChart)
+        trainInfoTitle.tvPlanInst.text = planTrain?.toPlanInst()
+        trainInfoChart.tvMid.text = planTrain?.toTrainText()
+
+        val entries = makeBarEntries()
+        makeChart(trainInfoChart.barChart, entries)
     }
 
-    private fun makeChart(barChart: BarChart) {
-        val entries = ArrayList<BarEntry>()
-        entries.add(BarEntry(2.5f, 0.2f))
-        entries.add(BarEntry(3.5f, 1.6f))
-        entries.add(BarEntry(4.5f, 1.2f))
-        entries.add(BarEntry(5.5f, 1.6f))
-        entries.add(BarEntry(6.5f, 1.2f))
-        entries.add(BarEntry(7.5f, 1.6f))
-        entries.add(BarEntry(8.5f, 0.2f))
+    private fun makeBarEntries(): MutableList<BarEntry> {
+        return planTrain?.let {
+            val entries = mutableListOf<BarEntry>()
+            repeat(5) { entries.add(BarEntry(entries.size + INCREASE_X, SMALL_Y)) }
+
+            val divider = when (it.paramType) {
+                TIME -> 60
+                DISTANCE -> 100
+                else -> 1
+            }
+            val trainCount = it.trainParam / divider
+            val interCount = it.interParam / divider
+
+            repeat(trainCount) {
+                val entry = BarEntry(entries.size + INCREASE_X, LARGE_Y)
+                entries.add(entry)
+            }
+
+            repeat(it.repeat - 1) {
+                repeat(interCount) {
+                    val entry = BarEntry(entries.size + INCREASE_X, SMALL_Y)
+                    entries.add(entry)
+                }
+                repeat(trainCount) {
+                    val entry = BarEntry(entries.size + INCREASE_X, LARGE_Y)
+                    entries.add(entry)
+                }
+            }
+
+            repeat(5) { entries.add(BarEntry(entries.size + INCREASE_X, SMALL_Y)) }
+
+            entries
+        } ?: mutableListOf()
+    }
+
+    private fun makeChart(barChart: BarChart, entries: MutableList<BarEntry>) {
 
         barChart.apply {
             description.isEnabled = false
-            setMaxVisibleValueCount(7)
+            setMaxVisibleValueCount(entries.size)
             setPinchZoom(false)
             setDrawBarShadow(false)
             setDrawGridBackground(false)
@@ -85,7 +120,7 @@ class ScheduleDialogFragment(
         val set = BarDataSet(entries, "DataSet")
 
         val colors = List(entries.size) { index ->
-            if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
+            if (entries[index].y < 1f) R.color.thirdPrimary else R.color.secondPrimary
         }
 
         set.setColors(colors.toIntArray(), barChart.context)
@@ -93,8 +128,15 @@ class ScheduleDialogFragment(
         val dataSet: ArrayList<IBarDataSet> = ArrayList()
         dataSet.add(set)
         val data = BarData(dataSet)
-        data.barWidth = 0.8f //막대 너비 설정
+        data.barWidth = 1.01f //막대 너비 설정
         barChart.data = data
     }
 
+    companion object {
+        const val TIME = "time"
+        const val DISTANCE = "distance"
+        const val INCREASE_X = 1.5f
+        const val SMALL_Y = 0.2f
+        const val LARGE_Y = 1.2f
+    }
 }

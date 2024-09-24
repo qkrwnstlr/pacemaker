@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 비활성화 상태 -->
+    <item android:color="@color/lightGray" android:state_enabled="false"/>
+
+    <!-- 기본 상태 (활성화) -->
+    <item android:color="@color/primary"/>
+</selector>

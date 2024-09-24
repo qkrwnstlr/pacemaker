@@ -7,6 +7,7 @@
     <string name="distance">거리 (km)</string>
     <string name="gender">성별</string>
     <string name="age">나이</string>
+    <string name="injuries">과거 부상 이력</string>
 
 
     <string name="is_empty">공백을 확인해주세요!</string>
