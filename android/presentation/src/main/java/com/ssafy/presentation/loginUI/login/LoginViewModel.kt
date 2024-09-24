@@ -16,10 +16,8 @@ class LoginViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    fun setProfileUrl(newUrl: String) {
-        viewModelScope.launch {
-            dataStoreRepository.setImgUrl(newUrl)
-        }
+    private suspend fun setProfileUrl(newUrl: String) {
+        dataStoreRepository.setImgUrl(newUrl)
     }
 
     fun signUp(
@@ -33,24 +31,17 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 setProfileUrl(url)
-            }
-                .onSuccess {
-                    runCatching { signUpUseCase(uid, name) }
-                        .onSuccess { result ->
-                            saveUid(uid)
-                            result.data?.let {
-                                dataStoreRepository.saveUser(it.userInfoResponse)
-                                if (it.isAlreadyExists) {
-                                    withContext(Dispatchers.Main) {
-                                        goHome()
-                                    }
-                                } else {
-                                    withContext(Dispatchers.Main) {
-                                        goConnect()
-                                    }
-                                }
-                            }
-                        }
+                signUpUseCase(uid, name)
+            }.onSuccess { result ->
+                saveUid(uid)
+                result.data?.let {
+                    dataStoreRepository.saveUser(it.userInfoResponse)
+
+                    withContext(Dispatchers.Main) {
+                        if (it.isAlreadyExists) goHome()
+                        else goConnect()
+                    }
                 }
+            }
         }
 }
