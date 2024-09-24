@@ -1,18 +1,14 @@
 package com.pacemaker.domain.plan.dto;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Builder
-public record ContentDTO(@NotNull String message, @NotNull Context context, @NotNull Plan plan) {
+public record ContentRequest(@NotNull String message, @NotNull Context context, @NotNull Plan plan) {
 
-	@Builder
 	public record Context(
 		String goal, Integer goalTime, Integer goalDistance, List<String> trainDayOfWeek, UserInfo userInfo
 	) {
@@ -23,13 +19,12 @@ public record ContentDTO(@NotNull String message, @NotNull Context context, @Not
 		}
 	}
 
-	@Builder
 	public record Plan(
 		Integer totalDays, Integer totalTimes, Integer totalDistances, List<PlanTrain> planTrains
 	) {
 		public record PlanTrain(
-			Integer index, Date trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
-			Integer repeat, Integer trainParam, Integer trainPace, Integer interParam
+			Integer index, String trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
+			Integer repetition, Integer trainParam, Integer trainPace, Integer interParam
 		) {
 		}
 	}
