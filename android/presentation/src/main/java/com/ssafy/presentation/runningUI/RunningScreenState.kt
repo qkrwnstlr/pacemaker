@@ -1,7 +1,7 @@
 package com.ssafy.presentation.runningUI
 
-import com.ssafy.presentation.core.ExerciseServiceState
-import com.ssafy.presentation.core.ServiceState
+import com.ssafy.presentation.core.exercise.ExerciseServiceState
+import com.ssafy.presentation.core.exercise.ServiceState
 
 data class RunningScreenState(
     val serviceState: ServiceState,

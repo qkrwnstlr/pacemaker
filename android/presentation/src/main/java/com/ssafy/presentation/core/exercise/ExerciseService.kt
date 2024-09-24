@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.exercise
 
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -145,13 +145,4 @@ data class ExerciseServiceState(
     val locationAvailability: LocationAvailability = LocationAvailability.UNKNOWN,
     val error: String? = null,
     val exerciseGoal: Set<ExerciseGoal<out Number>> = emptySet()
-)
-
-data class ExerciseMetrics(
-    val heartRate: Double? = null,
-    val distance: Double? = null,
-    val calories: Double? = null,
-    val heartRateAverage: Double? = null,
-    val pace: Double? = null,
-    val paceAverage: Double? = null,
 )
