@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class Plan {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "created_at", nullable = false)
+	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDate createdAt;
 
 	@Column(name = "expired_at", nullable = false)
@@ -52,6 +53,12 @@ public class Plan {
 
 	@OneToMany(mappedBy = "plan", cascade = CascadeType.PERSIST, orphanRemoval = true)
 	private List<PlanTrain> planTrains = new ArrayList<>();
+
+	@PrePersist
+	protected void prePersist() {
+		LocalDateTime now = LocalDateTime.now();
+		createdAt = now.toLocalDate();
+	}
 
 	@Builder
 	public Plan(User user, LocalDate createdAt, LocalDate expiredAt, Integer totalDays, Integer totalTimes,
