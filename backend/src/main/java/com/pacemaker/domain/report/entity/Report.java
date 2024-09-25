@@ -68,9 +68,13 @@ public class Report {
 	@Enumerated(EnumType.STRING)
 	private ReportType reportType;
 
+	@Column(name = "train_evaluation", nullable = false)
+	private String trainEvaluation;
+
 	@Builder
 	public Report(User user, LocalDateTime trainDate, Integer trainDistance, Integer trainTime, Integer heartRate,
-		Integer pace, Integer cadence, Integer kcal, String heartZone, String splitData, String trainMap, ReportType reportType) {
+		Integer pace, Integer cadence, Integer kcal, String heartZone, String splitData, String trainMap,
+		ReportType reportType, String trainEvaluation) {
 		this.user = user;
 		this.trainDate = trainDate;
 		this.trainDistance = trainDistance;
@@ -83,5 +87,6 @@ public class Report {
 		this.splitData = splitData;
 		this.trainMap = trainMap;
 		this.reportType = reportType;
+		this.trainEvaluation = trainEvaluation;
 	}
 }
