@@ -86,7 +86,7 @@ fun formatPace(pace: Double?) = buildAnnotatedString {
         val minutes = (secondsPerKm / 60).toInt()
         val seconds = (secondsPerKm % 60).toInt()
 
-        append("02d".format(minutes))
+        append("%02d".format(minutes))
         append("'")
         append("%02d".format(seconds))
         append('"')
