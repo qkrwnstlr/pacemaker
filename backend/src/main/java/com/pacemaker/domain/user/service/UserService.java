@@ -85,7 +85,12 @@ public class UserService {
 	public Object findMonthlyCalenderByUid(String uid, Integer year, Integer month) {
 		User findUser = findUserByUid(uid);
 
-		// year와 month로 between해서 그 사이 모든 레포트 플랜 등등 가져와야함
+		List<?> monthlyReports = userRepository.findMonthlyReports(uid, year, month);
+		List<?> monthlyPlanTrains = userRepository.findMonthlyPlanTrains(uid, year, month);
+		// ?에 들어갈 DTO 정하고
+		// report는 id와 report_type
+		// planTrain은 id와 status
+		// 가져와서 던져주자
 
 		return null;
 	}
