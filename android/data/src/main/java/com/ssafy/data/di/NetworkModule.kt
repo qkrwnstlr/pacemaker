@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.Strictness
 import com.ssafy.data.BuildConfig
 import com.ssafy.data.api.PlanAPI
+import com.ssafy.data.api.ReportsAPI
 import com.ssafy.data.api.TextToSpeechAPI
 import com.ssafy.data.api.TrainAPI
 import com.ssafy.data.api.UserAPI
@@ -78,6 +79,10 @@ object NetworkModule {
     @Singleton
     @Provides
     fun provideInfoAPI(@BaseRetrofit retrofit: Retrofit): TrainAPI = retrofit.create()
+
+    @Singleton
+    @Provides
+    fun provideReportsAPI(@BaseRetrofit retrofit: Retrofit): ReportsAPI = retrofit.create()
 
     @Singleton
     @Provides
