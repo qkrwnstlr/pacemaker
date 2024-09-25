@@ -1,7 +1,6 @@
 package com.pacemaker.domain.report.dto;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +40,8 @@ public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer train
 
 	private static List<SplitData> convertObjectSplitData(String splitData) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(splitData, new TypeReference<List<SplitData>>() {});
+		return objectMapper.readValue(splitData, new TypeReference<>() {
+		});
 	}
 
 	private static List<List<Double>> convertListTrainMap(String trainMap) throws JsonProcessingException {
