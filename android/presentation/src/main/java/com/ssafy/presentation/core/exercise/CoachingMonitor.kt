@@ -44,21 +44,19 @@ class CoachingMonitor @Inject constructor(
         isConnect = true
         coachingResponse.update { CoachingResponse("", "") }
         coroutineScope.launch {
-            coroutineScope.launch {
-                val user = dataStoreRepository.getUser()
-                coach = when (user.coachNumber) {
-                    MIKE -> MIKE_FEAT
-                    JAMIE -> JAMIE_FEAT
-                    DANNY -> DANNY_FEAT
-                    else -> ""
-                }
-                runCatching {
-                    getPlanInfoUseCase(user.uid)
-                }.onSuccess {
-                    plan = it
-                }.onFailure {
-                    disconnect()
-                }
+            val user = dataStoreRepository.getUser()
+            coach = when (user.coachNumber) {
+                MIKE -> MIKE_FEAT
+                JAMIE -> JAMIE_FEAT
+                DANNY -> DANNY_FEAT
+                else -> ""
+            }
+            runCatching {
+                getPlanInfoUseCase(user.uid)
+            }.onSuccess {
+                plan = it
+            }.onFailure {
+                disconnect()
             }
             collectExerciseSessionData()
         }
