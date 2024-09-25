@@ -3,18 +3,26 @@ package com.ssafy.presentation.loginUI.connect
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentConnectBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBinding::inflate) {
+    private val viewModel: ConnectViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
         initListener()
+        checkPermissions()
     }
 
     private fun initView() = with(binding.baseLayout) {
@@ -39,6 +47,25 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
         fabBlue.setOnClickListener {
             val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
             findNavController().navigate(action)
+        }
+    }
+
+    private fun checkPermissions() {
+        lifecycleScope.launch {
+            try {
+                if (viewModel.hasAllPermissions()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "All permissions granted",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                } else {
+                    viewModel.launchPermissionsLauncher(this@ConnectFragment)
+                }
+            } catch (exception: Exception) {
+                Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 }

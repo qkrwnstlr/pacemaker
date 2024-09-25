@@ -1,6 +1,7 @@
 package com.ssafy.data.source.plan
 
 import com.ssafy.data.api.PlanAPI
+import com.ssafy.domain.dto.PlanDot
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
@@ -19,5 +20,8 @@ class PlanDataSourceImpl @Inject constructor(private val planAPI: PlanAPI) : Pla
 
     override suspend fun getPlan(uid: String): Response<PlanInfo> =
         planAPI.getPlan(uid)
+
+    override suspend fun getPlanDot(uid: String, year: Int, month: Int): Response<PlanDot> =
+        planAPI.getPlanDot(uid, year, month)
 
 }

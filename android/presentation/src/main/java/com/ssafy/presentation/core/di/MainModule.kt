@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.di
 
 import dagger.Module
 import dagger.Provides

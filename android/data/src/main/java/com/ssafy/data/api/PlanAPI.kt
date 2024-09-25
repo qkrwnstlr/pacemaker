@@ -1,5 +1,6 @@
 package com.ssafy.data.api
 
+import com.ssafy.domain.dto.PlanDot
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
@@ -8,6 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface PlanAPI {
 
@@ -20,4 +22,12 @@ interface PlanAPI {
     @GET("plans/active/user/{uid}")
     suspend fun getPlan(@Path("uid") uid: String): Response<PlanInfo>
 
+    @GET("plans/{uid}")
+    suspend fun getPlanDot(
+        @Path("uid") uid: String,
+        @Query("year") year: Int,
+        @Query("month") month: Int
+    ): Response<PlanDot>
+
 }
+

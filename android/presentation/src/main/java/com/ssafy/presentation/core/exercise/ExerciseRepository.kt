@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.exercise
 
 import android.content.Context
 import com.ssafy.presentation.utils.bindService
