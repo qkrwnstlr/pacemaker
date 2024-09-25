@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.Gson;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanStatus;
 
@@ -25,7 +26,7 @@ public class PlanResponse {
 
 	private Integer totalDistances;
 
-	private String context;
+	private ContentResponse.Context context;
 
 	private Integer completedCount;
 
@@ -41,7 +42,7 @@ public class PlanResponse {
 		this.totalDays = plan.getTotalDays();
 		this.totalTimes = plan.getTotalTimes();
 		this.totalDistances = plan.getTotalDistances();
-		this.context = plan.getContext();
+		this.context = new Gson().fromJson(plan.getContext(), ContentResponse.Context.class);
 		this.completedCount = plan.getCompletedCount();
 		this.status = plan.getStatus();
 	}
