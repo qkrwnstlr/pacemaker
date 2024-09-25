@@ -12,12 +12,14 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -30,6 +32,9 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var exerciseMonitor: ExerciseMonitor
+
+    @Inject
+    lateinit var healthConnectManager: HealthConnectManager
 
     private var isBound = false
     private var isStarted = false
@@ -45,6 +50,15 @@ class ExerciseService : LifecycleService() {
 
             lifecycleScope.launch(Dispatchers.Default) {
                 exerciseMonitor.connect()
+                exerciseMonitor.exerciseServiceState.collect { exercise ->
+                    if (exercise.exerciseState == ExerciseState.ENDED) {
+                        healthConnectManager.writeExerciseSession(
+                            "My Run #${Random.nextInt(0, 60)}",
+                            parseExerciseData(exercise.exerciseMetrics ,exerciseMonitor.exerciseSessionData),
+                            exerciseMonitor.exerciseSessionData
+                        )
+                    }
+                }
             }
         }
 
