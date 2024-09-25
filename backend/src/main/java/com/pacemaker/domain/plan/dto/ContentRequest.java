@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ContentRequest(@NotNull String message, @NotNull Context context, @NotNull Plan plan) {
+public record ContentRequest(@NotNull String message, @NotNull Context context, @NotNull Plan plan, @NotNull String coachTone) {
 
 	@Builder
 	public record Context(

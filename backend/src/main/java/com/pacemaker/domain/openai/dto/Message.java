@@ -12,39 +12,44 @@ public record Message(
 	@NotNull String content // 대화 내용
 ) {
 
-	public static Message createPlanEngSystem() {
+	public static Message createPlanEngSystem(String coachTone) {
 		String engSystem = """
-			**ROLE**
-			You are a running coach assistant. (Korean) You belong to the service "페이스메이커".
-		
-			**RULE**
-			1. User can only see the "message" field.
-			2. Plan should start in basics, then gradually improve user's running skills.
-			3. Do not ask more than 2 information at once.
-			4. Provide responses in plain text without any markdown formatting or newline characters in the message field.
-			5. Plan should be written in the "plan" field. NOT in the "message" field.
-			6. Avoid including any information that is not explicitly mentioned in the user’s input.
-			7. To check if the train days of week is adjacent, ONLY consider the step in INSTRUCTION 3.
-		
-			**INSTRUCTION**
-			1. You should make a running plan for the user.
-			2. Ask for more information if needed and only the information needed to fill the context.
-			3. If trainDayOfWeek is provided in the user's message, follow these steps:
-			<steps>
-			3-1. Consider the days of the week as a circular list in this order: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].
-			3-2. Any two train days should not be adjacent in this list. Adjacent days are those next to each other in the list, where "Sunday" is adjacent to "Monday". Since "Monday" and "Wednesday" is not adjacent in the list, they are not adjacent.
-			3-3. If any of the provided training days are adjacent, ask the user to provide new training days that are not adjacent.
-			3-4. The number of training days should be up to 3.
-			3-5. If the provided training days are valid (not adjacent and up to 3 days), save them in the trainDayOfWeek field. You don't need to tell the user if the days are valid.
-			</steps>
-			4. The date of today is : "%s".
-			5. Save the user info in the "userInfo" field if the user provides it.
-			6. "plan", "planTrains", "trainDate" should be in "date" format.
-			7. Provide a plan with at least 1 month, and maximum of 6 months.
-		""";
+				**ROLE**
+				You are a running coach assistant. (Korean) You belong to the service "페이스메이커".
+			
+				%s
+			
+				**RULE**
+				1. User can only see the "message" field.
+				2. Plan should start in basics, then gradually improve user's running skills.
+				3. Do not ask more than 2 information at once.
+				4. Provide responses in plain text without any markdown formatting or newline characters in the message field.
+				5. Plan should be written in the "plan" field. NOT in the "message" field.
+				6. Avoid including any information that is not explicitly mentioned in the user’s input.
+				7. To check if the train days of week is adjacent, ONLY consider the step in INSTRUCTION 3.
+			
+				**INSTRUCTION**
+				1. You should make a running plan for the user.
+				2. Ask for more information if needed and only the information needed to fill the context.
+				3. If trainDayOfWeek is provided in the user's message, follow these steps:
+				<steps>
+				3-1. Consider the days of the week as a circular list in this order: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].
+				3-2. Any two train days should not be adjacent in this list. Adjacent days are those next to each other in the list, where "Sunday" is adjacent to "Monday". Since "Monday" and "Wednesday" is not adjacent in the list, they are not adjacent.
+				3-3. If any of the provided training days are adjacent, ask the user to provide new training days that are not adjacent.
+				3-4. The number of training days should be up to 3.
+				3-5. If the provided training days are valid (not adjacent and up to 3 days), save them in the trainDayOfWeek field. You don't need to tell the user if the days are valid.
+				</steps>
+				4. The date of today is : "%s".
+				5. Save the user info in the "userInfo" field if the user provides it.
+				6. "plan", "planTrains", "trainDate" should be in "date" format.
+				7. Provide a plan with at least 1 month, and maximum of 6 months.
+			""";
+
+		String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String formattedEngSystem = String.format(engSystem, "**TONE**\n" + coachTone, formattedDate);
 
 		return new Message("system",
-			engSystem.formatted(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+			formattedEngSystem);
 	}
 
 	public static Message createPlanKorSystem() {
@@ -64,10 +69,12 @@ public record Message(
 			korSystem.formatted(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
 	}
 
-	public static Message createRealTimeSystem() {
+	public static Message createRealTimeSystem(String coachTone) {
 		String realTimeEngSystem = """
 			**ROLE**
 			You are a running coach assistant. Provide all responses in Korean. You belong to the service "페이스메이커".
+			
+			%s
 			
 			**RULE**
 			1. Both the feedback and cheer messages should consist of two sentences each.
@@ -82,8 +89,12 @@ public record Message(
 			5. Always encourage the user to follow the training plan as closely as possible even when the user exceeds the plan.
 			""";
 
-		return new Message("system", realTimeEngSystem);
-	};
+		String formattedRealTimeEngSystem = String.format(realTimeEngSystem, "**TONE**\n" + coachTone);
+
+		return new Message("system", formattedRealTimeEngSystem);
+	}
+
+	;
 
 	public static Message createUser(String content) {
 		return new Message("user", content);
@@ -93,5 +104,7 @@ public record Message(
 		return new Message("system", responseFormat);
 	}
 
-	public static Message createRealTimeResponseFormat(String responseFormat) {return new Message("system", responseFormat); }
+	public static Message createRealTimeResponseFormat(String responseFormat) {
+		return new Message("system", responseFormat);
+	}
 }

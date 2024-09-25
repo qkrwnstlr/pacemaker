@@ -29,7 +29,7 @@ public class OpenAiService {
 	public Mono<String> createPlanChatCompletions(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),
+			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()), Message.createUser(new Gson().toJson(contentRequest)),
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			.build();
 
@@ -79,7 +79,7 @@ public class OpenAiService {
 	public Mono<String> testMini(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-mini")
-			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),
+			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()), Message.createUser(new Gson().toJson(contentRequest)),
 				// Message.createResponseFormat(ResponseFormatString.responseFormat)))
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
@@ -98,7 +98,7 @@ public class OpenAiService {
 	public Mono<String> test4o(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createPlanEngSystem(), Message.createUser(new Gson().toJson(contentRequest)),
+			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()), Message.createUser(new Gson().toJson(contentRequest)),
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
@@ -115,7 +115,7 @@ public class OpenAiService {
 	public Mono<String> createRealTimeChatCompletions(RealTimeRequest realTimeRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createRealTimeSystem(), Message.createUser(new Gson().toJson(realTimeRequest)),
+			.messages(List.of(Message.createRealTimeSystem(realTimeRequest.coachTone()), Message.createUser(new Gson().toJson(realTimeRequest)),
 				Message.createRealTimeResponseFormat(
 					ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
 			.build();
