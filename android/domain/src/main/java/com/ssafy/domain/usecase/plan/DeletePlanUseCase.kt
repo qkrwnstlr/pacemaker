@@ -6,6 +6,9 @@ import javax.inject.Inject
 
 class DeletePlanUseCase @Inject constructor(private val planRepository: PlanRepository) {
 
-    suspend operator fun invoke(uid: String): ResponseResult<Unit> = planRepository.deletePlan(uid)
+    suspend operator fun invoke(uid: String) {
+        val response = planRepository.deletePlan(uid)
+        if (response is ResponseResult.Error) throw RuntimeException(response.message)
+    }
 
 }

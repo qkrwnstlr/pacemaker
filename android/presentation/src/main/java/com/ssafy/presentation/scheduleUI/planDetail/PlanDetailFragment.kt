@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -112,7 +113,7 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
 
     private fun showPlanDeleteDialog() {
         val manager = requireActivity().supportFragmentManager
-        PlanDeleteDialog().show(manager, "PlanDelete")
+        PlanDeleteDialog(::deletePlan).show(manager, "PlanDelete")
     }
 
     private fun setUpCalendar(
@@ -163,4 +164,17 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
         tvMonth.text = month.month.displayText(short = true)
     }
 
+    private fun deletePlan() {
+        val uid = getUid()
+        viewModel.deletePlan(uid, ::successToDeletePlan, ::showSnackBar)
+    }
+
+    private fun successToDeletePlan() {
+        findNavController().popBackStack()
+        showSnackStringBar(DELETE)
+    }
+
+    companion object {
+        const val DELETE = "플랜이 성공적으로 삭제되었습니다."
+    }
 }
