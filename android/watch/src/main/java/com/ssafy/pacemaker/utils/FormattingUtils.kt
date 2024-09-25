@@ -82,9 +82,13 @@ fun formatPace(pace: Double?) = buildAnnotatedString {
     if (pace == null || pace.isNaN()) {
         append("--")
     } else {
-        append("%.0f".format(pace))
-        withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append("'")
-        }
+        val secondsPerKm = pace / 1000.0
+        val minutes = (secondsPerKm / 60).toInt()
+        val seconds = (secondsPerKm % 60).toInt()
+
+        append("02d".format(minutes))
+        append("'")
+        append("%02d".format(seconds))
+        append('"')
     }
 }

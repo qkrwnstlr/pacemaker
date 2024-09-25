@@ -54,36 +54,41 @@ class ExerciseService : LifecycleService() {
             isStarted = true
 
             startForeground()
-
-            lifecycleScope.launch(Dispatchers.Default) {
-                exerciseMonitor.connect()
-                exerciseMonitor.exerciseServiceState.collect { exercise ->
-                    if (exercise.exerciseState == ExerciseState.ENDED) {
-                        healthConnectManager.writeExerciseSession(
-                            // TODO : title 변경
-                            "My Run #${Random.nextInt(0, 60)}",
-                            parseExerciseData(
-                                exercise.exerciseMetrics,
-                                exerciseMonitor.exerciseSessionData.value
-                            ),
-                            exerciseMonitor.exerciseSessionData.value
-                        )
-                    }
-                }
-            }
-            lifecycleScope.launch(Dispatchers.Default) {
-                coachingMonitor.connect()
-                coachingMonitor.coachingResponse.collect { coaching ->
-                    // TODO : TTS로 변경
-                    runBlocking(Dispatchers.Main) {
-                        Toast.makeText(this@ExerciseService, "$coaching", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
         }
 
         return START_STICKY
+    }
+
+    private fun connectToExerciseMonitor() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            exerciseMonitor.connect()
+            exerciseMonitor.exerciseServiceState.collect { exercise ->
+                if (exercise.exerciseState == ExerciseState.ENDED) {
+                    healthConnectManager.writeExerciseSession(
+                        // TODO : title 변경
+                        "My Run #${Random.nextInt(0, 60)}",
+                        parseExerciseData(
+                            exercise.exerciseMetrics,
+                            exerciseMonitor.exerciseSessionData.value
+                        ),
+                        exerciseMonitor.exerciseSessionData.value
+                    )
+                }
+            }
+        }
+    }
+
+    private fun connectToCoachingMonitor() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            coachingMonitor.connect()
+            coachingMonitor.coachingResponse.collect { coaching ->
+                // TODO : TTS로 변경
+                runBlocking(Dispatchers.Main) {
+                    Toast.makeText(this@ExerciseService, "$coaching", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
     }
 
     private fun stopSelfIfNotRunning() {
@@ -153,6 +158,8 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
+        connectToExerciseMonitor()
+        connectToCoachingMonitor()
         wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
     }
@@ -169,6 +176,7 @@ class ExerciseService : LifecycleService() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
         exerciseMonitor.disconnect()
+        coachingMonitor.disconnect()
     }
 
     companion object {

@@ -20,6 +20,7 @@ import com.ssafy.presentation.utils.formatCalories
 import com.ssafy.presentation.utils.formatDistanceKm
 import com.ssafy.presentation.utils.formatElapsedTime
 import com.ssafy.presentation.utils.formatHeartRate
+import com.ssafy.presentation.utils.formatPace
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -101,7 +102,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                     boxKcal.tvRunningContent.text =
                         formatCalories(exerciseState.exerciseMetrics.calories)
                     boxPace.tvRunningContent.text =
-                        formatCalories(exerciseState.exerciseMetrics.pace)
+                        formatPace(exerciseState.exerciseMetrics.pace)
                     boxTime.tvRunningContent.text =
                         formatElapsedTime(exerciseState.activeDurationCheckpoint?.activeDuration)
                 }
