@@ -95,12 +95,21 @@ public class PlanService {
 			throw new PlanTrainEmptyException("플랜에는 최소한 하나의 훈련 세션이 필요합니다.");
 		}
 
+		int totalDays = 0;
+		int totalTimes = 0;
+		int totalDistance = 0;
+		for (ContentRequest.Plan.PlanTrain planTrain : planTrains) {
+			totalDays++;
+			totalTimes += planTrain.sessionTime() != null ? planTrain.sessionTime() : 0;
+			totalDistance += planTrain.sessionDistance() != null ? planTrain.sessionDistance() : 0;
+		}
+
 		return Plan.builder()
 			.user(userInfo)
 			.expiredAt(LocalDate.parse(planTrains.getLast().trainDate()))
-			.totalDays(plan.totalDays())
-			.totalTimes(plan.totalTimes())
-			.totalDistances(plan.totalDistances())
+			.totalDays(totalDays)
+			.totalTimes(totalTimes)
+			.totalDistances(totalDistance)
 			.context(new Gson().toJson(ContentRequest.Context.builder()
 				.goal(context.goal())
 				.goalDistance(context.goalDistance())
