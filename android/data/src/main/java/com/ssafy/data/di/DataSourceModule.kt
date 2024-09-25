@@ -4,6 +4,8 @@ import com.ssafy.data.source.plan.PlanDataSource
 import com.ssafy.data.source.plan.PlanDataSourceImpl
 import com.ssafy.data.source.train.TrainDataSource
 import com.ssafy.data.source.train.TrainDataSourceImpl
+import com.ssafy.data.source.tts.TextToSpeechDataSource
+import com.ssafy.data.source.tts.TextToSpeechDataSourceImpl
 import com.ssafy.data.source.user.UserDataSource
 import com.ssafy.data.source.user.UserDataSourceImpl
 import dagger.Binds
@@ -27,4 +29,8 @@ abstract class DataSourceModule {
     @Singleton
     @Binds
     abstract fun bindTrainDataSource(trainDataSourceImpl: TrainDataSourceImpl): TrainDataSource
+
+    @Singleton
+    @Binds
+    abstract fun bindTextToSpeechDataSource(textToSpeechDataSourceImpl: TextToSpeechDataSourceImpl): TextToSpeechDataSource
 }

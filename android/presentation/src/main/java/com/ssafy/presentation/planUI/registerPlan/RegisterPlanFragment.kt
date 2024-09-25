@@ -92,9 +92,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         setSendClickable(false)
 
         topSheetTrain.fabBlue.setOnClickListener {
-            val action =
-                RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
-            findNavController().navigate(action)
+            viewModel.makePlan(getUid(), ::moveToPlanDetailFragment, ::makeFailMessage)
         }
 
         chatUi.tvTitle.setOnClickListener {
@@ -214,6 +212,11 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 
     private suspend fun makeFailMessage(message: String) = withContext(Dispatchers.Main) {
         showSnackStringBar(message)
+    }
+
+    private suspend fun moveToPlanDetailFragment() = withContext(Dispatchers.Main) {
+        val action = RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
+        findNavController().navigate(action)
     }
 
     private fun scrollUpCalender() {

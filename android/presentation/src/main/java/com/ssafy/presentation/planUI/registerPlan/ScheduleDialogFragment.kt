@@ -70,7 +70,7 @@ class ScheduleDialogFragment(
                 entries.add(entry)
             }
 
-            repeat(it.repeat - 1) {
+            repeat(it.repetition - 1) {
                 repeat(interCount) {
                     val entry = BarEntry(entries.size + INCREASE_X, SMALL_Y)
                     entries.add(entry)

@@ -343,7 +343,7 @@
         android:layout_marginHorizontal="@dimen/padding_16"
         android:layout_marginTop="@dimen/margin_30"
         android:layout_marginBottom="@dimen/margin_16"
-        android:text="@string/go_back_to_schedule"
+        android:text="@string/go_back_to_home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

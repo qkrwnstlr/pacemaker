@@ -5,6 +5,8 @@ import com.ssafy.data.response.toResponseResult
 import com.ssafy.data.source.plan.PlanDataSource
 import com.ssafy.domain.dto.PlanDot
 import com.ssafy.domain.dto.plan.Chat
+import com.ssafy.domain.dto.plan.PlanInfo
+import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.response.ResponseResult
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,6 +22,16 @@ class PlanRepositoryImpl @Inject constructor(
 
     override suspend fun chatForPlan(chat: Chat): ResponseResult<Chat> {
         val response = withContext(ioDispatcher) { planDataSource.chatForPlan(chat) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun makePlan(planRequest: PlanRequest): ResponseResult<Unit> {
+        val response = withContext(ioDispatcher) { planDataSource.makePlan(planRequest) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun getPlan(uid: String): ResponseResult<PlanInfo> {
+        val response = withContext(ioDispatcher) { planDataSource.getPlan(uid) }
         return response.toResponseResult()
     }
 
