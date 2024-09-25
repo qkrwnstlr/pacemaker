@@ -11,7 +11,7 @@ class GetPlanInfoUseCase @Inject constructor(
 
     suspend operator fun invoke(uid: String): PlanInfo {
         val response = planRepository.getPlan(uid)
-        if (response is ResponseResult.Error) throw RuntimeException()
+        if (response is ResponseResult.Error) throw RuntimeException(response.message)
 
         response.data?.let { planInfo -> return planInfo } ?: throw RuntimeException()
     }

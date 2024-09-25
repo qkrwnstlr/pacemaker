@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.DialogDeletePlanBinding
 
-class PlanDeleteDialog : DialogFragment() {
+class PlanDeleteDialog(private val deletePlan: () -> Unit) : DialogFragment() {
     private var _binding: DialogDeletePlanBinding? = null
     private val binding: DialogDeletePlanBinding get() = _binding!!
 
@@ -29,12 +29,11 @@ class PlanDeleteDialog : DialogFragment() {
     }
 
     private fun initListener() = with(binding) {
-
-        btnOk.setOnClickListener {
-            // TODO 고차함수 로직 적용
-        }
-
         btnCancel.setOnClickListener { dismiss() }
+        btnOk.setOnClickListener {
+            deletePlan()
+            dismiss()
+        }
     }
 
     override fun onDestroyView() {
