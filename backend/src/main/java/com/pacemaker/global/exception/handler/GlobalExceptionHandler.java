@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.pacemaker.global.exception.ActivePlanNotFoundException;
 import com.pacemaker.global.exception.ConflictException;
 import com.pacemaker.global.exception.InvalidUsernameException;
 import com.pacemaker.global.exception.NotFoundException;
@@ -49,6 +50,13 @@ public class GlobalExceptionHandler {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(ActivePlanNotFoundException.class)
+	public ResponseEntity<String> handleActivePlanNotFoundException(ActivePlanNotFoundException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(NotFoundException.class)

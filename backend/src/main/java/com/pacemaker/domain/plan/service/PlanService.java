@@ -16,6 +16,7 @@ import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
+import com.pacemaker.global.exception.ActivePlanNotFoundException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
@@ -60,7 +61,7 @@ public class PlanService {
 	@Transactional(readOnly = true)
 	public PlanResponse findActivePlanByUid(String uid) {
 		Plan findActivePlan = planRepository.findActivePlan(uid)
-			.orElseThrow(() -> new NotFoundException("활성 플랜을 찾을 수 없습니다."));
+			.orElseThrow(() -> new ActivePlanNotFoundException("활성 플랜을 찾을 수 없습니다."));
 
 		PlanResponse planResponse = PlanResponse.builder()
 			.plan(findActivePlan)
