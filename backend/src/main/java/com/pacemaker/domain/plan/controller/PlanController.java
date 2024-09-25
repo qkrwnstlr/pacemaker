@@ -5,6 +5,8 @@ import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,5 +64,15 @@ public class PlanController {
 		System.out.println("최종 생성 Plan Id: " + id);
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	@Operation(summary = "현재 진행 중인 플랜 조회")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "플랜 조회 성공"),
+	})
+	@GetMapping("/active/user/{uid}")
+	public ResponseEntity<?> getActivePlan(@PathVariable("uid") String uid) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(planService.findActivePlanByUid(uid));
 	}
 }

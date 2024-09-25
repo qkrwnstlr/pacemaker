@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
+import com.pacemaker.domain.plan.dto.PlanResponse;
+import com.pacemaker.domain.plan.dto.PlanTrainResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
@@ -27,7 +29,6 @@ public class PlanService {
 	private final PlanRepository planRepository;
 	private final UserRepository userRepository;
 
-	// 플랜 생성 부분 만들자!
 	@Transactional
 	public Long createPlan(CreatePlanRequest createPlanRequest) {
 
@@ -54,6 +55,26 @@ public class PlanService {
 		System.out.println("생성 Plan Id: " + planEntity.getId().equals(planRepository.save(planEntity).getId()));
 
 		return planEntity.getId();
+	}
+
+	@Transactional(readOnly = true)
+	public PlanResponse findActivePlanByUid(String uid) {
+		Plan findActivePlan = planRepository.findActivePlan(uid)
+			.orElseThrow(() -> new NotFoundException("활성 플랜을 찾을 수 없습니다."));
+
+		PlanResponse planResponse = PlanResponse.builder()
+			.plan(findActivePlan)
+			.build();
+
+		int size = findActivePlan.getPlanTrains().size();
+		for (int i = 0; i < size; i++) {
+			planResponse.getPlanTrains().add(PlanTrainResponse.builder()
+				.planTrain(findActivePlan.getPlanTrains().get(i))
+				.index(i)
+				.build());
+		}
+
+		return planResponse;
 	}
 
 	private User findUserByUid(String uid) {
