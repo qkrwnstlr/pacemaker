@@ -61,8 +61,7 @@ public class PlanService {
 
 	@Transactional(readOnly = true)
 	public PlanResponse findActivePlanByUid(String uid) {
-		Plan findActivePlan = planRepository.findActivePlan(uid)
-			.orElseThrow(() -> new ActivePlanNotFoundException("활성 플랜을 찾을 수 없습니다."));
+		Plan findActivePlan = findActivePlan(uid);
 
 		PlanResponse planResponse = PlanResponse.builder()
 			.plan(findActivePlan)
@@ -77,6 +76,17 @@ public class PlanService {
 		}
 
 		return planResponse;
+	}
+
+	@Transactional
+	public void deleteActivePlanByUid(String uid) {
+		Plan findActivePlan = findActivePlan(uid);
+
+		// PlanTrain 제거
+		findActivePlan.getPlanTrains().clear();
+
+		// Plan 제거
+		planRepository.delete(findActivePlan);
 	}
 
 	private User findUserByUid(String uid) {
@@ -132,5 +142,10 @@ public class PlanService {
 			.trainPace(planTrain.trainPace())
 			.interParam(planTrain.interParam())
 			.build();
+	}
+
+	private Plan findActivePlan(String uid) {
+		return planRepository.findActivePlan(uid)
+			.orElseThrow(() -> new ActivePlanNotFoundException("활성 플랜을 찾을 수 없습니다."));
 	}
 }
