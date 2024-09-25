@@ -74,6 +74,10 @@ public class PlanTrain {
 		this.status = (status != null) ? status : TrainStatus.BEFORE;
 	}
 
+	public void updatePlanTrainStatus(TrainStatus status) {
+		this.status = status;
+	}
+
 	// 연관관계 편의 메서드
 	// public void setPlan(Plan plan) { // lombok으로 대체
 	// 	this.plan = plan;
