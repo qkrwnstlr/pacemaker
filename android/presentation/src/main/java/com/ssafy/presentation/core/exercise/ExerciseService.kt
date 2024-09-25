@@ -5,6 +5,7 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseState
@@ -12,12 +13,15 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.ssafy.domain.dto.train.CoachingResponse
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
@@ -34,6 +38,9 @@ class ExerciseService : LifecycleService() {
     lateinit var exerciseMonitor: ExerciseMonitor
 
     @Inject
+    lateinit var coachingMonitor: CoachingMonitor
+
+    @Inject
     lateinit var healthConnectManager: HealthConnectManager
 
     private var isBound = false
@@ -47,28 +54,48 @@ class ExerciseService : LifecycleService() {
             isStarted = true
 
             startForeground()
-
-            lifecycleScope.launch(Dispatchers.Default) {
-                exerciseMonitor.connect()
-                exerciseMonitor.exerciseServiceState.collect { exercise ->
-                    if (exercise.exerciseState == ExerciseState.ENDED) {
-                        healthConnectManager.writeExerciseSession(
-                            "My Run #${Random.nextInt(0, 60)}",
-                            parseExerciseData(exercise.exerciseMetrics ,exerciseMonitor.exerciseSessionData),
-                            exerciseMonitor.exerciseSessionData
-                        )
-                    }
-                }
-            }
         }
 
         return START_STICKY
+    }
+
+    private fun connectToExerciseMonitor() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            exerciseMonitor.connect()
+            exerciseMonitor.exerciseServiceState.collect { exercise ->
+                if (exercise.exerciseState == ExerciseState.ENDED) {
+                    healthConnectManager.writeExerciseSession(
+                        // TODO : title 변경
+                        "My Run #${Random.nextInt(0, 60)}",
+                        parseExerciseData(
+                            exercise.exerciseMetrics,
+                            exerciseMonitor.exerciseSessionData.value
+                        ),
+                        exerciseMonitor.exerciseSessionData.value
+                    )
+                }
+            }
+        }
+    }
+
+    private fun connectToCoachingMonitor() {
+        lifecycleScope.launch(Dispatchers.Default) {
+            coachingMonitor.connect()
+            coachingMonitor.coachingResponse.collect { coaching ->
+                // TODO : TTS로 변경
+                runBlocking(Dispatchers.Main) {
+                    Toast.makeText(this@ExerciseService, "$coaching", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
     }
 
     private fun stopSelfIfNotRunning() {
         lifecycleScope.launch {
             if (exerciseMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
                 exerciseMonitor.disconnect()
+                coachingMonitor.disconnect()
                 stopForeground(STOP_FOREGROUND_REMOVE)
             }
             stopSelf()
@@ -110,6 +137,9 @@ class ExerciseService : LifecycleService() {
 
         val exerciseServiceState: Flow<ExerciseServiceState>
             get() = this@ExerciseService.exerciseMonitor.exerciseServiceState
+
+        val coachingResponseState: Flow<CoachingResponse>
+            get() = this@ExerciseService.coachingMonitor.coachingResponse
     }
 
     private fun startForeground() {
@@ -128,6 +158,8 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
+        connectToExerciseMonitor()
+        connectToCoachingMonitor()
         wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
     }
@@ -144,6 +176,7 @@ class ExerciseService : LifecycleService() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
         exerciseMonitor.disconnect()
+        coachingMonitor.disconnect()
     }
 
     companion object {
