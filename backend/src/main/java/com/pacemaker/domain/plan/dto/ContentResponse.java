@@ -81,12 +81,12 @@ public class ContentResponse {
 		private void calculateSessionTime() {
 			// 총 시간 계산 로직
 			this.sessionTime = trainParam * repetition + interParam * (repetition - 1);
-			this.sessionDistance = null; // 아직 기준이 없어서 null (기준을 정한다면 조깅할 때 페이스? 이런거?)
+			this.sessionDistance = 0; // 아직 기준이 없어서 0 (기준을 정한다면 조깅할 때 페이스? 이런거?)
 		}
 
 		private void calculateSessionDistance() {
 			// 총 거리 계산 로직
-			this.sessionTime = null; // 위와 동일
+			this.sessionTime = 0; // 위와 동일
 			this.sessionDistance = trainParam * repetition + interParam * (repetition - 1);
 		}
 	}
