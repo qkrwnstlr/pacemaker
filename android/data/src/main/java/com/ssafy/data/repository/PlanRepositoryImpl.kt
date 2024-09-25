@@ -35,6 +35,11 @@ class PlanRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
+    override suspend fun deletePlan(uid: String): ResponseResult<Unit> {
+        val response = withContext(ioDispatcher) { planDataSource.deletePlan(uid) }
+        return response.toResponseResult()
+    }
+
     override suspend fun getTrainDot(uid: String, year: Int, month: Int): ResponseResult<PlanDot> {
         val response = withContext(ioDispatcher) { planDataSource.getPlanDot(uid, year, month) }
         return response.toResponseResult()

@@ -21,6 +21,9 @@ class PlanDataSourceImpl @Inject constructor(private val planAPI: PlanAPI) : Pla
     override suspend fun getPlan(uid: String): Response<PlanInfo> =
         planAPI.getPlan(uid)
 
+    override suspend fun deletePlan(uid: String): Response<Unit> =
+        planAPI.deletePlan(uid)
+
     override suspend fun getPlanDot(uid: String, year: Int, month: Int): Response<PlanDot> =
         planAPI.getPlanDot(uid, year, month)
 

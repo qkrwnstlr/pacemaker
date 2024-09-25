@@ -29,11 +29,7 @@ class PlanDeleteDialog : DialogFragment() {
     }
 
     private fun initListener() = with(binding) {
-
-        btnOk.setOnClickListener {
-            // TODO 고차함수 로직 적용
-        }
-
+        btnOk.setOnClickListener { }
         btnCancel.setOnClickListener { dismiss() }
     }
 
