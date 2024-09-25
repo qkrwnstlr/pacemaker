@@ -105,7 +105,6 @@ public class UserController {
 	@GetMapping("/calender")
 	public ResponseEntity<?> getMonthlyCalender(@PathVariable("uid") String uid, @RequestParam Integer year,
 		@RequestParam Integer month) {
-
 		return ResponseEntity.status(HttpStatus.OK).body(userService.findMonthlyCalenderByUid(uid, year, month));
 	}
 }
