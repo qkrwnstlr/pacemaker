@@ -53,8 +53,6 @@ public class PlanService {
 			planEntity.addPlanTrain(planTrainEntity);
 		}
 
-		System.out.println("생성 Plan Id: " + planEntity.getId().equals(planRepository.save(planEntity).getId()));
-
 		return planEntity.getId();
 	}
 
