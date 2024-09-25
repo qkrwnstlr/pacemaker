@@ -1,6 +1,10 @@
 package com.pacemaker.domain.user.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -8,12 +12,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.pacemaker.domain.coach.dto.CoachNumberResponse;
 import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
+import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.coach.repository.CoachRepository;
+import com.pacemaker.domain.plan.entity.PlanTrain;
+import com.pacemaker.domain.report.entity.Report;
+import com.pacemaker.domain.user.dto.CalenderResponse;
 import com.pacemaker.domain.user.dto.GoogleLoginRequest;
 import com.pacemaker.domain.user.dto.GoogleLoginResponse;
 import com.pacemaker.domain.user.dto.UserInfoResponse;
 import com.pacemaker.domain.user.dto.UserUpdateRequest;
-import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.user.entity.Gender;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
@@ -82,17 +89,24 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Object findMonthlyCalenderByUid(String uid, Integer year, Integer month) {
+	public Map<?, ?> findMonthlyCalenderByUid(String uid, Integer year, Integer month) {
 		User findUser = findUserByUid(uid);
 
-		List<?> monthlyReports = userRepository.findMonthlyReports(uid, year, month);
-		List<?> monthlyPlanTrains = userRepository.findMonthlyPlanTrains(uid, year, month);
-		// ?에 들어갈 DTO 정하고
-		// report는 id와 report_type
-		// planTrain은 id와 status
-		// 가져와서 던져주자
+		List<Report> findReports = userRepository.findMonthlyReports(uid, year, month);
+		List<PlanTrain> findPlanTrains = userRepository.findMonthlyPlanTrains(uid, year, month);
 
-		return null;
+		Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse = new HashMap<>();
+
+		// reports 매핑
+		mappingReports(findReports, mapResponse);
+
+		// planTrains 매핑
+		mappingPlanTrains(findPlanTrains, mapResponse);
+		System.out.println(mapResponse.size());
+		for (Map.Entry<LocalDate, List<CalenderResponse.TrainingDTO>> entry : mapResponse.entrySet()) {
+			System.out.println(entry.getKey() + " | " + entry.getValue());
+		}
+		return mapResponse;
 	}
 
 	private User findUserByUid(String uid) {
@@ -123,5 +137,40 @@ public class UserService {
 	private Coach findCoachById(Long coachId) {
 		return coachRepository.findById(coachId)
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 코치입니다."));
+	}
+
+	private void mappingReports(List<Report> reports, Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse) {
+		int size = reports.size();
+
+		Report report;
+		LocalDate key;
+		List<CalenderResponse.TrainingDTO> list;
+		for (int i = 0; i < size; i++) {
+			report = reports.get(i);
+			key = report.getTrainDate().toLocalDate();
+
+			list = mapResponse.getOrDefault(key, new ArrayList<>());
+			list.add(CalenderResponse.TrainingDTO.fromReport(report));
+
+			mapResponse.put(key, list);
+		}
+	}
+
+	private void mappingPlanTrains(List<PlanTrain> planTrains,
+		Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse) {
+		int size = planTrains.size();
+
+		PlanTrain planTrain;
+		LocalDate key;
+		List<CalenderResponse.TrainingDTO> list;
+		for (int i = 0; i < size; i++) {
+			planTrain = planTrains.get(i);
+			key = planTrain.getTrainDate();
+
+			list = mapResponse.getOrDefault(key, new ArrayList<>());
+			list.add(CalenderResponse.TrainingDTO.fromPlanTrain(planTrain));
+
+			mapResponse.put(key, list);
+		}
 	}
 }
