@@ -70,7 +70,7 @@ public class PlanService {
 
 		int size = findActivePlan.getPlanTrains().size();
 		for (int i = 0; i < size; i++) {
-			planResponse.getPlanTrains().add(PlanTrainResponse.builder()
+			planResponse.getPlanTrains().add(PlanResponse.PlanTrainDTO.builder()
 				.planTrain(findActivePlan.getPlanTrains().get(i))
 				.index(i)
 				.build());
