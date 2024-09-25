@@ -53,6 +53,9 @@ public class PlanService {
 			planEntity.addPlanTrain(planTrainEntity);
 		}
 
+		Long savedPlanId = planRepository.save(planEntity).getId();
+		System.out.println("생성 Plan Id: " + savedPlanId.equals(planEntity.getId()));
+
 		return planEntity.getId();
 	}
 
