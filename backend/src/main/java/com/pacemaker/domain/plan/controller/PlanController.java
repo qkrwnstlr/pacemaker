@@ -69,6 +69,7 @@ public class PlanController {
 	@Operation(summary = "현재 진행 중인 플랜 조회")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "플랜 조회 성공"),
+		@ApiResponse(responseCode = "404", description = "사용자의 진행 중인 플랜이 존재하지 않음")
 	})
 	@GetMapping("/active/user/{uid}")
 	public ResponseEntity<?> getActivePlan(@PathVariable("uid") String uid) {
