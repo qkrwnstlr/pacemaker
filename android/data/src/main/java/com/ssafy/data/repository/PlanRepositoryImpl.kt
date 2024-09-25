@@ -3,6 +3,7 @@ package com.ssafy.data.repository
 import com.ssafy.data.di.IoDispatcher
 import com.ssafy.data.response.toResponseResult
 import com.ssafy.data.source.plan.PlanDataSource
+import com.ssafy.domain.dto.PlanDot
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.response.ResponseResult
@@ -22,4 +23,8 @@ class PlanRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
+    override suspend fun getTrainDot(uid: String, year: Int, month: Int): ResponseResult<PlanDot> {
+        val response = withContext(ioDispatcher) { planDataSource.getPlanDot(uid, year, month) }
+        return response.toResponseResult()
+    }
 }
