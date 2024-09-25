@@ -158,7 +158,7 @@ public class ReportService {
 		return objectMapper.writeValueAsString(heartZone);
 	}
 
-	private String convertStringSplitData(SplitData splitData) throws JsonProcessingException {
+	private String convertStringSplitData(List<SplitData> splitData) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(splitData);
 	}
 

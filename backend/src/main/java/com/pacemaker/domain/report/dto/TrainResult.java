@@ -1,6 +1,7 @@
 package com.pacemaker.domain.report.dto;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ import lombok.Builder;
 @Builder
 public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer trainTime, @NotNull Integer heartRate,
 						  @NotNull Integer pace, @NotNull Integer cadence, @NotNull Integer kcal,
-						  @NotNull List<Integer> heartZone, @NotNull SplitData splitData,
+						  @NotNull List<Integer> heartZone, @NotNull List<SplitData> splitData,
 						  @NotNull List<List<Double>> trainMap, List<String> coachMessage) {
 
 	public static TrainResult of(Report report, List<String> coachMessage) throws JsonProcessingException {
@@ -38,9 +39,9 @@ public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer train
 		return Arrays.stream(heartZones.split(",")).map(Integer::parseInt).collect(Collectors.toList());
 	}
 
-	private static SplitData convertObjectSplitData(String splitData) throws JsonProcessingException {
+	private static List<SplitData> convertObjectSplitData(String splitData) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.readValue(splitData, SplitData.class);
+		return objectMapper.readValue(splitData, new TypeReference<List<SplitData>>() {});
 	}
 
 	private static List<List<Double>> convertListTrainMap(String trainMap) throws JsonProcessingException {
