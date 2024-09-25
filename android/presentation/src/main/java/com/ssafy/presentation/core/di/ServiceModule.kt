@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.di
 
 import android.app.NotificationManager
 import android.app.Service

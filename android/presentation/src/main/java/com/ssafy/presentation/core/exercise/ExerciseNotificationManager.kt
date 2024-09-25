@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.exercise
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.ssafy.presentation.R
+import com.ssafy.presentation.core.MainActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

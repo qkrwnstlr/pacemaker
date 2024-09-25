@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.exercise
 
 import android.content.Context
 import com.google.android.gms.wearable.CapabilityClient

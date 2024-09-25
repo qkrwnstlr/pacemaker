@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -101,7 +102,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun moveToHealthConnect() {
-        showSnackStringBar("헬커")
+        checkPermissions()
     }
 
     private fun logout() {
@@ -109,6 +110,25 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
             auth.signOut()
             clearUid()
             moveToLoginFragment()
+        }
+    }
+
+    private fun checkPermissions() {
+        lifecycleScope.launch {
+            try {
+                if (viewModel.hasAllPermissions()) {
+                    Toast.makeText(
+                        requireContext(),
+                        "All permissions granted",
+                        Toast.LENGTH_LONG,
+                    ).show()
+                } else {
+                    viewModel.launchPermissionsLauncher(this@ProfileFragment)
+                }
+            } catch (exception: Exception) {
+                Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_LONG)
+                    .show()
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core
+package com.ssafy.presentation.core.exercise
 
 import android.content.Intent
 import android.content.pm.ServiceInfo
@@ -12,12 +12,14 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -30,6 +32,9 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var exerciseMonitor: ExerciseMonitor
+
+    @Inject
+    lateinit var healthConnectManager: HealthConnectManager
 
     private var isBound = false
     private var isStarted = false
@@ -45,6 +50,15 @@ class ExerciseService : LifecycleService() {
 
             lifecycleScope.launch(Dispatchers.Default) {
                 exerciseMonitor.connect()
+                exerciseMonitor.exerciseServiceState.collect { exercise ->
+                    if (exercise.exerciseState == ExerciseState.ENDED) {
+                        healthConnectManager.writeExerciseSession(
+                            "My Run #${Random.nextInt(0, 60)}",
+                            parseExerciseData(exercise.exerciseMetrics ,exerciseMonitor.exerciseSessionData),
+                            exerciseMonitor.exerciseSessionData
+                        )
+                    }
+                }
             }
         }
 
@@ -145,13 +159,4 @@ data class ExerciseServiceState(
     val locationAvailability: LocationAvailability = LocationAvailability.UNKNOWN,
     val error: String? = null,
     val exerciseGoal: Set<ExerciseGoal<out Number>> = emptySet()
-)
-
-data class ExerciseMetrics(
-    val heartRate: Double? = null,
-    val distance: Double? = null,
-    val calories: Double? = null,
-    val heartRateAverage: Double? = null,
-    val pace: Double? = null,
-    val paceAverage: Double? = null,
 )

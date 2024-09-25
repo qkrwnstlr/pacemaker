@@ -105,4 +105,6 @@ dependencies {
 
     implementation(libs.androidx.health.services.client)
     implementation(libs.androidx.lifecycle.service)
+
+    implementation(libs.androidx.connect.client)
 }

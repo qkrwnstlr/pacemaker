@@ -2,7 +2,7 @@ package com.ssafy.presentation.homeUI
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssafy.presentation.core.ExerciseRepository
+import com.ssafy.presentation.core.exercise.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import com.ssafy.domain.repository.DataStoreRepository
