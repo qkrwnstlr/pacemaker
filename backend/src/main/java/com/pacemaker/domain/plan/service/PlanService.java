@@ -38,16 +38,15 @@ public class PlanService {
 		existsByUserId(user.getId());
 
 		// 유저 정보 업데이트
-		ContentRequest.Context.UserInfo userInfo = createPlanRequest.contentRequest().context().userInfo();
+		ContentRequest.Context.UserInfo userInfo = createPlanRequest.context().userInfo();
 		user.update(user.getUsername(), userInfo.age(), userInfo.height(), userInfo.weight(), userInfo.gender(),
 			userInfo.injuries().toString());
 
 		// Plan Entity 생성
-		Plan planEntity = createPlanEntity(user, createPlanRequest.contentRequest().plan(),
-			createPlanRequest.contentRequest().context());
+		Plan planEntity = createPlanEntity(user, createPlanRequest.plan(), createPlanRequest.context());
 
 		// PlanTrain 연결
-		for (ContentRequest.Plan.PlanTrain planTrain : createPlanRequest.contentRequest().plan().planTrains()) {
+		for (ContentRequest.Plan.PlanTrain planTrain : createPlanRequest.plan().planTrains()) {
 			PlanTrain planTrainEntity = createPlanTrainEntity(planTrain);
 			planEntity.addPlanTrain(planTrainEntity);
 		}
@@ -81,7 +80,12 @@ public class PlanService {
 			.totalDays(plan.totalDays())
 			.totalTimes(plan.totalTimes())
 			.totalDistances(plan.totalDistances())
-			.context(new Gson().toJson(context))
+			.context(new Gson().toJson(ContentRequest.Context.builder()
+				.goal(context.goal())
+				.goalDistance(context.goalDistance())
+				.goalTime(context.goalTime())
+				.trainDayOfWeek(context.trainDayOfWeek())
+				.build()))
 			.build();
 	}
 
