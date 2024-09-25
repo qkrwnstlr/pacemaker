@@ -19,7 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -38,7 +37,10 @@ class ExerciseService : LifecycleService() {
     lateinit var exerciseMonitor: ExerciseMonitor
 
     @Inject
-    lateinit var coachingMonitor: CoachingMonitor
+    lateinit var coachingManager: CoachingManager
+
+    @Inject
+    lateinit var reportsManager: ReportsManager
 
     @Inject
     lateinit var healthConnectManager: HealthConnectManager
@@ -73,6 +75,10 @@ class ExerciseService : LifecycleService() {
                         ),
                         exerciseMonitor.exerciseSessionData.value
                     )
+                    reportsManager.createPlanReports(
+                        exercise.exerciseMetrics,
+                        exerciseMonitor.exerciseSessionData.value
+                    )
                 }
             }
         }
@@ -80,8 +86,8 @@ class ExerciseService : LifecycleService() {
 
     private fun connectToCoachingMonitor() {
         lifecycleScope.launch(Dispatchers.Default) {
-            coachingMonitor.connect()
-            coachingMonitor.coachingResponse.collect { coaching ->
+            coachingManager.connect()
+            coachingManager.coachingResponse.collect { coaching ->
                 // TODO : TTS로 변경
                 runBlocking(Dispatchers.Main) {
                     Toast.makeText(this@ExerciseService, "$coaching", Toast.LENGTH_SHORT)
@@ -95,7 +101,7 @@ class ExerciseService : LifecycleService() {
         lifecycleScope.launch {
             if (exerciseMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
                 exerciseMonitor.disconnect()
-                coachingMonitor.disconnect()
+                coachingManager.disconnect()
                 stopForeground(STOP_FOREGROUND_REMOVE)
             }
             stopSelf()
@@ -139,7 +145,7 @@ class ExerciseService : LifecycleService() {
             get() = this@ExerciseService.exerciseMonitor.exerciseServiceState
 
         val coachingResponseState: Flow<CoachingResponse>
-            get() = this@ExerciseService.coachingMonitor.coachingResponse
+            get() = this@ExerciseService.coachingManager.coachingResponse
     }
 
     private fun startForeground() {
@@ -176,7 +182,7 @@ class ExerciseService : LifecycleService() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
         exerciseMonitor.disconnect()
-        coachingMonitor.disconnect()
+        coachingManager.disconnect()
     }
 
     companion object {

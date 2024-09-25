@@ -55,15 +55,17 @@ class ExerciseMonitor @Inject constructor(
 
     private suspend fun collectExerciseMetrics() {
         while (isConnect) {
+            var lastDistance = 0.0
             val exerciseState = exerciseServiceState.value.exerciseState
             when (exerciseState) {
                 ExerciseState.ACTIVE -> {
                     val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
                     exerciseSessionData.update {
                         exerciseSessionData.value.toMutableList().apply {
-                            add(exerciseMetrics.toExerciseSessionData())
+                            add(exerciseMetrics.toExerciseSessionData(lastDistance))
                         }
                     }
+                    exerciseMetrics.distance?.let { lastDistance = it }
                 }
 
                 ExerciseState.ENDED -> break
@@ -72,8 +74,9 @@ class ExerciseMonitor @Inject constructor(
         }
     }
 
-    private fun ExerciseMetrics.toExerciseSessionData(): ExerciseSessionData {
+    private fun ExerciseMetrics.toExerciseSessionData(lastDistance: Double): ExerciseSessionData {
         return ExerciseSessionData(
+            distance = distance?.let { it - lastDistance } ?: 0.0,
             heartRate = heartRate?.toLong(),
             pace = pace,
             cadence = cadence,
