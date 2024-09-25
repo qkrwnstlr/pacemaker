@@ -7,7 +7,7 @@
     </style>
 
     <style name="CustomFAB" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
-        <item name="android:backgroundTint">@color/primary</item>
+        <item name="android:backgroundTint">@drawable/button_background_selector</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_16</item>

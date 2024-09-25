@@ -1,5 +1,8 @@
 package com.ssafy.presentation.utils
 
+import com.ssafy.domain.dto.User
+import com.ssafy.domain.dto.plan.PlanTrain
+import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.presentation.R
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -31,8 +34,6 @@ fun Int.toHeight(): String = "${toString()}cm"
 fun Int.toWeight(): String = "${toString()}kg"
 fun Int.toDistance(): String = "${toString()}회"
 fun Int.toAgeString(): String = "${toString()}세"
-fun Int.toAge(): Int = if (this == 0) 0 else LocalDate.now().year - this
-fun Int.toYear(): Int = if (this == 0) 0 else LocalDate.now().year - this
 fun Int.toTime(): String {
     val hour = this / 60
     val minute = this % 60
@@ -41,6 +42,14 @@ fun Int.toTime(): String {
 
 fun String.toGenderString(): String =
     if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
+
+fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
+fun Int.toEmptyOrHeight(): String = if (this == 0) "" else "${toString()}cm"
+fun Int.toEmptyOrWeight(): String = if (this == 0) "" else "${toString()}kg"
+fun List<String>.toInjuries(): String {
+    val injuries = joinToString()
+    return if (injuries.length > 15) "${injuries}..." else injuries
+}
 
 fun Long?.toCoachIndex(): Int = when (this) {
     1L -> R.drawable.mikefull
@@ -56,16 +65,55 @@ fun Long?.toCoachMessage(): List<String> = when (this) {
     else -> START_WITH_MIKE
 }
 
-fun Int?.toGender(): String = when (this) {
-    0 -> FEMALE
-    1 -> MALE
-    else -> UNKNOWN
+fun String.toLocalDate(): LocalDate {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return LocalDate.parse(this, formatter)
 }
+
+fun Int.toTrainPace(): String {
+    val minute = this / 60
+    val second = this % 60
+    return "${minute}'${second}\""
+}
+
+fun Int.toTotalTime(): String {
+    val trainTime = this / 60
+    return "${trainTime}분"
+}
+
+fun PlanTrain?.toPlanInst(): String {
+    if (this == null) return ""
+
+    val totalTime = ((trainParam + interParam) * repeat).toTotalTime()
+    val meanPace = trainPace.toTrainPace()
+    return "$totalTime  |  $meanPace"
+}
+
+fun PlanTrain?.toTrainText(): String {
+    if (this == null) return ""
+
+    val totalDistance = sessionDistance / 1000f
+    val distanceString = String.format(Locale.KOREAN, "%.2f", totalDistance)
+
+    val runCount = "러닝 ${repeat}회"
+    val interCount = if (repeat > 1) "천천히 걷기 ${repeat - 1}회" else ""
+    return "${distanceString}km\n${runCount}\n${interCount}"
+}
+
+fun User.toUserInfo() = UserInfo(
+    age = age.toString(),
+    height = height,
+    weight = weight,
+    gender = gender,
+    injuries = injuries,
+    recentRunPace = 0,
+    recentRunDistance = 0,
+    recentRunHeartRate = 0
+)
 
 const val ERROR = "에러 발생!"
 const val MALE = "남자"
 const val FEMALE = "여자"
-const val UNKNOWN = "미상"
 
 val START_WITH_MIKE = listOf(
     "안녕하세요, 열정 넘치는 마이크 러닝 코치입니다! \uD83C\uDFC3\u200D♂\uFE0F\uD83D\uDCA8",

@@ -13,10 +13,24 @@
         android:layout_marginHorizontal="@dimen/margin_30"
         android:layout_marginTop="@dimen/padding_48"
         android:text="@string/set_goal"
+        app:layout_constraintBottom_toTopOf="@id/user_info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/user_info"
+        layout="@layout/user_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_30"
+        android:layout_marginTop="@dimen/margin_10"
+        app:layout_constraintBottom_toTopOf="@id/rv_plan_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <!--  list-item-coach, list-item-student, list-item-schedule   -->
     <androidx.recyclerview.widget.RecyclerView
@@ -30,7 +44,7 @@
         app:layout_constraintBottom_toTopOf="@id/cv_chat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/user_info"
         tools:listitem="@layout/list_item_student" />
 
     <com.google.android.material.card.MaterialCardView
