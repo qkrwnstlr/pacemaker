@@ -81,6 +81,15 @@ public class UserService {
 		userRepository.delete(user);
 	}
 
+	@Transactional(readOnly = true)
+	public Object findMonthlyCalenderByUid(String uid, Integer year, Integer month) {
+		User findUser = findUserByUid(uid);
+
+		// year와 month로 between해서 그 사이 모든 레포트 플랜 등등 가져와야함
+
+		return null;
+	}
+
 	private User findUserByUid(String uid) {
 		return userRepository.findByUid(uid)
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
