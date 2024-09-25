@@ -15,4 +15,6 @@ interface PlanDataSource {
 
     suspend fun getPlan(uid: String): Response<PlanInfo>
 
+    suspend fun deletePlan(uid: String): Response<Unit>
+
 }
