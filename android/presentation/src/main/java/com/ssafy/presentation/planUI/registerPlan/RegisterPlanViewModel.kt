@@ -4,10 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.Context
-import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.dto.plan.Plan
+import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.repository.DataStoreRepository
-import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
@@ -89,25 +88,18 @@ class RegisterPlanViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val chat = Chat(message = text, context = contextData.value, plan = planData.value)
             runCatching { chatForPlanUseCase(chat) }
-                .onSuccess { response -> checkResponse(response, failToMakeChat) }
+                .onSuccess { emitChatResponse(it) }
                 .onFailure {
                     it.printStackTrace()
-                    failToMakeChat(FAILURE)
+                    removeCoachChat()
+                    failToMakeChat(it.message ?: FAILURE)
                 }
         }
 
-    private suspend fun checkResponse(
-        responseResult: ResponseResult<Chat>,
-        failToMakeChat: suspend (String) -> Unit
-    ) = when (responseResult) {
-
-        is ResponseResult.Success -> {
-            responseResult.data?.let { emitChatResponse(it) } ?: failToMakeChat(FAILURE)
-        }
-
-        is ResponseResult.Error -> {
-            failToMakeChat(responseResult.message)
-        }
+    private suspend fun removeCoachChat() {
+        val newList = chatData.value.toMutableList()
+        if (newList.lastOrNull() is ChatData.CoachData) newList.removeLast()
+        _chatData.emit(newList)
     }
 
     private suspend fun emitChatResponse(chat: Chat) {
@@ -119,7 +111,7 @@ class RegisterPlanViewModel @Inject constructor(
 
         _chatData.emit(newList)
         _planData.emit(chat.plan)
-        _contextData.emit(chat.context)
+        chat.context?.let { _contextData.emit(it) }
     }
 
     fun makePlan(

@@ -18,7 +18,7 @@ class ChatForPlanUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) {
 
-    suspend operator fun invoke(chat: Chat): ResponseResult<Chat> {
+    suspend operator fun invoke(chat: Chat): Chat {
         val newPlanTrains = chat.plan.planTrains.map {
             val repeat = if (it.repetition == 0) 1 else it.repetition
             it.copy(repetition = repeat)
@@ -27,7 +27,10 @@ class ChatForPlanUseCase @Inject constructor(
         val feature = dataStoreRepository.getUser().toMakeFeature()
         val newChat = chat.copy(plan = newPlan, coachTone = feature)
 
-        return planRepository.chatForPlan(newChat)
+        val response = planRepository.chatForPlan(newChat)
+        if (response is ResponseResult.Error) throw RuntimeException(response.message)
+
+        return response.data ?: throw RuntimeException()
     }
 
     private fun User.toMakeFeature(): String = when (coachNumber) {
