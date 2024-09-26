@@ -2,13 +2,10 @@ package com.ssafy.data.source.plan
 
 import com.ssafy.data.api.PlanAPI
 import com.ssafy.domain.dto.plan.Chat
-<<<<<<< android/data/src/main/java/com/ssafy/data/source/plan/PlanDataSourceImpl.kt
-import com.ssafy.domain.dto.schedule.DayContentData
-import com.ssafy.domain.dto.schedule.ProgressData
-=======
 import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
->>>>>>> android/data/src/main/java/com/ssafy/data/source/plan/PlanDataSourceImpl.kt
+import com.ssafy.domain.dto.schedule.DayContentData
+import com.ssafy.domain.dto.schedule.ProgressData
 import retrofit2.Response
 import java.time.LocalDate
 import javax.inject.Inject
