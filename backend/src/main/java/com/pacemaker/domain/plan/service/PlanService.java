@@ -92,7 +92,7 @@ public class PlanService {
 		planRepository.delete(findActivePlan);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public PlanTrainResponse findActivePlanTrainByPlanTrainId(Long id, String uid) {
 		User user = findUserByUid(uid);
 		PlanTrain planTrain = findPlanTrainById(id);

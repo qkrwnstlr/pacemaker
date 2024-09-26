@@ -131,7 +131,7 @@ public class ReportService {
 			.build();
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public ReportPlanResponse findReportPlan(Long reportId, String uid) throws JsonProcessingException {
 		User user = findUserByUid(uid);
 		Report report = findReportById(reportId);

@@ -15,7 +15,9 @@ import com.pacemaker.domain.coach.dto.CoachUpdateRequest;
 import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.coach.repository.CoachRepository;
 import com.pacemaker.domain.plan.entity.PlanTrain;
+import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.entity.Report;
+import com.pacemaker.domain.report.repository.ReportRepository;
 import com.pacemaker.domain.user.dto.CalendarResponse;
 import com.pacemaker.domain.user.dto.GoogleLoginRequest;
 import com.pacemaker.domain.user.dto.GoogleLoginResponse;
@@ -34,6 +36,8 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final CoachRepository coachRepository;
+	private final ReportRepository reportRepository;
+	private final PlanTrainRepository planTrainRepository;
 
 	@Transactional
 	public GoogleLoginResponse googleLogin(String uid, GoogleLoginRequest googleLoginRequest) {
@@ -91,8 +95,8 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Map<?, ?> findMonthlyCalendarByUid(String uid, Integer year, Integer month) {
 
-		List<Report> findReports = userRepository.findMonthlyReports(uid, year, month);
-		List<PlanTrain> findBeforePlanTrains = userRepository.findMonthlyBeforePlanTrains(uid, year, month);
+		List<Report> findReports = reportRepository.findMonthlyReports(uid, year, month);
+		List<PlanTrain> findBeforePlanTrains = planTrainRepository.findMonthlyBeforePlanTrains(uid, year, month);
 
 		// CalendarResponse랑 같은 구조
 		// 다만 Map을 사용하는 이유는 "yyyy-MM"에 해당하는 key값이 있냐 없냐를 판별하기 위함
