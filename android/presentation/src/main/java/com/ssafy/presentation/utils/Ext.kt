@@ -104,28 +104,33 @@ fun Int.toTrainPace(): String {
     return "${minute}'${second}\""
 }
 
-fun Int.toTotalTime(): String {
-    val trainTime = this / 60
-    return "${trainTime}분"
-}
-
 fun PlanTrain?.toPlanInst(): String {
     if (this == null) return ""
 
-    val totalTime = (sessionTime).toTotalTime()
+    val totalString = makeTotalString()
     val meanPace = trainPace.toTrainPace()
-    return "$totalTime  |  $meanPace"
+    return "$totalString  |  $meanPace"
+}
+
+fun PlanTrain?.makeTotalString(): String {
+    if (this == null) return ""
+
+    val totalDistance = sessionDistance / 1000f
+    val distanceString = String.format(Locale.KOREAN, "%.2fkm", totalDistance)
+
+    val totalTime = sessionTime / 60
+    val timeString = "${totalTime}분"
+
+    return if (totalDistance != 0f) distanceString else timeString
 }
 
 fun PlanTrain?.toTrainText(): String {
     if (this == null) return ""
 
-    val totalDistance = sessionDistance / 1000f
-    val distanceString = String.format(Locale.KOREAN, "%.2f", totalDistance)
-
+    val totalString = makeTotalString()
     val runCount = "러닝 ${repetition}회"
     val interCount = if (repetition > 1) "천천히 걷기 ${repetition - 1}회" else ""
-    return "${distanceString}km\n${runCount}\n${interCount}"
+    return "${totalString}\n${runCount}\n${interCount}"
 }
 
 fun User.toUserInfo() = UserInfo(
