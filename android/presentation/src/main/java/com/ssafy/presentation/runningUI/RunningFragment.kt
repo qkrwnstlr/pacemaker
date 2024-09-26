@@ -40,7 +40,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     OnMapReadyCallback {
 
     private val viewModel: RunningViewModel by viewModels()
-    private lateinit var map:GoogleMap
+    private var map: GoogleMap? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCollect()
@@ -123,23 +123,23 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     }
 
     private fun CoroutineScope.collectTrainingLocation() = launch {
-        viewModel.exerciseMonitor.exerciseSessionData.collect{ result ->
-            for(locationData in result){
+        viewModel.exerciseMonitor.exerciseSessionData.collect { result ->
+            for (locationData in result) {
                 locationData.location?.let { addMarker(it) }
             }
         }
     }
 
-    private fun addMarker(location: LocationData){
+    private fun addMarker(location: LocationData) {
         val latLng = LatLng(location.latitude, location.longitude)
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
-        map.animateCamera(cameraUpdate)
+        map?.animateCamera(cameraUpdate)
 
         val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
         val markerOptions = MarkerOptions()
         markerOptions.position(latLng)
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
-        map.addMarker(markerOptions)
+        map?.addMarker(markerOptions)
 
         showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
     }
@@ -152,33 +152,46 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
             .commit()
         mapFragment.getMapAsync(this)
     }
+
     override fun onMapReady(googleMap: GoogleMap) {
-        map=googleMap
+        map = googleMap
         getMyLocation()
     }
+
     private var myLocationListener: LocationListener? = null
-    private fun getMyLocation(){
-            //todo: 전역으로 데이터 저장해놓고, 러닝시 초기 화면은 그 값 받아와서 표시하고 이 set, get location은 없애기
-            val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
-            myLocationListener = object : LocationListener {
-                override fun onLocationChanged(p0: Location) {
-                    setMyLocation(p0)
-                }
+    private fun getMyLocation() {
+        //todo: 전역으로 데이터 저장해놓고, 러닝시 초기 화면은 그 값 받아와서 표시하고 이 set, get location은 없애기
+        val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+        myLocationListener = object : LocationListener {
+            override fun onLocationChanged(p0: Location) {
+                setMyLocation(p0)
             }
+        }
 
-            if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, myLocationListener!!)
-            }
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationManager.requestLocationUpdates(
+                LocationManager.GPS_PROVIDER,
+                0,
+                0f,
+                myLocationListener!!
+            )
+        }
 
-            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, myLocationListener!!)
-            }
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                0,
+                0f,
+                myLocationListener!!
+            )
+        }
 
     }
 
-    fun setMyLocation(location: Location){
-        if(myLocationListener != null) {
-            val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+    fun setMyLocation(location: Location) {
+        if (myLocationListener != null) {
+            val locationManager =
+                requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
             locationManager.removeUpdates(myLocationListener!!)
             myLocationListener = null
         }
@@ -187,12 +200,12 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
 
-        map.animateCamera(cameraUpdate)
+        map?.animateCamera(cameraUpdate)
         val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
         val markerOptions = MarkerOptions()
         markerOptions.position(latLng)
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
-        map.addMarker(markerOptions)
+        map?.addMarker(markerOptions)
 
         showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
 

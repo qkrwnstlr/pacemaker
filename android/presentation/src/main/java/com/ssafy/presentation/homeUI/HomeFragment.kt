@@ -63,7 +63,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var weekCalendarView: WeekCalendarView
 
     private val viewModel: HomeViewModel by viewModels()
-    private lateinit var map: GoogleMap
+    private var myLocationListener: LocationListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -82,35 +82,38 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         mapFragment.getMapAsync(this)
     }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
+    override fun onMapReady(map: GoogleMap) {
         val point = LatLng(37.514655, 126.979974)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 12f))
 
-        getMyLocation()
+        getMyLocation(map)
     }
 
-    private var myLocationListener: LocationListener? = null
-    private fun getMyLocation() {
+    private fun getMyLocation(map: GoogleMap) {
 
         val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
         myLocationListener = object : LocationListener {
             override fun onLocationChanged(p0: Location) {
-                setMyLocation(p0)
+                setMyLocation(map, p0)
             }
-        }
+        }.apply {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+            }
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, myLocationListener!!)
-        }
-
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, myLocationListener!!)
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    0f,
+                    this
+                )
+            }
         }
 
     }
 
-    fun setMyLocation(location: Location) {
+    fun setMyLocation(map: GoogleMap, location: Location) {
         if (myLocationListener != null) {
             val locationManager =
                 requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
