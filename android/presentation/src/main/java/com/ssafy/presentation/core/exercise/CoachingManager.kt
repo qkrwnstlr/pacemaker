@@ -34,6 +34,7 @@ class CoachingManager @Inject constructor(
             }.onFailure {
                 disconnect()
             }
+            collectExerciseSessionData()
         }
     }
 
