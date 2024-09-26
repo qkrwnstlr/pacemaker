@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.google.gson.Gson;
+import com.pacemaker.domain.daily.dto.DailyCreateChatRequest;
+import com.pacemaker.domain.daily.dto.DailyCreateChatResponse;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
 import com.pacemaker.domain.openai.dto.Message;
@@ -29,7 +31,8 @@ public class OpenAiService {
 	public Mono<String> createPlanChatCompletions(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()), Message.createUser(new Gson().toJson(contentRequest)),
+			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
+				Message.createUser(new Gson().toJson(contentRequest)),
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			.build();
 
@@ -79,7 +82,8 @@ public class OpenAiService {
 	public Mono<String> testMini(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-mini")
-			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()), Message.createUser(new Gson().toJson(contentRequest)),
+			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
+				Message.createUser(new Gson().toJson(contentRequest)),
 				// Message.createResponseFormat(ResponseFormatString.responseFormat)))
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
@@ -98,7 +102,8 @@ public class OpenAiService {
 	public Mono<String> test4o(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()), Message.createUser(new Gson().toJson(contentRequest)),
+			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
+				Message.createUser(new Gson().toJson(contentRequest)),
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
@@ -115,7 +120,8 @@ public class OpenAiService {
 	public Mono<String> createRealTimeChatCompletions(RealTimeRequest realTimeRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createRealTimeSystem(realTimeRequest.coachTone()), Message.createUser(new Gson().toJson(realTimeRequest)),
+			.messages(List.of(Message.createRealTimeSystem(realTimeRequest.coachTone()),
+				Message.createUser(new Gson().toJson(realTimeRequest)),
 				Message.createRealTimeResponseFormat(
 					ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
 			.build();
@@ -132,6 +138,27 @@ public class OpenAiService {
 				System.out.println("realTimeResponse = " + realTimeResponse);
 
 				return new Gson().toJson(realTimeResponse);
+			});
+	}
+
+	public Mono<String> createDailyCreateChat(DailyCreateChatRequest dailyCreateChatRequest) {
+		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+			.model("gpt-4o-2024-08-06")
+			.messages(List.of(Message.createDailySystem(dailyCreateChatRequest.coachTone()),
+				Message.createUser(new Gson().toJson(dailyCreateChatRequest)), Message.createDailyResponseFormat(
+					ResponseFormatString.dailyCreateChatResponseFormat.replaceAll("\\s+", ""))))
+			.build();
+
+		return openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class)
+			.map(response -> {
+				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
+				DailyCreateChatResponse dailyCreateChatResponse = new Gson().fromJson(request.choices().get(0).message().content(), DailyCreateChatResponse.class);
+
+				return new Gson().toJson(dailyCreateChatResponse);
 			});
 	}
 }
