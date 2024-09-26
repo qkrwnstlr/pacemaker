@@ -145,8 +145,8 @@ fun User.toUserInfo() = UserInfo(
 )
 
 const val ERROR = "에러 발생!"
-const val MALE = "남자"
-const val FEMALE = "여자"
+const val MALE = "남성"
+const val FEMALE = "여성"
 
 val START_WITH_MIKE = listOf(
     "안녕하세요, 열정 넘치는 마이크 러닝 코치입니다! \uD83C\uDFC3\u200D♂\uFE0F\uD83D\uDCA8",
