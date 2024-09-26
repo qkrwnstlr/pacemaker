@@ -139,8 +139,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
         val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
         val markerOptions = MarkerOptions()
-        markerOptions.position(latLng)
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
         map?.addMarker(markerOptions)
 
         showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
@@ -203,8 +203,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         map?.animateCamera(cameraUpdate)
         val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
         val markerOptions = MarkerOptions()
-        markerOptions.position(latLng)
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
         map?.addMarker(markerOptions)
 
         showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")

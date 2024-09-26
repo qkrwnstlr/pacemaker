@@ -123,7 +123,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         map.animateCamera(cameraUpdate)
 
         val markerOptions = MarkerOptions()
-        markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
 
         map.addMarker(markerOptions)
     }
