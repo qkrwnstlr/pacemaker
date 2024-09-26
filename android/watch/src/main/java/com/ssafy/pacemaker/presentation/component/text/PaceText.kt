@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import com.ssafy.pacemaker.R
+import com.ssafy.pacemaker.utils.formatPace
 
 @Composable
 fun PaceText(pace: Double?) {
@@ -18,7 +19,7 @@ fun PaceText(pace: Double?) {
             imageVector = Icons.Default.Timer,
             contentDescription = stringResource(id = R.string.duration)
         )
-        Text(text = pace?.toString() ?: "--")
+        Text(text = formatPace(pace))
     }
 }
 

@@ -62,7 +62,13 @@ fun formatPace(pace: Double?) = buildSpannedString {
     if (pace == null || pace.isNaN()) {
         append("--")
     } else {
-        append("%.0f".format(pace))
+        val secondsPerKm = pace / 1000.0
+        val minutes = (secondsPerKm / 60).toInt()
+        val seconds = (secondsPerKm % 60).toInt()
+
+        append("%02d".format(minutes))
         append("'")
+        append("%02d".format(seconds))
+        append('"')
     }
 }

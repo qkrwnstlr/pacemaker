@@ -6,6 +6,7 @@ import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -21,6 +22,9 @@ interface PlanAPI {
 
     @GET("plans/active/user/{uid}")
     suspend fun getPlan(@Path("uid") uid: String): Response<PlanInfo>
+
+    @DELETE("plans/active/user/{uid}")
+    suspend fun deletePlan(@Path("uid") uid: String): Response<Unit>
 
     @GET("plans/{uid}")
     suspend fun getPlanDot(

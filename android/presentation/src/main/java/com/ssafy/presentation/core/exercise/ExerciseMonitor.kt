@@ -1,6 +1,5 @@
 package com.ssafy.presentation.core.exercise
 
-import android.util.Log
 import androidx.health.services.client.data.ExerciseState
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
@@ -21,17 +20,21 @@ class ExerciseMonitor @Inject constructor(
 ) : DataClient.OnDataChangedListener {
     val exerciseServiceState = MutableStateFlow(ExerciseServiceState())
 
-    val exerciseSessionData = mutableListOf<ExerciseSessionData>()
+    val exerciseSessionData = MutableStateFlow<List<ExerciseSessionData>>(listOf())
+
+    private var isConnect = false
 
     fun connect() {
-        exerciseSessionData.clear()
+        isConnect = true
+        exerciseSessionData.update { listOf() }
         wearableClientManager.dataClient.addListener(this)
         coroutineScope.launch {
-            collectExerciseSessionData()
+            collectExerciseMetrics()
         }
     }
 
     fun disconnect() {
+        isConnect = false
         wearableClientManager.dataClient.removeListener(this)
     }
 
@@ -50,14 +53,17 @@ class ExerciseMonitor @Inject constructor(
         }
     }
 
-    private suspend fun collectExerciseSessionData() {
-        while (true) {
+    private suspend fun collectExerciseMetrics() {
+        while (isConnect) {
             val exerciseState = exerciseServiceState.value.exerciseState
             when (exerciseState) {
                 ExerciseState.ACTIVE -> {
                     val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
-                    Log.d(TAG, "collectExerciseSessionData: ${exerciseMetrics.toExerciseSessionData()}")
-                    exerciseSessionData.add(exerciseMetrics.toExerciseSessionData())
+                    exerciseSessionData.update {
+                        exerciseSessionData.value.toMutableList().apply {
+                            add(exerciseMetrics.toExerciseSessionData())
+                        }
+                    }
                 }
 
                 ExerciseState.ENDED -> break
