@@ -26,6 +26,7 @@
         android:id="@+id/iv_progress"
         android:layout_width="@dimen/image_44"
         android:layout_height="@dimen/image_44"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="@dimen/margin_6"
         android:src="@drawable/progress_man"
         app:layout_constraintEnd_toEndOf="parent"

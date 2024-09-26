@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +29,8 @@ import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
+import com.ssafy.domain.dto.schedule.Content
+import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
@@ -35,6 +38,7 @@ import com.ssafy.presentation.utils.displayText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -52,6 +56,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private val startMonth = currentMonth.minusMonths(100)
     private val endMonth = currentMonth.plusMonths(100)
     private val daysOfWeek = daysOfWeek()
+    private lateinit var planStateView: PlanStateView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,12 +81,20 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 binding.exOneCalendar.smoothScrollToMonth(it.yearMonth.previousMonth)
             }
         }
-        val trainInfoView = binding.lyResultInfo
-        val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
-        makeChart(barChart)
-        makeResult()
 
         initListener()
+        planStateView = binding.lyPlan
+        viewModel.dateProgressInfo(selectedDate,::setProgress)
+
+    }
+
+    private fun setProgress(progressData: ProgressData){
+        if(progressData.status=="NOTHING"){
+            planStateView.isVisible=false
+        }
+        else{
+            planStateView.setPlanData(progressData.goal,progressData.completedCount,progressData.totalDays,progressData.status)
+        }
     }
 
     private fun initListener() = with(binding) {
@@ -90,15 +103,17 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            var previousDotList = emptyList<LocalDate>()
-            viewModel.dotList.collectLatest { newDotList ->
-                val changedDates = newDotList.filterNot { previousDotList.contains(it) } +
-                        previousDotList.filterNot { newDotList.contains(it) }
+            launch {
+                var previousDotList = emptyList<LocalDate>()
+                viewModel.dotList.collectLatest { newDotList ->
+                    val changedDates = newDotList.filterNot { previousDotList.contains(it) } +
+                            previousDotList.filterNot { newDotList.contains(it) }
 
-                for (date in changedDates) {
-                    monthCalendarView.notifyDateChanged(date)
+                    for (date in changedDates) {
+                        monthCalendarView.notifyDateChanged(date)
+                    }
+                    previousDotList = newDotList
                 }
-                previousDotList = newDotList
             }
         }
     }
@@ -109,51 +124,12 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     }
 
     private fun makeResult() {
-        // 전체
-        val totalPercent = 100f
         val pacePercent = 75f
         val heartPercent = 60f
         val stepPercent = 70f
 
-        val paceChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_pace)
-        val heartChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_heart)
-        val stepChart: PieChart = binding.lyTrainResult.findViewById(R.id.chart_step)
-
-        val colors = listOf(
-            Color.parseColor("#FFFFFFFF"),
-            Color.parseColor("#5973FF"),
-        )
-
-        setupPieChart(paceChart, pacePercent, totalPercent, colors)
-        setupPieChart(heartChart, heartPercent, totalPercent, colors)
-        setupPieChart(stepChart, stepPercent, totalPercent, colors)
-    }
-
-    private fun setupPieChart(
-        chart: PieChart,
-        valuePercent: Float,
-        totalPercent: Float,
-        colors: List<Int>
-    ) {
-        val entries = ArrayList<PieEntry>().apply {
-            add(PieEntry(totalPercent - valuePercent))
-            add(PieEntry(valuePercent, ""))
-        }
-
-        val dataSet = PieDataSet(entries, "").apply {
-            this.colors = colors
-            setDrawValues(false)
-        }
-
-        chart.apply {
-            data = PieData(dataSet)
-            holeRadius = 75f
-            transparentCircleRadius = 75f
-            setDrawCenterText(false)
-            legend.isEnabled = false
-            description.isEnabled = false
-            invalidate()
-        }
+        val trainResultView = binding.lyTrainResult
+        trainResultView.setPieChart(pacePercent,heartPercent,stepPercent)
     }
 
     private fun makeChart(barChart: BarChart) {
@@ -202,7 +178,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             invalidate()
         }
     }
-
     private fun setupMonthCalendar(
         startMonth: YearMonth,
         endMonth: YearMonth,
@@ -243,7 +218,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 when {
                     selectedDate == date -> R.drawable.day_selected_bg
                     today == date -> R.drawable.day_today_bg
-                    else -> 0 // null equivalent
+                    else -> 0
                 }
             )
         } else {
@@ -256,9 +231,41 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private fun dateClicked(date: LocalDate) {
         predate = selectedDate
         selectedDate = date
-        // Refresh both calendar views..
         monthCalendarView.notifyDateChanged(predate)
         monthCalendarView.notifyDateChanged(date)
+        viewModel.dateList.value.let {
+            for(i in it.indices){
+                if(LocalDate.parse(it[i].date)==selectedDate){
+                    setResultView(it[i].contentList)
+                    break
+                }
+                if(i==it.size-1){
+                    setResultView(emptyList())
+                }
+            }
+        }
+    }
+
+    private fun setResultView(contentList: List<Content>) {
+        if (contentList.isEmpty()) {//쉬는날
+            binding.lyResultInfo.isVisible = false
+            binding.lyTrainResult.isVisible = false
+            binding.map.isVisible = false
+            binding.lyTrainResultCoach.isVisible = false
+            binding.lyNothing.isVisible = true
+        } else {
+            binding.lyNothing.isVisible = false
+            binding.lyResultInfo.isVisible = true
+            binding.lyTrainResult.isVisible = true
+            binding.map.isVisible = true
+            binding.lyTrainResultCoach.isVisible = true
+            Timber.d("${contentList[0]} ${contentList[1]}")
+            val trainInfoView = binding.lyResultInfo
+            val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
+            makeChart(barChart)
+            makeResult()
+
+        }
     }
 
     @SuppressLint("SetTextI18n")
