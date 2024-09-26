@@ -16,15 +16,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.ssafy.pacemaker.presentation.component.text.TimeText
 import com.google.android.horologist.health.composables.ActiveDurationText
 import com.ssafy.pacemaker.data.ServiceState
 import com.ssafy.pacemaker.presentation.component.button.PauseButton
 import com.ssafy.pacemaker.presentation.component.button.ResumeButton
-import com.ssafy.pacemaker.presentation.component.button.StartButton
 import com.ssafy.pacemaker.presentation.component.button.StopButton
 import com.ssafy.pacemaker.presentation.component.text.CaloriesText
 import com.ssafy.pacemaker.presentation.component.text.DistanceText
+import com.ssafy.pacemaker.presentation.component.text.DurationText
 import com.ssafy.pacemaker.presentation.component.text.HRText
 import com.ssafy.pacemaker.presentation.component.text.PaceText
 import com.ssafy.pacemaker.service.ExerciseServiceState
@@ -38,7 +37,6 @@ fun ExerciseRoute(modifier: Modifier = Modifier) {
         onPauseClick = { viewModel.pauseExercise() },
         onEndClick = { viewModel.endExercise() },
         onResumeClick = { viewModel.resumeExercise() },
-        onStartClick = { viewModel.startExercise() },
         uiState = uiState,
     )
 }
@@ -48,7 +46,6 @@ fun ExerciseScreen(
     onPauseClick: () -> Unit,
     onEndClick: () -> Unit,
     onResumeClick: () -> Unit,
-    onStartClick: () -> Unit,
     uiState: ExerciseScreenState,
 ) {
     val lastActiveDurationCheckpoint = uiState.exerciseState?.activeDurationCheckpoint
@@ -61,10 +58,10 @@ fun ExerciseScreen(
                     checkpoint = lastActiveDurationCheckpoint,
                     state = exerciseState
                 ) {
-                    TimeText(duration = it)
+                    DurationText(duration = it)
                 }
             } else {
-                TimeText(null)
+                DurationText(null)
             }
         }
         SpaceAroundRow {
@@ -79,13 +76,12 @@ fun ExerciseScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            StartButton(onStartClick)
-
-            if (uiState.isEnding) StartButton(onStartClick)
-            else StopButton(onEndClick)
-
-            if (uiState.isPaused) ResumeButton(onResumeClick)
-            else PauseButton(onPauseClick)
+            if (uiState.isPaused) {
+                ResumeButton(onResumeClick)
+                StopButton(onEndClick)
+            } else {
+                PauseButton(onPauseClick)
+            }
         }
     }
 }
@@ -110,10 +106,9 @@ private fun SpaceAroundRow(
 @Composable
 fun ExerciseRoutePreview() {
     ExerciseScreen(
-        onPauseClick = {  },
-        onEndClick = {  },
-        onResumeClick = {  },
-        onStartClick = {  },
+        onPauseClick = { },
+        onEndClick = { },
+        onResumeClick = { },
         uiState = ExerciseScreenState(
             hasExerciseCapabilities = false,
             isTrackingAnotherExercise = false,

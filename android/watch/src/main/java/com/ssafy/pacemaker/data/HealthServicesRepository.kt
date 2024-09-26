@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "HealthServicesRepository_PACEMAKER"
+
 @ActivityRetainedScoped
 class HealthServicesRepository @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
@@ -68,6 +70,7 @@ class HealthServicesRepository @Inject constructor(
     fun startExercise() = serviceCall {
         try {
             errorState.value = null
+            Log.d(TAG, "startExercise: ")
             startExercise()
         } catch (e: Exception) {
             errorState.value = e.message

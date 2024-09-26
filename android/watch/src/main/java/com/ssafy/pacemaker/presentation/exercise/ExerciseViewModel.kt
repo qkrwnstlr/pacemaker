@@ -9,19 +9,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
 ) : ViewModel() {
-    init {
-        viewModelScope.launch {
-            healthServicesRepository.prepareExercise()
-        }
-    }
-
     val uiState: StateFlow<ExerciseScreenState> = healthServicesRepository.serviceState.map {
         ExerciseScreenState(
             hasExerciseCapabilities = healthServicesRepository.hasExerciseCapability(),
@@ -40,12 +33,9 @@ class ExerciseViewModel @Inject constructor(
                 exerciseState = (it as? ServiceState.Connected)?.exerciseServiceState
             )
         }
-
     )
 
-    fun startExercise() {
-        healthServicesRepository.startExercise()
-    }
+    suspend fun isExerciseInProgress() = healthServicesRepository.isExerciseInProgress()
 
     fun pauseExercise() {
         healthServicesRepository.pauseExercise()
