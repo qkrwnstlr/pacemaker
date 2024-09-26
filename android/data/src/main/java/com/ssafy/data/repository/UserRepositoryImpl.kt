@@ -7,6 +7,7 @@ import com.ssafy.domain.dto.Coach
 import com.ssafy.domain.dto.LoginRequestBody
 import com.ssafy.domain.dto.LoginResponseBody
 import com.ssafy.domain.dto.User
+import com.ssafy.domain.dto.schedule.ContentListDto
 import com.ssafy.domain.repository.UserRepository
 import com.ssafy.domain.response.ResponseResult
 import kotlinx.coroutines.CoroutineDispatcher
@@ -53,4 +54,12 @@ class UserRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
+    override suspend fun getCalendarDot(
+        uid: String,
+        year: Int,
+        month: Int
+    ): ResponseResult<Map<String, List<ContentListDto>>> {
+        val response = withContext(ioDispatcher) { userDataSource.getCalendarDot(uid, year, month) }
+        return response.toResponseResult()
+    }
 }

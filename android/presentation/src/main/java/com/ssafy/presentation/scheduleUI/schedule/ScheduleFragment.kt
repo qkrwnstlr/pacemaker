@@ -1,7 +1,6 @@
 package com.ssafy.presentation.scheduleUI.schedule
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -14,14 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -29,7 +24,7 @@ import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
-import com.ssafy.domain.dto.schedule.Content
+import com.ssafy.domain.dto.schedule.ContentListDto
 import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
@@ -57,6 +52,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private val endMonth = currentMonth.plusMonths(100)
     private val daysOfWeek = daysOfWeek()
     private lateinit var planStateView: PlanStateView
+    private var prevDateMap = emptyMap<String, List<ContentListDto>>()
+    private var flag = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,6 +66,10 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         viewModel.setMonthHasTrain(getUid(), currentMonth.year, currentMonth.monthValue)
         setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
         initCollect()
+
+        binding.exOneCalendar.monthScrollListener = { month ->
+            viewModel.setMonthHasTrain(getUid(), month.yearMonth.year, month.yearMonth.monthValue)
+        }
 
         binding.btnNextMonth.setOnClickListener {
             binding.exOneCalendar.findFirstVisibleMonth()?.let {
@@ -84,16 +85,20 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
         initListener()
         planStateView = binding.lyPlan
-        viewModel.dateProgressInfo(selectedDate,::setProgress)
+        viewModel.dateProgressInfo(selectedDate, ::setProgress)
 
     }
 
-    private fun setProgress(progressData: ProgressData){
-        if(progressData.status=="NOTHING"){
-            planStateView.isVisible=false
-        }
-        else{
-            planStateView.setPlanData(progressData.goal,progressData.completedCount,progressData.totalDays,progressData.status)
+    private fun setProgress(progressData: ProgressData) {
+        if (progressData.status == "NOTHING") {
+            planStateView.isVisible = false
+        } else {
+            planStateView.setPlanData(
+                progressData.goal,
+                progressData.completedCount,
+                progressData.totalDays,
+                progressData.status
+            )
         }
     }
 
@@ -103,17 +108,14 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            launch {
-                var previousDotList = emptyList<LocalDate>()
-                viewModel.dotList.collectLatest { newDotList ->
-                    val changedDates = newDotList.filterNot { previousDotList.contains(it) } +
-                            previousDotList.filterNot { newDotList.contains(it) }
-
-                    for (date in changedDates) {
-                        monthCalendarView.notifyDateChanged(date)
-                    }
-                    previousDotList = newDotList
+            viewModel.dateList.collectLatest { newDateList ->
+                val prevDates = prevDateMap.keys
+                val newDates = newDateList.keys
+                val commonDates = prevDates.union(newDates)
+                for (date in commonDates) {
+                    monthCalendarView.notifyDateChanged(LocalDate.parse(date))
                 }
+                prevDateMap = newDateList
             }
         }
     }
@@ -129,7 +131,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         val stepPercent = 70f
 
         val trainResultView = binding.lyTrainResult
-        trainResultView.setPieChart(pacePercent,heartPercent,stepPercent)
+        trainResultView.setPieChart(pacePercent, heartPercent, stepPercent)
     }
 
     private fun makeChart(barChart: BarChart) {
@@ -178,6 +180,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             invalidate()
         }
     }
+
     private fun setupMonthCalendar(
         startMonth: YearMonth,
         endMonth: YearMonth,
@@ -195,7 +198,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                     container.ly,
                     container.exThreeDotView,
                     data.position == DayPosition.MonthDate,
-                    viewModel.dotList.value.contains(data.date)
+                    viewModel.dateList.value.containsKey(data.date.toString())
                 )
             }
         }
@@ -233,20 +236,21 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         selectedDate = date
         monthCalendarView.notifyDateChanged(predate)
         monthCalendarView.notifyDateChanged(date)
-        viewModel.dateList.value.let {
-            for(i in it.indices){
-                if(LocalDate.parse(it[i].date)==selectedDate){
-                    setResultView(it[i].contentList)
+        viewModel.dateList.value.let { dateList ->
+            flag = true
+            for (trainDate in dateList.keys) {
+                if (LocalDate.parse(trainDate) == selectedDate) {
+                    dateList[trainDate]?.let { setResultView(it) }
+                    flag = false
                     break
                 }
-                if(i==it.size-1){
-                    setResultView(emptyList())
-                }
             }
+            if (flag)
+                setResultView(emptyList())
         }
     }
 
-    private fun setResultView(contentList: List<Content>) {
+    private fun setResultView(contentList: List<ContentListDto>) {
         if (contentList.isEmpty()) {//쉬는날
             binding.lyResultInfo.isVisible = false
             binding.lyTrainResult.isVisible = false
