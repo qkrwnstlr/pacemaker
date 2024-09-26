@@ -1,5 +1,6 @@
 package com.ssafy.presentation.runningUI
 
+import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -41,6 +42,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private val viewModel: RunningViewModel by viewModels()
     private var map: GoogleMap? = null
+    private var myLocationListener: LocationListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCollect()
@@ -137,8 +139,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
         val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
         val markerOptions = MarkerOptions()
-        markerOptions.position(latLng)
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
         map?.addMarker(markerOptions)
 
         showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
@@ -158,7 +160,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         getMyLocation()
     }
 
-    private var myLocationListener: LocationListener? = null
+    @SuppressLint("MissingPermission")
     private fun getMyLocation() {
         //todo: 전역으로 데이터 저장해놓고, 러닝시 초기 화면은 그 값 받아와서 표시하고 이 set, get location은 없애기
         val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
@@ -166,26 +168,24 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
             override fun onLocationChanged(p0: Location) {
                 setMyLocation(p0)
             }
+        }.apply {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0f,
+                    this
+                )
+            }
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    0f,
+                    this
+                )
+            }
         }
-
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                0,
-                0f,
-                myLocationListener!!
-            )
-        }
-
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                0,
-                0f,
-                myLocationListener!!
-            )
-        }
-
     }
 
     fun setMyLocation(location: Location) {
@@ -203,8 +203,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         map?.animateCamera(cameraUpdate)
         val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
         val markerOptions = MarkerOptions()
-        markerOptions.position(latLng)
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
         map?.addMarker(markerOptions)
 
         showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
