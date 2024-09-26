@@ -32,7 +32,7 @@
 
     <include
         android:id="@+id/running_info"
-        layout="@layout/running_infomation"
+        layout="@layout/running_information"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_10"

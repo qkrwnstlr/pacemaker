@@ -3,6 +3,7 @@ package com.ssafy.presentation.runningUI
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ssafy.presentation.core.exercise.ExerciseMonitor
 import com.ssafy.presentation.core.exercise.ExerciseRepository
 import com.ssafy.presentation.core.exercise.ServiceState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ private const val TAG = "RunningViewModel_PACEMAKER"
 
 @HiltViewModel
 class RunningViewModel @Inject constructor(
-    private val exerciseRepository: ExerciseRepository
+    private val exerciseRepository: ExerciseRepository,
+    val exerciseMonitor: ExerciseMonitor
 ) : ViewModel() {
 
     val exerciseState: StateFlow<RunningScreenState> = exerciseRepository.serviceState.map {
