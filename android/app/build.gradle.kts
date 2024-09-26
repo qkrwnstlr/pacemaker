@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.ssafy.pacemaker"
-        minSdk = 24
+        minSdk = 30
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -50,4 +50,6 @@ dependencies {
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    implementation(libs.play.services.wearable)
 }

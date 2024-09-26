@@ -50,7 +50,6 @@ class StartPlanFragment : BaseFragment<FragmentStartPlanBinding>(
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
             viewModel.checkCoach(
-                getUid(),
                 ::moveToRegisterPlanFragment,
                 ::moveToSelectCoachFragment,
                 ::failToGetCoach

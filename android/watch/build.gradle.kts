@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.ssafy.watch"
+    namespace = "com.ssafy.pacemaker"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.ssafy.watch"
+        applicationId = "com.ssafy.pacemaker"
         minSdk = 30
         targetSdk = 34
         versionCode = 1
@@ -102,4 +102,9 @@ dependencies {
 
     implementation(libs.androidx.material.icons.extended)
     implementation(kotlin("script-runtime"))
+
+    implementation(libs.gson)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

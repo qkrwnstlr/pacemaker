@@ -1,5 +1,11 @@
 package com.ssafy.presentation.utils
 
+import com.ssafy.domain.dto.User
+import com.ssafy.domain.dto.plan.PlanTrain
+import com.ssafy.domain.dto.plan.UserInfo
+import com.ssafy.domain.utils.DANNY
+import com.ssafy.domain.utils.JAMIE
+import com.ssafy.domain.utils.MIKE
 import com.ssafy.presentation.R
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -7,6 +13,7 @@ import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.math.roundToInt
 
 
 fun DayOfWeek.displayText(uppercase: Boolean = false, narrow: Boolean = false): String {
@@ -31,8 +38,6 @@ fun Int.toHeight(): String = "${toString()}cm"
 fun Int.toWeight(): String = "${toString()}kg"
 fun Int.toDistance(): String = "${toString()}회"
 fun Int.toAgeString(): String = "${toString()}세"
-fun Int.toAge(): Int = if (this == 0) 0 else LocalDate.now().year - this
-fun Int.toYear(): Int = if (this == 0) 0 else LocalDate.now().year - this
 fun Int.toTime(): String {
     val hour = this / 60
     val minute = this % 60
@@ -42,30 +47,101 @@ fun Int.toTime(): String {
 fun String.toGenderString(): String =
     if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
 
+fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
+fun Int.toEmptyOrHeight(): String = if (this == 0) "" else "${toString()}cm"
+fun Int.toEmptyOrWeight(): String = if (this == 0) "" else "${toString()}kg"
+fun List<String>.toInjuries(): String {
+    val injuries = joinToString()
+    return if (injuries.length > 15) "${injuries}..." else injuries
+}
+
+fun Double.toPaceString(): String {
+    val pace = roundToInt()
+    val minute = pace / 60
+    val second = pace % 60
+    return "${minute}'${second}\""
+}
+
+fun Int.toTimeString(): String {
+    val minutes = this / 60
+    val hour = minutes / 60
+    val minute = minutes % 60
+    return "${hour}h ${minute}m"
+}
+
+fun String.toMakeDurationDate(endDate: String): String = "$this ~ $endDate"
+
+fun List<String>.toWeekString(): String {
+    val builder = StringBuilder("매주 ")
+    WEEK_LIST.forEach { day ->
+        if (this.contains(day.first)) builder.append(day.second + " ")
+    }
+    return builder.toString()
+}
+
 fun Long?.toCoachIndex(): Int = when (this) {
-    1L -> R.drawable.mikefull
-    2L -> R.drawable.jamiefull
-    3L -> R.drawable.dannyfull
+    MIKE -> R.drawable.mikefull
+    JAMIE -> R.drawable.jamiefull
+    DANNY -> R.drawable.dannyfull
     else -> R.drawable.runnerfull
 }
 
 fun Long?.toCoachMessage(): List<String> = when (this) {
-    1L -> START_WITH_MIKE
-    2L -> START_WITH_JAMIE
-    3L -> START_WITH_DANNY
+    MIKE -> START_WITH_MIKE
+    JAMIE -> START_WITH_JAMIE
+    DANNY -> START_WITH_DANNY
     else -> START_WITH_MIKE
 }
 
-fun Int?.toGender(): String = when (this) {
-    0 -> FEMALE
-    1 -> MALE
-    else -> UNKNOWN
+fun String.toLocalDate(): LocalDate {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    return LocalDate.parse(this, formatter)
 }
+
+fun Int.toTrainPace(): String {
+    val minute = this / 60
+    val second = this % 60
+    return "${minute}'${second}\""
+}
+
+fun Int.toTotalTime(): String {
+    val trainTime = this / 60
+    return "${trainTime}분"
+}
+
+fun PlanTrain?.toPlanInst(): String {
+    if (this == null) return ""
+
+    val totalTime = (sessionTime).toTotalTime()
+    val meanPace = trainPace.toTrainPace()
+    return "$totalTime  |  $meanPace"
+}
+
+fun PlanTrain?.toTrainText(): String {
+    if (this == null) return ""
+
+    val totalDistance = sessionDistance / 1000f
+    val distanceString = String.format(Locale.KOREAN, "%.2f", totalDistance)
+
+    val runCount = "러닝 ${repetition}회"
+    val interCount = if (repetition > 1) "천천히 걷기 ${repetition - 1}회" else ""
+    return "${distanceString}km\n${runCount}\n${interCount}"
+}
+
+fun User.toUserInfo() = UserInfo(
+    age = age.toString(),
+    height = height,
+    weight = weight,
+    gender = gender,
+    injuries = injuries,
+    recentRunPace = 0,
+    recentRunDistance = 0,
+    recentRunHeartRate = 0
+)
 
 const val ERROR = "에러 발생!"
 const val MALE = "남자"
 const val FEMALE = "여자"
-const val UNKNOWN = "미상"
 
 val START_WITH_MIKE = listOf(
     "안녕하세요, 열정 넘치는 마이크 러닝 코치입니다! \uD83C\uDFC3\u200D♂\uFE0F\uD83D\uDCA8",
@@ -88,3 +164,12 @@ val START_WITH_DANNY = listOf(
     "고객님 나이가 어떻게 되십니까?"
 )
 
+val WEEK_LIST = listOf(
+    "Monday" to "월",
+    "Tuesday" to "화",
+    "Wednesday" to "수",
+    "Thursday" to "목",
+    "Friday" to "금",
+    "Saturday" to "토",
+    "Sunday" to "일"
+)

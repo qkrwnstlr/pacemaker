@@ -4,8 +4,13 @@ import com.ssafy.data.di.IoDispatcher
 import com.ssafy.data.response.toResponseResult
 import com.ssafy.data.source.plan.PlanDataSource
 import com.ssafy.domain.dto.plan.Chat
+<<<<<<< android/data/src/main/java/com/ssafy/data/repository/PlanRepositoryImpl.kt
 import com.ssafy.domain.dto.schedule.DayContentData
 import com.ssafy.domain.dto.schedule.ProgressData
+=======
+import com.ssafy.domain.dto.plan.PlanInfo
+import com.ssafy.domain.dto.plan.PlanRequest
+>>>>>>> android/data/src/main/java/com/ssafy/data/repository/PlanRepositoryImpl.kt
 import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.response.ResponseResult
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,11 +30,22 @@ class PlanRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
-    override suspend fun getTrainDot(
-        uid: String,
-        year: Int,
-        month: Int
-    ): ResponseResult<List<DayContentData>> {
+    override suspend fun makePlan(planRequest: PlanRequest): ResponseResult<Unit> {
+        val response = withContext(ioDispatcher) { planDataSource.makePlan(planRequest) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun getPlan(uid: String): ResponseResult<PlanInfo> {
+        val response = withContext(ioDispatcher) { planDataSource.getPlan(uid) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun deletePlan(uid: String): ResponseResult<Unit> {
+        val response = withContext(ioDispatcher) { planDataSource.deletePlan(uid) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun getTrainDot(uid: String, year: Int, month: Int): ResponseResult<List<DayContentData>> {
         val response = withContext(ioDispatcher) { planDataSource.getPlanDot(uid, year, month) }
         return response.toResponseResult()
     }

@@ -4,21 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-16T07:35:36.492291700Z">
+        <DropdownSelection timestamp="2024-09-23T06:18:20.711509100Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\johnj\.android\avd\Wear_OS_Large_Round_API_34.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
-        <DialogSelection />
-      </SelectionState>
-      <SelectionState runConfigName="wearos">
-        <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-12T15:17:20.388288500Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.168.0.6:46521;connection=a978ac86" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\johnj\.android\avd\Pixel_8_Pro_API_34.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -26,7 +15,7 @@
       </SelectionState>
       <SelectionState runConfigName="watch">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-16T07:35:40.761777600Z">
+        <DropdownSelection timestamp="2024-09-22T16:06:55.198135800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\johnj\.android\avd\Wear_OS_Large_Round_API_34.avd" />

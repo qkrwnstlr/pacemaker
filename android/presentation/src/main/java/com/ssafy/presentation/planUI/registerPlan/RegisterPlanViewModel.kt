@@ -4,12 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.Context
+import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.dto.plan.Plan
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
-import com.ssafy.domain.usecase.user.GetCoachUseCase
+import com.ssafy.domain.usecase.plan.MakePlanUseCase
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
+import com.ssafy.presentation.utils.ERROR
 import com.ssafy.presentation.utils.toCoachMessage
+import com.ssafy.presentation.utils.toUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -24,8 +28,9 @@ import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
 class RegisterPlanViewModel @Inject constructor(
-    private val getCoachUseCase: GetCoachUseCase,
-    private val chatForPlanUseCase: ChatForPlanUseCase
+    private val dataStoreRepository: DataStoreRepository,
+    private val chatForPlanUseCase: ChatForPlanUseCase,
+    private val makePlanUseCase: MakePlanUseCase
 ) : ViewModel() {
 
     private var coachIndex: Long = 1
@@ -59,27 +64,25 @@ class RegisterPlanViewModel @Inject constructor(
         }
     }
 
-    fun getCoach(uid: String, sendAble: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-        initChatMessage(3, sendAble)
-//        runCatching { getCoachUseCase(uid) }
-//            .onSuccess {
-//                it.data?.coachNumber?.let { number ->
-//                    coachIndex = number
-//                    initChatMessage(number, sendAble)
-//                }
-//            }
+    fun getCoach(sendAble: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
+        runCatching { dataStoreRepository.getUser() }
+            .onSuccess {
+                coachIndex = it.coachNumber
+                initChatMessage(it.coachNumber, sendAble)
+                val context = contextData.value.copy(userInfo = it.toUserInfo())
+                _contextData.emit(context)
+            }
     }
 
-    fun sendMyMessage(text: String, failToMakeChat: suspend (String) -> Unit) =
+    fun sendMyMessage(message: String, failToMakeChat: suspend (String) -> Unit) =
         viewModelScope.launch(Dispatchers.IO) {
             val newList = _chatData.value.toMutableList()
-            val myMessage = ChatData.MyData(text)
+            val myMessage = ChatData.MyData(message)
             val coachMessage = ChatData.CoachData(COACH_CHATTING, coachIndex)
             newList.add(myMessage)
             newList.add(coachMessage)
             _chatData.emit(newList)
-            startToLoading()
-//            makeChat(text, failToMakeChat)
+            makeChat(message, failToMakeChat)
         }
 
     private fun makeChat(text: String, failToMakeChat: suspend (String) -> Unit) =
@@ -87,7 +90,10 @@ class RegisterPlanViewModel @Inject constructor(
             val chat = Chat(message = text, context = contextData.value, plan = planData.value)
             runCatching { chatForPlanUseCase(chat) }
                 .onSuccess { response -> checkResponse(response, failToMakeChat) }
-                .onFailure { failToMakeChat(FAILURE) }
+                .onFailure {
+                    it.printStackTrace()
+                    failToMakeChat(FAILURE)
+                }
         }
 
     private suspend fun checkResponse(
@@ -116,23 +122,23 @@ class RegisterPlanViewModel @Inject constructor(
         _contextData.emit(chat.context)
     }
 
-    private fun startToLoading() = viewModelScope.launch(Dispatchers.Main) {
-        while (true) {
-            delay(500)
+    fun makePlan(
+        uid: String,
+        successToMakePlan: suspend () -> Unit,
+        failToMakePlan: suspend (String) -> Unit
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        val planRequest = PlanRequest(
+            uid = uid,
+            context = contextData.value,
+            plan = planData.value
+        )
 
-            val newList = chatData.value.toMutableList()
-            val chat = newList.lastOrNull()
-
-            if (chat !is ChatData.CoachData) return@launch
-            if (!chat.text.startsWith(COACH_CHATTING)) return@launch
-
-            val dotCount = chat.text.count { it == '.' }
-            val newText = if (dotCount < 5) "${chat.text}." else chat.text.substringBefore(".")
-            val newCoachChat = ChatData.CoachData(newText, coachIndex)
-            newList.removeLastOrNull()
-            newList.add(newCoachChat)
-            _chatData.emit(newList)
-        }
+        runCatching { makePlanUseCase(planRequest) }
+            .onSuccess { successToMakePlan() }
+            .onFailure {
+                it.printStackTrace()
+                failToMakePlan(ERROR)
+            }
     }
 
     companion object {

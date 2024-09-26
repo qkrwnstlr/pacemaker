@@ -23,10 +23,15 @@ import com.ssafy.presentation.databinding.FragmentRegisterPlanBinding
 import com.ssafy.presentation.homeUI.TopSheetBehavior
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatAdapter
 import com.ssafy.presentation.utils.displayText
+import com.ssafy.presentation.utils.toAgeString
+import com.ssafy.presentation.utils.toEmptyOrHeight
+import com.ssafy.presentation.utils.toEmptyOrWeight
+import com.ssafy.presentation.utils.toGenderString
+import com.ssafy.presentation.utils.toInjuries
+import com.ssafy.presentation.utils.toLocalDate
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,7 +50,8 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         ChatAdapter().apply {
             registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    binding.chatUi.rvPlanChat.scrollToPosition(positionStart)
+                    val lastIndex = positionStart + itemCount - 1
+                    binding.chatUi.rvPlanChat.scrollToPosition(lastIndex)
                     super.onItemRangeInserted(positionStart, itemCount)
                 }
             })
@@ -62,14 +68,13 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     }
 
     private fun initView() = with(binding.chatUi) {
-        val uid = getUid()
         val slideDown = AnimationUtils.loadAnimation(
             requireContext(),
             com.ssafy.presentation.R.anim.fade_slide_down
         )
 
         tvTitle.startAnimation(slideDown)
-        viewModel.getCoach(uid, ::setSendClickable)
+        viewModel.getCoach(::setSendClickable)
         rvPlanChat.adapter = adapter
     }
 
@@ -80,16 +85,21 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun initListener() = with(binding) {
         chatUi.ivSend.setOnClickListener {
             val text = chatUi.etChat.text.toString()
-            if(text.isBlank()) return@setOnClickListener
+            if (text.isBlank()) return@setOnClickListener
             chatUi.etChat.text = null
             viewModel.sendMyMessage(text, ::makeFailMessage)
         }
         setSendClickable(false)
 
         topSheetTrain.fabBlue.setOnClickListener {
-            val action =
-                RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
-            findNavController().navigate(action)
+            viewModel.makePlan(getUid(), ::moveToPlanDetailFragment, ::makeFailMessage)
+        }
+
+        chatUi.tvTitle.setOnClickListener {
+            chatUi.userInfo.root.apply {
+                val visible = if (visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                visibility = visible
+            }
         }
     }
 
@@ -110,7 +120,13 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun CoroutineScope.collectContext() = launch {
         viewModel.contextData.collectLatest { context ->
             val userInfo = context.userInfo
-            // TODO userInfo 화면에 표출해야함
+            binding.chatUi.userInfo.apply {
+                tvAge.text = userInfo.age.toAgeString()
+                tvGender.text = userInfo.gender.toGenderString()
+                tvHeight.text = userInfo.height.toEmptyOrHeight()
+                tvWeight.text = userInfo.weight.toEmptyOrWeight()
+                tvInjuries.text = userInfo.injuries.toInjuries()
+            }
         }
     }
 
@@ -159,7 +175,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
                     container.binding.exOneDayText.text = data.date.dayOfMonth.toString()
 
                     if (dateList.contains(data.date)) return
-                    container.binding.exThreeDotView.visibility = View.GONE
+                    container.binding.exThreeDotView.visibility = View.INVISIBLE
                     container.binding.root.isEnabled = false
                 } else {
                     container.binding.root.background = null
@@ -187,12 +203,20 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
 
     private fun dateClicked(date: LocalDate) {
         val manager = requireActivity().supportFragmentManager
-        val planTrain = viewModel.planData.value.planTrains.find { it.trainDate.toLocalDate() == date }
+        val planTrain = viewModel.planData.value.planTrains.find {
+            it.trainDate.toLocalDate() == date
+        }
+
         ScheduleDialogFragment(date, planTrain).show(manager, "ScheduleDialog")
     }
 
     private suspend fun makeFailMessage(message: String) = withContext(Dispatchers.Main) {
         showSnackStringBar(message)
+    }
+
+    private suspend fun moveToPlanDetailFragment() = withContext(Dispatchers.Main) {
+        val action = RegisterPlanFragmentDirections.actionRegisterPlanFragmentToPlanDetailFragment()
+        findNavController().navigate(action)
     }
 
     private fun scrollUpCalender() {
