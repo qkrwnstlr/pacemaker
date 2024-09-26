@@ -119,7 +119,7 @@ public class ReportService {
 		TrainResult trainResult = TrainResult.of(report, reportPlanCreateRequest.trainResult().coachMessage());
 		TrainEvaluation trainEvaluation = objectMapper.readValue(stringTrainEvaluation, TrainEvaluation.class);
 		TrainReport trainReport = TrainReport.builder()
-			.trainDate(calculateTrainDuration(reportPlanCreateRequest.trainDate(),
+			.trainDuration(calculateTrainDuration(reportPlanCreateRequest.trainDate(),
 				reportPlanCreateRequest.trainResult().trainTime()))
 			.trainResult(trainResult)
 			.trainEvaluation(trainEvaluation)
@@ -148,7 +148,7 @@ public class ReportService {
 		TrainResult trainResult = TrainResult.of(report, convertListCoachMessage(reportPlanTrain.getCoachMessage()));
 		TrainEvaluation trainEvaluation = convertStringTrainEvaluation(report.getTrainEvaluation());
 		TrainReport trainReport = TrainReport.builder()
-			.trainDate(calculateTrainDuration(report.getTrainDate(), report.getTrainTime()))
+			.trainDuration(calculateTrainDuration(report.getTrainDate(), report.getTrainTime()))
 			.trainResult(trainResult)
 			.trainEvaluation(trainEvaluation)
 			.build();
