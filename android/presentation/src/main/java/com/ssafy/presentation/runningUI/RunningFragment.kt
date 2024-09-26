@@ -1,6 +1,8 @@
 package com.ssafy.presentation.runningUI
 
+import android.Manifest
 import android.content.Context.LOCATION_SERVICE
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,6 +13,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.health.services.client.data.LocationData
 import androidx.lifecycle.Lifecycle
@@ -169,6 +172,16 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         }
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
             locationManager.requestLocationUpdates(
                 LocationManager.GPS_PROVIDER,
                 0,
