@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.coach.dto.CoachNumberResponse;
@@ -94,5 +95,15 @@ public class UserController {
 	public ResponseEntity<?> deleteUser(@PathVariable String uid) {
 		userService.deleteUser(uid);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+	}
+
+	@Operation(summary = "월별 캘린더 조회 (존재하지 않는 사용자는 따로 404 안 터트림 -> null)")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "월별 캘린더 조회 성공"),
+	})
+	@GetMapping("/calender")
+	public ResponseEntity<?> getMonthlyCalender(@PathVariable("uid") String uid, @RequestParam Integer year,
+		@RequestParam Integer month) {
+		return ResponseEntity.status(HttpStatus.OK).body(userService.findMonthlyCalenderByUid(uid, year, month));
 	}
 }
