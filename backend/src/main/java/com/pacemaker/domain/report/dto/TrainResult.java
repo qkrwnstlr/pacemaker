@@ -10,12 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pacemaker.domain.report.entity.Report;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
 public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer trainTime, @NotNull Integer heartRate,
 						  @NotNull Integer pace, @NotNull Integer cadence, @NotNull Integer kcal,
-						  @NotNull List<Integer> heartZone, @NotNull List<SplitData> splitData,
+						  @NotNull @Size(max = 5, min = 5) List<Integer> heartZone, @NotNull List<SplitData> splitData,
 						  @NotNull List<List<Double>> trainMap, List<String> coachMessage) {
 
 	public static TrainResult of(Report report, List<String> coachMessage) throws JsonProcessingException {

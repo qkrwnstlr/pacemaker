@@ -124,7 +124,7 @@ public class ReportService {
 			.build();
 
 		return ReportPlanCreateResponse.builder()
-			.planTrainResponse(planTrainResponse)
+			.planTrain(planTrainResponse)
 			.trainReport(trainReport)
 			.build();
 	}
