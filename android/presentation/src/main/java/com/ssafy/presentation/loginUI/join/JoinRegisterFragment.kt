@@ -8,12 +8,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.ssafy.domain.utils.FEMALE
+import com.ssafy.domain.utils.MALE
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentJoinRegisterBinding
 import com.ssafy.presentation.myPageUI.modify.GenderButtonSheetFragment
-import com.ssafy.presentation.utils.FEMALE
-import com.ssafy.presentation.utils.MALE
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

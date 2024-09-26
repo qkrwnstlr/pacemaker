@@ -6,6 +6,7 @@ import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.response.ResponseResult
+import com.ssafy.domain.utils.ifZero
 import javax.inject.Inject
 
 class MakePlanUseCase @Inject constructor(
@@ -39,9 +40,5 @@ class MakePlanUseCase @Inject constructor(
         coachNumber = prevUser.coachNumber,
         injuries = injuries.ifEmpty { prevUser.injuries }
     )
-
-    private fun Int.ifZero(defaultValue: () -> Int): Int {
-        return if (this == 0) defaultValue() else this
-    }
 
 }

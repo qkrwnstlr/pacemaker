@@ -8,3 +8,11 @@ const val DANNY_FEAT = "#유머러스 #경상도 사투리 #가보입시다"
 const val MIKE = 1L
 const val JAMIE = 2L
 const val DANNY = 3L
+
+const val MALE = "남성"
+const val FEMALE = "여성"
+
+fun Int.ifZero(defaultValue: () -> Int): Int = if (this == 0) defaultValue() else this
+fun String.ifNotHuman(defaultValue: () -> String) =
+    if (this != MALE && this != FEMALE) defaultValue()
+    else this

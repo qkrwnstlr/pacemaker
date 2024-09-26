@@ -9,10 +9,10 @@ import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
+import com.ssafy.domain.utils.ifNotHuman
+import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.ERROR
-import com.ssafy.presentation.utils.FEMALE
-import com.ssafy.presentation.utils.MALE
 import com.ssafy.presentation.utils.toCoachMessage
 import com.ssafy.presentation.utils.toUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -118,16 +118,16 @@ class RegisterPlanViewModel @Inject constructor(
     }
 
     private suspend fun checkContext(context: Context) = with(contextData.value.userInfo) {
-        val prevUserInfo = context.userInfo
-        val newUserInfo = prevUserInfo.copy(
-            age = prevUserInfo.age.ifBlank { age },
-            height = if (prevUserInfo.height == 0) height else prevUserInfo.height,
-            weight = if (prevUserInfo.weight == 0) weight else prevUserInfo.weight,
-            gender = if (prevUserInfo.gender != MALE && prevUserInfo.gender != FEMALE) gender else prevUserInfo.gender,
-            injuries = prevUserInfo.injuries.ifEmpty { injuries },
-            recentRunPace = if (prevUserInfo.recentRunPace == 0) recentRunPace else prevUserInfo.recentRunPace,
-            recentRunDistance = if (prevUserInfo.recentRunDistance == 0) recentRunDistance else prevUserInfo.recentRunDistance,
-            recentRunHeartRate = if (prevUserInfo.recentRunHeartRate == 0) recentRunHeartRate else prevUserInfo.recentRunHeartRate
+        val emitUserInfo = context.userInfo
+        val newUserInfo = emitUserInfo.copy(
+            age = emitUserInfo.age.ifBlank { age },
+            height = emitUserInfo.height.ifZero { height },
+            weight = emitUserInfo.weight.ifZero { weight },
+            gender = emitUserInfo.gender.ifNotHuman { gender },
+            injuries = emitUserInfo.injuries.ifEmpty { injuries },
+            recentRunPace = emitUserInfo.recentRunPace.ifZero { recentRunPace },
+            recentRunDistance = emitUserInfo.recentRunDistance.ifZero { recentRunDistance },
+            recentRunHeartRate = emitUserInfo.recentRunHeartRate.ifZero { recentRunHeartRate }
         )
 
         val newContext = context.copy(userInfo = newUserInfo)
