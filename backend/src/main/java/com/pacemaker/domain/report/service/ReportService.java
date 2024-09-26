@@ -79,7 +79,7 @@ public class ReportService {
 	public ReportPlanResponse createReportPlan(ReportPlanCreateRequest reportPlanCreateRequest) throws
 		JsonProcessingException {
 		User user = findUserByUid(reportPlanCreateRequest.uid());
-		PlanTrain planTrain = findPlanTrainByid(reportPlanCreateRequest.planTrainId());
+		PlanTrain planTrain = findPlanTrainById(reportPlanCreateRequest.planTrainId());
 		Coach coach = findCoachById(reportPlanCreateRequest.coachNumber());
 		planTrain.updatePlanTrainStatus(TrainStatus.DONE);
 
@@ -141,7 +141,7 @@ public class ReportService {
 		}
 
 		ReportPlanTrain reportPlanTrain = findReportPlanTrainById(reportId);
-		PlanTrain planTrain = findPlanTrainByid(reportPlanTrain.getPlanTrain().getId());
+		PlanTrain planTrain = findPlanTrainById(reportPlanTrain.getPlanTrain().getId());
 
 		Integer planTrainIndex = findIndexByPlanTrainId(planTrain.getId());
 		PlanTrainResponse planTrainResponse = PlanTrainResponse.of(planTrainIndex, planTrain);
@@ -164,7 +164,7 @@ public class ReportService {
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
 	}
 
-	private PlanTrain findPlanTrainByid(Long id) {
+	private PlanTrain findPlanTrainById(Long id) {
 		return planTrainRepository.findPlanTrainById(id)
 			.orElseThrow(() -> new NotFoundException("해당 훈련을 찾을 수 없습니다."));
 	}

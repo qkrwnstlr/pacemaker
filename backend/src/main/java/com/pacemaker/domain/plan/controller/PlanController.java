@@ -67,6 +67,19 @@ public class PlanController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
+	@GetMapping("train/before/{id}/user/{uid}")
+	@Operation(summary = "레포트 조회 - 플랜 훈련 / 플랜 훈련 단일 조회")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "플랜 훈련 조회 성공"),
+		@ApiResponse(responseCode = "400", description = "회원정보 불일치"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패"),
+		@ApiResponse(responseCode = "404", description = "플랜정보 조회 실패"),
+		@ApiResponse(responseCode = "404", description = "훈련정보 조회 실패")
+	})
+	public ResponseEntity<?> findActivePlanTrain(@PathVariable Long id, @PathVariable String uid) {
+		return ResponseEntity.status(HttpStatus.OK).body(planService.findActivePlanTrainByPlanTrainId(id, uid));
+	}
+
 	@Operation(summary = "현재 진행 중인 플랜 조회")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "플랜 조회 성공"),
