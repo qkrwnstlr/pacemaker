@@ -7,7 +7,9 @@ import com.ssafy.domain.dto.reports.SplitData
 import com.ssafy.domain.dto.reports.TrainResult
 import com.ssafy.domain.usecase.reports.CreatePlanReportsUseCase
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ReportsManager @Inject constructor(
     private val planManager: PlanManager,
     private val createPlanReportsUseCase: CreatePlanReportsUseCase

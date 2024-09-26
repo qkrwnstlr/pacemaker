@@ -1,7 +1,6 @@
 package com.ssafy.presentation.core.exercise
 
 import com.ssafy.domain.dto.User
-import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
@@ -16,7 +15,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PlanManager @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val dataStoreRepository: DataStoreRepository,
@@ -26,18 +27,22 @@ class PlanManager @Inject constructor(
     lateinit var coach: String
     lateinit var plan: PlanTrain
 
-    fun syncPlanInfo() {
+    fun syncPlanInfo(onFailure: ((exception: Throwable) -> Unit)? = null) {
         coroutineScope.launch {
-            user = dataStoreRepository.getUser()
-            coach = when (user.coachNumber) {
-                MIKE -> MIKE_FEAT
-                JAMIE -> JAMIE_FEAT
-                DANNY -> DANNY_FEAT
-                else -> ""
+            runCatching {
+                user = dataStoreRepository.getUser()
+                coach = when (user.coachNumber) {
+                    MIKE -> MIKE_FEAT
+                    JAMIE -> JAMIE_FEAT
+                    DANNY -> DANNY_FEAT
+                    else -> ""
+                }
+                plan = getPlanInfoUseCase(user.uid).planTrains.firstOrNull {
+                    it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
+                } ?: PlanTrain()
+            }.onFailure {
+                onFailure?.invoke(it)
             }
-            plan = getPlanInfoUseCase(user.uid).planTrains.firstOrNull {
-                it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
-            } ?: PlanTrain()
         }
     }
 }

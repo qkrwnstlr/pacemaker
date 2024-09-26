@@ -7,6 +7,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface ReportsAPI {
-    @POST("report/plan")
+    @POST("reports/plan")
     suspend fun createPlanReports(@Body createPlanReportsRequest: CreatePlanReportsRequest): Response<CreatePlanReportsResponse>
 }

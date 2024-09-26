@@ -2,29 +2,18 @@ package com.ssafy.presentation.core.exercise
 
 import androidx.health.connect.client.units.Velocity
 import androidx.health.services.client.data.ExerciseState
-import com.ssafy.domain.dto.plan.PlanInfo
-import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.domain.dto.train.CoachingRequest
 import com.ssafy.domain.dto.train.CoachingResponse
-import com.ssafy.domain.repository.DataStoreRepository
-import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.train.GetCoachingUseCase
-import com.ssafy.domain.utils.DANNY
-import com.ssafy.domain.utils.DANNY_FEAT
-import com.ssafy.domain.utils.JAMIE
-import com.ssafy.domain.utils.JAMIE_FEAT
-import com.ssafy.domain.utils.MIKE
-import com.ssafy.domain.utils.MIKE_FEAT
-import com.ssafy.presentation.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Duration
-import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class CoachingManager @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val exerciseMonitor: ExerciseMonitor,
@@ -40,7 +29,7 @@ class CoachingManager @Inject constructor(
         coachingResponse.update { CoachingResponse("", "") }
         coroutineScope.launch {
             runCatching {
-                planManager.syncPlanInfo()
+                planManager.syncPlanInfo { disconnect() }
                 collectExerciseSessionData()
             }.onFailure {
                 disconnect()

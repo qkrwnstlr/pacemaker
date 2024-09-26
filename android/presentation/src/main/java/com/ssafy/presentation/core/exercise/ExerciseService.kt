@@ -5,6 +5,7 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseGoal
@@ -24,6 +25,8 @@ import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
+
+private const val TAG = "ExerciseService_PACEMAKER"
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -66,7 +69,7 @@ class ExerciseService : LifecycleService() {
             exerciseMonitor.connect()
             exerciseMonitor.exerciseServiceState.collect { exercise ->
                 if (exercise.exerciseState == ExerciseState.ENDED) {
-                    healthConnectManager.writeExerciseSession(
+                    val result = healthConnectManager.writeExerciseSession(
                         // TODO : title 변경
                         "My Run #${Random.nextInt(0, 60)}",
                         parseExerciseData(
@@ -75,6 +78,7 @@ class ExerciseService : LifecycleService() {
                         ),
                         exerciseMonitor.exerciseSessionData.value
                     )
+                    Log.d(TAG, "connectToExerciseMonitor: ${result.recordIdsList}")
                     reportsManager.createPlanReports(
                         exercise.exerciseMetrics,
                         exerciseMonitor.exerciseSessionData.value
@@ -181,8 +185,8 @@ class ExerciseService : LifecycleService() {
     suspend fun endExercise() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
-        exerciseMonitor.disconnect()
-        coachingManager.disconnect()
+//        exerciseMonitor.disconnect()
+//        coachingManager.disconnect()
     }
 
     companion object {

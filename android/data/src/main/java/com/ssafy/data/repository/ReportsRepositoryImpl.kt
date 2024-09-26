@@ -2,7 +2,6 @@ package com.ssafy.data.repository
 
 import com.ssafy.data.di.IoDispatcher
 import com.ssafy.data.response.toResponseResult
-import com.ssafy.data.source.plan.PlanDataSource
 import com.ssafy.data.source.reports.ReportsDataSource
 import com.ssafy.domain.dto.reports.CreatePlanReportsRequest
 import com.ssafy.domain.dto.reports.CreatePlanReportsResponse
