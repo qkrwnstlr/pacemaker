@@ -25,7 +25,7 @@ class ChatForPlanUseCase @Inject constructor(
         }
         val newPlan = chat.plan.copy(planTrains = newPlanTrains)
         val feature = dataStoreRepository.getUser().toMakeFeature()
-        val newChat = chat.copy(plan = newPlan, coachTemperature = feature)
+        val newChat = chat.copy(plan = newPlan, coachTone = feature)
 
         return planRepository.chatForPlan(newChat)
     }

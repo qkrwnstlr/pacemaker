@@ -4,5 +4,5 @@ data class Chat(
     val message: String = "",
     val context: Context = Context(),
     val plan: Plan = Plan(),
-    val coachTemperature: String = ""
+    val coachTone: String = ""
 )
