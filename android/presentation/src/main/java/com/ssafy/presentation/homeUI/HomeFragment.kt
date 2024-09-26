@@ -1,6 +1,10 @@
 package com.ssafy.presentation.homeUI
 
+import android.content.Context.LOCATION_SERVICE
 import android.graphics.Color
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -59,27 +63,71 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private lateinit var weekCalendarView: WeekCalendarView
 
     private val viewModel: HomeViewModel by viewModels()
+    private lateinit var map: GoogleMap
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        initMapView()
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    private fun initMapView() {
         val mapFragment = SupportMapFragment.newInstance()
         getParentFragmentManager()
             .beginTransaction()
             .add(R.id.map, mapFragment)
             .commit()
         mapFragment.getMapAsync(this)
-
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onMapReady(map: GoogleMap) {
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
         val point = LatLng(37.514655, 126.979974)
-        val marker = MarkerOptions().position(point).title("현위치")
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
-        map.addMarker(marker)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 12f))
+
+        getMyLocation()
+    }
+
+    private var myLocationListener: LocationListener? = null
+    private fun getMyLocation() {
+
+        val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+        myLocationListener = object : LocationListener {
+            override fun onLocationChanged(p0: Location) {
+                setMyLocation(p0)
+            }
+        }
+
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, myLocationListener!!)
+        }
+
+        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, myLocationListener!!)
+        }
+
+    }
+
+    fun setMyLocation(location: Location) {
+        if (myLocationListener != null) {
+            val locationManager =
+                requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
+            locationManager.removeUpdates(myLocationListener!!)
+            myLocationListener = null
+        }
+
+        val latLng = LatLng(location.latitude, location.longitude)
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+        map.animateCamera(cameraUpdate)
+
+        val markerOptions = MarkerOptions()
+        markerOptions
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+
+        map.addMarker(markerOptions)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -11,9 +11,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "ExerciseMonitor_PACEMAKER"
 
+@Singleton
 class ExerciseMonitor @Inject constructor(
     private val wearableClientManager: WearableClientManager,
     private val coroutineScope: CoroutineScope,
