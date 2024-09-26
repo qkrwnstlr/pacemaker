@@ -9,11 +9,3 @@ annotation class DefaultDispatcher
 @Qualifier
 @Retention(AnnotationRetention.RUNTIME)
 annotation class IoDispatcher
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class BaseRetrofit
-
-@Qualifier
-@Retention(AnnotationRetention.RUNTIME)
-annotation class TextToSpeechRetrofit
