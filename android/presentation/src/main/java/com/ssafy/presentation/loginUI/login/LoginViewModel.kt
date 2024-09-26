@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(
             }.onSuccess { result ->
                 saveUid(uid)
                 result.data?.let {
-                    dataStoreRepository.saveUser(it.userInfoResponse)
+                    dataStoreRepository.saveUser(it.userInfoResponse.copy(uid = uid))
 
                     withContext(Dispatchers.Main) {
                         if (it.isAlreadyExists) goHome()

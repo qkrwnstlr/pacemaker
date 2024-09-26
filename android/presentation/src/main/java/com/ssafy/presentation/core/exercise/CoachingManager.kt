@@ -2,59 +2,35 @@ package com.ssafy.presentation.core.exercise
 
 import androidx.health.connect.client.units.Velocity
 import androidx.health.services.client.data.ExerciseState
-import androidx.lifecycle.lifecycleScope
-import com.ssafy.domain.dto.plan.PlanInfo
-import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.domain.dto.train.CoachingRequest
 import com.ssafy.domain.dto.train.CoachingResponse
-import com.ssafy.domain.repository.DataStoreRepository
-import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.train.GetCoachingUseCase
-import com.ssafy.domain.utils.DANNY
-import com.ssafy.domain.utils.DANNY_FEAT
-import com.ssafy.domain.utils.JAMIE
-import com.ssafy.domain.utils.JAMIE_FEAT
-import com.ssafy.domain.utils.MIKE
-import com.ssafy.domain.utils.MIKE_FEAT
-import com.ssafy.presentation.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.Duration
-import java.time.LocalDate
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class CoachingMonitor @Inject constructor(
+@Singleton
+class CoachingManager @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val exerciseMonitor: ExerciseMonitor,
-    private val dataStoreRepository: DataStoreRepository,
-    private val getPlanInfoUseCase: GetPlanInfoUseCase,
+    private val planManager: PlanManager,
     private val getCoachingUseCase: GetCoachingUseCase,
 ) {
     private var isConnect = false
 
     val coachingResponse = MutableStateFlow(CoachingResponse("", ""))
 
-    private lateinit var coach: String
-    private lateinit var plan: PlanInfo
-
     fun connect() {
         isConnect = true
         coachingResponse.update { CoachingResponse("", "") }
         coroutineScope.launch {
-            val user = dataStoreRepository.getUser()
-            coach = when (user.coachNumber) {
-                MIKE -> MIKE_FEAT
-                JAMIE -> JAMIE_FEAT
-                DANNY -> DANNY_FEAT
-                else -> ""
-            }
             runCatching {
-                getPlanInfoUseCase(user.uid)
-            }.onSuccess {
-                plan = it
+                planManager.syncPlanInfo { disconnect() }
+                collectExerciseSessionData()
             }.onFailure {
                 disconnect()
             }
@@ -102,22 +78,17 @@ class CoachingMonitor @Inject constructor(
     }
 
     private fun List<ExerciseSessionData>.toCoachingRequest(totalDistance: Float): CoachingRequest {
-        val meanPace = this.speed.map { it.speed.pace }.average().toInt()
-        val time = Duration.between(this.first().time, this.last().time).seconds
-
         return CoachingRequest(
-            coach,
+            planManager.coach,
             totalDistance,
-            (time / meanPace).toFloat(),
-            this.heartRate.map { it.beatsPerMinute }.average().toInt(),
-            meanPace,
-            this.cadence.map { it.rate }.average().toInt(),
-            plan.planTrains.firstOrNull {
-                it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
-            } ?: PlanTrain(),
+            distance.toFloat(),
+            heartRate.map { it.beatsPerMinute }.average().toInt(),
+            speed.map { it.speed.pace }.average().toInt(),
+            cadence.map { it.rate }.average().toInt(),
+            planManager.plan,
         )
     }
 
     private val Velocity.pace
-        get() = 60 * 60 / this.inKilometersPerHour
+        get() = 60 * 60 / inKilometersPerHour
 }

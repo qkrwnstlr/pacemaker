@@ -29,15 +29,19 @@ class MakePlanUseCase @Inject constructor(
         distance = prevUser.distance,
         minute = prevUser.minute,
         pace = prevUser.pace,
-        height = height,
-        weight = weight,
-        age = age.toIntOrNull() ?: 0,
+        height = height.ifZero { prevUser.height },
+        weight = weight.ifZero { prevUser.weight },
+        age = age.toIntOrNull() ?: prevUser.age,
         trainCount = prevUser.trainCount,
         trainTime = prevUser.trainTime,
         trainDistance = prevUser.trainDistance,
-        gender = gender,
+        gender = gender.ifBlank { prevUser.gender },
         coachNumber = prevUser.coachNumber,
-        injuries = injuries
+        injuries = injuries.ifEmpty { prevUser.injuries }
     )
+
+    private fun Int.ifZero(defaultValue: () -> Int): Int {
+        return if (this == 0) defaultValue() else this
+    }
 
 }

@@ -10,6 +10,7 @@ import androidx.health.connect.client.units.calories
 import androidx.health.connect.client.units.kilometersPerHour
 import androidx.health.connect.client.units.meters
 import androidx.health.services.client.data.LocationData
+import java.time.Duration
 import java.time.ZonedDateTime
 
 data class ExerciseData(
@@ -22,6 +23,7 @@ data class ExerciseData(
 
 data class ExerciseSessionData(
     val time: ZonedDateTime = ZonedDateTime.now(),
+    val distance: Double? = null,
     val heartRate: Long? = null,
     val pace: Double? = null,
     val cadence: Long? = null,
@@ -39,9 +41,16 @@ val List<ExerciseSessionData>.location: List<ExerciseRoute.Location>
         )
     }
 
+val List<ExerciseSessionData>.distance: Double
+    get() = this.filter {
+        it.distance != null
+    }.sumOf {
+        it.distance!!
+    }
+
 val List<ExerciseSessionData>.heartRate: List<HeartRateRecord.Sample>
     get() = this.filter {
-        it.heartRate != null
+        it.heartRate != null && it.heartRate != 0L
     }.map {
         HeartRateRecord.Sample(
             time = it.time.toInstant(),
@@ -68,6 +77,9 @@ val List<ExerciseSessionData>.speed: List<SpeedRecord.Sample>
             speed = (it.pace!! / 1000 * 60 * 60).kilometersPerHour
         )
     }
+
+val List<ExerciseSessionData>.time: Duration
+    get() = Duration.between(this.first().time, this.last().time)
 
 fun parseExerciseData(
     exerciseMetrics: ExerciseMetrics,
