@@ -1,9 +1,7 @@
 package com.ssafy.presentation.runningUI
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -14,7 +12,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.health.services.client.data.LocationData
 import androidx.lifecycle.Lifecycle
@@ -45,6 +42,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private val viewModel: RunningViewModel by viewModels()
     private var map: GoogleMap? = null
+    private var myLocationListener: LocationListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initCollect()
@@ -162,7 +160,6 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         getMyLocation()
     }
 
-    private var myLocationListener: LocationListener? = null
     @SuppressLint("MissingPermission")
     private fun getMyLocation() {
         //todo: 전역으로 데이터 저장해놓고, 러닝시 초기 화면은 그 값 받아와서 표시하고 이 set, get location은 없애기
