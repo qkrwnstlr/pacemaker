@@ -36,10 +36,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 								where p.user.id = (select u.id
 												from User u
 												where u.uid = :uid))
+			and pt.status = "BEFORE"
 		    and function('year', pt.trainDate) = :year
 		    and function('month', pt.trainDate) = :month
 		  order by pt.trainDate
 		""")
-	List<PlanTrain> findMonthlyPlanTrains(String uid, Integer year,
+	List<PlanTrain> findMonthlyBeforePlanTrains(String uid, Integer year,
 		Integer month); // plan 도메인에 넣어야 할 것 같음 (PlanTrainRepo~~)
 }

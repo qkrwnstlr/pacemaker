@@ -97,10 +97,9 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
 	}
 
-	@Operation(summary = "월별 캘린더 조회")
+	@Operation(summary = "월별 캘린더 조회 (존재하지 않는 사용자는 따로 404 안 터트림 -> null)")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "월별 캘린더 조회 성공"),
-		@ApiResponse(responseCode = "404", description = "사용자가 존재하지 않음")
 	})
 	@GetMapping("/calender")
 	public ResponseEntity<?> getMonthlyCalender(@PathVariable("uid") String uid, @RequestParam Integer year,

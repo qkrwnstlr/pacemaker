@@ -90,10 +90,9 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public Map<?, ?> findMonthlyCalenderByUid(String uid, Integer year, Integer month) {
-		User findUser = findUserByUid(uid);
 
 		List<Report> findReports = userRepository.findMonthlyReports(uid, year, month);
-		List<PlanTrain> findPlanTrains = userRepository.findMonthlyPlanTrains(uid, year, month);
+		List<PlanTrain> findBeforePlanTrains = userRepository.findMonthlyBeforePlanTrains(uid, year, month);
 
 		Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse = new HashMap<>();
 
@@ -101,11 +100,8 @@ public class UserService {
 		mappingReports(findReports, mapResponse);
 
 		// planTrains 매핑
-		mappingPlanTrains(findPlanTrains, mapResponse);
-		System.out.println(mapResponse.size());
-		for (Map.Entry<LocalDate, List<CalenderResponse.TrainingDTO>> entry : mapResponse.entrySet()) {
-			System.out.println(entry.getKey() + " | " + entry.getValue());
-		}
+		mappingPlanTrains(findBeforePlanTrains, mapResponse);
+
 		return mapResponse;
 	}
 
@@ -140,13 +136,11 @@ public class UserService {
 	}
 
 	private void mappingReports(List<Report> reports, Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse) {
-		int size = reports.size();
 
-		Report report;
 		LocalDate key;
 		List<CalenderResponse.TrainingDTO> list;
-		for (int i = 0; i < size; i++) {
-			report = reports.get(i);
+
+		for (Report report : reports) {
 			key = report.getTrainDate().toLocalDate();
 
 			list = mapResponse.getOrDefault(key, new ArrayList<>());
@@ -158,13 +152,11 @@ public class UserService {
 
 	private void mappingPlanTrains(List<PlanTrain> planTrains,
 		Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse) {
-		int size = planTrains.size();
 
-		PlanTrain planTrain;
 		LocalDate key;
 		List<CalenderResponse.TrainingDTO> list;
-		for (int i = 0; i < size; i++) {
-			planTrain = planTrains.get(i);
+
+		for (PlanTrain planTrain : planTrains) {
 			key = planTrain.getTrainDate();
 
 			list = mapResponse.getOrDefault(key, new ArrayList<>());

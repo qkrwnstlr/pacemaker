@@ -3,64 +3,60 @@ package com.pacemaker.domain.user.dto;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pacemaker.domain.plan.entity.PlanTrain;
-import com.pacemaker.domain.plan.entity.TrainStatus;
 import com.pacemaker.domain.report.entity.Report;
 import com.pacemaker.domain.report.entity.ReportType;
 
 import lombok.Builder;
 import lombok.Getter;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Getter
 public class CalenderResponse {
 
 	private LocalDate date;
 	private List<TrainingDTO> trainings;
 
+	@Getter
 	@Builder
 	public static class TrainingDTO {
 
+		private Long id;
 		private TrainingType type;
-		private Long planTrainId;
-		private Long reportId;
-
-		public static TrainingDTO fromPlanTrain(PlanTrain planTrain) {
-			return TrainingDTO.builder()
-				.type(TrainingType.valueOf(planTrain.getStatus().name()))
-				.planTrainId(planTrain.getId())
-				.build();
-		}
 
 		public static TrainingDTO fromReport(Report report) {
 			return TrainingDTO.builder()
-				.type(TrainingType.valueOf(report.getReportType().name()))
-				.reportId(report.getId())
+				.id(report.getId())
+				.type(TrainingType.fromType(report.getReportType()))
+				.build();
+		}
+
+		public static TrainingDTO fromPlanTrain(PlanTrain planTrain) {
+			return TrainingDTO.builder()
+				.id(planTrain.getId())
+				.type(TrainingType.BEFORE_PLAN_TRAIN)
 				.build();
 		}
 	}
 
-	@Getter
 	public enum TrainingType {
-		
-		REPORT_TYPE_PLAN(ReportType.PLAN),
-		REPORT_TYPE_DAILY(ReportType.DAILY),
-		REPORT_TYPE_FREE(ReportType.FREE),
-		PLAN_TRAIN_BEFORE(TrainStatus.BEFORE),
-		PLAN_TRAIN_DONE(TrainStatus.DONE);
+		DAILY_REPORT,
+		FREE_REPORT,
+		PLAN_REPORT,
+		BEFORE_PLAN_TRAIN;
 
-		private final TrainStatus trainStatus;
-		private final ReportType reportType;
+		public static TrainingType fromType(ReportType reportType) {
+			if (reportType == ReportType.DAILY) {
+				return DAILY_REPORT;
 
-		// 생성자
-		TrainingType(TrainStatus trainStatus) {
-			this.trainStatus = trainStatus;
-			this.reportType = null;
-		}
+			} else if (reportType == ReportType.FREE) {
+				return FREE_REPORT;
 
-		TrainingType(ReportType reportType) {
-			this.reportType = reportType;
-			this.trainStatus = null;
+			} else if (reportType == ReportType.PLAN) {
+				return PLAN_REPORT;
+
+			} else {
+				throw new IllegalArgumentException("Invalid reportType: " + reportType);
+			}
 		}
 	}
 }
