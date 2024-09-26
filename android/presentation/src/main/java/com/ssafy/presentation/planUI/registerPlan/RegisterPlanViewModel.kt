@@ -6,6 +6,7 @@ import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.Context
 import com.ssafy.domain.dto.plan.Plan
 import com.ssafy.domain.dto.plan.PlanRequest
+import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
@@ -119,7 +120,7 @@ class RegisterPlanViewModel @Inject constructor(
 
     private suspend fun checkContext(context: Context) = with(contextData.value.userInfo) {
         val emitUserInfo = context.userInfo
-        val newUserInfo = emitUserInfo.copy(
+        val newUserInfo = UserInfo(
             age = emitUserInfo.age.ifBlank { age },
             height = emitUserInfo.height.ifZero { height },
             weight = emitUserInfo.weight.ifZero { weight },
