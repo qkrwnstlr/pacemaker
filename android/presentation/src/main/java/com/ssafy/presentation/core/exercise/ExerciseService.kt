@@ -57,7 +57,7 @@ class ExerciseService : LifecycleService() {
 
         if (!isStarted) {
             isStarted = true
-
+            Log.d(TAG, "onStartCommand: ")
             startForeground()
         }
 
@@ -83,6 +83,8 @@ class ExerciseService : LifecycleService() {
                         exercise.exerciseMetrics,
                         exerciseMonitor.exerciseSessionData.value
                     )
+                    exerciseMonitor.disconnect()
+                    coachingManager.disconnect()
                 }
             }
         }
@@ -127,6 +129,7 @@ class ExerciseService : LifecycleService() {
     }
 
     private fun handleBind() {
+        Log.d(TAG, "handleBind: ")
         if (!isBound) {
             isBound = true
             startForegroundService(Intent(this, this::class.java))
@@ -153,6 +156,7 @@ class ExerciseService : LifecycleService() {
     }
 
     private fun startForeground() {
+        Log.d(TAG, "startForeground: ")
         exerciseNotificationManager.createNotificationChannel()
         val notification = exerciseNotificationManager.buildNotification()
 
@@ -185,8 +189,6 @@ class ExerciseService : LifecycleService() {
     suspend fun endExercise() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
-//        exerciseMonitor.disconnect()
-//        coachingManager.disconnect()
     }
 
     companion object {

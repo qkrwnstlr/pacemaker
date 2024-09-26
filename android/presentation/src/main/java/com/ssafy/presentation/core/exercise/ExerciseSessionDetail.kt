@@ -50,7 +50,7 @@ val List<ExerciseSessionData>.distance: Double
 
 val List<ExerciseSessionData>.heartRate: List<HeartRateRecord.Sample>
     get() = this.filter {
-        it.heartRate != null
+        it.heartRate != null && it.heartRate != 0L
     }.map {
         HeartRateRecord.Sample(
             time = it.time.toInstant(),

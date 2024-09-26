@@ -38,7 +38,11 @@ class ReportsManager @Inject constructor(
             exerciseSessionData.last().time.toString(),
             trainResult,
         )
-        createPlanReportsUseCase(request)
+        runCatching {
+            createPlanReportsUseCase(request)
+        }.onFailure {
+
+        }
     }
 
     private val List<HeartRateRecord.Sample>.zone: List<Int>
