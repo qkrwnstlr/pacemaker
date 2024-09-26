@@ -94,15 +94,17 @@ public class UserService {
 		List<Report> findReports = userRepository.findMonthlyReports(uid, year, month);
 		List<PlanTrain> findBeforePlanTrains = userRepository.findMonthlyBeforePlanTrains(uid, year, month);
 
-		Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse = new HashMap<>();
+		// CalenderResponse랑 같은 구조
+		// 다만 Map을 사용하는 이유는 "yyyy-MM"에 해당하는 key값이 있냐 없냐를 판별하기 위함
+		Map<LocalDate, List<CalenderResponse.TrainingDTO>> calenderResponse = new HashMap<>();
 
 		// reports 매핑
-		mappingReports(findReports, mapResponse);
+		mappingReports(findReports, calenderResponse);
 
 		// planTrains 매핑
-		mappingPlanTrains(findBeforePlanTrains, mapResponse);
+		mappingBeforePlanTrains(findBeforePlanTrains, calenderResponse);
 
-		return mapResponse;
+		return calenderResponse;
 	}
 
 	private User findUserByUid(String uid) {
@@ -150,7 +152,7 @@ public class UserService {
 		}
 	}
 
-	private void mappingPlanTrains(List<PlanTrain> planTrains,
+	private void mappingBeforePlanTrains(List<PlanTrain> planTrains,
 		Map<LocalDate, List<CalenderResponse.TrainingDTO>> mapResponse) {
 
 		LocalDate key;
