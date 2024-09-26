@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.Context
-import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.dto.plan.Plan
+import com.ssafy.domain.dto.plan.PlanRequest
+import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.domain.repository.DataStoreRepository
-import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
+import com.ssafy.domain.utils.ifNotHuman
+import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.ERROR
 import com.ssafy.presentation.utils.toCoachMessage
@@ -69,6 +71,7 @@ class RegisterPlanViewModel @Inject constructor(
             .onSuccess {
                 coachIndex = it.coachNumber
                 initChatMessage(it.coachNumber, sendAble)
+                // TODO 나중에는 최신 러닝 데이터도 같이 넣어야 함!
                 val context = contextData.value.copy(userInfo = it.toUserInfo())
                 _contextData.emit(context)
             }
@@ -89,25 +92,18 @@ class RegisterPlanViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val chat = Chat(message = text, context = contextData.value, plan = planData.value)
             runCatching { chatForPlanUseCase(chat) }
-                .onSuccess { response -> checkResponse(response, failToMakeChat) }
+                .onSuccess { emitChatResponse(it) }
                 .onFailure {
                     it.printStackTrace()
-                    failToMakeChat(FAILURE)
+                    removeCoachChat()
+                    failToMakeChat(it.message ?: FAILURE)
                 }
         }
 
-    private suspend fun checkResponse(
-        responseResult: ResponseResult<Chat>,
-        failToMakeChat: suspend (String) -> Unit
-    ) = when (responseResult) {
-
-        is ResponseResult.Success -> {
-            responseResult.data?.let { emitChatResponse(it) } ?: failToMakeChat(FAILURE)
-        }
-
-        is ResponseResult.Error -> {
-            failToMakeChat(responseResult.message)
-        }
+    private suspend fun removeCoachChat() {
+        val newList = chatData.value.toMutableList()
+        if (newList.lastOrNull() is ChatData.CoachData) newList.removeLast()
+        _chatData.emit(newList)
     }
 
     private suspend fun emitChatResponse(chat: Chat) {
@@ -119,7 +115,24 @@ class RegisterPlanViewModel @Inject constructor(
 
         _chatData.emit(newList)
         _planData.emit(chat.plan)
-        _contextData.emit(chat.context)
+        chat.context?.let { checkContext(it) }
+    }
+
+    private suspend fun checkContext(context: Context) = with(contextData.value.userInfo) {
+        val emitUserInfo = context.userInfo
+        val newUserInfo = UserInfo(
+            age = emitUserInfo.age.ifBlank { age },
+            height = emitUserInfo.height.ifZero { height },
+            weight = emitUserInfo.weight.ifZero { weight },
+            gender = emitUserInfo.gender.ifNotHuman { gender },
+            injuries = emitUserInfo.injuries.ifEmpty { injuries },
+            recentRunPace = emitUserInfo.recentRunPace.ifZero { recentRunPace },
+            recentRunDistance = emitUserInfo.recentRunDistance.ifZero { recentRunDistance },
+            recentRunHeartRate = emitUserInfo.recentRunHeartRate.ifZero { recentRunHeartRate }
+        )
+
+        val newContext = context.copy(userInfo = newUserInfo)
+        _contextData.emit(newContext)
     }
 
     fun makePlan(
