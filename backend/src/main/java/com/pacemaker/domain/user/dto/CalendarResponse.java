@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class CalenderResponse {
+public class CalendarResponse {
 
 	private LocalDate date;
 	private List<TrainingDTO> trainings;

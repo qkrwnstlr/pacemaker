@@ -10,16 +10,18 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.dto.PlanResponse;
-import com.pacemaker.domain.plan.dto.PlanTrainResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
+import com.pacemaker.domain.plan.repository.PlanTrainRepository;
+import com.pacemaker.domain.report.dto.PlanTrainResponse;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
 import com.pacemaker.global.exception.ActivePlanNotFoundException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
+import com.pacemaker.global.exception.UserMismatchException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +31,7 @@ public class PlanService {
 
 	private final PlanRepository planRepository;
 	private final UserRepository userRepository;
+	private final PlanTrainRepository planTrainRepository;
 
 	@Transactional
 	public Long createPlan(CreatePlanRequest createPlanRequest) {
@@ -89,6 +92,21 @@ public class PlanService {
 		planRepository.delete(findActivePlan);
 	}
 
+	@Transactional(readOnly = true)
+	public PlanTrainResponse findActivePlanTrainByPlanTrainId(Long id, String uid) {
+		User user = findUserByUid(uid);
+		PlanTrain planTrain = findPlanTrainById(id);
+		Plan plan = findPlanById(planTrain.getPlan().getId());
+
+		if (user != plan.getUser()) {
+			throw new UserMismatchException("본인의 레포트만 조회할 수 있습니다.");
+		}
+
+		Integer planTrainIndex = findIndexByPlanTrainId(id);
+
+		return PlanTrainResponse.of(planTrainIndex, planTrain);
+	}
+
 	private User findUserByUid(String uid) {
 		return userRepository.findByUid(uid)
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
@@ -147,5 +165,25 @@ public class PlanService {
 	private Plan findActivePlan(String uid) {
 		return planRepository.findActivePlan(uid)
 			.orElseThrow(() -> new ActivePlanNotFoundException("활성 플랜을 찾을 수 없습니다."));
+	}
+
+	private Plan findPlanById(Long id) {
+		return planRepository.findPlanById(id)
+			.orElseThrow(() -> new NotFoundException("해당 플랜을 찾을 수 없습니다."));
+	}
+
+	private PlanTrain findPlanTrainById(Long id) {
+		return planTrainRepository.findPlanTrainById(id)
+			.orElseThrow(() -> new NotFoundException("해당 훈련을 찾을 수 없습니다."));
+	}
+
+	private Integer findIndexByPlanTrainId(Long planTrainId) {
+		Integer index = planTrainRepository.findIndexByPlanTrainId(planTrainId);
+
+		if (index == -1) {
+			throw new NotFoundException("해당 훈련을 찾을 수 없습니다.");
+		}
+
+		return index;
 	}
 }
