@@ -21,7 +21,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
         buildConfigField("String", "BASE_URL", properties.getProperty("baseUrl"))
-        buildConfigField("String", "TTS_URL", properties.getProperty("ttsUrl"))
     }
 
     buildTypes {
