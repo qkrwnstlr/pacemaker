@@ -1,6 +1,7 @@
 package com.ssafy.presentation.runningUI
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -162,6 +163,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     }
 
     private var myLocationListener: LocationListener? = null
+    @SuppressLint("MissingPermission")
     private fun getMyLocation() {
         //todo: 전역으로 데이터 저장해놓고, 러닝시 초기 화면은 그 값 받아와서 표시하고 이 set, get location은 없애기
         val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
@@ -169,36 +171,24 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
             override fun onLocationChanged(p0: Location) {
                 setMyLocation(p0)
             }
-        }
-
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            if (ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
+        }.apply {
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    0,
+                    0f,
+                    this
+                )
             }
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
-                0,
-                0f,
-                myLocationListener!!
-            )
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER,
+                    0,
+                    0f,
+                    this
+                )
+            }
         }
-
-        if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-            locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER,
-                0,
-                0f,
-                myLocationListener!!
-            )
-        }
-
     }
 
     fun setMyLocation(location: Location) {

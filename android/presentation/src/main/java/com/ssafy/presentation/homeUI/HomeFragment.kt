@@ -1,8 +1,7 @@
 package com.ssafy.presentation.homeUI
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
@@ -13,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -69,8 +67,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private var myLocationListener: LocationListener? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         initMapView()
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -78,10 +75,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun initMapView() {
         val mapFragment = SupportMapFragment.newInstance()
-        getParentFragmentManager()
-            .beginTransaction()
-            .add(R.id.map, mapFragment)
-            .commit()
+        getParentFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit()
         mapFragment.getMapAsync(this)
     }
 
@@ -92,8 +86,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         getMyLocation(map)
     }
 
+    @SuppressLint("MissingPermission")
     private fun getMyLocation(map: GoogleMap) {
-
         val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
         myLocationListener = object : LocationListener {
             override fun onLocationChanged(p0: Location) {
@@ -101,16 +95,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             }
         }.apply {
             if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                if (ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    return
-                }
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
             }
 
@@ -139,9 +123,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         map.animateCamera(cameraUpdate)
 
         val markerOptions = MarkerOptions()
-        markerOptions
-            .position(latLng)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+        markerOptions.position(latLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
 
         map.addMarker(markerOptions)
     }
@@ -252,10 +234,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         initWeekCalendar()
         viewLifecycleOwner.lifecycleScope.launch {
             val imgUrl = viewModel.profileUrlFlow().firstOrNull()
-            Glide.with(root)
-                .load(imgUrl)
-                .circleCrop()
-                .into(profileButton)
+            Glide.with(root).load(imgUrl).circleCrop().into(profileButton)
         }
     }
 
