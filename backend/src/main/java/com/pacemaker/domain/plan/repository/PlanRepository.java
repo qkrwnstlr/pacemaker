@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.pacemaker.domain.plan.entity.Plan;
 
 @Repository
-public interface PlanRepository extends JpaRepository<Plan, Long> {
+public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositoryCustom {
 
 	boolean existsByUserId(Long userId);
 
