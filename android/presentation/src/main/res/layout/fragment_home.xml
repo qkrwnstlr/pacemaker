@@ -66,6 +66,7 @@
             app:layout_constraintTop_toTopOf="@+id/start_run_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/top_sheet" />
+    <include android:id="@+id/top_sheet"
+        layout="@layout/top_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

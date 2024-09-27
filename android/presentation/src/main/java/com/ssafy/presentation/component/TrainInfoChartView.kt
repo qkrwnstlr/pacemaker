@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.TrainInfoChartCustomViewBinding
-import com.ssafy.presentation.databinding.TrainInfoCustomViewBinding
 
 class TrainInfoChartView : ConstraintLayout {
     constructor(context: Context) : super(context) {
@@ -17,7 +16,7 @@ class TrainInfoChartView : ConstraintLayout {
         initView()
     }
 
-    private val binding: TrainInfoChartCustomViewBinding by lazy {
+    val binding: TrainInfoChartCustomViewBinding by lazy {
         TrainInfoChartCustomViewBinding.bind(
             LayoutInflater.from(context).inflate(R.layout.train_info_chart_custom_view, this, false)
         )
