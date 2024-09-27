@@ -127,13 +127,13 @@ public class ResponseFormatString {
 						   "enum": ["time", "distance"],
 						   "description": "type "
 						 },
-						 "repeat": {
+						 "repetition": {
 						   "type": "integer",
-						   "description": "number of repeat of the main train"
+						   "description": "number of repetition of the main train"
 						 },
 						 "trainParam": {
 						   "type": "integer",
-						   "description": "time duration or distance of the main(repeat) train in seconds"
+						   "description": "time duration or distance of the main(repetition) train in seconds"
 						 },
 						 "trainPace": {
 						   "type": "integer",
@@ -141,10 +141,10 @@ public class ResponseFormatString {
 						 },
 						 "interParam": {
 						   "type": "integer",
-						   "description": "time duration or distance of recovery jog in between in repeat of the main train"
+						   "description": "time duration or distance of recovery jog in between in repetition of the main train"
 						 }
 					   },
-					   "required": ["index", "trainDate", "paramType", "repeat", "trainParam", "trainPace", "interParam"]
+					   "required": ["index", "trainDate", "paramType", "repetition", "trainParam", "trainPace", "interParam"]
 					 }
 				   }
 				 },
@@ -159,11 +159,12 @@ public class ResponseFormatString {
 	public static String realTimeResponseFormat = """
 		{
 		  "name": "realtimecoach",
-		  "strict": false,
+		  "strict": true,
 		  "schema": {
+		    "additionalProperties": false,
 		    "type": "object",
 		    "required": [
-		      "textFeedBack",
+		      "textFeedback",
 		      "textCheer"
 		    ],
 		    "properties": {
@@ -173,12 +174,11 @@ public class ResponseFormatString {
 		      },
 		      "textFeedback": {
 		        "type": "string",
-		        "description": "Feedback message of the about the user's run within 2 sentences in Korean"
+		        "description": "Feedback message about the user's run within 2 sentences in Korean"
 		      }
 		    }
 		  }
-		}
-		""";
+		}""";
 
 	public static String dailyCreateChatResponseFormat = """
 		{
@@ -282,13 +282,13 @@ public class ResponseFormatString {
 					 "enum": ["time", "distance"],
 					 "description": "type "
 				   },
-				   "repeat": {
+				   "repetition": {
 					 "type": "integer",
-					 "description": "number of repeat of the main train"
+					 "description": "number of repetition of the main train"
 				   },
 				   "trainParam": {
 					 "type": "integer",
-					 "description": "time duration or distance of the main(repeat) train in seconds"
+					 "description": "time duration or distance of the main(repetition) train in seconds or meters"
 				   },
 				   "trainPace": {
 					 "type": "integer",
@@ -296,9 +296,9 @@ public class ResponseFormatString {
 				   },
 				   "interParam": {
 					 "type": "integer",
-					 "description": "time duration or distance of recovery jog in between in repeat of the main train"
+					 "description": "time duration or distance of recovery jog in between in repetition of the main train"
 				   },
-				 "required": ["index", "trainDate", "paramType", "repeat", "trainParam", "trainPace", "interParam"]
+				 "required": ["index", "trainDate", "paramType", "repetition", "trainParam", "trainPace", "interParam"]
 				 }
 			   }
 			 },

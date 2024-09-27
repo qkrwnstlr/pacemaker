@@ -136,7 +136,7 @@ public class OpenAiService {
 					request.choices().getFirst().message().content(), RealTimeResponse.class);
 				System.out.println("realTimeResponse = " + realTimeResponse);
 
-				return new Gson().toJson(realTimeResponse);
+				return realTimeResponse.textFeedback() + " " + realTimeResponse.textCheer();
 			});
 	}
 
