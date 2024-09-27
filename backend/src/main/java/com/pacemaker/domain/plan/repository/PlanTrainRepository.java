@@ -28,4 +28,15 @@ public interface PlanTrainRepository extends JpaRepository<PlanTrain, Long>, Pla
 		  order by pt.trainDate
 		""")
 	List<PlanTrain> findMonthlyBeforePlanTrains(String uid, Integer year, Integer month);
+
+	@Query("""
+		select count(pt) > 0
+		  from PlanTrain pt
+		  join fetch Plan p
+		    on pt.plan.id = p.id
+		  join fetch User u
+		    on p.user.id = u.id
+		  where pt.trainDate = current_date
+		""")
+	boolean existsNowPlanTrain(Long userId);
 }

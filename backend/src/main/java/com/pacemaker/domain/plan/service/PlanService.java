@@ -42,7 +42,8 @@ public class PlanService {
 		User user = findUserByUid(createPlanRequest.uid());
 
 		// 플랜 존재 체크
-		existsByUserId(user.getId());
+		existsActivePlan(user.getId());
+		existsNowPlanTrain(user.getId());
 
 		// 유저 정보 업데이트
 		ContentRequest.Context.UserInfo userInfo = createPlanRequest.context().userInfo();
@@ -66,6 +67,7 @@ public class PlanService {
 
 	@Transactional(readOnly = true)
 	public CreatePlanResponse findActivePlanByUid(String uid) {
+
 		Plan findActivePlan = findActivePlan(uid);
 
 		CreatePlanResponse planResponse = CreatePlanResponse.builder()
@@ -74,10 +76,7 @@ public class PlanService {
 
 		int size = findActivePlan.getPlanTrains().size();
 		for (int i = 0; i < size; i++) {
-			planResponse.getPlanTrains().add(CreatePlanResponse.PlanTrainDTO.builder()
-				.planTrain(findActivePlan.getPlanTrains().get(i))
-				.index(i)
-				.build());
+			planResponse.addPlanTrain(findActivePlan.getPlanTrains().get(i), i);
 		}
 
 		return planResponse;
@@ -135,9 +134,15 @@ public class PlanService {
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
 	}
 
-	private void existsByUserId(Long userId) {
-		if (planRepository.existsByUserId(userId)) {
+	private void existsActivePlan(Long userId) {
+		if (planRepository.existsActivePlan(userId)) {
 			throw new PlanAlreadyExistsException("해당 사용자는 이미 플랜이 존재합니다.");
+		}
+	}
+
+	private void existsNowPlanTrain(Long userId) {
+		if (planTrainRepository.existsNowPlanTrain(userId)) {
+			throw new PlanAlreadyExistsException("해당 사용자는 이미 플랜이 존재합니다. (오늘 plan train 존재)");
 		}
 	}
 
@@ -159,6 +164,7 @@ public class PlanService {
 
 		return Plan.builder()
 			.user(userInfo)
+			.createdAt(LocalDate.parse(planTrains.getFirst().trainDate()))
 			.expiredAt(LocalDate.parse(planTrains.getLast().trainDate()))
 			.totalDays(totalDays)
 			.totalTimes(totalTimes)

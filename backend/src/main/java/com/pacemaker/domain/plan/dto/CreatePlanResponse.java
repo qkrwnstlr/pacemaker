@@ -36,6 +36,14 @@ public class CreatePlanResponse {
 
 	private List<PlanTrainDTO> planTrains = new ArrayList<>();
 
+	public void addPlanTrain(PlanTrain planTrain, int index) {
+		planTrains.add(PlanTrainDTO.builder()
+			.planTrain(planTrain)
+			.index(index)
+			.build()
+		);
+	}
+
 	@Builder
 	public CreatePlanResponse(Plan plan) {
 		this.id = plan.getId();
@@ -50,8 +58,7 @@ public class CreatePlanResponse {
 	}
 
 	@Getter
-	public static class ContextDTO {
-
+	private static class ContextDTO {
 		private String goal;
 
 		private Integer goalTime;
@@ -62,8 +69,7 @@ public class CreatePlanResponse {
 	}
 
 	@Getter
-	public static class PlanTrainDTO {
-
+	private static class PlanTrainDTO {
 		private Long id;
 
 		private LocalDate trainDate;
@@ -87,7 +93,7 @@ public class CreatePlanResponse {
 		private Integer index;
 
 		@Builder
-		public PlanTrainDTO(PlanTrain planTrain, int index) {
+		private PlanTrainDTO(PlanTrain planTrain, int index) {
 			this.id = planTrain.getId();
 			this.trainDate = planTrain.getTrainDate();
 			this.paramType = planTrain.getParamType();

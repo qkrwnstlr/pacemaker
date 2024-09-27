@@ -12,7 +12,13 @@ import com.pacemaker.domain.plan.entity.Plan;
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositoryCustom {
 
-	boolean existsByUserId(Long userId);
+	@Query("""
+			select count(p) > 0
+			  from Plan p
+			  where p.user.id = :userId
+			    and p.status = 'ACTIVE'
+			""")
+	boolean existsActivePlan(Long userId);
 
 	@Query("""
 			select p
