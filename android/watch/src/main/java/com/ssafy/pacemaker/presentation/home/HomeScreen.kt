@@ -3,6 +3,7 @@ package com.ssafy.pacemaker.presentation.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     onStartClick: () -> Unit,
 ) {
-    TimeText(modifier = Modifier.padding(5.dp))
+    TimeText(modifier = Modifier.padding(10.dp))
     Center {
         Image(
             painter = painterResource(id = R.drawable.logo_background),
@@ -51,7 +52,9 @@ fun HomeScreen(
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.padding(20.dp).fillMaxSize()
+        modifier = modifier
+            .padding(top = 20.dp, bottom = 40.dp)
+            .fillMaxSize()
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
@@ -59,6 +62,7 @@ fun HomeScreen(
             contentScale = ContentScale.Fit,
             modifier = Modifier.weight(1f)
         )
+        Spacer(modifier = Modifier.height(10.dp))
         StartButton(onStartClick)
     }
 }
