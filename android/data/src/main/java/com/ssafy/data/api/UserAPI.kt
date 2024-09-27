@@ -4,6 +4,7 @@ import com.ssafy.domain.dto.Coach
 import com.ssafy.domain.dto.LoginRequestBody
 import com.ssafy.domain.dto.LoginResponseBody
 import com.ssafy.domain.dto.User
+import com.ssafy.domain.dto.schedule.ContentListDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -11,6 +12,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserAPI {
 
@@ -34,5 +36,12 @@ interface UserAPI {
 
     @PUT("users/{uid}/coach")
     suspend fun setCoach(@Path("uid") uid: String, @Body coach: Coach): Response<Unit>
+
+    @GET("users/{uid}/calendar")
+    suspend fun getCalendarDot(
+        @Path("uid") uid: String,
+        @Query("year") year: Int,
+        @Query("month") month: Int
+    ): Response<Map<String, List<ContentListDto>>>
 
 }

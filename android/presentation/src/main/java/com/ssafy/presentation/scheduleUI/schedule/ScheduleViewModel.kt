@@ -2,10 +2,12 @@ package com.ssafy.presentation.scheduleUI.schedule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssafy.domain.dto.schedule.DayContentData
+import com.ssafy.domain.dto.reports.Report
+import com.ssafy.domain.dto.schedule.ContentListDto
 import com.ssafy.domain.dto.schedule.ProgressData
-import com.ssafy.domain.usecase.plan.GetPlanDotUseCase
 import com.ssafy.domain.usecase.plan.GetProgressUseCase
+import com.ssafy.domain.usecase.reports.GetReportUseCase
+import com.ssafy.domain.usecase.user.GetCalendarDotUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,25 +17,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ScheduleViewModel @Inject constructor(
-    private val getPlanDotUseCase: GetPlanDotUseCase,
-    private val getProgressUseCase: GetProgressUseCase
+    private val getCalendarDotUseCase: GetCalendarDotUseCase,
+    private val getProgressUseCase: GetProgressUseCase,
+    private val getReportUseCase: GetReportUseCase
 ) : ViewModel() {
-    private val _dotList = MutableStateFlow<List<LocalDate>>(emptyList())
-    val dotList = _dotList.asStateFlow()
-
-    private val _dateList = MutableStateFlow<List<DayContentData>>(emptyList())
+    private val _dateList = MutableStateFlow<Map<String, List<ContentListDto>>>(emptyMap())
     val dateList = _dateList.asStateFlow()
 
     fun setMonthHasTrain(uid: String, year: Int, month: Int) {
-        val resultList: MutableList<LocalDate> = arrayListOf()
         viewModelScope.launch {
-
-            runCatching { getPlanDotUseCase.invoke(uid, year, month) }
+            runCatching { getCalendarDotUseCase.invoke(uid, year, month) }
                 .onSuccess { response ->
-                    response.data?.let { _dateList.emit(it) }
-                    resultList.clear()
-                    response.data?.map { LocalDate.parse(it.date) }?.let { resultList.addAll(it) }
-                    _dotList.emit(resultList)
+                    val currentData = _dateList.value.toMutableMap()
+                    currentData.putAll(response)
+                    _dateList.emit(currentData)
                 }
         }
     }
@@ -45,4 +42,14 @@ class ScheduleViewModel @Inject constructor(
                     result.data?.let { setProgressView(it) }
                 }
         }
+
+    fun getReport(item: ContentListDto, uid: String, callback: (Report) -> Unit) {
+        viewModelScope.launch {
+            runCatching { getReportUseCase.invoke(item, uid) }
+                .onSuccess { callback(it) }
+                .onFailure { it.printStackTrace() }
+
+        }
+    }
+
 }

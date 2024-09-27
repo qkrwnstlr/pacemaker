@@ -5,6 +5,7 @@ import com.ssafy.domain.dto.Coach
 import com.ssafy.domain.dto.LoginRequestBody
 import com.ssafy.domain.dto.LoginResponseBody
 import com.ssafy.domain.dto.User
+import com.ssafy.domain.dto.schedule.ContentListDto
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,5 +30,11 @@ class UserDataSourceImpl @Inject constructor(private val userAPI: UserAPI) : Use
 
     override suspend fun setCoach(uid: String, coach: Coach): Response<Unit> =
         userAPI.setCoach(uid, coach)
+
+    override suspend fun getCalendarDot(
+        uid: String,
+        year: Int,
+        month: Int
+    ): Response<Map<String, List<ContentListDto>>> = userAPI.getCalendarDot(uid, year, month)
 
 }

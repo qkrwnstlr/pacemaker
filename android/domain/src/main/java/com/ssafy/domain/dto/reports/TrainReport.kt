@@ -2,6 +2,15 @@ package com.ssafy.domain.dto.reports
 
 data class TrainReport(
     val trainDuration: List<String>, // time 타입을 String으로 가정
+    val trainResult: TrainResult,
+    val trainEvaluation: TrainEvaluation
+)
+
+/*
+package com.ssafy.domain.dto.reports
+
+data class TrainReport(
+    val trainDate: List<String>, // time 타입을 String으로 가정
     val trainDistance: Int,
     val trainTime: Int,
     val heartRate: Int,
@@ -14,3 +23,4 @@ data class TrainReport(
     val trainEvaluation: TrainEvaluation,
     val coachMessage: List<String>
 )
+ */

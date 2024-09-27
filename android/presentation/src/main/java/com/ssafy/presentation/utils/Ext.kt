@@ -71,6 +71,10 @@ fun Int.toTimeString(): String {
     return "${hour}h ${minute}m"
 }
 
+fun Int.toDistanceString(): String {
+    return "%02.2fkm".format(this.toDouble() / 1_000)
+}
+
 fun String.toMakeDurationDate(endDate: String): String = "$this ~ $endDate"
 
 fun List<String>.toWeekString(): String {
@@ -88,6 +92,13 @@ fun Long?.toCoachIndex(): Int = when (this) {
     else -> R.drawable.runnerfull
 }
 
+fun Long?.toCoachIndexJust(): Int = when (this) {
+    MIKE -> R.drawable.coach_mike
+    JAMIE -> R.drawable.coach_jamie
+    DANNY -> R.drawable.coach_danny
+    else -> R.drawable.runner
+}
+
 fun Long?.toCoachMessage(isModify: Boolean): List<String> = when (this) {
     MIKE -> if (isModify) MODIFY_WITH_MIKE else START_WITH_MIKE
     JAMIE -> if (isModify) MODIFY_WITH_JAMIE else START_WITH_JAMIE
@@ -100,6 +111,11 @@ fun String.toLocalDate(): LocalDate {
     return LocalDate.parse(this, formatter)
 }
 
+fun String.toLocalDateDot(): String {
+    val formattedDate = this.replace("-", ".")
+    return formattedDate
+}
+
 fun Int.toTrainPace(): String {
     val minute = this / 60
     val second = this % 60
@@ -109,6 +125,23 @@ fun Int.toTrainPace(): String {
 fun PlanTrain?.toPlanInst(): String {
     if (this == null) return ""
 
+    val totalString = makeTotalString()
+    val meanPace = trainPace.toTrainPace()
+    return "$totalString  |  $meanPace"
+}
+
+fun PlanTrain?.toContentString(): String {
+    if (this == null) return ""
+
+    when (this.paramType) {
+        "distance" -> {
+            return "${sessionDistance.toDistanceString()} | ${trainPace.toTrainPace()}"
+        }
+
+        "time" -> {
+            return "${sessionTime.toTimeString()} | ${trainPace.toTrainPace()}"
+        }
+    }
     val totalString = makeTotalString()
     val meanPace = trainPace.toTrainPace()
     return "$totalString  |  $meanPace"

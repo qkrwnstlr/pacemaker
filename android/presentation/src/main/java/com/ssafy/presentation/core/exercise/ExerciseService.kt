@@ -13,6 +13,7 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +44,9 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var healthConnectManager: HealthConnectManager
+
+    @Inject
+    lateinit var dataStoreRepository: DataStoreRepository
 
     private var isBound = false
     private var isStarted = false
@@ -76,7 +80,8 @@ class ExerciseService : LifecycleService() {
                     )
                     reportsManager.createPlanReports(
                         exercise.exerciseMetrics,
-                        exerciseMonitor.exerciseSessionData.value
+                        exerciseMonitor.exerciseSessionData.value,
+                        dataStoreRepository.getUser().coachNumber
                     )
                     exerciseMonitor.disconnect()
                     coachingManager.disconnect()
@@ -96,6 +101,8 @@ class ExerciseService : LifecycleService() {
 
     private fun speakCoaching(coachPath: String) {
         val file = File(coachPath)
+        if (!file.exists()) return
+
         mediaPlayer.apply {
             setDataSource(file.path)
             prepare()
