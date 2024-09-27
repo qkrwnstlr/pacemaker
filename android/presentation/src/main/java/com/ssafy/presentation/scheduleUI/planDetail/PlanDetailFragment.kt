@@ -49,7 +49,7 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
         initView()
         initListener()
         initCollect()
-        viewModel.getPlanInfo(getUid(), ::showSnackBar)
+        viewModel.getPlanInfo(::showSnackBar)
     }
 
     private fun initView() = with(binding.basePlanLayout) {
@@ -80,7 +80,7 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
             }
         }
 
-        fabModify.setOnClickListener { showWeekModifyDialog() }
+        fabModify.setOnClickListener { moveToChatFragment() }
         fabDelete.setOnClickListener { showPlanDeleteDialog() }
     }
 
@@ -104,11 +104,6 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
             tvPlanCount.text = planInfo.totalDays.toString()
             setUpCalendar(dateSet)
         }
-    }
-
-    private fun showWeekModifyDialog() {
-        val manager = requireActivity().supportFragmentManager
-        PlanModifyDialog().show(manager, "PlanModify")
     }
 
     private fun showPlanDeleteDialog() {
@@ -172,6 +167,11 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
     private fun successToDeletePlan() {
         findNavController().popBackStack()
         showSnackStringBar(DELETE)
+    }
+
+    private fun moveToChatFragment() {
+        val action = PlanDetailFragmentDirections.actionPlanDetailFragment2ToRegisterPlanFragment()
+        findNavController().navigate(action)
     }
 
     companion object {

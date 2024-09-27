@@ -37,7 +37,7 @@ class PlanManager @Inject constructor(
                     DANNY -> DANNY_FEAT
                     else -> ""
                 }
-                plan = getPlanInfoUseCase(user.uid).planTrains.firstOrNull {
+                plan = getPlanInfoUseCase().planTrains.firstOrNull {
                     it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
                 } ?: PlanTrain()
             }.onFailure {

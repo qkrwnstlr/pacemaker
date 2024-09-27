@@ -48,7 +48,7 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetailBinding>(
         initView()
         initListener()
         initCollect()
-        viewModel.getPlanInfo(getUid(), ::showSnackBar)
+        viewModel.getPlanInfo(::showSnackBar)
     }
 
     private fun initView() = with(binding.basePlanLayout) {
