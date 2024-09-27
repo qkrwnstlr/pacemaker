@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
+import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.dto.PlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
@@ -110,6 +111,25 @@ public class PlanService {
 			.build();
 	}
 
+	@Transactional(readOnly = true)
+	public ProgressPlanResponse findPlanProgressByUid(String uid, Integer year, Integer month, Integer day) {
+		
+		// 입력 받은 값 검증 및 반환
+		LocalDate date = createLocalDate(year, month, day);
+		
+		// 해당 하는 플랜 찾기
+		Plan findPlan = findPlanByUidAndDate(uid, date);
+
+		// 없으면 null
+		if (findPlan == null) {
+			return null;
+		}
+
+		return ProgressPlanResponse.builder()
+			.plan(findPlan)
+			.build();
+	}
+
 	private User findUserByUid(String uid) {
 		return userRepository.findByUid(uid)
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
@@ -188,5 +208,19 @@ public class PlanService {
 		}
 
 		return index;
+	}
+
+	private LocalDate createLocalDate(Integer year, Integer month, Integer day) {
+		try {
+			return LocalDate.of(year, month, day);
+
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private Plan findPlanByUidAndDate(String uid, LocalDate date) {
+		return planRepository.findPlanByUidAndDate(uid, date)
+			.orElse(null);
 	}
 }

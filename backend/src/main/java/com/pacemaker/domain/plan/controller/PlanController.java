@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.openai.service.OpenAiService;
@@ -39,7 +40,7 @@ public class PlanController {
 	})
 	@PostMapping("/chat")
 	public Mono<ResponseEntity<?>> createPlanChat(@RequestBody ContentRequest contentRequest) {
-		
+
 		Instant start = Instant.now();
 
 		return openAiService.createPlanChatCompletions(contentRequest)
@@ -77,7 +78,8 @@ public class PlanController {
 		@ApiResponse(responseCode = "404", description = "플랜정보 조회 실패"),
 		@ApiResponse(responseCode = "404", description = "훈련정보 조회 실패")
 	})
-	public ResponseEntity<ActivePlanTrainResponse> findActivePlanTrain(@PathVariable Long id, @PathVariable String uid) {
+	public ResponseEntity<ActivePlanTrainResponse> findActivePlanTrain(@PathVariable Long id,
+		@PathVariable String uid) {
 		return ResponseEntity.status(HttpStatus.OK).body(planService.findActivePlanTrainByPlanTrainId(id, uid));
 	}
 
@@ -101,5 +103,16 @@ public class PlanController {
 	public ResponseEntity<?> deleteActivePlan(@PathVariable("uid") String uid) {
 		planService.deleteActivePlanByUid(uid);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@Operation(summary = "해당 날짜의 플랜 진행 현황 확인")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "플랜 조회 성공"),
+	})
+	@GetMapping("/progress/user/{uid}")
+	public ResponseEntity<?> getProgressPlan(@PathVariable("uid") String uid, @RequestParam Integer year,
+		@RequestParam Integer month, @RequestParam Integer day) {
+
+		return ResponseEntity.status(HttpStatus.OK).body(planService.findPlanProgressByUid(uid, year, month, day));
 	}
 }
