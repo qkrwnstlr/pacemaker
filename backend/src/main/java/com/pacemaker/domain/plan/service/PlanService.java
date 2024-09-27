@@ -11,7 +11,7 @@ import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
-import com.pacemaker.domain.plan.dto.PlanResponse;
+import com.pacemaker.domain.plan.dto.CreatePlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
@@ -65,16 +65,16 @@ public class PlanService {
 	}
 
 	@Transactional(readOnly = true)
-	public PlanResponse findActivePlanByUid(String uid) {
+	public CreatePlanResponse findActivePlanByUid(String uid) {
 		Plan findActivePlan = findActivePlan(uid);
 
-		PlanResponse planResponse = PlanResponse.builder()
+		CreatePlanResponse planResponse = CreatePlanResponse.builder()
 			.plan(findActivePlan)
 			.build();
 
 		int size = findActivePlan.getPlanTrains().size();
 		for (int i = 0; i < size; i++) {
-			planResponse.getPlanTrains().add(PlanResponse.PlanTrainDTO.builder()
+			planResponse.getPlanTrains().add(CreatePlanResponse.PlanTrainDTO.builder()
 				.planTrain(findActivePlan.getPlanTrains().get(i))
 				.index(i)
 				.build());
