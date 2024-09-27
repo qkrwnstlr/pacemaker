@@ -77,5 +77,6 @@
     <string name="km">km</string>
     <string name="send">전송</string>
     <string name="create">생성</string>
+    <string name="nothing">진행중인 훈련이 없어요</string>
 
 </resources>

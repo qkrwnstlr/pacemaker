@@ -6,7 +6,6 @@ import com.ssafy.data.source.plan.PlanDataSource
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
-import com.ssafy.domain.dto.schedule.DayContentData
 import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.response.ResponseResult
@@ -39,15 +38,6 @@ class PlanRepositoryImpl @Inject constructor(
 
     override suspend fun deletePlan(uid: String): ResponseResult<Unit> {
         val response = withContext(ioDispatcher) { planDataSource.deletePlan(uid) }
-        return response.toResponseResult()
-    }
-
-    override suspend fun getTrainDot(
-        uid: String,
-        year: Int,
-        month: Int
-    ): ResponseResult<List<DayContentData>> {
-        val response = withContext(ioDispatcher) { planDataSource.getPlanDot(uid, year, month) }
         return response.toResponseResult()
     }
 

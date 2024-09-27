@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_16">
+
+    <com.ssafy.presentation.component.TrainInfoTitleView
+        android:id="@+id/tv_inst"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
+        android:id="@+id/ly_result_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.TrainResultView
+        android:id="@+id/ly_train_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.pager.CustomMapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_36" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.TrainResultCoachView
+        android:id="@+id/ly_train_result_coach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

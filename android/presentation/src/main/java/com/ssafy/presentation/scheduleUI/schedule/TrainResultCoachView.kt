@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.TrainResultCoachCustomViewBinding
+import com.ssafy.presentation.utils.toCoachIndexJust
 
 class TrainResultCoachView : ConstraintLayout {
     constructor(context: Context) : super(context) {
@@ -25,5 +26,17 @@ class TrainResultCoachView : ConstraintLayout {
 
     private fun initView() {
         addView(binding.root)
+    }
+
+    fun setList(messageList: List<String>) {
+        val listView = binding.listView
+
+        val adapter = MessageAdapter(context, messageList)
+        listView.adapter = adapter
+    }
+
+    fun setCoachImage(coachNum: Long) {
+        val resIdx = coachNum.toCoachIndexJust()
+        binding.ivCoach.setImageResource(resIdx)
     }
 }

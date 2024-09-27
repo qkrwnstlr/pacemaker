@@ -4,7 +4,6 @@ import com.ssafy.data.api.PlanAPI
 import com.ssafy.domain.dto.plan.Chat
 import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
-import com.ssafy.domain.dto.schedule.DayContentData
 import com.ssafy.domain.dto.schedule.ProgressData
 import retrofit2.Response
 import java.time.LocalDate
@@ -16,12 +15,6 @@ class PlanDataSourceImpl @Inject constructor(private val planAPI: PlanAPI) : Pla
 
     override suspend fun chatForPlan(chat: Chat): Response<Chat> =
         planAPI.chatForPlan(chat)
-
-    override suspend fun getPlanDot(
-        uid: String,
-        year: Int,
-        month: Int
-    ): Response<List<DayContentData>> = planAPI.getPlanDot(uid, year, month)
 
     override suspend fun makePlan(planRequest: PlanRequest): Response<Unit> =
         planAPI.makePlan(planRequest)

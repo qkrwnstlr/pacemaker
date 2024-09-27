@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "HealthServicesRepository_PACEMAKER"
+
 @ActivityRetainedScoped
 class HealthServicesRepository @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
@@ -40,8 +42,11 @@ class HealthServicesRepository @Inject constructor(
                 WearableClientManager.EXERCISE_DATA_PATH,
                 exerciseServiceState
             )
-
-            ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+            if (exerciseServiceState.exerciseState == null) {
+                ServiceState.Disconnected
+            } else {
+                ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+            }
         }.stateIn(
             coroutineScope,
             started = SharingStarted.Eagerly,
@@ -77,6 +82,7 @@ class HealthServicesRepository @Inject constructor(
     fun pauseExercise() = serviceCall { pauseExercise() }
     fun endExercise() = serviceCall { endExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
+    fun clearExercise() = serviceCall { clearExercise() }
 }
 
 sealed class ServiceState {

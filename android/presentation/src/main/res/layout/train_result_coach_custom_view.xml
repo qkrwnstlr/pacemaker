@@ -3,42 +3,41 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingVertical="@dimen/padding_16">
 
     <TextView
         android:id="@+id/tv_result_title"
         style="@style/BoldLargeText"
-        android:layout_margin="@dimen/margin_24"
         android:text="@string/coach_talk_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <ListView
+        android:id="@+id/listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_16"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_result_title"
-        tools:listitem="@layout/list_item_coach" />
+        tools:listitem="@layout/list_item_coach_message" />
 
     <androidx.cardview.widget.CardView
-        android:layout_width="@dimen/image_56"
-        android:layout_height="@dimen/image_56"
-        android:layout_margin="@dimen/margin_24"
-        android:layout_marginTop="@dimen/margin_8"
+        android:layout_width="@dimen/image_50"
+        android:layout_height="@dimen/image_50"
+        android:layout_marginVertical="@dimen/margin_8"
+        android:layout_marginEnd="4dp"
         app:cardCornerRadius="28dp"
-        app:cardElevation="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView">
+        app:layout_constraintTop_toBottomOf="@id/listView">
 
         <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_coach"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/progress_man"
+            android:padding="2dp"
             app:shapeAppearanceOverlay="@style/CircleShape" />
 
     </androidx.cardview.widget.CardView>

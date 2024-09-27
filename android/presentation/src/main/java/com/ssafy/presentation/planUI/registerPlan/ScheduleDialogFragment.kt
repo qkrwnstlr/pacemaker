@@ -42,7 +42,6 @@ class ScheduleDialogFragment(
     }
 
     private fun initView() = with(binding) {
-        trainInfoTitle.ivNext.visibility = View.GONE
         root.layoutParams.width = (resources.displayMetrics.widthPixels * 0.85).toInt()
         trainInfoTitle.tvResultTitle.text = date.displayText()
         trainInfoTitle.tvPlanInst.text = planTrain?.toPlanInst()
