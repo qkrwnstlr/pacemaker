@@ -9,5 +9,6 @@ data class CoachingRequest(
     val meanHeartRate: Int,
     val meanPace: Int,
     val meanCadence: Int,
-    val planTrain: PlanTrain
+    val planTrain: PlanTrain,
+    val coachIndex: Long = 2L
 )

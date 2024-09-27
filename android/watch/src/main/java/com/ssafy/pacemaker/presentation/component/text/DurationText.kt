@@ -14,7 +14,7 @@ import com.ssafy.pacemaker.utils.formatElapsedTime
 import java.time.Duration
 
 @Composable
-fun TimeText(duration: Duration?) {
+fun DurationText(duration: Duration?) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.Default.WatchLater,
@@ -27,5 +27,5 @@ fun TimeText(duration: Duration?) {
 @Preview
 @Composable
 fun TimeTextPreview() {
-    TimeText(duration = Duration.ofSeconds(107))
+    DurationText(duration = Duration.ofSeconds(107))
 }

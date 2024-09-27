@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import com.ssafy.pacemaker.data.ExerciseClientManager
 import com.ssafy.pacemaker.data.WearableClientManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -51,7 +50,7 @@ class ExerciseService : LifecycleService() {
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()
 
     suspend fun prepareExercise() {
-        exerciseServiceMonitor.monitor()
+        exerciseServiceMonitor.connect()
         exerciseClientManager.prepareExercise()
     }
 
@@ -69,9 +68,13 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun endExercise() {
-        exerciseMonitor.disconnect()
         exerciseClientManager.endExercise()
         removeOngoingActivityNotification()
+    }
+
+    fun clearExercise() {
+        exerciseServiceMonitor.disconnect()
+        exerciseMonitor.disconnect()
     }
 
     fun markLap() {
@@ -92,10 +95,6 @@ class ExerciseService : LifecycleService() {
 
             postOngoingActivityNotification()
             exerciseMonitor.connect()
-
-            lifecycleScope.launch(Dispatchers.Default) {
-                wearableClientManager.startMobileActivity()
-            }
         }
 
         return START_STICKY

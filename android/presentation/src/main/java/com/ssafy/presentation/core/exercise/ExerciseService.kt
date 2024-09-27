@@ -2,11 +2,10 @@ package com.ssafy.presentation.core.exercise
 
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
-import android.widget.Toast
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseState
@@ -14,7 +13,6 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.ssafy.domain.dto.train.CoachingResponse
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,12 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import java.io.File
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
-
-private const val TAG = "ExerciseService_PACEMAKER"
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -55,13 +51,13 @@ class ExerciseService : LifecycleService() {
     private var isBound = false
     private var isStarted = false
     private val localBinder = LocalBinder()
+    private val mediaPlayer by lazy { MediaPlayer() }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
         if (!isStarted) {
             isStarted = true
-            Log.d(TAG, "onStartCommand: ")
             startForeground()
         }
 
@@ -82,7 +78,6 @@ class ExerciseService : LifecycleService() {
                         ),
                         exerciseMonitor.exerciseSessionData.value
                     )
-                    Log.d(TAG, "connectToExerciseMonitor: ${result.recordIdsList}")
                     reportsManager.createPlanReports(
                         exercise.exerciseMetrics,
                         exerciseMonitor.exerciseSessionData.value,
@@ -98,12 +93,22 @@ class ExerciseService : LifecycleService() {
     private fun connectToCoachingMonitor() {
         lifecycleScope.launch(Dispatchers.Default) {
             coachingManager.connect()
-            coachingManager.coachingResponse.collect { coaching ->
-                // TODO : TTS로 변경
-                runBlocking(Dispatchers.Main) {
-                    Toast.makeText(this@ExerciseService, "$coaching", Toast.LENGTH_SHORT)
-                        .show()
-                }
+            coachingManager.coachVoicePath.collect { coachPath ->
+                speakCoaching(coachPath)
+            }
+        }
+    }
+
+    private fun speakCoaching(coachPath: String) {
+        val file = File(coachPath)
+        mediaPlayer.apply {
+            setDataSource(file.path)
+            prepare()
+            start()
+
+            setOnCompletionListener { mp ->
+                mp.release()
+                file.delete()
             }
         }
     }
@@ -134,7 +139,6 @@ class ExerciseService : LifecycleService() {
     }
 
     private fun handleBind() {
-        Log.d(TAG, "handleBind: ")
         if (!isBound) {
             isBound = true
             startForegroundService(Intent(this, this::class.java))
@@ -156,12 +160,11 @@ class ExerciseService : LifecycleService() {
         val exerciseServiceState: Flow<ExerciseServiceState>
             get() = this@ExerciseService.exerciseMonitor.exerciseServiceState
 
-        val coachingResponseState: Flow<CoachingResponse>
-            get() = this@ExerciseService.coachingManager.coachingResponse
+        val coachVoicePathState: Flow<String>
+            get() = this@ExerciseService.coachingManager.coachVoicePath
     }
 
     private fun startForeground() {
-        Log.d(TAG, "startForeground: ")
         exerciseNotificationManager.createNotificationChannel()
         val notification = exerciseNotificationManager.buildNotification()
 

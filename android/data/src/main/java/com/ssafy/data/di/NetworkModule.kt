@@ -6,7 +6,6 @@ import com.google.gson.Strictness
 import com.ssafy.data.BuildConfig
 import com.ssafy.data.api.PlanAPI
 import com.ssafy.data.api.ReportsAPI
-import com.ssafy.data.api.TextToSpeechAPI
 import com.ssafy.data.api.TrainAPI
 import com.ssafy.data.api.UserAPI
 import dagger.Module
@@ -45,7 +44,6 @@ object NetworkModule {
 
 
     @Singleton
-    @BaseRetrofit
     @Provides
     fun provideUserRetrofit(
         okHttpClient: OkHttpClient,
@@ -57,36 +55,19 @@ object NetworkModule {
         .build()
 
     @Singleton
-    @TextToSpeechRetrofit
     @Provides
-    fun providesTextToSpeechRetrofit(
-        okHttpClient: OkHttpClient,
-        gson: Gson
-    ): Retrofit = Retrofit.Builder()
-        .baseUrl(BuildConfig.TTS_URL)
-        .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
+    fun provideUserAPI(retrofit: Retrofit): UserAPI = retrofit.create()
 
     @Singleton
     @Provides
-    fun provideUserAPI(@BaseRetrofit retrofit: Retrofit): UserAPI = retrofit.create()
+    fun provideLectureAPI(retrofit: Retrofit): PlanAPI = retrofit.create()
 
     @Singleton
     @Provides
-    fun provideLectureAPI(@BaseRetrofit retrofit: Retrofit): PlanAPI = retrofit.create()
+    fun provideInfoAPI(retrofit: Retrofit): TrainAPI = retrofit.create()
 
     @Singleton
     @Provides
-    fun provideInfoAPI(@BaseRetrofit retrofit: Retrofit): TrainAPI = retrofit.create()
-
-    @Singleton
-    @Provides
-    fun provideReportsAPI(@BaseRetrofit retrofit: Retrofit): ReportsAPI = retrofit.create()
-
-    @Singleton
-    @Provides
-    fun provideTextToSpeechAPI(@TextToSpeechRetrofit retrofit: Retrofit): TextToSpeechAPI =
-        retrofit.create()
+    fun provideReportsAPI(retrofit: Retrofit): ReportsAPI = retrofit.create()
 
 }

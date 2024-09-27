@@ -176,7 +176,11 @@
         android:id="@+id/planDetailFragment2"
         android:name="com.ssafy.presentation.scheduleUI.planDetail.PlanDetailFragment"
         android:label="fragment_plan_detail2"
-        tools:layout="@layout/fragment_plan_detail2" />
+        tools:layout="@layout/fragment_plan_detail2">
+        <action
+            android:id="@+id/action_planDetailFragment2_to_registerPlanFragment"
+            app:destination="@id/registerPlanFragment" />
+    </fragment>
     <fragment
         android:id="@+id/startTrainFragment"
         android:name="com.ssafy.presentation.trainUI.startTrain.StartTrainFragment"

@@ -1,15 +1,26 @@
 package com.ssafy.pacemaker.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.navigation.NavHostController
+import androidx.wear.compose.navigation.currentBackStackEntryAsState
 import com.google.android.horologist.compose.ambient.AmbientAware
-import com.ssafy.pacemaker.presentation.exercise.ExerciseRoute
 import com.ssafy.pacemaker.presentation.theme.PaceMakerTheme
 
+val AlwaysOnRoutes = listOf(Screen.Exercise.route)
+
 @Composable
-fun WearApp() {
+fun WearApp(navController: NavHostController) {
+    val currentScreen by navController.currentBackStackEntryAsState()
+    val isAlwaysOnScreen = currentScreen?.destination?.route in AlwaysOnRoutes
+
     PaceMakerTheme {
-        AmbientAware(true) {
-            ExerciseRoute()
+        AmbientAware(isAlwaysOnScreen) {
+            NavHost(
+                navController = navController,
+                startDestination = Screen.Home.route,
+            )
         }
     }
 }
+

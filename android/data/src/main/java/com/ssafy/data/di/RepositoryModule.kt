@@ -2,12 +2,10 @@ package com.ssafy.data.di
 
 import com.ssafy.data.repository.PlanRepositoryImpl
 import com.ssafy.data.repository.ReportsRepositoryImpl
-import com.ssafy.data.repository.TextToSpeechRepositoryImpl
 import com.ssafy.data.repository.TrainRepositoryImpl
 import com.ssafy.data.repository.UserRepositoryImpl
 import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.repository.ReportsRepository
-import com.ssafy.domain.repository.TextToSpeechRepository
 import com.ssafy.domain.repository.TrainRepository
 import com.ssafy.domain.repository.UserRepository
 import dagger.Binds
@@ -36,7 +34,4 @@ abstract class RepositoryModule {
     @Binds
     abstract fun bindReportsRepository(reportsRepositoryImpl: ReportsRepositoryImpl): ReportsRepository
 
-    @Singleton
-    @Binds
-    abstract fun bindTextToSpeechRepository(textToSpeechRepositoryImpl: TextToSpeechRepositoryImpl): TextToSpeechRepository
 }

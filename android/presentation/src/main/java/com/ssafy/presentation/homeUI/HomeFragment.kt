@@ -175,7 +175,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         initListener()
         initCollect()
         // TODO 추후에 리포트 API가 나오면 변경됩니다. 현재는 진행중인 플랜의 유무만 확인합니다.
-        viewModel.getPlanInfo(getUid())
+        viewModel.getPlanInfo()
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {

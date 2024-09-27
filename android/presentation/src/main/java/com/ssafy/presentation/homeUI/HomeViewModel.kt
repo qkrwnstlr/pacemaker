@@ -38,8 +38,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getPlanInfo(uid: String) = viewModelScope.launch(Dispatchers.IO) {
-        runCatching { getPlanInfoUseCase(uid) }
+    fun getPlanInfo() = viewModelScope.launch(Dispatchers.IO) {
+        runCatching { getPlanInfoUseCase() }
             .onSuccess { _trainingState.emit(3) }
             .onFailure { _trainingState.emit(4) }
     }
