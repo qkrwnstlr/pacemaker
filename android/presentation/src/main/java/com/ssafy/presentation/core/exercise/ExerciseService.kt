@@ -101,6 +101,8 @@ class ExerciseService : LifecycleService() {
 
     private fun speakCoaching(coachPath: String) {
         val file = File(coachPath)
+        if (!file.exists()) return
+
         mediaPlayer.apply {
             setDataSource(file.path)
             prepare()
