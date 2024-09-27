@@ -1,5 +1,6 @@
 package com.ssafy.presentation.homeUI
 
+import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Color
 import android.location.Location
@@ -66,8 +67,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private var myLocationListener: LocationListener? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         initMapView()
         return super.onCreateView(inflater, container, savedInstanceState)
@@ -75,10 +75,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun initMapView() {
         val mapFragment = SupportMapFragment.newInstance()
-        getParentFragmentManager()
-            .beginTransaction()
-            .add(R.id.map, mapFragment)
-            .commit()
+        getParentFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit()
         mapFragment.getMapAsync(this)
     }
 
@@ -89,8 +86,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         getMyLocation(map)
     }
 
+    @SuppressLint("MissingPermission")
     private fun getMyLocation(map: GoogleMap) {
-
         val locationManager = requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
         myLocationListener = object : LocationListener {
             override fun onLocationChanged(p0: Location) {
@@ -126,7 +123,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         map.animateCamera(cameraUpdate)
 
         val markerOptions = MarkerOptions()
-        markerOptions
             .position(latLng)
             .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
 
@@ -239,10 +235,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         initWeekCalendar()
         viewLifecycleOwner.lifecycleScope.launch {
             val imgUrl = viewModel.profileUrlFlow().firstOrNull()
-            Glide.with(root)
-                .load(imgUrl)
-                .circleCrop()
-                .into(profileButton)
+            Glide.with(root).load(imgUrl).circleCrop().into(profileButton)
         }
     }
 
