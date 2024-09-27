@@ -306,4 +306,50 @@ public class ResponseFormatString {
 		   }
 		}
 	""";
+
+	public static String createTrainEvaluationResponseFormat = """
+		{
+		  "name": "pacemaker",
+		  "strict": false,
+		  "schema": {
+		    "type": "object",
+		    "required": [
+		      "trainEvaluation",
+		      "coachMessage"
+		    ],
+		    "properties": {
+		      "trainEvaluation": {
+		        "type": "object",
+		        "required": [
+		          "paceEvaluation",
+		          "heartRateEvaluation",
+		          "cadenceEvaluation"
+		        ],
+		        "properties": {
+		          "paceEvaluation": {
+		            "type": "integer",
+		            "description": "Evaluation score for pace (1 to 100)"
+		          },
+		          "heartRateEvaluation": {
+		            "type": "integer",
+		            "description": "Evaluation score for heart rate (1 to 100)"
+		          },
+		          "cadenceEvaluation": {
+		            "type": "integer",
+		            "description": "Evaluation score for cadence (1 to 100)"
+		          }
+		        }
+		      },
+		      "coachMessage": {
+		        "type": "array",
+		        "items": {
+		          "type": "string",
+		          "description": "Feedback messages from the coach about the user's run, each message in Korean"
+		        },
+		        "description": "List of feedback messages about the user's performance"
+		      }
+		    }
+		  }
+		}
+		""";
 }
