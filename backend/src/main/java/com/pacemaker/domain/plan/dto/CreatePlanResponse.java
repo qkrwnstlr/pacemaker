@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class PlanResponse {
+public class CreatePlanResponse {
 
 	private Long id;
 
@@ -37,7 +37,7 @@ public class PlanResponse {
 	private List<PlanTrainDTO> planTrains = new ArrayList<>();
 
 	@Builder
-	public PlanResponse(Plan plan) {
+	public CreatePlanResponse(Plan plan) {
 		this.id = plan.getId();
 		this.createdAt = plan.getCreatedAt();
 		this.expiredAt = plan.getExpiredAt();

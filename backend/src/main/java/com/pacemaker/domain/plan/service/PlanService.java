@@ -10,7 +10,8 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
-import com.pacemaker.domain.plan.dto.PlanResponse;
+import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
+import com.pacemaker.domain.plan.dto.CreatePlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
@@ -64,16 +65,16 @@ public class PlanService {
 	}
 
 	@Transactional(readOnly = true)
-	public PlanResponse findActivePlanByUid(String uid) {
+	public CreatePlanResponse findActivePlanByUid(String uid) {
 		Plan findActivePlan = findActivePlan(uid);
 
-		PlanResponse planResponse = PlanResponse.builder()
+		CreatePlanResponse planResponse = CreatePlanResponse.builder()
 			.plan(findActivePlan)
 			.build();
 
 		int size = findActivePlan.getPlanTrains().size();
 		for (int i = 0; i < size; i++) {
-			planResponse.getPlanTrains().add(PlanResponse.PlanTrainDTO.builder()
+			planResponse.getPlanTrains().add(CreatePlanResponse.PlanTrainDTO.builder()
 				.planTrain(findActivePlan.getPlanTrains().get(i))
 				.index(i)
 				.build());
@@ -107,6 +108,25 @@ public class PlanService {
 
 		return ActivePlanTrainResponse.builder()
 			.planTrain(PlanTrainResponse.of(planTrainIndex, planTrain))
+			.build();
+	}
+
+	@Transactional(readOnly = true)
+	public ProgressPlanResponse findPlanProgressByUid(String uid, Integer year, Integer month, Integer day) {
+		
+		// 입력 받은 값 검증 및 반환
+		LocalDate date = createLocalDate(year, month, day);
+		
+		// 해당 하는 플랜 찾기
+		Plan findPlan = findPlanByUidAndDate(uid, date);
+
+		// 없으면 null
+		if (findPlan == null) {
+			return null;
+		}
+
+		return ProgressPlanResponse.builder()
+			.plan(findPlan)
 			.build();
 	}
 
@@ -188,5 +208,19 @@ public class PlanService {
 		}
 
 		return index;
+	}
+
+	private LocalDate createLocalDate(Integer year, Integer month, Integer day) {
+		try {
+			return LocalDate.of(year, month, day);
+
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private Plan findPlanByUidAndDate(String uid, LocalDate date) {
+		return planRepository.findPlanByUidAndDate(uid, date)
+			.orElse(null);
 	}
 }

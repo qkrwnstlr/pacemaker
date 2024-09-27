@@ -1,5 +1,6 @@
 package com.pacemaker.domain.plan.repository;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,14 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 			""")
 	Optional<Plan> findActivePlan(String uid); // @Param("uid")를 해주면 명시적이라 좋기도 하지만 생략도 가능!
 	Optional<Plan> findPlanById(Long planId);
+
+	@Query("""
+			select p
+			  from Plan p
+			  where p.user.id = (select u.id
+			  					   from User u
+			  					   where u.uid = :uid)
+			    and (:date between p.createdAt and p.expiredAt)
+			""")
+	Optional<Plan> findPlanByUidAndDate(String uid, LocalDate date);
 }
