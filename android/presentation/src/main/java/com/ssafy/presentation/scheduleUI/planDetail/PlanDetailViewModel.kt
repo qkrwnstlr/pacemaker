@@ -24,17 +24,15 @@ class PlanDetailViewModel @Inject constructor(
     private val _planInfo: MutableStateFlow<PlanInfo?> = MutableStateFlow(null)
     val planInfo: StateFlow<PlanInfo?> = _planInfo.asStateFlow()
 
-    fun getPlanInfo(
-        uid: String,
-        failToGetPlanInfo: suspend (String) -> Unit
-    ) = viewModelScope.launch(Dispatchers.IO) {
-        runCatching { getPlanInfoUseCase(uid) }
-            .onSuccess { _planInfo.emit(it) }
-            .onFailure {
-                it.printStackTrace()
-                failToGetPlanInfo(it.message ?: ERROR)
-            }
-    }
+    fun getPlanInfo(failToGetPlanInfo: suspend (String) -> Unit) =
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching { getPlanInfoUseCase() }
+                .onSuccess { _planInfo.emit(it) }
+                .onFailure {
+                    it.printStackTrace()
+                    failToGetPlanInfo(it.message ?: ERROR)
+                }
+        }
 
     fun deletePlan(
         uid: String,

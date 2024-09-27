@@ -76,7 +76,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         val isModify = isFromPlanDetailFragment()
 
         tvTitle.startAnimation(slideDown)
-        viewModel.getCoach(::setSendClickable, isModify)
+        viewModel.initData(::setSendClickable, isModify)
         rvPlanChat.adapter = adapter
     }
 

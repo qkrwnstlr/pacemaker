@@ -1,6 +1,8 @@
 package com.ssafy.presentation.utils
 
 import com.ssafy.domain.dto.User
+import com.ssafy.domain.dto.plan.Plan
+import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.domain.utils.DANNY
@@ -142,6 +144,13 @@ fun User.toUserInfo() = UserInfo(
     recentRunPace = 0,
     recentRunDistance = 0,
     recentRunHeartRate = 0
+)
+
+fun PlanInfo.toPlan(): Plan = Plan(
+    totalDays = totalDays,
+    totalTimes = totalTimes,
+    totalDistances = totalDistances,
+    planTrains = planTrains
 )
 
 const val ERROR = "에러 발생!"

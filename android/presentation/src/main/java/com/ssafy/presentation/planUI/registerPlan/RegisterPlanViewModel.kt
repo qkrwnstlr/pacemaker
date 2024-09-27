@@ -9,12 +9,14 @@ import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.dto.plan.UserInfo
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
+import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
 import com.ssafy.domain.utils.ifNotHuman
 import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.ERROR
 import com.ssafy.presentation.utils.toCoachMessage
+import com.ssafy.presentation.utils.toPlan
 import com.ssafy.presentation.utils.toUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +34,8 @@ import kotlin.time.Duration.Companion.seconds
 class RegisterPlanViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val chatForPlanUseCase: ChatForPlanUseCase,
-    private val makePlanUseCase: MakePlanUseCase
+    private val makePlanUseCase: MakePlanUseCase,
+    private val getPlanInfoUseCase: GetPlanInfoUseCase
 ) : ViewModel() {
 
     private var coachIndex: Long = 1
@@ -70,7 +73,7 @@ class RegisterPlanViewModel @Inject constructor(
         }
     }
 
-    fun getCoach(sendAble: (Boolean) -> Unit, isModify: Boolean = false) =
+    fun initData(sendAble: (Boolean) -> Unit, isModify: Boolean = false) =
         viewModelScope.launch(Dispatchers.IO) {
             runCatching { dataStoreRepository.getUser() }
                 .onSuccess {
@@ -79,6 +82,14 @@ class RegisterPlanViewModel @Inject constructor(
                     // TODO 나중에는 최신 러닝 데이터도 같이 넣어야 함!
                     val context = contextData.value.copy(userInfo = it.toUserInfo())
                     _contextData.emit(context)
+                }
+
+            runCatching { getPlanInfoUseCase() }
+                .onSuccess { planInfo ->
+                    val newPlanData = planInfo.toPlan()
+                    _planData.emit(newPlanData)
+                }.onFailure {
+                    it.printStackTrace()
                 }
         }
 
