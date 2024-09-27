@@ -145,7 +145,7 @@ public record Message(
 			       "index": 1,
 			       "trainDate": "2024-09-27",
 			       "paramType": "time",
-			       "repeat": 4,
+			       "repetition": 4,
 			       "trainParam": 600,
 			       "trainPace": 320,
 			       "interParam": 120
