@@ -1,6 +1,7 @@
-package com.pacemaker.domain.report.entity;
+package com.pacemaker.domain.daily.entity;
 
 import com.pacemaker.domain.coach.entity.Coach;
+import com.pacemaker.domain.report.entity.Report;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
