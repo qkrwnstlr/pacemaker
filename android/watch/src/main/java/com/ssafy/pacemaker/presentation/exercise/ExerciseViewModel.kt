@@ -1,5 +1,6 @@
 package com.ssafy.pacemaker.presentation.exercise
 
+import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.pacemaker.data.HealthServicesRepository
@@ -16,11 +17,7 @@ import javax.inject.Inject
 class ExerciseViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
 ) : ViewModel() {
-    init {
-        viewModelScope.launch {
-            healthServicesRepository.prepareExercise()
-        }
-    }
+    private var isConnected = false
 
     val uiState: StateFlow<ExerciseScreenState> = healthServicesRepository.serviceState.map {
         ExerciseScreenState(
@@ -40,12 +37,9 @@ class ExerciseViewModel @Inject constructor(
                 exerciseState = (it as? ServiceState.Connected)?.exerciseServiceState
             )
         }
-
     )
 
-    fun startExercise() {
-        healthServicesRepository.startExercise()
-    }
+    suspend fun isExerciseInProgress() = healthServicesRepository.isExerciseInProgress()
 
     fun pauseExercise() {
         healthServicesRepository.pauseExercise()
@@ -58,7 +52,25 @@ class ExerciseViewModel @Inject constructor(
     fun resumeExercise() {
         healthServicesRepository.resumeExercise()
     }
+
+    fun collectServiceState(navigateToHomeRoute: () -> Unit, navigateToResultRoute: () -> Unit) {
+        if (isConnected) return
+        isConnected = true
+
+        viewModelScope.launch {
+            healthServicesRepository.serviceState.collect {
+                when (it) {
+                    is ServiceState.Disconnected -> {
+                        navigateToHomeRoute()
+                    }
+
+                    is ServiceState.Connected -> {
+                        when (it.exerciseServiceState.exerciseState) {
+                            ExerciseState.ENDED -> navigateToResultRoute()
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
-
-
-
