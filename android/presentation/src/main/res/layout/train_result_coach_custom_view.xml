@@ -20,7 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_result_title"
-        tools:listitem="@layout/list_item_coach" />
+        tools:listitem="@layout/list_item_coach_message" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="@dimen/image_50"

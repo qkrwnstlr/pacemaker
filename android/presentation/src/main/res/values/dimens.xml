@@ -29,6 +29,7 @@
     <dimen name="text_10">10sp</dimen>
 
     <dimen name="padding_48">48dp</dimen>
+    <dimen name="padding_42">42dp</dimen>
     <dimen name="padding_36">36dp</dimen>
     <dimen name="padding_24">24dp</dimen>
     <dimen name="padding_22">22dp</dimen>

@@ -13,7 +13,7 @@ class MessageAdapter(context: Context, messages: List<String>) :
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context)
-            .inflate(R.layout.list_item_coach, parent, false)
+            .inflate(R.layout.list_item_coach_message, parent, false)
 
         val messageTextView: TextView = view.findViewById(R.id.tv_coach_talk)
         messageTextView.text = getItem(position)
