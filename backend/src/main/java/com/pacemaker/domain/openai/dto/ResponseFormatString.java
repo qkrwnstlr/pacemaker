@@ -159,11 +159,12 @@ public class ResponseFormatString {
 	public static String realTimeResponseFormat = """
 		{
 		  "name": "realtimecoach",
-		  "strict": false,
+		  "strict": true,
 		  "schema": {
+		    "additionalProperties": false,
 		    "type": "object",
 		    "required": [
-		      "textFeedBack",
+		      "textFeedback",
 		      "textCheer"
 		    ],
 		    "properties": {
@@ -173,12 +174,11 @@ public class ResponseFormatString {
 		      },
 		      "textFeedback": {
 		        "type": "string",
-		        "description": "Feedback message of the about the user's run within 2 sentences in Korean"
+		        "description": "Feedback message about the user's run within 2 sentences in Korean"
 		      }
 		    }
 		  }
-		}
-		""";
+		}""";
 
 	public static String dailyCreateChatResponseFormat = """
 		{
