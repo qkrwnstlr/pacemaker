@@ -3,6 +3,7 @@ package com.pacemaker.domain.report.service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +13,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.coach.repository.CoachRepository;
+import com.pacemaker.domain.plan.entity.Plan;
+import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.entity.TrainStatus;
+import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.dto.PlanTrainResponse;
 import com.pacemaker.domain.report.dto.ReportFreeRequest;
@@ -45,6 +49,7 @@ public class ReportService {
 	private final PlanTrainRepository planTrainRepository;
 	private final ObjectMapper objectMapper;
 	private final ReportPlanTrainRepository reportPlanTrainRepository;
+	private final PlanRepository planRepository;
 
 	@Transactional
 	public void createFree(ReportFreeRequest reportFreeRequest) {
@@ -80,10 +85,21 @@ public class ReportService {
 		JsonProcessingException {
 		User user = findUserByUid(reportPlanCreateRequest.uid());
 		PlanTrain planTrain = findPlanTrainById(reportPlanCreateRequest.planTrainId());
+		Plan plan = planTrain.getPlan();
 		Coach coach = findCoachById(reportPlanCreateRequest.coachNumber());
-		planTrain.updatePlanTrainStatus(TrainStatus.DONE);
 
-		// TODO: trainEvaluation을 계산하는 LLM 프롬프팅 필요
+		planTrain.updatePlanTrainStatus(TrainStatus.DONE);
+		user.updateUserTrainReport(reportPlanCreateRequest.trainResult().trainTime(),
+			reportPlanCreateRequest.trainResult().trainDistance());
+		plan.updateCompletedCount();
+
+		if (Objects.equals(plan.getTotalDays(), plan.getCompletedCount())) {
+			plan.updatePlanStatus(PlanStatus.COMPLETED);
+			plan.updatePlanTrainReport(planRepository.findSumPlanDistanceByPlanId(plan.getId()),
+				planRepository.findSumPlanTimeByPlanId(plan.getId()));
+		}
+
+		// TODO: trainEvaluation을 계산하는 LLM 프롬프팅 + 플랜 자동 수정 필요
 		String stringTrainEvaluation = "{\"paceEvaluation\":75,\"heartRateEvaluation\":70,\"cadenceEvaluation\":85}";
 
 		String heartZone = convertStringHeartZone(reportPlanCreateRequest.trainResult().heartZone());
