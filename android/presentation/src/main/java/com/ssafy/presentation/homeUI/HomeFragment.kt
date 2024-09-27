@@ -2,6 +2,8 @@ package com.ssafy.presentation.homeUI
 
 import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
@@ -122,9 +124,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
         map.animateCamera(cameraUpdate)
 
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
+        val resizeBitmap = Bitmap.createScaledBitmap(bitmap, MARKER_WIDTH, MARKER_HEIGHT, false)
+        val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(resizeBitmap)
+
         val markerOptions = MarkerOptions()
             .position(latLng)
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker))
+            .icon(bitmapDescriptor)
 
         map.addMarker(markerOptions)
     }
@@ -365,5 +371,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             description.isEnabled = false
             invalidate()
         }
+    }
+
+    companion object {
+        const val MARKER_WIDTH = 200
+        const val MARKER_HEIGHT = 200
     }
 }
