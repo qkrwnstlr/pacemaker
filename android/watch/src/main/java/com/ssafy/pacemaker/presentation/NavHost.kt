@@ -2,6 +2,7 @@ package com.ssafy.pacemaker.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,21 +24,29 @@ fun NavHost(
     ) {
         composable(Screen.Home.route) {
             HomeRoute(
-                onStart = { navController.navigate(Screen.Exercise.route) }
+                onStart = { navController.navigateToTopLevel(Screen.Exercise) }
             )
         }
 
         composable(Screen.Exercise.route) {
             ExerciseRoute(
                 onDisconnected = { navController.popBackStack() },
-                onEnd = { navController.navigate(Screen.Result.route) }
+                onEnd = { navController.navigateToTopLevel(Screen.Result) }
             )
         }
 
         composable(Screen.Result.route) {
             ResultRoute(
-                onFinish = { navController.navigate(Screen.Home.route) }
+                onFinish = { navController.navigateToTopLevel(Screen.Home) }
             )
+        }
+    }
+}
+
+fun NavController.navigateToTopLevel(screen: Screen, route: String = screen.route) {
+    navigate(route) {
+        popUpTo(graph.id) {
+            inclusive = true
         }
     }
 }

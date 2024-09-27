@@ -12,23 +12,29 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
-): ViewModel() {
+) : ViewModel() {
     init {
         healthServicesRepository.prepareExercise()
     }
+
+    private var isConnected = false
 
     fun startExercise() {
         healthServicesRepository.startExercise()
     }
 
     fun collectServiceState(navigateToExerciseRoute: () -> Unit) {
+        if (isConnected) return
+        isConnected = true
+
         viewModelScope.launch {
             healthServicesRepository.serviceState.collect {
                 when (it) {
                     is ServiceState.Disconnected -> {}
                     is ServiceState.Connected -> {
                         when (it.exerciseServiceState.exerciseState) {
-                            ExerciseState.ACTIVE -> navigateToExerciseRoute()
+                            ExerciseState.PREPARING -> {}
+                            else -> navigateToExerciseRoute()
                         }
                     }
                 }

@@ -17,6 +17,8 @@ import javax.inject.Inject
 class ExerciseViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
 ) : ViewModel() {
+    private var isConnected = false
+
     val uiState: StateFlow<ExerciseScreenState> = healthServicesRepository.serviceState.map {
         ExerciseScreenState(
             hasExerciseCapabilities = healthServicesRepository.hasExerciseCapability(),
@@ -52,6 +54,9 @@ class ExerciseViewModel @Inject constructor(
     }
 
     fun collectServiceState(navigateToHomeRoute: () -> Unit, navigateToResultRoute: () -> Unit) {
+        if (isConnected) return
+        isConnected = true
+
         viewModelScope.launch {
             healthServicesRepository.serviceState.collect {
                 when (it) {
@@ -69,6 +74,3 @@ class ExerciseViewModel @Inject constructor(
         }
     }
 }
-
-
-

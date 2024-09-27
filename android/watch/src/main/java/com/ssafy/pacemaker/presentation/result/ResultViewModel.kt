@@ -12,11 +12,16 @@ import javax.inject.Inject
 class ResultViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
 ) : ViewModel() {
+    private var isConnected = false
+
     fun onFinish() {
         healthServicesRepository.clearExercise()
     }
 
     fun collectServiceState(navigateToHomeRoute: () -> Unit) {
+        if(isConnected) return
+        isConnected = true
+
         viewModelScope.launch {
             healthServicesRepository.serviceState.collect {
                 when (it) {
