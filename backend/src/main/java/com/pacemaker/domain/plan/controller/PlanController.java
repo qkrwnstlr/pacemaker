@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.openai.service.OpenAiService;
+import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.service.PlanService;
@@ -76,7 +77,7 @@ public class PlanController {
 		@ApiResponse(responseCode = "404", description = "플랜정보 조회 실패"),
 		@ApiResponse(responseCode = "404", description = "훈련정보 조회 실패")
 	})
-	public ResponseEntity<?> findActivePlanTrain(@PathVariable Long id, @PathVariable String uid) {
+	public ResponseEntity<ActivePlanTrainResponse> findActivePlanTrain(@PathVariable Long id, @PathVariable String uid) {
 		return ResponseEntity.status(HttpStatus.OK).body(planService.findActivePlanTrainByPlanTrainId(id, uid));
 	}
 
