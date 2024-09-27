@@ -16,7 +16,6 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
             trainInfoTitle.setTitle(
                 item.planTrain?.trainDate ?: "",
                 item.planTrain.toContentString(),
-                item.trainReport == null
             )
         }
         if (item.planTrain != null) {

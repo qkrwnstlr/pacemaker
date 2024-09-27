@@ -72,9 +72,7 @@ fun Int.toTimeString(): String {
 }
 
 fun Int.toDistanceString(): String {
-    val km = this / 1000
-    val m = this % 1000
-    return "${km}.${m}km"
+    return "%02.2fkm".format(this.toDouble() / 1_000)
 }
 
 fun String.toMakeDurationDate(endDate: String): String = "$this ~ $endDate"
@@ -111,6 +109,11 @@ fun Long?.toCoachMessage(isModify: Boolean): List<String> = when (this) {
 fun String.toLocalDate(): LocalDate {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     return LocalDate.parse(this, formatter)
+}
+
+fun String.toLocalDateDot(): String {
+    val formattedDate = this.replace("-", ".")
+    return formattedDate
 }
 
 fun Int.toTrainPace(): String {

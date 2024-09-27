@@ -22,6 +22,7 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.ssafy.domain.dto.schedule.ContentListDto
 import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.presentation.R
+import com.ssafy.presentation.component.TrainInfoTitleView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
 import com.ssafy.presentation.scheduleUI.schedule.pager.ViewPagerAdapter
@@ -75,6 +76,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
         binding.exOneCalendar.monthScrollListener = { month ->
             viewModel.setMonthHasTrain(getUid(), month.yearMonth.year, month.yearMonth.monthValue)
+            updateTitle()
         }
 
         binding.btnNextMonth.setOnClickListener {
@@ -117,6 +119,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 for (date in commonDates) {
                     monthCalendarView.notifyDateChanged(LocalDate.parse(date))
                 }
+                dateClicked(selectedDate)
                 prevDateMap = newDateList
             }
         }
@@ -148,7 +151,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 )
             }
         }
-        monthCalendarView.monthScrollListener = { updateTitle() }
         monthCalendarView.setup(startMonth, endMonth, daysOfWeek.first())
         monthCalendarView.scrollToMonth(currentMonth)
     }
@@ -186,24 +188,25 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
             flag = true
             for (trainDate in dateList.keys) {
                 if (LocalDate.parse(trainDate) == selectedDate) {
-                    dateList[trainDate]?.let { setResultView(it) }
+                    dateList[trainDate]?.let { setResultView(selectedDate, it) }
                     flag = false
                     break
                 }
             }
             if (flag)
-                setResultView(emptyList())
+                setResultView(selectedDate, emptyList())
         }
     }
 
-    private fun setResultView(contentList: List<ContentListDto>) {
-        if (contentList.isEmpty()) {//쉬는날
+    private fun setResultView(selectedDate: LocalDate, contentList: List<ContentListDto>) {
+        if (contentList.isEmpty()) {
             binding.vpReport.isVisible = false
             binding.lyNothing.isVisible = true
+            val traininfo = binding.lyNothing.findViewById<TrainInfoTitleView>(R.id.tv_nothing_inst)
+            traininfo.setTitle(date = selectedDate.toString())
         } else {
             binding.lyNothing.isVisible = false
             binding.vpReport.isVisible = true
-
             adapter.updateItems(contentList)
         }
     }
