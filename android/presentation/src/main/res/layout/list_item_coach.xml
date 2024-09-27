@@ -4,41 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cv_coach"
-        android:layout_width="@dimen/image_44"
-        android:layout_height="@dimen/image_44"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/margin_10"
-        android:layout_marginStart="@dimen/margin_10"
-        android:visibility="gone"
-        app:cardCornerRadius="50dp"
-        app:cardElevation="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/iv_coach"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="@dimen/margin_6"
-            android:scaleType="fitXY"
-            android:src="@drawable/coach_mike" />
-
-    </androidx.cardview.widget.CardView>
-
     <TextView
         android:id="@+id/tv_coach_talk"
         style="@style/ChatShape"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_10"
+        android:gravity="left"
         android:paddingHorizontal="@dimen/padding_16"
         android:paddingVertical="@dimen/padding_10"
         android:text="페이스가 목표보다 살짝 느렸지만, 심박수를 유지하며 끝까지 달린 건 대단해."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cv_coach" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

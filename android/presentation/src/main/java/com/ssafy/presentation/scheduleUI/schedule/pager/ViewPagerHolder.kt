@@ -35,7 +35,7 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
             item.trainReport?.apply {
                 makeResult(trainEvaluation, trainResult)
                 makeMap(trainResult.trainMap)
-                makeCoach()
+                makeCoach(trainResult.coachNumber, trainResult.coachMessage)
             }
         } else {
             binding.lyTrainResult.isVisible = false
@@ -50,8 +50,10 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
 
     }
 
-    private fun makeCoach() {
-
+    private fun makeCoach(coachNumber: Long, messages: List<String>) {
+        val coachList = binding.lyTrainResultCoach
+        coachList.setList(messages)
+        coachList.setCoachImage(coachNumber)
     }
 
     private fun makeResult(score: TrainEvaluation, result: TrainResult) {

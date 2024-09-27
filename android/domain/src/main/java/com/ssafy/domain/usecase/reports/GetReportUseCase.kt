@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetReportUseCase @Inject constructor(
     private val reportsRepository: ReportsRepository
 ) {
-    suspend operator fun invoke(content: ContentListDto, uid: String): Report? {
+    suspend operator fun invoke(content: ContentListDto, uid: String): Report {
         val result =
             when (content.type) {
                 "DAILY_REPORT" -> {

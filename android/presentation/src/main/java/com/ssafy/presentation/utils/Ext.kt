@@ -92,6 +92,13 @@ fun Long?.toCoachIndex(): Int = when (this) {
     else -> R.drawable.runnerfull
 }
 
+fun Long?.toCoachIndexJust(): Int = when (this) {
+    MIKE -> R.drawable.coach_mike
+    JAMIE -> R.drawable.coach_jamie
+    DANNY -> R.drawable.coach_danny
+    else -> R.drawable.runner
+}
+
 fun Long?.toCoachMessage(): List<String> = when (this) {
     MIKE -> START_WITH_MIKE
     JAMIE -> START_WITH_JAMIE
