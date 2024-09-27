@@ -58,6 +58,15 @@ fun formatHeartRate(bpm: Double?) = buildSpannedString {
     }
 }
 
+fun formatCadenceRate(cadence: Int?) = buildSpannedString {
+    if (cadence == null) {
+        append("--")
+    } else {
+        append("%d".format(cadence))
+        append("kcal")
+    }
+}
+
 fun formatPace(pace: Double?) = buildSpannedString {
     if (pace == null || pace.isNaN()) {
         append("--")

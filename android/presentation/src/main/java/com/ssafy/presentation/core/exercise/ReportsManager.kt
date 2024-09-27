@@ -1,7 +1,6 @@
 package com.ssafy.presentation.core.exercise
 
 import androidx.health.connect.client.records.HeartRateRecord
-import com.google.gson.Gson
 import com.ssafy.domain.dto.reports.CreatePlanReportsRequest
 import com.ssafy.domain.dto.reports.SplitData
 import com.ssafy.domain.dto.reports.TrainResult
@@ -27,7 +26,7 @@ class ReportsManager @Inject constructor(
             exerciseMetrics.calories?.toInt() ?: 0,
             exerciseSessionData.heartRate.zone,
             exerciseSessionData.splitData,
-            Gson().toJson(exerciseSessionData.location),
+            exerciseSessionData.location.map { listOf(it.latitude, it.longitude) },
             listOf(), // TODO : 코치 메시지 바꾸기
         )
 

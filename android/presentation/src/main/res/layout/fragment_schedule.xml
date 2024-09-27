@@ -137,20 +137,24 @@
                 android:layout_height="1dp"
                 app:dividerColor="@color/lightGray" />
 
-            <com.ssafy.presentation.component.TrainInfoTitleView
-                android:id="@+id/tv_date"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vp_report"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/margin_16"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ly_nothing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/margin_16">
+
+                <com.ssafy.presentation.component.TrainInfoTitleView
+                    android:id="@+id/tv_nothing_inst"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_nothing"
@@ -163,7 +167,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/tv_nothing_inst" />
 
                 <TextView
                     android:id="@+id/tv_nothing_content"
@@ -180,30 +184,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_nothing" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
-                android:id="@+id/ly_result_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
-
-            <com.ssafy.presentation.scheduleUI.schedule.TrainResultView
-                android:id="@+id/ly_train_result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/margin_24"
-                android:visibility="gone" />
-
-            <androidx.fragment.app.FragmentContainerView
-                android:id="@+id/map"
-                android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:visibility="gone" />
-
-            <com.ssafy.presentation.scheduleUI.schedule.TrainResultCoachView
-                android:id="@+id/ly_train_result_coach"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 

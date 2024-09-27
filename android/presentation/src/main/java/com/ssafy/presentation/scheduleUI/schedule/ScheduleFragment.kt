@@ -12,11 +12,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -29,11 +24,11 @@ import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
+import com.ssafy.presentation.scheduleUI.schedule.pager.ViewPagerAdapter
 import com.ssafy.presentation.utils.displayText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -54,6 +49,11 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private lateinit var planStateView: PlanStateView
     private var prevDateMap = emptyMap<String, List<ContentListDto>>()
     private var flag = true
+    private val adapter = ViewPagerAdapter(emptyList()) { item, callback ->
+        viewModel.getReport(item, getUid()) { report ->
+            callback(report)
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,6 +66,12 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         viewModel.setMonthHasTrain(getUid(), currentMonth.year, currentMonth.monthValue)
         setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
         initCollect()
+        initListener()
+
+        binding.vpReport.adapter = adapter
+
+        planStateView = binding.lyPlan
+        viewModel.dateProgressInfo(selectedDate, ::setProgress)
 
         binding.exOneCalendar.monthScrollListener = { month ->
             viewModel.setMonthHasTrain(getUid(), month.yearMonth.year, month.yearMonth.monthValue)
@@ -82,10 +88,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 binding.exOneCalendar.smoothScrollToMonth(it.yearMonth.previousMonth)
             }
         }
-
-        initListener()
-        planStateView = binding.lyPlan
-        viewModel.dateProgressInfo(selectedDate, ::setProgress)
 
     }
 
@@ -123,62 +125,6 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private fun moveToPlanDetailFragment() {
         val action = ScheduleFragmentDirections.actionScheduleFragmentToPlanDetailFragment2()
         findNavController().navigate(action)
-    }
-
-    private fun makeResult() {
-        val pacePercent = 75f
-        val heartPercent = 60f
-        val stepPercent = 70f
-
-        val trainResultView = binding.lyTrainResult
-        trainResultView.setPieChart(pacePercent, heartPercent, stepPercent)
-    }
-
-    private fun makeChart(barChart: BarChart) {
-        val entries = ArrayList<BarEntry>().apply {
-            add(BarEntry(2.5f, 0.2f))
-            add(BarEntry(3.5f, 1.6f))
-            add(BarEntry(4.5f, 1.2f))
-            add(BarEntry(5.5f, 1.6f))
-            add(BarEntry(6.5f, 1.2f))
-            add(BarEntry(7.5f, 1.6f))
-            add(BarEntry(8.5f, 0.2f))
-        }
-
-        val barDataSet = BarDataSet(entries, "DataSet").apply {
-            val colors = List(entries.size) { index ->
-                if (index % 2 == 0) R.color.thirdPrimary else R.color.secondPrimary
-            }
-            setColors(colors.toIntArray(), barChart.context)
-        }
-
-        barChart.apply {
-            data = BarData(barDataSet).apply { barWidth = 0.8f }
-            description.isEnabled = false
-            setMaxVisibleValueCount(7)
-            setPinchZoom(false)
-            setDrawBarShadow(false)
-            setDrawGridBackground(false)
-            axisLeft.apply {
-                axisMaximum = 2f
-                axisMinimum = 0f
-                setDrawLabels(false)
-                setDrawGridLines(false)
-                setDrawAxisLine(false)
-            }
-            xAxis.apply {
-                position = XAxis.XAxisPosition.BOTTOM
-                granularity = 1f
-                setDrawBarShadow(false)
-                setDrawGridLines(false)
-                setDrawLabels(false)
-            }
-            axisRight.isEnabled = false
-            setTouchEnabled(false)
-            animateY(1000)
-            legend.isEnabled = false
-            invalidate()
-        }
     }
 
     private fun setupMonthCalendar(
@@ -252,23 +198,13 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     private fun setResultView(contentList: List<ContentListDto>) {
         if (contentList.isEmpty()) {//쉬는날
-            binding.lyResultInfo.isVisible = false
-            binding.lyTrainResult.isVisible = false
-            binding.map.isVisible = false
-            binding.lyTrainResultCoach.isVisible = false
+            binding.vpReport.isVisible = false
             binding.lyNothing.isVisible = true
         } else {
             binding.lyNothing.isVisible = false
-            binding.lyResultInfo.isVisible = true
-            binding.lyTrainResult.isVisible = true
-            binding.map.isVisible = true
-            binding.lyTrainResultCoach.isVisible = true
-            Timber.d("${contentList[0]} ${contentList[1]}")
-            val trainInfoView = binding.lyResultInfo
-            val barChart: BarChart = trainInfoView.findViewById(R.id.barChart)
-            makeChart(barChart)
-            makeResult()
+            binding.vpReport.isVisible = true
 
+            adapter.updateItems(contentList)
         }
     }
 

@@ -37,7 +37,7 @@ interface UserAPI {
     @PUT("users/{uid}/coach")
     suspend fun setCoach(@Path("uid") uid: String, @Body coach: Coach): Response<Unit>
 
-    @GET("users/{uid}/calender")
+    @GET("users/{uid}/calendar")
     suspend fun getCalendarDot(
         @Path("uid") uid: String,
         @Query("year") year: Int,

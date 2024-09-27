@@ -11,6 +11,11 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.TrainResultCustomViewBinding
+import com.ssafy.presentation.utils.formatCadenceRate
+import com.ssafy.presentation.utils.formatHeartRate
+import com.ssafy.presentation.utils.formatPace
+import com.ssafy.presentation.utils.toDistanceString
+import com.ssafy.presentation.utils.toTime
 
 class TrainResultView : ConstraintLayout {
     constructor(context: Context) : super(context) {
@@ -29,6 +34,15 @@ class TrainResultView : ConstraintLayout {
 
     private fun initView() {
         addView(binding.root)
+    }
+
+    fun setResultData(distance: Int, time: Int, hearRate: Int, cadence: Int, pace: Int, kcal: Int) {
+        binding.tvResultDistanceContent.text = distance.toDistanceString()
+        binding.tvResultHeartContent.text = formatHeartRate(hearRate.toDouble())
+        binding.tvResultTimeContent.text = time.toTime()
+        binding.tvResultStepContent.text = formatCadenceRate(cadence)
+        binding.tvResultPaceContent.text = formatPace(pace.toDouble())
+        binding.tvResultKcalContent.text = formatCadenceRate(kcal)
     }
 
     fun setPieChart(pacePercent: Float, heartPercent: Float, stepPercent: Float) = with(binding) {

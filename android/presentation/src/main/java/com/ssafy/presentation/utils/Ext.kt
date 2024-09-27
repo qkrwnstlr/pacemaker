@@ -69,6 +69,12 @@ fun Int.toTimeString(): String {
     return "${hour}h ${minute}m"
 }
 
+fun Int.toDistanceString(): String {
+    val km = this / 1000
+    val m = this % 1000
+    return "${km}.${m}km"
+}
+
 fun String.toMakeDurationDate(endDate: String): String = "$this ~ $endDate"
 
 fun List<String>.toWeekString(): String {
@@ -107,6 +113,23 @@ fun Int.toTrainPace(): String {
 fun PlanTrain?.toPlanInst(): String {
     if (this == null) return ""
 
+    val totalString = makeTotalString()
+    val meanPace = trainPace.toTrainPace()
+    return "$totalString  |  $meanPace"
+}
+
+fun PlanTrain?.toContentString(): String {
+    if (this == null) return ""
+
+    when (this.paramType) {
+        "distance" -> {
+            return "${sessionDistance.toDistanceString()} | ${trainPace.toTrainPace()}"
+        }
+
+        "time" -> {
+            return "${sessionTime.toTimeString()} | ${trainPace.toTrainPace()}"
+        }
+    }
     val totalString = makeTotalString()
     val meanPace = trainPace.toTrainPace()
     return "$totalString  |  $meanPace"

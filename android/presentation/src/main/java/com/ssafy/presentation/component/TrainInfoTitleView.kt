@@ -4,8 +4,8 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.ssafy.presentation.R
-import com.ssafy.presentation.databinding.TrainInfoCustomViewBinding
 import com.ssafy.presentation.databinding.TrainInfoTitleCustomViewBinding
 
 class TrainInfoTitleView : ConstraintLayout {
@@ -25,5 +25,11 @@ class TrainInfoTitleView : ConstraintLayout {
 
     private fun initView() {
         addView(binding.root)
+    }
+
+    fun setTitle(date: String, content: String, isOnPostPone: Boolean) = with(binding) {
+        tvResultTitle.text = date
+        tvPlanInst.text = content
+        ivNext.isVisible = isOnPostPone
     }
 }

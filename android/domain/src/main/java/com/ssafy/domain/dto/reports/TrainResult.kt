@@ -9,6 +9,6 @@ data class TrainResult(
     val kcal: Int,
     val heartZone: List<Int>,
     val splitData: List<SplitData>,
-    val trainMap: String,
+    val trainMap: List<List<Double>>,
     val coachMessage: List<String>
 )
