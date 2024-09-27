@@ -83,4 +83,17 @@ public class Plan {
 	public void removePlanTrain(PlanTrain planTrain) {
 		planTrains.remove(planTrain);
 	}
+
+	public void updateCompletedCount() {
+		this.completedCount += 1;
+	}
+
+	public void updatePlanStatus(PlanStatus status) {
+		this.status = status;
+	}
+
+	public void updatePlanTrainReport(Integer totalDistances, Integer totalTimes) {
+		this.totalDistances = totalDistances;
+		this.totalTimes = totalTimes;
+	}
 }

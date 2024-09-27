@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.pacemaker.domain.plan.entity.Plan;
 
 @Repository
-public interface PlanRepository extends JpaRepository<Plan, Long> {
+public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositoryCustom {
 
 	boolean existsByUserId(Long userId);
 
@@ -24,5 +24,5 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
 			  order by pt.trainDate
 			""")
 	Optional<Plan> findActivePlan(String uid); // @Param("uid")를 해주면 명시적이라 좋기도 하지만 생략도 가능!
-
+	Optional<Plan> findPlanById(Long planId);
 }

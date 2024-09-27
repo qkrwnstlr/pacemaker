@@ -6,5 +6,5 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record TrainReport(List<LocalTime> trainDate, TrainResult trainResult, TrainEvaluation trainEvaluation) {
+public record TrainReport(List<LocalTime> trainDuration, TrainResult trainResult, TrainEvaluation trainEvaluation) {
 }

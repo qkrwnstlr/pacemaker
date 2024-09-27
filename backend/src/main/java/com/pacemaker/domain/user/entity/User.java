@@ -107,6 +107,12 @@ public class User {
 		this.injuries = injuries;
 	}
 
+	public void updateUserTrainReport(Integer completedTrainTime, Integer completedTrainDistance) {
+		this.trainCount += 1;
+		this.trainTime += completedTrainTime;
+		this.trainDistance += completedTrainDistance;
+	}
+
 	public Gender stringToGender(String gender) {
 		if ("MALE".equals(gender)) {
 			return Gender.MALE;

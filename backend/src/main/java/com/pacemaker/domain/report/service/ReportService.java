@@ -3,21 +3,26 @@ package com.pacemaker.domain.report.service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.coach.repository.CoachRepository;
+import com.pacemaker.domain.plan.entity.Plan;
+import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.entity.TrainStatus;
+import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.dto.PlanTrainResponse;
 import com.pacemaker.domain.report.dto.ReportFreeRequest;
 import com.pacemaker.domain.report.dto.ReportPlanCreateRequest;
-import com.pacemaker.domain.report.dto.ReportPlanCreateResponse;
+import com.pacemaker.domain.report.dto.ReportPlanResponse;
 import com.pacemaker.domain.report.dto.SplitData;
 import com.pacemaker.domain.report.dto.TrainEvaluation;
 import com.pacemaker.domain.report.dto.TrainReport;
@@ -30,6 +35,7 @@ import com.pacemaker.domain.report.repository.ReportRepository;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
 import com.pacemaker.global.exception.NotFoundException;
+import com.pacemaker.global.exception.UserMismatchException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,6 +49,7 @@ public class ReportService {
 	private final PlanTrainRepository planTrainRepository;
 	private final ObjectMapper objectMapper;
 	private final ReportPlanTrainRepository reportPlanTrainRepository;
+	private final PlanRepository planRepository;
 
 	@Transactional
 	public void createFree(ReportFreeRequest reportFreeRequest) {
@@ -74,14 +81,25 @@ public class ReportService {
 	}
 
 	@Transactional
-	public ReportPlanCreateResponse createReportPlan(ReportPlanCreateRequest reportPlanCreateRequest) throws
+	public ReportPlanResponse createReportPlan(ReportPlanCreateRequest reportPlanCreateRequest) throws
 		JsonProcessingException {
 		User user = findUserByUid(reportPlanCreateRequest.uid());
-		PlanTrain planTrain = findPlanTrainByid(reportPlanCreateRequest.planTrainId());
+		PlanTrain planTrain = findPlanTrainById(reportPlanCreateRequest.planTrainId());
+		Plan plan = planTrain.getPlan();
 		Coach coach = findCoachById(reportPlanCreateRequest.coachNumber());
-		planTrain.updatePlanTrainStatus(TrainStatus.DONE);
 
-		// TODO: trainEvaluation을 계산하는 LLM 프롬프팅 필요
+		planTrain.updatePlanTrainStatus(TrainStatus.DONE);
+		user.updateUserTrainReport(reportPlanCreateRequest.trainResult().trainTime(),
+			reportPlanCreateRequest.trainResult().trainDistance());
+		plan.updateCompletedCount();
+
+		if (Objects.equals(plan.getTotalDays(), plan.getCompletedCount())) {
+			plan.updatePlanStatus(PlanStatus.COMPLETED);
+			plan.updatePlanTrainReport(planRepository.findSumPlanDistanceByPlanId(plan.getId()),
+				planRepository.findSumPlanTimeByPlanId(plan.getId()));
+		}
+
+		// TODO: trainEvaluation을 계산하는 LLM 프롬프팅 + 플랜 자동 수정 필요
 		String stringTrainEvaluation = "{\"paceEvaluation\":75,\"heartRateEvaluation\":70,\"cadenceEvaluation\":85}";
 
 		String heartZone = convertStringHeartZone(reportPlanCreateRequest.trainResult().heartZone());
@@ -117,13 +135,41 @@ public class ReportService {
 		TrainResult trainResult = TrainResult.of(report, reportPlanCreateRequest.trainResult().coachMessage());
 		TrainEvaluation trainEvaluation = objectMapper.readValue(stringTrainEvaluation, TrainEvaluation.class);
 		TrainReport trainReport = TrainReport.builder()
-			.trainDate(calculateTrainDuration(reportPlanCreateRequest.trainDate(),
+			.trainDuration(calculateTrainDuration(reportPlanCreateRequest.trainDate(),
 				reportPlanCreateRequest.trainResult().trainTime()))
 			.trainResult(trainResult)
 			.trainEvaluation(trainEvaluation)
 			.build();
 
-		return ReportPlanCreateResponse.builder()
+		return ReportPlanResponse.builder()
+			.planTrain(planTrainResponse)
+			.trainReport(trainReport)
+			.build();
+	}
+
+	@Transactional(readOnly = true)
+	public ReportPlanResponse findReportPlan(Long reportId, String uid) throws JsonProcessingException {
+		User user = findUserByUid(uid);
+		Report report = findReportById(reportId);
+
+		if (user != report.getUser()) {
+			throw new UserMismatchException("본인의 레포트만 조회할 수 있습니다.");
+		}
+
+		ReportPlanTrain reportPlanTrain = findReportPlanTrainById(reportId);
+		PlanTrain planTrain = findPlanTrainById(reportPlanTrain.getPlanTrain().getId());
+
+		Integer planTrainIndex = findIndexByPlanTrainId(planTrain.getId());
+		PlanTrainResponse planTrainResponse = PlanTrainResponse.of(planTrainIndex, planTrain);
+		TrainResult trainResult = TrainResult.of(report, convertListCoachMessage(reportPlanTrain.getCoachMessage()));
+		TrainEvaluation trainEvaluation = convertStringTrainEvaluation(report.getTrainEvaluation());
+		TrainReport trainReport = TrainReport.builder()
+			.trainDuration(calculateTrainDuration(report.getTrainDate(), report.getTrainTime()))
+			.trainResult(trainResult)
+			.trainEvaluation(trainEvaluation)
+			.build();
+
+		return ReportPlanResponse.builder()
 			.planTrain(planTrainResponse)
 			.trainReport(trainReport)
 			.build();
@@ -134,7 +180,7 @@ public class ReportService {
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
 	}
 
-	private PlanTrain findPlanTrainByid(Long id) {
+	private PlanTrain findPlanTrainById(Long id) {
 		return planTrainRepository.findPlanTrainById(id)
 			.orElseThrow(() -> new NotFoundException("해당 훈련을 찾을 수 없습니다."));
 	}
@@ -142,6 +188,16 @@ public class ReportService {
 	private Coach findCoachById(Long coachId) {
 		return coachRepository.findById(coachId)
 			.orElseThrow(() -> new NotFoundException("존재하지 않는 코치입니다."));
+	}
+
+	private Report findReportById(Long id) {
+		return reportRepository.findReportById(id)
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 레포트입니다."));
+	}
+
+	private ReportPlanTrain findReportPlanTrainById(Long id) {
+		return reportPlanTrainRepository.findReportPlanTrainByReportId(id)
+			.orElseThrow(() -> new NotFoundException("존재하지 않는 플랜훈련 레포트입니다. 플랜 훈련을 진행한 이력이 있는지 확인해주세요."));
 	}
 
 	private Integer findIndexByPlanTrainId(Long planTrainId) {
@@ -168,6 +224,15 @@ public class ReportService {
 
 	private String convertStringCoachMessage(List<String> coachMessage) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(coachMessage);
+	}
+
+	private List<String> convertListCoachMessage(String coachMessage) throws JsonProcessingException {
+		return objectMapper.readValue(coachMessage, new TypeReference<>() {
+		});
+	}
+
+	private TrainEvaluation convertStringTrainEvaluation(String trainEvaluation) throws JsonProcessingException {
+		return objectMapper.readValue(trainEvaluation, TrainEvaluation.class);
 	}
 
 	private List<LocalTime> calculateTrainDuration(LocalDateTime endDateTiem, Integer trainTime) {

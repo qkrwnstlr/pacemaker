@@ -14,6 +14,7 @@ import com.pacemaker.global.exception.InvalidUsernameException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
+import com.pacemaker.global.exception.UserMismatchException;
 import com.pacemaker.global.util.mattermost.NotificationManager;
 
 import jakarta.persistence.NoResultException;
@@ -71,6 +72,13 @@ public class GlobalExceptionHandler {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(UserMismatchException.class)
+	public ResponseEntity<String> handleUserMismatchException(UserMismatchException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(NoResourceFoundException.class)

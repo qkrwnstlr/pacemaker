@@ -101,9 +101,9 @@ public class UserController {
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "월별 캘린더 조회 성공"),
 	})
-	@GetMapping("/calender")
-	public ResponseEntity<?> getMonthlyCalender(@PathVariable("uid") String uid, @RequestParam Integer year,
+	@GetMapping("/calendar")
+	public ResponseEntity<?> getMonthlyCalendar(@PathVariable("uid") String uid, @RequestParam Integer year,
 		@RequestParam Integer month) {
-		return ResponseEntity.status(HttpStatus.OK).body(userService.findMonthlyCalenderByUid(uid, year, month));
+		return ResponseEntity.status(HttpStatus.OK).body(userService.findMonthlyCalendarByUid(uid, year, month));
 	}
 }

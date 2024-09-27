@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.openai.service.OpenAiService;
+import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.service.PlanService;
@@ -65,6 +66,19 @@ public class PlanController {
 		System.out.println("최종 생성 Plan Id: " + id);
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
+
+	@GetMapping("train/before/{id}/user/{uid}")
+	@Operation(summary = "레포트 조회 - 플랜 훈련 / 플랜 훈련 단일 조회")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "플랜 훈련 조회 성공"),
+		@ApiResponse(responseCode = "400", description = "회원정보 불일치"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패"),
+		@ApiResponse(responseCode = "404", description = "플랜정보 조회 실패"),
+		@ApiResponse(responseCode = "404", description = "훈련정보 조회 실패")
+	})
+	public ResponseEntity<ActivePlanTrainResponse> findActivePlanTrain(@PathVariable Long id, @PathVariable String uid) {
+		return ResponseEntity.status(HttpStatus.OK).body(planService.findActivePlanTrainByPlanTrainId(id, uid));
 	}
 
 	@Operation(summary = "현재 진행 중인 플랜 조회")
