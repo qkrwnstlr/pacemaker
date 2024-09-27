@@ -11,14 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.pacemaker.domain.coach.entity.Coach;
 import com.pacemaker.domain.coach.repository.CoachRepository;
+import com.pacemaker.domain.openai.service.OpenAiService;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.entity.TrainStatus;
 import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.plan.repository.PlanTrainRepository;
+import com.pacemaker.domain.report.dto.CreateTrainEvaluationRequest;
+import com.pacemaker.domain.report.dto.CreateTrainEvaluationResponse;
 import com.pacemaker.domain.report.dto.PlanTrainResponse;
 import com.pacemaker.domain.report.dto.ReportFreeRequest;
 import com.pacemaker.domain.report.dto.ReportPlanCreateRequest;
@@ -43,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReportService {
 
+	private final OpenAiService openAiService;
 	private final ReportRepository reportRepository;
 	private final UserRepository userRepository;
 	private final CoachRepository coachRepository;
@@ -83,6 +88,8 @@ public class ReportService {
 	@Transactional
 	public ReportPlanResponse createReportPlan(ReportPlanCreateRequest reportPlanCreateRequest) throws
 		JsonProcessingException {
+		// TODO: 플랜 자동 수정 필요
+
 		User user = findUserByUid(reportPlanCreateRequest.uid());
 		PlanTrain planTrain = findPlanTrainById(reportPlanCreateRequest.planTrainId());
 		Plan plan = planTrain.getPlan();
@@ -99,13 +106,22 @@ public class ReportService {
 				planRepository.findSumPlanTimeByPlanId(plan.getId()));
 		}
 
-		// TODO: trainEvaluation을 계산하는 LLM 프롬프팅 + 플랜 자동 수정 필요
-		String stringTrainEvaluation = "{\"paceEvaluation\":75,\"heartRateEvaluation\":70,\"cadenceEvaluation\":85}";
+		CreateTrainEvaluationRequest createTrainEvaluationRequest = new CreateTrainEvaluationRequest(
+			planTrain.getTrainPace(), reportPlanCreateRequest.trainResult().splitData(),
+			reportPlanCreateRequest.trainResult().heartZone(), coach.getDescription());
+		String stringCreateTrainEvaluationResponse = openAiService.createTrainEvaluation(createTrainEvaluationRequest)
+			.block();
+		CreateTrainEvaluationResponse createTrainEvaluationResponse = new Gson().fromJson(
+			stringCreateTrainEvaluationResponse, CreateTrainEvaluationResponse.class);
+
+		TrainEvaluation trainEvaluation = createTrainEvaluationResponse.trainEvaluation();
+		String stringTrainEvaluation = convertStringTrainEvaluation(trainEvaluation);
+		List<String> coachMessage = createTrainEvaluationResponse.coachMessage();
 
 		String heartZone = convertStringHeartZone(reportPlanCreateRequest.trainResult().heartZone());
 		String splitData = convertStringSplitData(reportPlanCreateRequest.trainResult().splitData());
 		String trainMap = convertStringTrainMap(reportPlanCreateRequest.trainResult().trainMap());
-		String coachMessage = convertStringCoachMessage(reportPlanCreateRequest.trainResult().coachMessage());
+		String stringCoachMessage = convertStringCoachMessage(reportPlanCreateRequest.trainResult().coachMessage());
 
 		Report report = reportRepository.save(Report.builder()
 			.user(user)
@@ -127,13 +143,12 @@ public class ReportService {
 			.report(report)
 			.planTrain(planTrain)
 			.coach(coach)
-			.coachMessage(coachMessage)
+			.coachMessage(stringCoachMessage)
 			.build());
 
 		Integer planTrainIndex = findIndexByPlanTrainId(reportPlanCreateRequest.planTrainId());
 		PlanTrainResponse planTrainResponse = PlanTrainResponse.of(planTrainIndex, planTrain);
-		TrainResult trainResult = TrainResult.of(report, reportPlanCreateRequest.trainResult().coachMessage());
-		TrainEvaluation trainEvaluation = objectMapper.readValue(stringTrainEvaluation, TrainEvaluation.class);
+		TrainResult trainResult = TrainResult.of(report, reportPlanCreateRequest.coachNumber(), coachMessage);
 		TrainReport trainReport = TrainReport.builder()
 			.trainDuration(calculateTrainDuration(reportPlanCreateRequest.trainDate(),
 				reportPlanCreateRequest.trainResult().trainTime()))
@@ -161,7 +176,8 @@ public class ReportService {
 
 		Integer planTrainIndex = findIndexByPlanTrainId(planTrain.getId());
 		PlanTrainResponse planTrainResponse = PlanTrainResponse.of(planTrainIndex, planTrain);
-		TrainResult trainResult = TrainResult.of(report, convertListCoachMessage(reportPlanTrain.getCoachMessage()));
+		TrainResult trainResult = TrainResult.of(report, reportPlanTrain.getCoach().getId(),
+			convertListCoachMessage(reportPlanTrain.getCoachMessage()));
 		TrainEvaluation trainEvaluation = convertStringTrainEvaluation(report.getTrainEvaluation());
 		TrainReport trainReport = TrainReport.builder()
 			.trainDuration(calculateTrainDuration(report.getTrainDate(), report.getTrainTime()))
@@ -224,6 +240,10 @@ public class ReportService {
 
 	private String convertStringCoachMessage(List<String> coachMessage) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(coachMessage);
+	}
+
+	private String convertStringTrainEvaluation(TrainEvaluation trainEvaluation) throws JsonProcessingException {
+		return objectMapper.writeValueAsString(trainEvaluation);
 	}
 
 	private List<String> convertListCoachMessage(String coachMessage) throws JsonProcessingException {
