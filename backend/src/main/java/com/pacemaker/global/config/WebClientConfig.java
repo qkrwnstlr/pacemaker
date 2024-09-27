@@ -15,6 +15,9 @@ public class WebClientConfig {
     @Value("${notification.mattermost.webhook-url}")
     private String webhookUrl;
 
+    @Value("${PACEMAKER_GPU_SERVER_URL}")
+    private String gpuServerUrl;
+
     @Bean
     public WebClient openAIWebClient() {
         return WebClient.builder()
@@ -27,6 +30,14 @@ public class WebClientConfig {
     public WebClient mattermostWebClient() {
         return WebClient.builder()
             .baseUrl(webhookUrl)
+            .build();
+    }
+
+    @Bean
+    public WebClient gpuServerWebClient() {
+        return WebClient.builder()
+            .baseUrl(gpuServerUrl)
+            .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(50 * 1024 * 1024))  // 10MB로 설정
             .build();
     }
 }
