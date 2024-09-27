@@ -7,6 +7,8 @@ import androidx.wear.compose.navigation.currentBackStackEntryAsState
 import com.google.android.horologist.compose.ambient.AmbientAware
 import com.ssafy.pacemaker.presentation.theme.PaceMakerTheme
 
+val AlwaysOnRoutes = listOf(Screen.Exercise.route)
+
 @Composable
 fun WearApp(navController: NavHostController) {
     val currentScreen by navController.currentBackStackEntryAsState()
@@ -22,4 +24,3 @@ fun WearApp(navController: NavHostController) {
     }
 }
 
-val AlwaysOnRoutes = listOf(Screen.Exercise.route)

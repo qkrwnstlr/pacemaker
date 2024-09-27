@@ -19,6 +19,7 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.tooling.preview.devices.WearDevices
 import com.ssafy.pacemaker.R
 import com.ssafy.pacemaker.presentation.component.button.StartButton
+import com.ssafy.pacemaker.presentation.component.layout.Center
 
 @Composable
 fun HomeRoute(
@@ -35,22 +36,28 @@ fun HomeRoute(
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     onStartClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    TimeText()
+    TimeText(modifier = Modifier.padding(5.dp))
+    Center {
+        Image(
+            painter = painterResource(id = R.drawable.logo_background),
+            contentDescription = stringResource(id = R.string.logo_background_image_cd),
+            contentScale = ContentScale.Fit,
+            modifier = Modifier.fillMaxSize()
+        )
+    }
     Column(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.padding(20.dp).fillMaxSize()
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = stringResource(id = R.string.logo_image_cd),
             contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .height(75.dp)
+            modifier = Modifier.weight(1f)
         )
         StartButton(onStartClick)
     }

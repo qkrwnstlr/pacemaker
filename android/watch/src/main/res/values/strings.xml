@@ -17,6 +17,7 @@
 
   <!-- Descriptions -->
   <string name="logo_image_cd">Logo</string>
+  <string name="logo_background_image_cd">Logo Background</string>
   <string name="start_button_cd">Start</string>
   <string name="stop_button_cd">End</string>
   <string name="pause_button_cd">Pause</string>
