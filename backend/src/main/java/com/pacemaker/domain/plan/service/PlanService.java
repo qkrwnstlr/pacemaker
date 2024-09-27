@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
+import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.dto.PlanResponse;
@@ -93,7 +94,7 @@ public class PlanService {
 	}
 
 	@Transactional(readOnly = true)
-	public PlanTrainResponse findActivePlanTrainByPlanTrainId(Long id, String uid) {
+	public ActivePlanTrainResponse findActivePlanTrainByPlanTrainId(Long id, String uid) {
 		User user = findUserByUid(uid);
 		PlanTrain planTrain = findPlanTrainById(id);
 		Plan plan = findPlanById(planTrain.getPlan().getId());
@@ -104,7 +105,9 @@ public class PlanService {
 
 		Integer planTrainIndex = findIndexByPlanTrainId(id);
 
-		return PlanTrainResponse.of(planTrainIndex, planTrain);
+		return ActivePlanTrainResponse.builder()
+			.planTrain(PlanTrainResponse.of(planTrainIndex, planTrain))
+			.build();
 	}
 
 	private User findUserByUid(String uid) {
