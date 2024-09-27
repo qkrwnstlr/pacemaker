@@ -17,6 +17,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
 import com.kizitonwose.calendar.view.MonthDayBinder
+import com.ssafy.presentation.R
 import com.ssafy.presentation.component.MiniDateContainer
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRegisterPlanBinding
@@ -70,12 +71,18 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun initView() = with(binding.chatUi) {
         val slideDown = AnimationUtils.loadAnimation(
             requireContext(),
-            com.ssafy.presentation.R.anim.fade_slide_down
+            R.anim.fade_slide_down
         )
+        val isModify = isFromPlanDetailFragment()
 
         tvTitle.startAnimation(slideDown)
-        viewModel.getCoach(::setSendClickable)
+        viewModel.getCoach(::setSendClickable, isModify)
         rvPlanChat.adapter = adapter
+    }
+
+    private fun isFromPlanDetailFragment(): Boolean {
+        val previousFragmentId = findNavController().previousBackStackEntry?.destination?.id
+        return previousFragmentId == R.id.planDetailFragment2
     }
 
     private fun setSendClickable(able: Boolean) = with(binding.chatUi) {

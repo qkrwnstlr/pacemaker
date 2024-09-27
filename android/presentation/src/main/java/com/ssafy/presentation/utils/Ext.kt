@@ -86,11 +86,11 @@ fun Long?.toCoachIndex(): Int = when (this) {
     else -> R.drawable.runnerfull
 }
 
-fun Long?.toCoachMessage(): List<String> = when (this) {
-    MIKE -> START_WITH_MIKE
-    JAMIE -> START_WITH_JAMIE
-    DANNY -> START_WITH_DANNY
-    else -> START_WITH_MIKE
+fun Long?.toCoachMessage(isModify: Boolean): List<String> = when (this) {
+    MIKE -> if (isModify) MODIFY_WITH_MIKE else START_WITH_MIKE
+    JAMIE -> if (isModify) MODIFY_WITH_JAMIE else START_WITH_JAMIE
+    DANNY -> if (isModify) MODIFY_WITH_DANNY else START_WITH_DANNY
+    else -> if (isModify) MODIFY_WITH_MIKE else START_WITH_MIKE
 }
 
 fun String.toLocalDate(): LocalDate {
@@ -153,6 +153,13 @@ val START_WITH_MIKE = listOf(
     "먼저, 여러분의 현재 체력 수준과 러닝 경험에 대해 알고 싶어요. 목표가 어떻게 되시나요?"
 )
 
+val MODIFY_WITH_MIKE = listOf(
+    "안녕하세요, 열정 넘치는 마이크 러닝 코치입니다! 플랜 수정을 위해 돌아왔군요! \uD83D\uDE4C\uD83C\uDFFB\uD83D\uDCAA",
+    "러닝 플랜을 개선하고 싶으시다니 정말 대단해요! 지속적인 성장을 위한 첫 걸음이에요. \uD83D\uDCC8",
+    "함께 여러분의 플랜을 업그레이드해 볼 텐데요, 이를 위해 몇 가지 궁금한 점이 있어요.",
+    "현재 플랜에서 어떤 부분을 수정하고 싶으신가요? 특별히 힘든 부분이 있나요? 목표나 일정에 변화가 있나요? \uD83E\uDD14"
+)
+
 val START_WITH_JAMIE = listOf(
     "안녕하세요! \uD83D\uDC4B 저는 당신의 러닝 여정을 함께할 재미 러닝 코치예요.",
     "운동을 시작하려는 당신의 결심이 정말 멋집니다. \uD83C\uDFC3\u200D♀\uFE0F✨",
@@ -160,11 +167,25 @@ val START_WITH_JAMIE = listOf(
     "먼저 당신에 대해 조금 더 알고 싶어요. 목표가 어떻게 되시나요?"
 )
 
+val MODIFY_WITH_JAMIE = listOf(
+    "안녕하세요! \uD83D\uDE04 재미 러닝 코치 제이미예요. 플랜을 수정하러 오셨군요?",
+    "와우! 플랜을 개선하려는 당신의 열정이 정말 대단해요. \uD83C\uDF1F",
+    "함께 더 즐겁고 효과적인 러닝 계획을 만들어봐요. 이건 정말 신나는 일이 될 거예요! \uD83C\uDF89",
+    "자, 어떤 부분을 바꿔보고 싶으세요? 힘들었던 점이나 더 재미있게 만들고 싶은 부분이 있나요? \uD83E\uDD14"
+)
+
 val START_WITH_DANNY = listOf(
     "어이구! 반갑습니다, 반가워요! \uD83E\uDD20 제가 바로 뛰는 재미 알려드릴 대니 러닝 코치입니다!",
     "경상도에서 온 제 말투가 좀 촌스럽습니까? 뭐 어쩌겠습니까, 러닝하는데 말투가 중요합니까? 하하!",
     "자, 이제 고객님 얘기 좀 해주시겠습니까? 재밌는 러닝 계획 짜보려는데, 고객님 사정을 좀 알아야 제대로 도와드리지 않겠습니까? \uD83C\uDFC3\u200D♂\uFE0F\uD83D\uDCA8",
     "고객님 목표가 어떻게 되십니까?"
+)
+
+val MODIFY_WITH_DANNY = listOf(
+    "어이구! 또 오셨습니까? \uD83D\uDE1C 우리 고객님, 플랜 좀 바꿔보고 싶다 이 말입니까?",
+    "아이고, 참 잘하셨습니다! 뭐가 마음에 안 드십니까? 달리기가 너무 쉽습니까? 하하하! \uD83E\uDD23",
+    "자, 이제 고객님 얘기 좀 들어봅시다. 뭐가 문제였는지, 뭐를 바꾸고 싶은지 말씀해 보이소. \uD83D\uDC4D",
+    "힘든 게 있었습니까? 아니면 더 재밌게 하고 싶은 게 있습니까? 들어보이소, 대니 코치가 다 해결해 드리겠습니다! \uD83D\uDCAA"
 )
 
 val WEEK_LIST = listOf(

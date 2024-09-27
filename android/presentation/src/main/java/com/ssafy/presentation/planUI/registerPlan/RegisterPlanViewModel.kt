@@ -45,8 +45,12 @@ class RegisterPlanViewModel @Inject constructor(
     val contextData = _contextData.asStateFlow()
     val planData = _planData.asStateFlow()
 
-    private suspend fun initChatMessage(index: Long, sendAble: (Boolean) -> Unit) {
-        val coachMessages = index.toCoachMessage()
+    private suspend fun initChatMessage(
+        index: Long,
+        sendAble: (Boolean) -> Unit,
+        isModify: Boolean
+    ) {
+        val coachMessages = index.toCoachMessage(isModify)
             .map { ChatData.CoachData(it, index) }
             .toMutableList()
 
@@ -66,16 +70,17 @@ class RegisterPlanViewModel @Inject constructor(
         }
     }
 
-    fun getCoach(sendAble: (Boolean) -> Unit) = viewModelScope.launch(Dispatchers.IO) {
-        runCatching { dataStoreRepository.getUser() }
-            .onSuccess {
-                coachIndex = it.coachNumber
-                initChatMessage(it.coachNumber, sendAble)
-                // TODO 나중에는 최신 러닝 데이터도 같이 넣어야 함!
-                val context = contextData.value.copy(userInfo = it.toUserInfo())
-                _contextData.emit(context)
-            }
-    }
+    fun getCoach(sendAble: (Boolean) -> Unit, isModify: Boolean = false) =
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching { dataStoreRepository.getUser() }
+                .onSuccess {
+                    coachIndex = it.coachNumber
+                    initChatMessage(it.coachNumber, sendAble, isModify)
+                    // TODO 나중에는 최신 러닝 데이터도 같이 넣어야 함!
+                    val context = contextData.value.copy(userInfo = it.toUserInfo())
+                    _contextData.emit(context)
+                }
+        }
 
     fun sendMyMessage(message: String, failToMakeChat: suspend (String) -> Unit) =
         viewModelScope.launch(Dispatchers.IO) {
