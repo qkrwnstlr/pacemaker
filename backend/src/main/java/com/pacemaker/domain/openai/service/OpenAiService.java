@@ -48,7 +48,7 @@ public class OpenAiService {
 				// return response + " | startIdx: " + startIdx;
 
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
-				ContentResponse contentResponse = new Gson().fromJson(request.choices().get(0).message().content(),
+				ContentResponse contentResponse = new Gson().fromJson(request.choices().getFirst().message().content(),
 					ContentResponse.class);
 				System.out.println("contentResponse = " + contentResponse);
 
@@ -121,8 +121,7 @@ public class OpenAiService {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createRealTimeSystem(realTimeRequest.coachTone()),
-				Message.createUser(new Gson().toJson(realTimeRequest)),
-				Message.createRealTimeResponseFormat(
+				Message.createUser(new Gson().toJson(realTimeRequest)), Message.createRealTimeResponseFormat(
 					ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
 			.build();
 
@@ -133,8 +132,8 @@ public class OpenAiService {
 			.bodyToMono(String.class)
 			.map(response -> {
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
-				RealTimeResponse realTimeResponse = new Gson().fromJson(request.choices().get(0).message().content(),
-					RealTimeResponse.class);
+				RealTimeResponse realTimeResponse = new Gson().fromJson(
+					request.choices().getFirst().message().content(), RealTimeResponse.class);
 				System.out.println("realTimeResponse = " + realTimeResponse);
 
 				return new Gson().toJson(realTimeResponse);
@@ -156,7 +155,8 @@ public class OpenAiService {
 			.bodyToMono(String.class)
 			.map(response -> {
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
-				DailyCreateChatResponse dailyCreateChatResponse = new Gson().fromJson(request.choices().get(0).message().content(), DailyCreateChatResponse.class);
+				DailyCreateChatResponse dailyCreateChatResponse = new Gson().fromJson(
+					request.choices().getFirst().message().content(), DailyCreateChatResponse.class);
 
 				return new Gson().toJson(dailyCreateChatResponse);
 			});

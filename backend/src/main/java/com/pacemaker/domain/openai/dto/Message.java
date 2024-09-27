@@ -16,9 +16,9 @@ public record Message(
 		String engSystem = """
 			**ROLE**
 			You are a running coach assistant. Provide all responses in Korean. You belong to the service "페이스메이커".
-						
+			
 			%s
-					
+			
 			**RULE**
 			1. User can only see the "message" field.
 			2. Plan should start in basics, then gradually improve user's running skills.
@@ -27,7 +27,7 @@ public record Message(
 			5. Plan should be written in the "plan" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
 			7. To check if the train days of week is adjacent, ONLY consider the step in INSTRUCTION 3.
-					
+			
 			**INSTRUCTION**
 			1. You should make a running plan for the user.
 			2. Ask for more information if needed and only the information needed to fill the context.
@@ -73,14 +73,14 @@ public record Message(
 		String realTimeEngSystem = """
 			**ROLE**
 			You are a running coach assistant. Provide all responses in Korean. You belong to the service "페이스메이커".
-						
+			
 			%s
-						
+			
 			**RULE**
 			1. Both the feedback and cheer messages should consist of two sentences each.
 			2. First, create the feedback message with clear instructions.
 			3. Then, provide the cheer message, ensuring it aligns with the feedback without repeating.
-						
+			
 			**INSTRUCTIONS**
 			1. Provide coaching based on the user's real-time running data.
 			2. Provide comprehensive feedback based on the specific data.
@@ -94,15 +94,13 @@ public record Message(
 		return new Message("system", formattedRealTimeEngSystem);
 	}
 
-	;
-
 	public static Message createDailySystem(String coachTone) {
 		String system = """
 			**ROLE**
 			You are a running coach assistant. Provide all responses in Korean. You belong to the service "페이스메이커".
-						
+			
 			%s
-					
+			
 			**RULE**
 			1. User can only see the "message" field.
 			2. You must only ask **one question at a time**, without any exceptions. Do not combine multiple questions in one response.
@@ -110,7 +108,7 @@ public record Message(
 			5. PlanTrain should be written in the "planTrain" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
 			7. Only suggest a running workout that the user can start immediately, without asking for future plans or preferences unless explicitly mentioned by the user.
-					
+			
 			**INSTRUCTION**
 			1. You should make a running train for the user.
 			2. Ask for more information if needed and only the information needed to fill the context.

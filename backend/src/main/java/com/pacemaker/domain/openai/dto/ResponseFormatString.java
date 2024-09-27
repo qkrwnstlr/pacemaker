@@ -300,10 +300,10 @@ public class ResponseFormatString {
 				   },
 				 "required": ["index", "trainDate", "paramType", "repeat", "trainParam", "trainPace", "interParam"]
 				 }
-			   }	 	 
+			   }
 			 },
 			 "required": ["message", "context", "planTrain"]
 		   }
 		}
-		""";
+	""";
 }
