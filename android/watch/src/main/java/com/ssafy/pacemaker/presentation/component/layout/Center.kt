@@ -1,4 +1,4 @@
-package com.ssafy.pacemaker.presentation.component
+package com.ssafy.pacemaker.presentation.component.layout
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,5 +1,6 @@
 package com.ssafy.pacemaker.presentation.exercise
 
+import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.pacemaker.data.HealthServicesRepository
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,6 +49,24 @@ class ExerciseViewModel @Inject constructor(
 
     fun resumeExercise() {
         healthServicesRepository.resumeExercise()
+    }
+
+    fun collectServiceState(navigateToHomeRoute: () -> Unit, navigateToResultRoute: () -> Unit) {
+        viewModelScope.launch {
+            healthServicesRepository.serviceState.collect {
+                when (it) {
+                    is ServiceState.Disconnected -> {
+                        navigateToHomeRoute()
+                    }
+
+                    is ServiceState.Connected -> {
+                        when (it.exerciseServiceState.exerciseState) {
+                            ExerciseState.ENDED -> navigateToResultRoute()
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

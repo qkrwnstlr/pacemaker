@@ -50,7 +50,7 @@ class ExerciseService : LifecycleService() {
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()
 
     suspend fun prepareExercise() {
-        exerciseServiceMonitor.monitor()
+        exerciseServiceMonitor.connect()
         exerciseClientManager.prepareExercise()
     }
 
@@ -68,9 +68,13 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun endExercise() {
-        exerciseMonitor.disconnect()
         exerciseClientManager.endExercise()
         removeOngoingActivityNotification()
+    }
+
+    fun clearExercise() {
+        exerciseServiceMonitor.disconnect()
+        exerciseMonitor.disconnect()
     }
 
     fun markLap() {

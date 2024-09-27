@@ -29,8 +29,14 @@ import com.ssafy.pacemaker.presentation.component.text.PaceText
 import com.ssafy.pacemaker.service.ExerciseServiceState
 
 @Composable
-fun ExerciseRoute(modifier: Modifier = Modifier) {
+fun ExerciseRoute(
+    modifier: Modifier = Modifier,
+    onDisconnected: () -> Unit,
+    onEnd: () -> Unit
+) {
     val viewModel = hiltViewModel<ExerciseViewModel>()
+    viewModel.collectServiceState(onDisconnected, onEnd)
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ExerciseScreen(

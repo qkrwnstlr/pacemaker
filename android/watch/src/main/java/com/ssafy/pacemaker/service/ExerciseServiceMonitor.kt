@@ -1,7 +1,6 @@
 package com.ssafy.pacemaker.service
 
 import android.app.Service
-import android.util.Log
 import androidx.health.services.client.data.ExerciseUpdate
 import com.ssafy.pacemaker.data.ExerciseClientManager
 import com.ssafy.pacemaker.data.ExerciseMessage
@@ -24,7 +23,7 @@ class ExerciseServiceMonitor @Inject constructor(
         )
     )
 
-    suspend fun monitor() {
+    suspend fun connect() {
         exerciseClientManager.exerciseUpdateFlow.collect {
             when (it) {
                 is ExerciseMessage.ExerciseUpdateMessage ->
@@ -59,6 +58,15 @@ class ExerciseServiceMonitor @Inject constructor(
                 activeDurationCheckpoint = exerciseUpdate.activeDurationCheckpoint
                     ?: old.activeDurationCheckpoint,
                 exerciseGoal = exerciseUpdate.latestAchievedGoals
+            )
+        }
+    }
+
+    fun disconnect() {
+        exerciseServiceState.update {
+            ExerciseServiceState(
+                exerciseState = null,
+                exerciseMetrics = ExerciseMetrics()
             )
         }
     }

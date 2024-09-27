@@ -21,7 +21,6 @@ class HomeViewModel @Inject constructor(
         healthServicesRepository.startExercise()
     }
 
-
     fun collectServiceState(navigateToExerciseRoute: () -> Unit) {
         viewModelScope.launch {
             healthServicesRepository.serviceState.collect {

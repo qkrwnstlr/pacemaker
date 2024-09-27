@@ -42,8 +42,11 @@ class HealthServicesRepository @Inject constructor(
                 WearableClientManager.EXERCISE_DATA_PATH,
                 exerciseServiceState
             )
-
-            ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+            if (exerciseServiceState.exerciseState == null) {
+                ServiceState.Disconnected
+            } else {
+                ServiceState.Connected(exerciseServiceState.copy(error = errorString))
+            }
         }.stateIn(
             coroutineScope,
             started = SharingStarted.Eagerly,
@@ -70,7 +73,6 @@ class HealthServicesRepository @Inject constructor(
     fun startExercise() = serviceCall {
         try {
             errorState.value = null
-            Log.d(TAG, "startExercise: ")
             startExercise()
         } catch (e: Exception) {
             errorState.value = e.message
@@ -80,6 +82,7 @@ class HealthServicesRepository @Inject constructor(
     fun pauseExercise() = serviceCall { pauseExercise() }
     fun endExercise() = serviceCall { endExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
+    fun clearExercise() = serviceCall { clearExercise() }
 }
 
 sealed class ServiceState {

@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ssafy.pacemaker.presentation.exercise.ExerciseRoute
 import com.ssafy.pacemaker.presentation.home.HomeRoute
+import com.ssafy.pacemaker.presentation.result.ResultRoute
 
 @Composable
 fun NavHost(
@@ -27,7 +28,16 @@ fun NavHost(
         }
 
         composable(Screen.Exercise.route) {
-            ExerciseRoute()
+            ExerciseRoute(
+                onDisconnected = { navController.popBackStack() },
+                onEnd = { navController.navigate(Screen.Result.route) }
+            )
+        }
+
+        composable(Screen.Result.route) {
+            ResultRoute(
+                onFinish = { navController.navigate(Screen.Home.route) }
+            )
         }
     }
 }
