@@ -211,6 +211,39 @@ public class ReportService {
 			.build();
 	}
 
+	@Transactional(readOnly = true)
+	public ReportFreeResponse findReportFree(Long reportId, String uid) throws JsonProcessingException {
+		User user = findUserByUid(uid);
+		Report report = findReportById(reportId);
+
+		if (user != report.getUser()) {
+			throw new UserMismatchException("본인의 레포트만 조회할 수 있습니다.");
+		}
+
+		List<Integer> heartZone = convertListHeartZone(report.getHeartZone());
+		List<List<Double>> trainMap = convertListTrainMap(report.getTrainMap());
+
+		TrainResult trainResult = TrainResult.builder()
+			.trainDistance(report.getTrainDistance())
+			.trainTime(report.getTrainTime())
+			.heartRate(report.getHeartRate())
+			.pace(report.getPace())
+			.cadence(report.getCadence())
+			.kcal(report.getKcal())
+			.heartZone(heartZone)
+			.trainMap(trainMap)
+			.build();
+
+		TrainReport trainReport = TrainReport.builder()
+			.trainDuration(calculateTrainDuration(report.getTrainDate(), report.getTrainTime()))
+			.trainResult(trainResult)
+			.build();
+
+		return ReportFreeResponse.builder()
+			.trainReport(trainReport)
+			.build();
+	}
+
 	private User findUserByUid(String uid) {
 		return userRepository.findByUid(uid)
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
@@ -273,6 +306,16 @@ public class ReportService {
 
 	private TrainEvaluation convertStringTrainEvaluation(String trainEvaluation) throws JsonProcessingException {
 		return objectMapper.readValue(trainEvaluation, TrainEvaluation.class);
+	}
+
+	private List<Integer> convertListHeartZone(String heartZone) throws JsonProcessingException {
+		return objectMapper.readValue(heartZone, new TypeReference<>() {
+		});
+	}
+
+	private List<List<Double>> convertListTrainMap(String trainMap) throws JsonProcessingException {
+		return objectMapper.readValue(trainMap, new TypeReference<>() {
+		});
 	}
 
 	private List<LocalTime> calculateTrainDuration(LocalDateTime endDateTiem, Integer trainTime) {
