@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core.exercise
+package com.ssafy.presentation.core.exercise.manager
 
 import com.ssafy.domain.dto.User
 import com.ssafy.domain.dto.plan.PlanTrain

@@ -81,12 +81,11 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             collectTrainingState()
-            collectTrainingLocation()
         }
     }
 
     private fun CoroutineScope.collectTrainingState() = launch {
-        viewModel.exerciseState.collect {
+        viewModel.uiState.collect {
             if (it.isPaused) {
                 with(binding) {
                     btnPlay.showAnimate(true)
@@ -119,15 +118,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                         formatPace(exerciseState.exerciseMetrics.pace)
                     boxTime.tvRunningContent.text =
                         formatElapsedTime(exerciseState.activeDurationCheckpoint?.activeDuration)
+                    exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
                 }
-            }
-        }
-    }
-
-    private fun CoroutineScope.collectTrainingLocation() = launch {
-        viewModel.exerciseMonitor.exerciseSessionData.collect { result ->
-            for (locationData in result) {
-                locationData.location?.let { addMarker(it) }
             }
         }
     }

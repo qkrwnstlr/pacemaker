@@ -14,6 +14,12 @@ import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.ssafy.domain.repository.DataStoreRepository
+import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
+import com.ssafy.presentation.core.exercise.manager.CoachingManager
+import com.ssafy.presentation.core.exercise.manager.ExerciseManager
+import com.ssafy.presentation.core.exercise.manager.ExerciseNotificationManager
+import com.ssafy.presentation.core.exercise.manager.ReportsManager
+import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +40,7 @@ class ExerciseService : LifecycleService() {
     lateinit var wearableClientManager: WearableClientManager
 
     @Inject
-    lateinit var exerciseMonitor: ExerciseMonitor
+    lateinit var exerciseManager: ExerciseManager
 
     @Inject
     lateinit var coachingManager: CoachingManager
@@ -64,33 +70,29 @@ class ExerciseService : LifecycleService() {
         return START_STICKY
     }
 
-    private fun connectToExerciseMonitor() {
+    private fun connectToExerciseManager() {
         lifecycleScope.launch(Dispatchers.Default) {
-            exerciseMonitor.connect()
-            exerciseMonitor.exerciseServiceState.collect { exercise ->
-                if (exercise.exerciseState == ExerciseState.ENDED) {
-                    val result = healthConnectManager.writeExerciseSession(
-                        // TODO : title 변경
-                        "My Run #${Random.nextInt(0, 60)}",
-                        parseExerciseData(
-                            exercise.exerciseMetrics,
-                            exerciseMonitor.exerciseSessionData.value
-                        ),
-                        exerciseMonitor.exerciseSessionData.value
-                    )
-                    reportsManager.createPlanReports(
-                        exercise.exerciseMetrics,
-                        exerciseMonitor.exerciseSessionData.value,
-                        dataStoreRepository.getUser().coachNumber
-                    )
-                    exerciseMonitor.disconnect()
-                    coachingManager.disconnect()
+            exerciseManager.connect()
+            exerciseManager.exerciseServiceState.collect {
+                when(it.exerciseState) {
+                    ExerciseState.ENDED -> {
+                        healthConnectManager.writeExerciseSession(
+                            "My Run #${Random.nextInt(0, 60)}",
+                            exerciseManager.exerciseData.value,
+                        )
+                        reportsManager.createPlanReports(
+                            exerciseManager.exerciseData.value,
+                            dataStoreRepository.getUser().coachNumber
+                        )
+                        exerciseManager.disconnect()
+                        coachingManager.disconnect()
+                    }
                 }
             }
         }
     }
 
-    private fun connectToCoachingMonitor() {
+    private fun connectToCoachingManager() {
         lifecycleScope.launch(Dispatchers.Default) {
             coachingManager.connect()
             coachingManager.coachVoicePath.collect { coachPath ->
@@ -117,8 +119,8 @@ class ExerciseService : LifecycleService() {
 
     private fun stopSelfIfNotRunning() {
         lifecycleScope.launch {
-            if (exerciseMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
-                exerciseMonitor.disconnect()
+            if (exerciseManager.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
+                exerciseManager.disconnect()
                 coachingManager.disconnect()
                 stopForeground(STOP_FOREGROUND_REMOVE)
             }
@@ -160,7 +162,7 @@ class ExerciseService : LifecycleService() {
         fun getService() = this@ExerciseService
 
         val exerciseServiceState: Flow<ExerciseServiceState>
-            get() = this@ExerciseService.exerciseMonitor.exerciseServiceState
+            get() = this@ExerciseService.exerciseManager.exerciseServiceState
 
         val coachVoicePathState: Flow<String>
             get() = this@ExerciseService.coachingManager.coachVoicePath
@@ -182,8 +184,8 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
-        connectToExerciseMonitor()
-        connectToCoachingMonitor()
+        connectToExerciseManager()
+        connectToCoachingManager()
         wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
     }

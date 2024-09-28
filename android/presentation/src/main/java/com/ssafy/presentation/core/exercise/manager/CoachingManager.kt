@@ -1,9 +1,15 @@
-package com.ssafy.presentation.core.exercise
+package com.ssafy.presentation.core.exercise.manager
 
 import androidx.health.connect.client.units.Velocity
 import androidx.health.services.client.data.ExerciseState
 import com.ssafy.domain.dto.train.CoachingRequest
 import com.ssafy.domain.usecase.train.GetCoachingUseCase
+import com.ssafy.presentation.core.exercise.ExerciseMonitor
+import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
+import com.ssafy.presentation.core.exercise.data.cadence
+import com.ssafy.presentation.core.exercise.data.distance
+import com.ssafy.presentation.core.exercise.data.heartRate
+import com.ssafy.presentation.core.exercise.data.speed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,12 +24,12 @@ class CoachingManager @Inject constructor(
     private val planManager: PlanManager,
     private val getCoachingUseCase: GetCoachingUseCase,
 ) {
-    private var isConnect = false
+    private var isConnected = false
 
     val coachVoicePath = MutableStateFlow("")
 
     fun connect() {
-        isConnect = true
+        isConnected = true
         coroutineScope.launch {
             runCatching {
                 planManager.syncPlanInfo { disconnect() }
@@ -35,14 +41,14 @@ class CoachingManager @Inject constructor(
     }
 
     fun disconnect() {
-        isConnect = false
+        isConnected = false
     }
 
     private suspend fun collectExerciseSessionData() {
-        val list = mutableListOf<ExerciseSessionData>()
+        val collectedList = mutableListOf<ExerciseSessionData>()
 
         coroutineScope.launch {
-            while (isConnect) {
+            while (isConnected) {
                 delay(2 * 1_000 * 60)
 
                 val state = exerciseMonitor.exerciseServiceState.value
@@ -50,8 +56,8 @@ class CoachingManager @Inject constructor(
                 when (exerciseState) {
                     ExerciseState.ACTIVE -> {
                         val distance = state.exerciseMetrics.distance?.toFloat() ?: 0f
-                        getCoaching(distance, list)
-                        list.clear()
+                        getCoaching(distance, collectedList)
+                        collectedList.clear()
                     }
 
                     ExerciseState.ENDED -> break
@@ -59,9 +65,7 @@ class CoachingManager @Inject constructor(
             }
         }
 
-        exerciseMonitor.exerciseSessionData.collect {
-            it.lastOrNull()?.let { list.add(it) }
-        }
+        exerciseMonitor.exerciseSessionData.collect(collectedList::add)
     }
 
     private suspend fun getCoaching(totalDistance: Float, list: List<ExerciseSessionData>) {

@@ -4,6 +4,9 @@ import androidx.health.services.client.data.ExerciseState
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.gson.Gson
+import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
+import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
+import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +16,6 @@ import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val TAG = "ExerciseMonitor_PACEMAKER"
-
 @Singleton
 class ExerciseMonitor @Inject constructor(
     private val wearableClientManager: WearableClientManager,
@@ -22,20 +23,20 @@ class ExerciseMonitor @Inject constructor(
 ) : DataClient.OnDataChangedListener {
     val exerciseServiceState = MutableStateFlow(ExerciseServiceState())
 
-    val exerciseSessionData = MutableStateFlow<List<ExerciseSessionData>>(listOf())
+    val exerciseSessionData = MutableStateFlow(ExerciseSessionData())
 
     private var isConnect = false
 
-    fun connect() {
+    fun run() {
         isConnect = true
-        exerciseSessionData.update { listOf() }
+        exerciseSessionData.update { ExerciseSessionData() }
         wearableClientManager.dataClient.addListener(this)
         coroutineScope.launch {
             collectExerciseMetrics()
         }
     }
 
-    fun disconnect() {
+    fun stop() {
         isConnect = false
         wearableClientManager.dataClient.removeListener(this)
     }
@@ -63,9 +64,7 @@ class ExerciseMonitor @Inject constructor(
                 ExerciseState.ACTIVE -> {
                     val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
                     exerciseSessionData.update {
-                        exerciseSessionData.value.toMutableList().apply {
-                            add(exerciseMetrics.toExerciseSessionData(lastDistance))
-                        }
+                        exerciseMetrics.toExerciseSessionData(lastDistance)
                     }
                     exerciseMetrics.distance?.let { lastDistance = it }
                 }
