@@ -16,6 +16,8 @@ import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.ContentResponse;
 import com.pacemaker.domain.realtime.dto.RealTimeRequest;
 import com.pacemaker.domain.realtime.dto.RealTimeResponse;
+import com.pacemaker.domain.report.dto.CreateTrainEvaluationRequest;
+import com.pacemaker.domain.report.dto.CreateTrainEvaluationResponse;
 
 import reactor.core.publisher.Mono;
 
@@ -159,6 +161,28 @@ public class OpenAiService {
 					request.choices().getFirst().message().content(), DailyCreateChatResponse.class);
 
 				return new Gson().toJson(dailyCreateChatResponse);
+			});
+	}
+
+	public Mono<String> createTrainEvaluation(CreateTrainEvaluationRequest createTrainEvaluationRequest) {
+		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+			.model("gpt-4o-2024-08-06")
+			.messages(List.of(Message.createTrainEvaluation(createTrainEvaluationRequest.coachTone()),
+				Message.createUser(new Gson().toJson(createTrainEvaluationRequest)),
+				Message.createTrainEvaluationResponseFormat(
+					ResponseFormatString.createTrainEvaluationResponseFormat.replaceAll("\\s+", ""))))
+			.build();
+
+		return openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class)
+			.map(response -> {
+				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
+				CreateTrainEvaluationResponse createTrainEvaluationResponse = new Gson().fromJson(
+					request.choices().getFirst().message().content(), CreateTrainEvaluationResponse.class);
+				return new Gson().toJson(createTrainEvaluationResponse);
 			});
 	}
 }
