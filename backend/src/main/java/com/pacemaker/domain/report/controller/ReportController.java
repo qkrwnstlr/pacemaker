@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.pacemaker.domain.report.dto.ReportFreeRequest;
+import com.pacemaker.domain.report.dto.ReportFreeCreateRequest;
+import com.pacemaker.domain.report.dto.ReportFreeResponse;
 import com.pacemaker.domain.report.dto.ReportPlanCreateRequest;
 import com.pacemaker.domain.report.dto.ReportPlanResponse;
 import com.pacemaker.domain.report.service.ReportService;
@@ -29,17 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class ReportController {
 
 	private final ReportService reportService;
-
-	@PostMapping("/free")
-	@Operation(summary = "내맘대로 달리기 레포트 생성")
-	@ApiResponses({
-		@ApiResponse(responseCode = "201", description = "내맘대로 달리기 레포트 생성 성공")
-	})
-	public ResponseEntity<?> createFreeReport(@Valid @RequestBody
-	ReportFreeRequest reportFreeRequest) {
-		reportService.createFree(reportFreeRequest);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
 
 	@PostMapping("/plan")
 	@Operation(summary = "레포트 생성 - 플랜 훈련")
@@ -68,5 +58,16 @@ public class ReportController {
 	public ResponseEntity<ReportPlanResponse> findReportPlan(@PathVariable Long id, @PathVariable String uid) throws
 		JsonProcessingException {
 		return ResponseEntity.status(HttpStatus.OK).body(reportService.findReportPlan(id, uid));
+	}
+
+	@PostMapping("/free")
+	@Operation(summary = "레포트 생성 - 내맘대로 달리기")
+	@ApiResponses({
+		@ApiResponse(responseCode = "201", description = "내맘대로 달리기 레포트 생성 성공"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패")
+	})
+	public ResponseEntity<ReportFreeResponse> createFreeReport(
+		@RequestBody ReportFreeCreateRequest reportFreeCreateRequest) throws JsonProcessingException {
+		return ResponseEntity.status(HttpStatus.CREATED).body(reportService.createReportFree(reportFreeCreateRequest));
 	}
 }
