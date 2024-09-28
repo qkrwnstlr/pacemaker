@@ -69,4 +69,17 @@ public class ReportController {
 		@RequestBody ReportFreeCreateRequest reportFreeCreateRequest) throws JsonProcessingException {
 		return ResponseEntity.status(HttpStatus.CREATED).body(reportService.createReportFree(reportFreeCreateRequest));
 	}
+
+	@GetMapping("{id}/free/user/{uid}")
+	@Operation(summary = "레포트 조회 - 내맘대로 달리기")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "내맘대로 달리기 레포트 조회 성공"),
+		@ApiResponse(responseCode = "400", description = "회원정보 불일치"),
+		@ApiResponse(responseCode = "404", description = "레포트정보 조회 실패"),
+		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패")
+	})
+	public ResponseEntity<ReportFreeResponse> findReportFree(@PathVariable Long id, @PathVariable String uid) throws
+		JsonProcessingException {
+		return ResponseEntity.status(HttpStatus.OK).body(reportService.findReportFree(id, uid));
+	}
 }
