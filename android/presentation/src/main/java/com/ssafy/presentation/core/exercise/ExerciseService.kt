@@ -13,16 +13,17 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
 import com.ssafy.presentation.core.exercise.manager.CoachingManager
 import com.ssafy.presentation.core.exercise.manager.ExerciseManager
 import com.ssafy.presentation.core.exercise.manager.ExerciseNotificationManager
 import com.ssafy.presentation.core.exercise.manager.ReportsManager
+import com.ssafy.presentation.core.exercise.manager.TrainManager
+import com.ssafy.presentation.core.exercise.manager.TrainSession
+import com.ssafy.presentation.core.exercise.manager.TrainState
 import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -49,10 +50,11 @@ class ExerciseService : LifecycleService() {
     lateinit var reportsManager: ReportsManager
 
     @Inject
-    lateinit var healthConnectManager: HealthConnectManager
+    lateinit var trainManager: TrainManager
 
     @Inject
-    lateinit var dataStoreRepository: DataStoreRepository
+    lateinit var healthConnectManager: HealthConnectManager
+
 
     private var isBound = false
     private var isStarted = false
@@ -70,34 +72,67 @@ class ExerciseService : LifecycleService() {
         return START_STICKY
     }
 
-    private fun connectToExerciseManager() {
-        lifecycleScope.launch(Dispatchers.Default) {
-            exerciseManager.connect()
-            exerciseManager.exerciseServiceState.collect {
-                when(it.exerciseState) {
-                    ExerciseState.ENDED -> {
-                        healthConnectManager.writeExerciseSession(
-                            "My Run #${Random.nextInt(0, 60)}",
-                            exerciseManager.exerciseData.value,
-                        )
-                        reportsManager.createPlanReports(
-                            exerciseManager.exerciseData.value,
-                            dataStoreRepository.getUser().coachNumber
-                        )
-                        exerciseManager.disconnect()
-                        coachingManager.disconnect()
+    private suspend fun connectToTrainManager() {
+        trainManager.connect(exerciseManager.currentSessionData)
+        trainManager.trainState.collect {
+            when (it) {
+                TrainState.Before -> {
+                    // TODO : 훈련 시작 TTS 추가
+                    startExercise()
+                }
+
+                is TrainState.WarmUp -> TODO("Warm Up TTS 추가")
+
+                is TrainState.During -> {
+                    when (it.session.type) {
+                        TrainSession.Type.RUNNING -> {
+                            exerciseManager.stopJogging()
+                            // TODO : 러닝 시작 TTS 추가
+                            exerciseManager.startRunning()
+                        }
+
+                        TrainSession.Type.JOGGING -> {
+                            exerciseManager.stopRunning()
+                            // TODO : 조깅 시작 TTS 추가
+                            exerciseManager.startJogging()
+                        }
                     }
+                }
+
+                is TrainState.CoolDown -> TODO("Cool Down 시작 TTS 추가")
+
+                TrainState.Ended -> {
+                    // TODO : 훈련 종료 TTS 추가
+                    endExercise()
                 }
             }
         }
     }
 
-    private fun connectToCoachingManager() {
-        lifecycleScope.launch(Dispatchers.Default) {
-            coachingManager.connect()
-            coachingManager.coachVoicePath.collect { coachPath ->
-                speakCoaching(coachPath)
+    private suspend fun connectToExerciseManager() {
+        exerciseManager.connect()
+        exerciseManager.exerciseServiceState.collect {
+            when (it.exerciseState) {
+                ExerciseState.ENDED -> {
+                    healthConnectManager.writeExerciseSession(
+                        "${trainManager.train.id} (#${trainManager.train.index})",
+                        exerciseManager.exerciseData.value,
+                    )
+                    reportsManager.createPlanReports(
+                        trainManager.train.id,
+                        exerciseManager.exerciseData.value,
+                    )
+                    exerciseManager.disconnect()
+                    coachingManager.disconnect()
+                }
             }
+        }
+    }
+
+    private suspend fun connectToCoachingManager() {
+        coachingManager.connect(trainManager.train)
+        coachingManager.coachVoicePath.collect { coachPath ->
+            speakCoaching(coachPath)
         }
     }
 
@@ -184,6 +219,7 @@ class ExerciseService : LifecycleService() {
     }
 
     suspend fun startExercise() {
+        connectToTrainManager()
         connectToExerciseManager()
         connectToCoachingManager()
         wearableClientManager.startWearableActivity()

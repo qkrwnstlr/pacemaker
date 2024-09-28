@@ -2,6 +2,7 @@ package com.ssafy.presentation.core.exercise.manager
 
 import androidx.health.connect.client.units.Velocity
 import androidx.health.services.client.data.ExerciseState
+import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.domain.dto.train.CoachingRequest
 import com.ssafy.domain.usecase.train.GetCoachingUseCase
 import com.ssafy.presentation.core.exercise.ExerciseMonitor
@@ -21,22 +22,19 @@ import javax.inject.Singleton
 class CoachingManager @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val exerciseMonitor: ExerciseMonitor,
-    private val planManager: PlanManager,
     private val getCoachingUseCase: GetCoachingUseCase,
 ) {
     private var isConnected = false
 
+    private lateinit var train: PlanTrain
+
     val coachVoicePath = MutableStateFlow("")
 
-    fun connect() {
+    fun connect(train: PlanTrain) {
         isConnected = true
+        this.train = train
         coroutineScope.launch {
-            runCatching {
-                planManager.syncPlanInfo { disconnect() }
-                collectExerciseSessionData()
-            }.onFailure {
-                disconnect()
-            }
+            collectExerciseSessionData()
         }
     }
 
@@ -56,7 +54,7 @@ class CoachingManager @Inject constructor(
                 when (exerciseState) {
                     ExerciseState.ACTIVE -> {
                         val distance = state.exerciseMetrics.distance?.toFloat() ?: 0f
-                        getCoaching(distance, collectedList)
+                        getCoaching(distance, collectedList, train)
                         collectedList.clear()
                     }
 
@@ -68,8 +66,12 @@ class CoachingManager @Inject constructor(
         exerciseMonitor.exerciseSessionData.collect(collectedList::add)
     }
 
-    private suspend fun getCoaching(totalDistance: Float, list: List<ExerciseSessionData>) {
-        val coachingRequestDto = list.toCoachingRequest(totalDistance)
+    private suspend fun getCoaching(
+        totalDistance: Float,
+        exerciseSessionData: List<ExerciseSessionData>,
+        train: PlanTrain
+    ) {
+        val coachingRequestDto = exerciseSessionData.toCoachingRequest(totalDistance, train)
         runCatching {
             getCoachingUseCase(coachingRequestDto)
         }.onSuccess { filePath ->
@@ -77,15 +79,17 @@ class CoachingManager @Inject constructor(
         }
     }
 
-    private fun List<ExerciseSessionData>.toCoachingRequest(totalDistance: Float): CoachingRequest {
+    private fun List<ExerciseSessionData>.toCoachingRequest(
+        totalDistance: Float,
+        train: PlanTrain
+    ): CoachingRequest {
         return CoachingRequest(
-            planManager.coach,
             totalDistance,
             distance.toFloat(),
             heartRate.map { it.beatsPerMinute }.average().toInt(),
             speed.map { it.speed.pace }.average().toInt(),
             cadence.map { it.rate }.average().toInt(),
-            planManager.plan,
+            train,
         )
     }
 

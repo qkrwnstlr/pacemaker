@@ -38,17 +38,27 @@ class ExerciseManager @Inject constructor(
         exerciseMonitor.stop()
     }
 
-    fun startSession() {
+    fun startRunning() {
         isDuringSession = true
         currentSessionData.update { listOf() }
         coroutineScope.launch { collectExerciseSessionData() }
     }
 
-    fun stopSession() {
+    fun stopRunning() {
         isDuringSession = false
         exerciseData.update {
             it.copy(sessions = it.sessions.toMutableList().apply { add(currentSessionData.value) })
         }
+    }
+
+    fun startJogging() {
+        isDuringSession = true
+        currentSessionData.update { listOf() }
+        coroutineScope.launch { collectExerciseSessionData() }
+    }
+
+    fun stopJogging() {
+        isDuringSession = false
     }
 
     private suspend fun collectExerciseSessionData() {

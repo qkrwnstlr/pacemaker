@@ -2,15 +2,30 @@ package com.ssafy.domain.usecase.reports
 
 import com.ssafy.domain.dto.reports.CreatePlanReportsRequest
 import com.ssafy.domain.dto.reports.CreatePlanReportsResponse
+import com.ssafy.domain.dto.reports.TrainResult
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.repository.ReportsRepository
 import com.ssafy.domain.response.ResponseResult
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class CreatePlanReportsUseCase @Inject constructor(
+    private val dataStoreRepository: DataStoreRepository,
     private val reportsRepository: ReportsRepository
 ) {
-    suspend operator fun invoke(createPlanReportsRequest: CreatePlanReportsRequest): ResponseResult<CreatePlanReportsResponse> {
-        val result = reportsRepository.createPlanReports(createPlanReportsRequest)
+    suspend operator fun invoke(
+        planTrainId: Long,
+        trainResult: TrainResult
+    ): ResponseResult<CreatePlanReportsResponse> {
+        val user = dataStoreRepository.getUser()
+        val request = CreatePlanReportsRequest(
+            user.uid,
+            planTrainId,
+            user.coachNumber,
+            LocalDateTime.now().toString(),
+            trainResult,
+        )
+        val result = reportsRepository.createPlanReports(request)
         if (result is ResponseResult.Error) throw RuntimeException(result.message)
         return result
     }

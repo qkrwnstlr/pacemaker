@@ -21,6 +21,8 @@ class ExerciseRepository @Inject constructor(
     private val coroutineScope: CoroutineScope,
     lifecycle: ActivityRetainedLifecycle
 ) {
+    // TODO : service 운동 시작 시 bind, 운동 종료시 unbound 하도록 변경
+    
     private val binderConnection by lazy {
         lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
     }

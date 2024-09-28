@@ -1,6 +1,7 @@
 package com.ssafy.domain.dto.plan
 
 data class PlanTrain(
+    val id: Long = 0,
     val index: Int = 0,
     val trainDate: String = "",
     val paramType: String = "",
