@@ -10,14 +10,13 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.pacemaker.global.exception.ActivePlanNotFoundException;
 import com.pacemaker.global.exception.ConflictException;
-import com.pacemaker.global.exception.InvalidUsernameException;
+import com.pacemaker.global.exception.InvalidDateException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
 import com.pacemaker.global.exception.UserMismatchException;
 import com.pacemaker.global.util.mattermost.NotificationManager;
 
-import jakarta.persistence.NoResultException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -40,7 +39,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(PlanAlreadyExistsException.class)
-	public ResponseEntity<String> handlePlanAlreadyExistsException(PlanAlreadyExistsException e, HttpServletRequest req) {
+	public ResponseEntity<String> handlePlanAlreadyExistsException(PlanAlreadyExistsException e,
+		HttpServletRequest req) {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
@@ -54,10 +54,18 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ActivePlanNotFoundException.class)
-	public ResponseEntity<String> handleActivePlanNotFoundException(ActivePlanNotFoundException e, HttpServletRequest req) {
+	public ResponseEntity<String> handleActivePlanNotFoundException(ActivePlanNotFoundException e,
+		HttpServletRequest req) {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(InvalidDateException.class)
+	public ResponseEntity<String> handleInvalidDateException(InvalidDateException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(NotFoundException.class)
@@ -82,15 +90,17 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(NoResourceFoundException.class)
-	public ResponseEntity<String> handleNoResourceFoundExceptionException(NoResourceFoundException e, HttpServletRequest req) {
+	public ResponseEntity<String> handleNoResourceFoundExceptionException(NoResourceFoundException e,
+		HttpServletRequest req) {
 		// 계속 이상한 공격 들어와서 이거는 로그 안 찍게 하기
-		
+
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<String> handleGeneralException(Exception e, HttpServletRequest req) {
-		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req)); // mattermost log 찍기
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(),
+			getParams(req)); // mattermost log 찍기
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
 	}

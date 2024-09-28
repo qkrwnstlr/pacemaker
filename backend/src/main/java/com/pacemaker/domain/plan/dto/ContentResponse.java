@@ -1,7 +1,10 @@
 package com.pacemaker.domain.plan.dto;
 
 import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pacemaker.global.util.TempValue;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
@@ -65,12 +68,12 @@ public class ContentResponse {
 			}
 
 			if ("time".equals(paramType)) {
-				calculateSessionTime();
+				paramTypeTime();
 				return;
 			}
 
 			if ("distance".equals(paramType)) {
-				calculateSessionDistance();
+				paramTypeDistance();
 				return;
 			}
 
@@ -78,15 +81,17 @@ public class ContentResponse {
 			return;
 		}
 
-		private void calculateSessionTime() {
+		private void paramTypeTime() {
 			// 총 시간 계산 로직
 			this.sessionTime = trainParam * repetition + interParam * (repetition - 1);
-			this.sessionDistance = 0; // 아직 기준이 없어서 0 (기준을 정한다면 조깅할 때 페이스? 이런거?)
+			this.sessionDistance = (int)Math.round(trainParam * 1000.0 / trainPace * repetition)
+				+ (int)Math.round(interParam * 1000.0 / TempValue.JOGGING_PACE * (repetition - 1));
 		}
 
-		private void calculateSessionDistance() {
+		private void paramTypeDistance() {
 			// 총 거리 계산 로직
-			this.sessionTime = 0; // 위와 동일
+			this.sessionTime = (int)Math.round(trainParam / 1000.0 * trainPace * repetition)
+				+ (int)Math.round(interParam / 1000.0 * (repetition - 1));
 			this.sessionDistance = trainParam * repetition + interParam * (repetition - 1);
 		}
 	}

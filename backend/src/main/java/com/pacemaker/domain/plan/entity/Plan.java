@@ -25,7 +25,7 @@ public class Plan {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "created_at", nullable = false, updatable = false)
+	@Column(name = "created_at", nullable = false)
 	private LocalDate createdAt;
 
 	@Column(name = "expired_at", nullable = false)

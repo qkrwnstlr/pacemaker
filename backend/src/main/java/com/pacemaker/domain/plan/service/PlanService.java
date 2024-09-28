@@ -10,8 +10,8 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
-import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.dto.CreatePlanResponse;
+import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
@@ -20,6 +20,7 @@ import com.pacemaker.domain.report.dto.PlanTrainResponse;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
 import com.pacemaker.global.exception.ActivePlanNotFoundException;
+import com.pacemaker.global.exception.InvalidDateException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
@@ -42,7 +43,8 @@ public class PlanService {
 		User user = findUserByUid(createPlanRequest.uid());
 
 		// 플랜 존재 체크
-		existsByUserId(user.getId());
+		existsActivePlan(user.getId());
+		existsNowPlanTrain(user.getId());
 
 		// 유저 정보 업데이트
 		ContentRequest.Context.UserInfo userInfo = createPlanRequest.context().userInfo();
@@ -66,6 +68,7 @@ public class PlanService {
 
 	@Transactional(readOnly = true)
 	public CreatePlanResponse findActivePlanByUid(String uid) {
+
 		Plan findActivePlan = findActivePlan(uid);
 
 		CreatePlanResponse planResponse = CreatePlanResponse.builder()
@@ -74,10 +77,7 @@ public class PlanService {
 
 		int size = findActivePlan.getPlanTrains().size();
 		for (int i = 0; i < size; i++) {
-			planResponse.getPlanTrains().add(CreatePlanResponse.PlanTrainDTO.builder()
-				.planTrain(findActivePlan.getPlanTrains().get(i))
-				.index(i)
-				.build());
+			planResponse.addPlanTrain(findActivePlan.getPlanTrains().get(i), i);
 		}
 
 		return planResponse;
@@ -113,10 +113,10 @@ public class PlanService {
 
 	@Transactional(readOnly = true)
 	public ProgressPlanResponse findPlanProgressByUid(String uid, Integer year, Integer month, Integer day) {
-		
+
 		// 입력 받은 값 검증 및 반환
 		LocalDate date = createLocalDate(year, month, day);
-		
+
 		// 해당 하는 플랜 찾기
 		Plan findPlan = findPlanByUidAndDate(uid, date);
 
@@ -135,9 +135,15 @@ public class PlanService {
 			.orElseThrow(() -> new NotFoundException("해당 사용자를 찾을 수 없습니다."));
 	}
 
-	private void existsByUserId(Long userId) {
-		if (planRepository.existsByUserId(userId)) {
+	private void existsActivePlan(Long userId) {
+		if (planRepository.existsActivePlan(userId)) {
 			throw new PlanAlreadyExistsException("해당 사용자는 이미 플랜이 존재합니다.");
+		}
+	}
+
+	private void existsNowPlanTrain(Long userId) {
+		if (planTrainRepository.existsNowPlanTrain(userId)) {
+			throw new PlanAlreadyExistsException("해당 사용자는 이미 플랜이 존재합니다. (오늘 plan train 존재)");
 		}
 	}
 
@@ -159,6 +165,7 @@ public class PlanService {
 
 		return Plan.builder()
 			.user(userInfo)
+			.createdAt(LocalDate.parse(planTrains.getFirst().trainDate()))
 			.expiredAt(LocalDate.parse(planTrains.getLast().trainDate()))
 			.totalDays(totalDays)
 			.totalTimes(totalTimes)
@@ -215,7 +222,7 @@ public class PlanService {
 			return LocalDate.of(year, month, day);
 
 		} catch (Exception e) {
-			return null;
+			throw new InvalidDateException("올바르지 않은 날짜입니다. : " + year + "-" + month + "-" + day);
 		}
 	}
 
