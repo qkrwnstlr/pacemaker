@@ -15,18 +15,25 @@ import com.ssafy.domain.utils.ifNotHuman
 import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.ERROR
+import com.ssafy.presentation.utils.displayText
 import com.ssafy.presentation.utils.toCoachMessage
+import com.ssafy.presentation.utils.toDayString
 import com.ssafy.presentation.utils.toPlan
 import com.ssafy.presentation.utils.toUserInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.DayOfWeek
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
@@ -43,14 +50,17 @@ class RegisterPlanViewModel @Inject constructor(
     private val _chatData = MutableStateFlow<List<ChatData>>(emptyList())
     private val _contextData = MutableStateFlow(Context())
     private val _planData = MutableStateFlow(Plan())
+    private val _failEvent = MutableSharedFlow<String>()
 
     val chatData = _chatData.asStateFlow()
     val contextData = _contextData.asStateFlow()
     val planData = _planData.asStateFlow()
+    val failEvent = _failEvent.asSharedFlow()
 
     private suspend fun initChatMessage(
         index: Long,
         sendAble: (Boolean) -> Unit,
+        showSelectWeekDayDialog: () -> Unit,
         isModify: Boolean
     ) {
         val coachMessages = index.toCoachMessage(isModify)
@@ -65,6 +75,7 @@ class RegisterPlanViewModel @Inject constructor(
         }.onCompletion {
             withContext(Dispatchers.Main) {
                 sendAble(true)
+                showSelectWeekDayDialog()
             }
         }.collect { coachMessage ->
             val newList = _chatData.value.toMutableList()
@@ -73,27 +84,40 @@ class RegisterPlanViewModel @Inject constructor(
         }
     }
 
-    fun initData(sendAble: (Boolean) -> Unit, isModify: Boolean = false) =
+    fun initData(
+        sendAble: (Boolean) -> Unit,
+        showSelectWeekDayDialog: () -> Unit,
+        isModify: Boolean = false
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching { dataStoreRepository.getUser() }
                 .onSuccess {
                     coachIndex = it.coachNumber
-                    initChatMessage(it.coachNumber, sendAble, isModify)
+                    initChatMessage(it.coachNumber, sendAble, showSelectWeekDayDialog, isModify)
                     // TODO 나중에는 최신 러닝 데이터도 같이 넣어야 함!
                     val context = contextData.value.copy(userInfo = it.toUserInfo())
                     _contextData.emit(context)
                 }
-
-            runCatching { getPlanInfoUseCase() }
-                .onSuccess { planInfo ->
-                    val newPlanData = planInfo.toPlan()
-                    _planData.emit(newPlanData)
-                }.onFailure {
-                    it.printStackTrace()
-                }
         }
 
-    fun sendMyMessage(message: String, failToMakeChat: suspend (String) -> Unit) =
+        if (isModify) {
+            viewModelScope.launch(Dispatchers.IO) {
+                runCatching { getPlanInfoUseCase() }
+                    .onSuccess { planInfo ->
+                        val newPlanData = planInfo.toPlan(false)
+                        val trainDays = planInfo.context.trainDayOfWeek
+                        val newContext = contextData.value.copy(trainDayOfWeek = trainDays)
+
+                        _planData.emit(newPlanData)
+                        _contextData.emit(newContext)
+                    }.onFailure {
+                        it.printStackTrace()
+                    }
+            }
+        }
+    }
+
+    fun sendMyMessage(message: String) =
         viewModelScope.launch(Dispatchers.IO) {
             val newList = _chatData.value.toMutableList()
             val myMessage = ChatData.MyData(message)
@@ -101,10 +125,10 @@ class RegisterPlanViewModel @Inject constructor(
             newList.add(myMessage)
             newList.add(coachMessage)
             _chatData.emit(newList)
-            makeChat(message, failToMakeChat)
+            makeChat(message)
         }
 
-    private fun makeChat(text: String, failToMakeChat: suspend (String) -> Unit) =
+    private fun makeChat(text: String) =
         viewModelScope.launch(Dispatchers.IO) {
             val chat = Chat(message = text, context = contextData.value, plan = planData.value)
             runCatching { chatForPlanUseCase(chat) }
@@ -112,7 +136,7 @@ class RegisterPlanViewModel @Inject constructor(
                 .onFailure {
                     it.printStackTrace()
                     removeCoachChat()
-                    failToMakeChat(it.message ?: FAILURE)
+                    _failEvent.emit(it.message ?: FAILURE)
                 }
         }
 
@@ -154,7 +178,6 @@ class RegisterPlanViewModel @Inject constructor(
     fun makePlan(
         uid: String,
         successToMakePlan: suspend () -> Unit,
-        failToMakePlan: suspend (String) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
         val planRequest = PlanRequest(
             uid = uid,
@@ -166,8 +189,16 @@ class RegisterPlanViewModel @Inject constructor(
             .onSuccess { successToMakePlan() }
             .onFailure {
                 it.printStackTrace()
-                failToMakePlan(ERROR)
+                _failEvent.emit(it.message ?: ERROR)
             }
+    }
+
+    fun setPlanDate(planWeek: Set<DayOfWeek>) {
+        val newContext = _contextData.value.copy(trainDayOfWeek = planWeek.map { it.toDayString() })
+        _contextData.update { newContext }
+
+        val chat = planWeek.joinToString(", ") { it.displayText(locale = Locale.KOREAN) }
+        sendMyMessage("훈련 날짜를 ${chat}으로 할게")
     }
 
     companion object {

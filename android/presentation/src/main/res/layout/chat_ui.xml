@@ -20,19 +20,32 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/tv_week_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/plan_week_title"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_week"
+        app:layout_constraintEnd_toStartOf="@id/tv_week"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="@id/tv_week" />
+
+    <TextView
         android:id="@+id/tv_week"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/user_info"
-        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintEnd_toStartOf="@id/iv_week_modify"
+        app:layout_constraintStart_toEndOf="@id/tv_week_title"
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <ImageView
         android:id="@+id/iv_week_modify"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="@dimen/margin_24"
+        android:paddingHorizontal="@dimen/padding_10"
         android:src="@drawable/baseline_arrow_forward_24"
         app:layout_constraintBottom_toBottomOf="@id/tv_week"
         app:layout_constraintStart_toEndOf="@id/tv_week"
@@ -68,8 +81,8 @@
         android:id="@+id/cv_chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/margin_24"
-        android:layout_marginVertical="@dimen/margin_24"
+        android:layout_marginTop="@dimen/margin_24"
+        android:layout_marginBottom="@dimen/margin_10"
         android:backgroundTint="@color/fifthPrimary"
         android:elevation="0dp"
         android:outlineProvider="none"
