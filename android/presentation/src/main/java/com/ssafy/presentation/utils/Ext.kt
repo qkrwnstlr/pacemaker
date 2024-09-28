@@ -60,7 +60,7 @@ fun List<String>.toInjuries(): String {
 fun Double.toPaceString(): String {
     val pace = roundToInt()
     val minute = pace / 60
-    val second = pace % 60
+    val second = (pace % 60).toString().padStart(2, '0')
     return "${minute}'${second}\""
 }
 
@@ -118,7 +118,7 @@ fun String.toLocalDateDot(): String {
 
 fun Int.toTrainPace(): String {
     val minute = this / 60
-    val second = this % 60
+    val second = (this % 60).toString().padStart(2,'0')
     return "${minute}'${second}\""
 }
 
