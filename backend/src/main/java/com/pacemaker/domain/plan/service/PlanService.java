@@ -10,8 +10,8 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
-import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.dto.CreatePlanResponse;
+import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanTrain;
 import com.pacemaker.domain.plan.repository.PlanRepository;
@@ -20,6 +20,7 @@ import com.pacemaker.domain.report.dto.PlanTrainResponse;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
 import com.pacemaker.global.exception.ActivePlanNotFoundException;
+import com.pacemaker.global.exception.InvalidDateException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
@@ -112,10 +113,10 @@ public class PlanService {
 
 	@Transactional(readOnly = true)
 	public ProgressPlanResponse findPlanProgressByUid(String uid, Integer year, Integer month, Integer day) {
-		
+
 		// 입력 받은 값 검증 및 반환
 		LocalDate date = createLocalDate(year, month, day);
-		
+
 		// 해당 하는 플랜 찾기
 		Plan findPlan = findPlanByUidAndDate(uid, date);
 
@@ -221,7 +222,7 @@ public class PlanService {
 			return LocalDate.of(year, month, day);
 
 		} catch (Exception e) {
-			return null;
+			throw new InvalidDateException("올바르지 않은 날짜입니다. : " + year + "-" + month + "-" + day);
 		}
 	}
 
