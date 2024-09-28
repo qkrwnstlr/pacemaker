@@ -94,14 +94,16 @@ public class PlanController {
 		return ResponseEntity.status(HttpStatus.OK).body(planService.findActivePlanByUid(uid));
 	}
 
-	@Operation(summary = "승준이를 위한 Active Plan 삭제 (status 변환이 아님 그냥 다 삭제임)")
+	@Operation(summary = "Test를 위한 Active Plan 삭제 (status 변환이 아님 그냥 다 삭제임)")
 	@ApiResponses({
 		@ApiResponse(responseCode = "204", description = "플랜 삭제 성공"),
 		@ApiResponse(responseCode = "404", description = "사용자의 진행 중인 플랜이 존재하지 않음")
 	})
-	@DeleteMapping("/active/user/{uid}")
-	public ResponseEntity<?> deleteActivePlan(@PathVariable("uid") String uid) {
-		planService.deleteActivePlanByUid(uid);
+	@DeleteMapping("/test/active/user/{uid}")
+	public ResponseEntity<?> deleteActivePlanForTest(@PathVariable("uid") String uid) {
+
+		// 나중에 삭제할 api
+		planService.deleteActivePlanByUidForTest(uid);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
@@ -114,5 +116,17 @@ public class PlanController {
 		@RequestParam Integer month, @RequestParam Integer day) {
 
 		return ResponseEntity.status(HttpStatus.OK).body(planService.findPlanProgressByUid(uid, year, month, day));
+	}
+
+	@Operation(summary = "사용자의 Active Plan 삭제")
+	@ApiResponses({
+		@ApiResponse(responseCode = "204", description = "플랜 삭제 성공"),
+		@ApiResponse(responseCode = "404", description = "사용자의 진행 중인 플랜이 존재하지 않음")
+	})
+	@DeleteMapping("/active/user/{uid}")
+	public ResponseEntity<?> deleteActivePlan(@PathVariable("uid") String uid) {
+
+		planService.deleteActivePlanByUid(uid);
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 }
