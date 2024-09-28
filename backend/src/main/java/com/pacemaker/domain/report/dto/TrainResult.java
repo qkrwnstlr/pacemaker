@@ -17,9 +17,9 @@ import lombok.Builder;
 public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer trainTime, @NotNull Integer heartRate,
 						  @NotNull Integer pace, @NotNull Integer cadence, @NotNull Integer kcal,
 						  @NotNull @Size(max = 5, min = 5) List<Integer> heartZone, List<SplitData> splitData,
-						  @NotNull List<List<Double>> trainMap, List<String> coachMessage) {
+						  @NotNull List<List<Double>> trainMap, Long coachNumber, List<String> coachMessage) {
 
-	public static TrainResult of(Report report, List<String> coachMessage) throws JsonProcessingException {
+	public static TrainResult of(Report report, Long coachNumber, List<String> coachMessage) throws JsonProcessingException {
 		return TrainResult.builder()
 			.trainDistance(report.getTrainDistance())
 			.trainTime(report.getTrainTime())
@@ -30,6 +30,7 @@ public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer train
 			.heartZone(convertListHeartZone(report.getHeartZone()))
 			.splitData(convertObjectSplitData(report.getSplitData()))
 			.trainMap(convertListTrainMap(report.getTrainMap()))
+			.coachNumber(coachNumber)
 			.coachMessage(coachMessage)
 			.build();
 	}
