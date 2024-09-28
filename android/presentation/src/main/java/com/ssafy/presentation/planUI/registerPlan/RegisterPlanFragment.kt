@@ -108,6 +108,10 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
                 visibility = visible
             }
         }
+
+        chatUi.ivWeekModify.setOnClickListener {
+            modifyPlanWeek()
+        }
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -167,6 +171,11 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
                 cvDays.smoothScrollToMonth(it.yearMonth.previousMonth)
             }
         }
+    }
+
+    private fun modifyPlanWeek() {
+        val manager = requireActivity().supportFragmentManager
+        SelectWeekDialog().show(manager, "SelectWeek")
     }
 
     private fun setUpCalendar(

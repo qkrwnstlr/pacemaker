@@ -1,4 +1,4 @@
-package com.ssafy.presentation.scheduleUI.planDetail
+package com.ssafy.presentation.planUI.registerPlan
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.fragment.app.DialogFragment
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.DialogSelectWeekBinding
 
-class PlanModifyDialog : DialogFragment() {
+class SelectWeekDialog : DialogFragment() {
     private var _binding: DialogSelectWeekBinding? = null
     private val binding: DialogSelectWeekBinding get() = _binding!!
 
