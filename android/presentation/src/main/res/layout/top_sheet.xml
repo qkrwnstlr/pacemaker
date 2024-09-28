@@ -9,7 +9,7 @@
     android:elevation="@dimen/elevation_8"
     android:focusable="true"
     android:orientation="vertical"
-    app:behavior_hideable="true"
+    app:behavior_hideable="false"
     app:behavior_peekHeight="200dp"
     app:layout_behavior="com.ssafy.presentation.homeUI.TopSheetBehavior">
 
@@ -53,6 +53,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingHorizontal="@dimen/padding_16"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/top_sheet_handle"
         app:layout_constraintEnd_toEndOf="@+id/top_sheet_handle"
         app:layout_constraintStart_toStartOf="@+id/top_sheet_handle"
