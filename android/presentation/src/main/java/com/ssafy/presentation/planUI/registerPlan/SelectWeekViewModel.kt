@@ -10,11 +10,21 @@ import java.time.DayOfWeek
 
 class SelectWeekViewModel : ViewModel() {
 
-    private val _weekListState: MutableStateFlow<List<DayOfWeek>> = MutableStateFlow(emptyList())
-    val weekListState: StateFlow<List<DayOfWeek>> = _weekListState.asStateFlow()
+    private val _weekListState: MutableStateFlow<Set<DayOfWeek>> = MutableStateFlow(emptySet())
+    val weekListState: StateFlow<Set<DayOfWeek>> = _weekListState.asStateFlow()
+
+    private val weekMap = mapOf(
+        "Monday" to DayOfWeek.MONDAY,
+        "Tuesday" to DayOfWeek.TUESDAY,
+        "Wednesday" to DayOfWeek.WEDNESDAY,
+        "Thursday" to DayOfWeek.THURSDAY,
+        "Friday" to DayOfWeek.FRIDAY,
+        "Saturday" to DayOfWeek.SATURDAY,
+        "Sunday" to DayOfWeek.SUNDAY
+    )
 
     fun selectDay(day: DayOfWeek, selected: Boolean, isNotValid: (DayOfWeek) -> Unit) {
-        val weekList = weekListState.value.toMutableList()
+        val weekList = weekListState.value.toMutableSet()
 
         if (selected) {
             val prevDay = day.minus(1)
@@ -27,6 +37,13 @@ class SelectWeekViewModel : ViewModel() {
             weekList.remove(day)
         }
 
+        _weekListState.update { weekList }
+    }
+
+    fun addDays(days: List<String>) {
+        val weekList = weekListState.value.toMutableSet()
+
+        days.forEach { day -> weekMap[day]?.let { weekList.add(it) } }
         _weekListState.update { weekList }
     }
 

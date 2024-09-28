@@ -24,7 +24,10 @@ import java.time.DayOfWeek.THURSDAY
 import java.time.DayOfWeek.TUESDAY
 import java.time.DayOfWeek.WEDNESDAY
 
-class SelectWeekDialog(private val setPlanDate: (List<DayOfWeek>) -> Unit) : DialogFragment() {
+class SelectWeekDialog(
+    private val trainDays: List<String>,
+    private val setPlanDate: (Set<DayOfWeek>) -> Unit
+) : DialogFragment() {
     private var _binding: DialogSelectWeekBinding? = null
     private val binding: DialogSelectWeekBinding get() = _binding!!
     private val viewModel: SelectWeekViewModel by viewModels()
@@ -54,8 +57,10 @@ class SelectWeekDialog(private val setPlanDate: (List<DayOfWeek>) -> Unit) : Dia
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initListener()
         initCollect()
+        viewModel.addDays(trainDays)
     }
 
     private fun initListener() = with(binding) {
@@ -99,7 +104,7 @@ class SelectWeekDialog(private val setPlanDate: (List<DayOfWeek>) -> Unit) : Dia
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            viewModel.weekListState.collectLatest { weekList: List<DayOfWeek> ->
+            viewModel.weekListState.collectLatest { weekList: Set<DayOfWeek> ->
                 binding.btnOk.isEnabled = weekList.isNotEmpty()
 
                 DayOfWeek.entries.forEach { day ->
