@@ -16,7 +16,7 @@ import lombok.Builder;
 @Builder
 public record TrainResult(@NotNull Integer trainDistance, @NotNull Integer trainTime, @NotNull Integer heartRate,
 						  @NotNull Integer pace, @NotNull Integer cadence, @NotNull Integer kcal,
-						  @NotNull @Size(max = 5, min = 5) List<Integer> heartZone, @NotNull List<SplitData> splitData,
+						  @NotNull @Size(max = 5, min = 5) List<Integer> heartZone, List<SplitData> splitData,
 						  @NotNull List<List<Double>> trainMap, Long coachNumber, List<String> coachMessage) {
 
 	public static TrainResult of(Report report, Long coachNumber, List<String> coachMessage) throws JsonProcessingException {

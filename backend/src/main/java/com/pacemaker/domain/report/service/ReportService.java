@@ -24,7 +24,8 @@ import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.dto.CreateTrainEvaluationRequest;
 import com.pacemaker.domain.report.dto.CreateTrainEvaluationResponse;
 import com.pacemaker.domain.report.dto.PlanTrainResponse;
-import com.pacemaker.domain.report.dto.ReportFreeRequest;
+import com.pacemaker.domain.report.dto.ReportFreeCreateRequest;
+import com.pacemaker.domain.report.dto.ReportFreeResponse;
 import com.pacemaker.domain.report.dto.ReportPlanCreateRequest;
 import com.pacemaker.domain.report.dto.ReportPlanResponse;
 import com.pacemaker.domain.report.dto.SplitData;
@@ -55,35 +56,6 @@ public class ReportService {
 	private final ObjectMapper objectMapper;
 	private final ReportPlanTrainRepository reportPlanTrainRepository;
 	private final PlanRepository planRepository;
-
-	@Transactional
-	public void createFree(ReportFreeRequest reportFreeRequest) {
-		/*
-		reportFreeRequestDto의 uid로 User 객체 조회
-		return -> Optionanl<User>
-		값이 없는 경우 null 대신 Optional.empty()를 반환
-		 */
-		User user = userRepository.findByUid(reportFreeRequest.uid())
-			.orElseThrow(() -> new NotFoundException("해당 사용자가 없습니다."));
-
-		TrainResult tr = reportFreeRequest.trainResult();
-
-		// Report 엔티티 생성 및 저장
-		// Report report = Report.builder()
-		// 	.user(user)
-		// 	.trainDate(LocalDateTime.now()) // 오늘
-		// 	.trainDistance(tr.totalDistance())
-		// 	.trainTime(tr.totalTime())
-		// 	.heartRate(tr.meanHeartRate())
-		// 	.pace(tr.meanPace())
-		// 	.cadence(tr.meanCadence())
-		// 	.kcal(tr.totalKcal())
-		// 	.heartZone(tr.heartRateZone().toString())
-		// 	.trainType(TrainType.FREE).build();
-		//
-		// reportRepository.save(report);
-
-	}
 
 	@Transactional
 	public ReportPlanResponse createReportPlan(ReportPlanCreateRequest reportPlanCreateRequest) throws
@@ -187,6 +159,54 @@ public class ReportService {
 
 		return ReportPlanResponse.builder()
 			.planTrain(planTrainResponse)
+			.trainReport(trainReport)
+			.build();
+	}
+
+	@Transactional
+	public ReportFreeResponse createReportFree(ReportFreeCreateRequest reportFreeCreateRequest) throws
+		JsonProcessingException {
+
+		User user = findUserByUid(reportFreeCreateRequest.uid());
+		user.updateUserTrainReport(reportFreeCreateRequest.trainResult().trainTime(),
+			reportFreeCreateRequest.trainResult().trainDistance());
+
+		String heartZone = convertStringHeartZone(reportFreeCreateRequest.trainResult().heartZone());
+		String trainMap = convertStringTrainMap(reportFreeCreateRequest.trainResult().trainMap());
+
+		Report report = reportRepository.save(Report.builder()
+			.user(user)
+			.trainDate(reportFreeCreateRequest.trainDate())
+			.trainDistance(reportFreeCreateRequest.trainResult().trainDistance())
+			.trainTime(reportFreeCreateRequest.trainResult().trainTime())
+			.heartRate(reportFreeCreateRequest.trainResult().heartRate())
+			.pace(reportFreeCreateRequest.trainResult().pace())
+			.cadence(reportFreeCreateRequest.trainResult().cadence())
+			.kcal(reportFreeCreateRequest.trainResult().kcal())
+			.heartZone(heartZone)
+			.trainMap(trainMap)
+			.reportType(ReportType.FREE)
+			.build());
+
+		TrainResult trainResult = TrainResult.builder()
+			.trainDistance(report.getTrainDistance())
+			.trainTime(report.getTrainTime())
+			.heartRate(report.getHeartRate())
+			.pace(report.getPace())
+			.cadence(report.getCadence())
+			.kcal(report.getKcal())
+			.heartZone(reportFreeCreateRequest.trainResult().heartZone())
+			.trainMap(reportFreeCreateRequest.trainResult().trainMap())
+			.build();
+
+		List<LocalTime> trainDuration = calculateTrainDuration(reportFreeCreateRequest.trainDate(),
+			reportFreeCreateRequest.trainResult().trainTime());
+		TrainReport trainReport = TrainReport.builder()
+			.trainDuration(trainDuration)
+			.trainResult(trainResult)
+			.build();
+
+		return ReportFreeResponse.builder()
 			.trainReport(trainReport)
 			.build();
 	}
