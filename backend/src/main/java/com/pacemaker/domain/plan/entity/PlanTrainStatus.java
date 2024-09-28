@@ -1,5 +1,5 @@
 package com.pacemaker.domain.plan.entity;
 
-public enum TrainStatus {
+public enum PlanTrainStatus {
 	BEFORE, DONE
 }

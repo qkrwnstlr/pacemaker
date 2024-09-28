@@ -57,11 +57,11 @@ public class PlanTrain {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private TrainStatus status;
+	private PlanTrainStatus status;
 
 	@Builder
 	public PlanTrain(Plan plan, LocalDate trainDate, String paramType, Integer sessionTime, Integer sessionDistance,
-		Integer repetition, Integer trainParam, Integer trainPace, Integer interParam, TrainStatus status) {
+		Integer repetition, Integer trainParam, Integer trainPace, Integer interParam, PlanTrainStatus status) {
 		this.plan = plan;
 		this.trainDate = trainDate;
 		this.paramType = paramType;
@@ -71,10 +71,10 @@ public class PlanTrain {
 		this.trainParam = trainParam;
 		this.trainPace = trainPace;
 		this.interParam = interParam;
-		this.status = (status != null) ? status : TrainStatus.BEFORE;
+		this.status = (status != null) ? status : PlanTrainStatus.BEFORE;
 	}
 
-	public void updatePlanTrainStatus(TrainStatus status) {
+	public void updatePlanTrainStatus(PlanTrainStatus status) {
 		this.status = status;
 	}
 

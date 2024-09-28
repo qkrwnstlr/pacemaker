@@ -15,7 +15,7 @@ import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
-import com.pacemaker.domain.plan.entity.TrainStatus;
+import com.pacemaker.domain.plan.entity.PlanTrainStatus;
 import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.dto.PlanTrainResponse;
@@ -105,7 +105,7 @@ public class PlanService {
 		// Before PlanTrain 제거
 		// 여기에서 고려사항이 있을까?
 		for (PlanTrain planTrain : findActivePlan.getPlanTrains()) {
-			if (planTrain.getStatus() == TrainStatus.DONE) {
+			if (planTrain.getStatus() == PlanTrainStatus.DONE) {
 				continue;
 			}
 
