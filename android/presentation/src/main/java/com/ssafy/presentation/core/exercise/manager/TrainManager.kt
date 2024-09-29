@@ -25,9 +25,15 @@ class TrainManager @Inject constructor(
     val trainState: MutableStateFlow<TrainState> = MutableStateFlow(TrainState.Before)
 
     suspend fun connect(exerciseSessionFlow: Flow<List<ExerciseSessionData>>) {
-        train = getPlanInfoUseCase().planTrains.firstOrNull {
-            it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
-        } ?: PlanTrain()
+        runCatching {
+            getPlanInfoUseCase()
+        }.onSuccess {
+            train = getPlanInfoUseCase().planTrains.firstOrNull {
+                it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
+            } ?: PlanTrain()
+        }.onFailure {
+            train = PlanTrain()
+        }
 
         trainState.update { TrainState.Before }
 
