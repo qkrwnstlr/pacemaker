@@ -15,6 +15,7 @@ import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
 import com.pacemaker.global.exception.UserMismatchException;
+import com.pacemaker.global.exception.WebClientTtsException;
 import com.pacemaker.global.util.mattermost.NotificationManager;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -103,5 +104,13 @@ public class GlobalExceptionHandler {
 			getParams(req)); // mattermost log 찍기
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+	}
+
+	@ExceptionHandler(WebClientTtsException.class)
+	public ResponseEntity<String> handleWebClientTtsException(WebClientTtsException e, HttpServletRequest req) {
+		// TTS 생성 오류 로그
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_GATEWAY);
 	}
 }
