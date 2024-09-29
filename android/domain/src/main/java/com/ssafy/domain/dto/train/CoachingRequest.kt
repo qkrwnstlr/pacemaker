@@ -1,6 +1,7 @@
 package com.ssafy.domain.dto.train
 
 import com.ssafy.domain.dto.plan.PlanTrain
+import com.google.gson.annotations.SerializedName
 
 data class CoachingRequest(
     val totalDistance: Float,
@@ -10,5 +11,6 @@ data class CoachingRequest(
     val meanCadence: Int,
     val planTrain: PlanTrain,
     val coachTone: String = "",
+    @SerializedName("coachNumber")
     val coachIndex: Long = 2L
 )

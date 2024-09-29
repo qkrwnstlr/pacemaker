@@ -11,4 +11,5 @@ java {
 dependencies {
     implementation(libs.javax.inject)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0") // 최신 버전으로 변경 가능
+    implementation(libs.gson)
 }

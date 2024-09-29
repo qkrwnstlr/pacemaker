@@ -9,7 +9,7 @@ import retrofit2.http.Streaming
 
 interface TrainAPI {
 
-    @POST("realtimes")
+    @POST("realtimes/feedback")
     @Streaming
     suspend fun getCoaching(@Body dto: CoachingRequest): Response<ResponseBody>
 
