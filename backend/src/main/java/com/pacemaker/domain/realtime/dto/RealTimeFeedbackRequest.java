@@ -7,9 +7,9 @@ import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-public record RealTimeRequest(@NotNull Integer coachIndex, @NotNull String coachTone, @NotNull Integer meanHeartRate,
-							  @NotNull Integer meanPace, @NotNull Integer meanCadence, @NotNull float nowDistance,
-							  @NotNull PlanTrain planTrain) {
+public record RealTimeFeedbackRequest(@NotNull Long coachIndex, @NotNull String coachTone, @NotNull Integer meanHeartRate,
+									  @NotNull Integer meanPace, @NotNull Integer meanCadence, @NotNull float nowDistance,
+									  @NotNull PlanTrain planTrain) {
 
 	@Builder
 	public record PlanTrain(

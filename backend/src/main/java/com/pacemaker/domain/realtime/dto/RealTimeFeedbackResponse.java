@@ -7,5 +7,5 @@ import lombok.Builder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder
-public record RealTimeResponse(@NotNull String textFeedback, @NotNull String textCheer) {
+public record RealTimeFeedbackResponse(@NotNull String textFeedback, @NotNull String textCheer) {
 }
