@@ -13,7 +13,9 @@ import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpo
 import androidx.health.services.client.data.LocationAvailability
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.ssafy.domain.usecase.train.GetTTSUseCase
 import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
+import com.ssafy.presentation.core.exercise.data.message
 import com.ssafy.presentation.core.exercise.manager.CoachingManager
 import com.ssafy.presentation.core.exercise.manager.ExerciseManager
 import com.ssafy.presentation.core.exercise.manager.ExerciseNotificationManager
@@ -29,7 +31,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
-import kotlin.random.Random
 import kotlin.time.Duration.Companion.seconds
 
 @AndroidEntryPoint
@@ -55,6 +56,9 @@ class ExerciseService : LifecycleService() {
     @Inject
     lateinit var healthConnectManager: HealthConnectManager
 
+    @Inject
+    lateinit var getTTSUseCase: GetTTSUseCase
+
 
     private var isBound = false
     private var isStarted = false
@@ -75,42 +79,46 @@ class ExerciseService : LifecycleService() {
     private suspend fun connectToTrainManager() {
         trainManager.connect(exerciseManager.currentSessionData)
         trainManager.trainState.collect {
+            speakMessage(it.message)
+
             when (it) {
                 TrainState.Before -> {
-                    // TODO : 훈련 시작 TTS 추가
                     startExercise()
                 }
 
-                is TrainState.WarmUp -> TODO("Warm Up TTS 추가")
+                is TrainState.WarmUp -> {
+                    exerciseManager.connect()
+                    speakMessage(trainManager.train.message)
+                }
 
                 is TrainState.During -> {
-                    when (it.session.type) {
-                        TrainSession.Type.RUNNING -> {
+                    when (it.session) {
+                        is TrainSession.Running -> {
                             exerciseManager.stopJogging()
-                            // TODO : 러닝 시작 TTS 추가
                             exerciseManager.startRunning()
+                            coachingManager.connect(trainManager.train)
                         }
 
-                        TrainSession.Type.JOGGING -> {
+                        is TrainSession.Jogging -> {
                             exerciseManager.stopRunning()
-                            // TODO : 조깅 시작 TTS 추가
                             exerciseManager.startJogging()
+                            coachingManager.disconnect()
                         }
                     }
                 }
 
-                is TrainState.CoolDown -> TODO("Cool Down 시작 TTS 추가")
+                is TrainState.CoolDown -> {
+                    coachingManager.disconnect()
+                }
 
                 TrainState.Ended -> {
-                    // TODO : 훈련 종료 TTS 추가
                     endExercise()
                 }
             }
         }
     }
 
-    private suspend fun connectToExerciseManager() {
-        exerciseManager.connect()
+    private suspend fun collectExerciseServiceState() {
         exerciseManager.exerciseServiceState.collect {
             when (it.exerciseState) {
                 ExerciseState.ENDED -> {
@@ -129,10 +137,17 @@ class ExerciseService : LifecycleService() {
         }
     }
 
-    private suspend fun connectToCoachingManager() {
-        coachingManager.connect(trainManager.train)
+    private suspend fun collectCoachVoicePath() {
         coachingManager.coachVoicePath.collect { coachPath ->
             speakCoaching(coachPath)
+        }
+    }
+
+    private suspend fun speakMessage(message: String) {
+        runCatching {
+            getTTSUseCase(message)
+        }.onSuccess { path ->
+            speakCoaching(path)
         }
     }
 
@@ -220,8 +235,8 @@ class ExerciseService : LifecycleService() {
 
     suspend fun startExercise() {
         connectToTrainManager()
-        connectToExerciseManager()
-        connectToCoachingManager()
+        collectExerciseServiceState()
+        collectCoachVoicePath()
         wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
     }

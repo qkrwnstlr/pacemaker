@@ -48,6 +48,7 @@ class CoachingManager @Inject constructor(
         coroutineScope.launch {
             while (isConnected) {
                 delay(2 * 1_000 * 60)
+                if (!isConnected) break
 
                 val state = exerciseMonitor.exerciseServiceState.value
                 val exerciseState = state.exerciseState

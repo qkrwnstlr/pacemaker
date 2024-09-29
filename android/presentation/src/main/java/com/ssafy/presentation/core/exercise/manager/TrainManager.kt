@@ -33,12 +33,12 @@ class TrainManager @Inject constructor(
 
         when (train.paramType) {
             "time" -> {
-                running = TrainSession.timeRunning(train.trainParam)
+                running = TrainSession.timeRunning(train.trainParam, train.trainPace)
                 jogging = TrainSession.timeJogging(train.interParam)
             }
 
             "distance" -> {
-                running = TrainSession.distanceRunning(train.trainParam)
+                running = TrainSession.distanceRunning(train.trainParam, train.trainPace)
                 jogging = TrainSession.distanceJogging(train.interParam)
             }
         }
@@ -70,13 +70,13 @@ class TrainManager @Inject constructor(
                 }
 
                 is TrainState.During -> {
-                    when (session.type) {
-                        TrainSession.Type.RUNNING -> {
+                    when (session) {
+                        is TrainSession.Running -> {
                             if (step <= train.repetition) TrainState.During(jogging, step)
                             else TrainState.CoolDown()
                         }
 
-                        TrainSession.Type.JOGGING -> {
+                        is TrainSession.Jogging -> {
                             TrainState.During(running, step + 1)
                         }
                     }
@@ -121,21 +121,21 @@ sealed class TrainState {
 }
 
 sealed class TrainSession(val type: Type, val goal: Int) {
-    class Time(type: Type, goal: Int) : TrainSession(type, goal)
-    class Distance(type: Type, goal: Int) : TrainSession(type, goal)
+    class Running(type: Type, goal: Int, val pace: Int) : TrainSession(type, goal)
+    class Jogging(type: Type, goal: Int) : TrainSession(type, goal)
 
     companion object {
-        fun timeRunning(goal: Int) = Time(Type.RUNNING, goal)
-        fun distanceRunning(goal: Int) = Time(Type.JOGGING, goal)
-        fun timeJogging(goal: Int) = Distance(Type.RUNNING, goal)
-        fun distanceJogging(goal: Int) = Distance(Type.JOGGING, goal)
+        fun timeRunning(goal: Int, pace: Int) = Running(Type.TIME, goal, pace)
+        fun distanceRunning(goal: Int, pace: Int) = Running(Type.DISTANCE, goal, pace)
+        fun timeJogging(goal: Int) = Jogging(Type.TIME, goal)
+        fun distanceJogging(goal: Int) = Jogging(Type.DISTANCE, goal)
 
         val WARM_UP = timeJogging(Duration.ofMinutes(5).seconds.toInt())
         val COOL_DOWN = timeJogging(Duration.ofMinutes(5).seconds.toInt())
     }
 
     enum class Type {
-        RUNNING,
-        JOGGING;
+        TIME,
+        DISTANCE;
     }
 }
