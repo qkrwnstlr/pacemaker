@@ -3,7 +3,7 @@ package com.pacemaker.domain.plan.dto;
 import java.time.LocalDate;
 
 import com.pacemaker.domain.plan.entity.PlanTrain;
-import com.pacemaker.domain.plan.entity.TrainStatus;
+import com.pacemaker.domain.plan.entity.PlanTrainStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +29,7 @@ public class PlanTrainResponse {
 
 	private Integer interParam;
 
-	private TrainStatus status;
+	private PlanTrainStatus status;
 
 	private Integer index;
 

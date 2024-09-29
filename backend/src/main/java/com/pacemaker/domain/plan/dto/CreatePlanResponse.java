@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
-import com.pacemaker.domain.plan.entity.TrainStatus;
+import com.pacemaker.domain.plan.entity.PlanTrainStatus;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -88,7 +88,7 @@ public class CreatePlanResponse {
 
 		private Integer interParam;
 
-		private TrainStatus status;
+		private PlanTrainStatus status;
 
 		private Integer index;
 

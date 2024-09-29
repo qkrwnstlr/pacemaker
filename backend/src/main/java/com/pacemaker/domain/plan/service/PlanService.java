@@ -13,7 +13,9 @@ import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanResponse;
 import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
 import com.pacemaker.domain.plan.entity.Plan;
+import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
+import com.pacemaker.domain.plan.entity.PlanTrainStatus;
 import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.dto.PlanTrainResponse;
@@ -84,7 +86,7 @@ public class PlanService {
 	}
 
 	@Transactional
-	public void deleteActivePlanByUid(String uid) {
+	public void deleteActivePlanByUidForTest(String uid) {
 		Plan findActivePlan = findActivePlan(uid);
 
 		// PlanTrain 제거
@@ -92,6 +94,31 @@ public class PlanService {
 
 		// Plan 제거
 		planRepository.delete(findActivePlan);
+	}
+
+	@Transactional
+	public void deleteActivePlanByUid(String uid) {
+
+		// 사용자의 활성 Plan 찾기
+		Plan findActivePlan = findActivePlan(uid);
+
+		// Before PlanTrain 제거
+		// 여기에서 고려사항이 있을까?
+		for (PlanTrain planTrain : findActivePlan.getPlanTrains()) {
+			if (planTrain.getStatus() == PlanTrainStatus.DONE) {
+				continue;
+			}
+
+			findActivePlan.getPlanTrains().remove(planTrain);
+		}
+
+		if (findActivePlan.getPlanTrains().isEmpty()) {
+			// 관련된 PlanTrain이 없기 때문에 Plan도 삭제
+			planRepository.delete(findActivePlan);
+		} else {
+			// 플랜 삭제 상태로 변경
+			findActivePlan.updatePlanStatus(PlanStatus.DELETED);
+		}
 	}
 
 	@Transactional(readOnly = true)

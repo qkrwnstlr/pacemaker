@@ -18,7 +18,7 @@ import com.pacemaker.domain.openai.service.OpenAiService;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
-import com.pacemaker.domain.plan.entity.TrainStatus;
+import com.pacemaker.domain.plan.entity.PlanTrainStatus;
 import com.pacemaker.domain.plan.repository.PlanRepository;
 import com.pacemaker.domain.plan.repository.PlanTrainRepository;
 import com.pacemaker.domain.report.dto.CreateTrainEvaluationRequest;
@@ -67,7 +67,7 @@ public class ReportService {
 		Plan plan = planTrain.getPlan();
 		Coach coach = findCoachById(reportPlanCreateRequest.coachNumber());
 
-		planTrain.updatePlanTrainStatus(TrainStatus.DONE);
+		planTrain.updatePlanTrainStatus(PlanTrainStatus.DONE);
 		user.updateUserTrainReport(reportPlanCreateRequest.trainResult().trainTime(),
 			reportPlanCreateRequest.trainResult().trainDistance());
 		plan.updateCompletedCount();
