@@ -72,7 +72,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         binding.vpReport.adapter = adapter
 
         planStateView = binding.lyPlan
-        viewModel.dateProgressInfo(selectedDate, ::setProgress)
+        viewModel.dateProgressInfo(getUid(), selectedDate, ::setProgress)
+
 
         binding.exOneCalendar.monthScrollListener = { month ->
             viewModel.setMonthHasTrain(getUid(), month.yearMonth.year, month.yearMonth.monthValue)
@@ -93,15 +94,18 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     }
 
-    private fun setProgress(progressData: ProgressData) {
-        if (progressData.status == "NOTHING") {
+    private fun setProgress(progressData: ProgressData?) {
+        if (progressData==null) {
             planStateView.isVisible = false
         } else {
+            planStateView.isVisible = true
             planStateView.setPlanData(
-                progressData.goal,
+                progressData.context.goal,
                 progressData.completedCount,
                 progressData.totalDays,
-                progressData.status
+                progressData.status,
+                progressData.totalDistances,
+                progressData.totalTimes,
             )
         }
     }
@@ -184,6 +188,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         selectedDate = date
         monthCalendarView.notifyDateChanged(predate)
         monthCalendarView.notifyDateChanged(date)
+        viewModel.dateProgressInfo(getUid(), selectedDate, ::setProgress)
         viewModel.dateList.value.let { dateList ->
             flag = true
             for (trainDate in dateList.keys) {

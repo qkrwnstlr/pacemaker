@@ -6,7 +6,6 @@ import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.dto.schedule.ProgressData
 import retrofit2.Response
-import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,6 +25,6 @@ class PlanDataSourceImpl @Inject constructor(private val planAPI: PlanAPI) : Pla
         planAPI.deletePlan(uid)
 
 
-    override suspend fun getProgress(date: LocalDate): Response<ProgressData> =
-        planAPI.getProgress(date)
+    override suspend fun getProgress(uid:String, year:Int, month:Int, day:Int): Response<ProgressData> =
+        planAPI.getProgress(uid, year, month, day)
 }
