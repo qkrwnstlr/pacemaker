@@ -112,8 +112,13 @@ public class PlanService {
 			findActivePlan.getPlanTrains().remove(planTrain);
 		}
 
-		// 플랜 삭제 상태로 변경
-		findActivePlan.updatePlanStatus(PlanStatus.DELETED);
+		if (findActivePlan.getPlanTrains().isEmpty()) {
+			// 관련된 PlanTrain이 없기 때문에 Plan도 삭제
+			planRepository.delete(findActivePlan);
+		} else {
+			// 플랜 삭제 상태로 변경
+			findActivePlan.updatePlanStatus(PlanStatus.DELETED);
+		}
 	}
 
 	@Transactional(readOnly = true)
