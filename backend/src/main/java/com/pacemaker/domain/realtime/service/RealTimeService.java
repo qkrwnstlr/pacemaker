@@ -17,12 +17,12 @@ public class RealTimeService {
 		this.gpuServerWebClient = gpuServerWebClient;
 	}
 
-	public Mono<byte[]> createRealTimeTts(String message, Long coachIndex) {
+	public Mono<byte[]> createRealTimeTts(String message, Long coachNumber) {
 		return gpuServerWebClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path("/tts")
 				.queryParam("message", message)
-				.queryParam("coach_index", coachIndex)
+				.queryParam("coachNumber", coachNumber)
 				.build())
 			.retrieve()
 			.onStatus(HttpStatusCode::is5xxServerError, clientResponse -> {

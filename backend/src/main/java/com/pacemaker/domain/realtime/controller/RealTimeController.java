@@ -44,7 +44,7 @@ public class RealTimeController {
 				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
 				System.out.println("GPT processing time: " + timeElapsed + " milliseconds"); // 나중에 log로 바꾸기
 
-				return realTimeService.createRealTimeTts(response, realTimeFeedbackRequest.coachIndex());
+				return realTimeService.createRealTimeTts(response, realTimeFeedbackRequest.coachNumber());
 			})
 			.map(wavFile -> {
 				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
@@ -66,7 +66,7 @@ public class RealTimeController {
 	public Mono<ResponseEntity<byte[]>> createRealTimeTts(@RequestBody RealTimeTtsRequest realTimeTtsRequest) {
 		Instant start = Instant.now();
 
-		return realTimeService.createRealTimeTts(realTimeTtsRequest.message(), realTimeTtsRequest.coachIndex())
+		return realTimeService.createRealTimeTts(realTimeTtsRequest.message(), realTimeTtsRequest.coachNumber())
 			.map(wavFile -> {
 				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
 				System.out.println("TTS creation Time = " + timeElapsed + " milliseconds");

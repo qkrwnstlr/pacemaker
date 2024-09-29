@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record RealTimeTtsRequest(@NotNull Long coachIndex, @NotNull String message) {
+public record RealTimeTtsRequest(@NotNull Long coachNumber, @NotNull String message) {
 }
