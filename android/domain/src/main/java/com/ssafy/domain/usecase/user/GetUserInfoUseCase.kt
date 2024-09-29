@@ -6,5 +6,9 @@ import com.ssafy.domain.response.ResponseResult
 import javax.inject.Inject
 
 class GetUserInfoUseCase @Inject constructor(private val userRepository: UserRepository) {
-    suspend operator fun invoke(uid: String): ResponseResult<User> = userRepository.getInfo(uid)
+    suspend operator fun invoke(uid: String): User {
+        val response = userRepository.getInfo(uid)
+        if (response is ResponseResult.Error) throw RuntimeException(response.message)
+        return response.data ?: throw RuntimeException()
+    }
 }
