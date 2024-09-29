@@ -96,6 +96,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.14.2")
     //Data Store
 
+    // LOTTIE 이미지
+    implementation(libs.dotlottie.android)
+
     implementation(libs.play.services.wearable)
 
     implementation(libs.gson)
