@@ -16,7 +16,7 @@ class CreatePlanReportsUseCase @Inject constructor(
     suspend operator fun invoke(
         planTrainId: Long,
         trainResult: TrainResult
-    ): ResponseResult<CreatePlanReportsResponse> {
+    ): CreatePlanReportsResponse {
         val user = dataStoreRepository.getUser()
         val request = CreatePlanReportsRequest(
             user.uid,
@@ -26,7 +26,6 @@ class CreatePlanReportsUseCase @Inject constructor(
             trainResult,
         )
         val result = reportsRepository.createPlanReports(request)
-        if (result is ResponseResult.Error) throw RuntimeException(result.message)
-        return result
+        return result.data ?: throw RuntimeException(result.message)
     }
 }
