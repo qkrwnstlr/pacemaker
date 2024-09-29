@@ -5,6 +5,7 @@ import com.ssafy.data.di.IoDispatcher
 import com.ssafy.data.response.ERROR
 import com.ssafy.data.source.train.TrainDataSource
 import com.ssafy.domain.dto.train.CoachingRequest
+import com.ssafy.domain.dto.train.TTSRequest
 import com.ssafy.domain.repository.TrainRepository
 import com.ssafy.domain.response.ResponseResult
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -28,6 +29,11 @@ class TrainRepositoryImpl @Inject constructor(
 
     override suspend fun getCoaching(coachingRequest: CoachingRequest): ResponseResult<File> {
         val response = withContext(ioDispatcher) { trainDataSource.getCoaching(coachingRequest) }
+        return response.toFile()
+    }
+
+    override suspend fun getTTS(ttsRequest: TTSRequest): ResponseResult<File> {
+        val response = withContext(ioDispatcher) { trainDataSource.getTTS(ttsRequest) }
         return response.toFile()
     }
 
