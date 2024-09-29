@@ -3,6 +3,7 @@ agp = "8.5.2"
 connectClient = "1.1.0-alpha06"
 datastorePreferences = "1.1.1"
 desugar_jdk_libs = "2.1.1"
+dotlottieAndroid = "0.5.0"
 fragmentKtx = "1.8.2"
 javaxInject = "1"
 healthServicesClient = "1.1.0-alpha03"
@@ -73,6 +74,7 @@ androidx-wear-remote-interactions = { module = "androidx.wear:wear-remote-intera
 androidx-wear-tooling-preview = { module = "androidx.wear:wear-tooling-preview", version.ref = "wearToolingPreview" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntimeKtxVersion" }
 desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
+dotlottie-android = { module = "com.github.LottieFiles:dotlottie-android", version.ref = "dotlottieAndroid" }
 horologist-compose-layout = { module = "com.google.android.horologist:horologist-compose-layout", version.ref = "horologistComposeLayout" }
 horologist-compose-material = { module = "com.google.android.horologist:horologist-compose-material", version.ref = "horologistComposeLayout" }
 horologist-health-composables = { module = "com.google.android.horologist:horologist-health-composables", version.ref = "horologistComposeLayout" }
