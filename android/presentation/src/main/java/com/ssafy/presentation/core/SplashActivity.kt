@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.model.Config
 import com.lottiefiles.dotlottie.core.util.DotLottieEventListener
@@ -14,6 +15,8 @@ import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
@@ -48,7 +51,7 @@ class SplashActivity : AppCompatActivity() {
             addEventListener(object : DotLottieEventListener {
                 override fun onComplete() {
                     super.onComplete()
-                    moveToMainActivity()
+                    collectUID()
                     removeEventListener(this)
                 }
             })
@@ -57,9 +60,15 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun moveToMainActivity() {
+    private fun collectUID() = lifecycleScope.launch {
+        viewModel.uidState.collectLatest { uid ->
+            uid?.let { moveToMainActivity(it) }
+        }
+    }
+
+    private fun moveToMainActivity(uid: String) {
         val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(UID, viewModel.uid)
+            putExtra(UID, uid)
         }
         startActivity(intent)
     }

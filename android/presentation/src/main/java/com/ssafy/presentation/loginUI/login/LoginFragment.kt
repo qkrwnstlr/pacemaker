@@ -35,10 +35,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun initCheck() {
-        requireActivity().intent.getStringExtra(SplashActivity.UID)?.let { uid ->
-            mainViewModel.updateNewUid(uid)
-        }
+        val uid = requireActivity().intent.getStringExtra(SplashActivity.UID)
+        if (uid.isNullOrBlank()) return
 
+        mainViewModel.updateNewUid(uid)
         if (getUid().isNotBlank()) {
             moveToHomeFragment()
         }
