@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pacemaker.domain.openai.service.OpenAiService;
 import com.pacemaker.domain.realtime.dto.RealTimeFeedbackRequest;
+import com.pacemaker.domain.realtime.dto.RealTimeTtsRequest;
 import com.pacemaker.domain.realtime.service.RealTimeService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,10 +31,12 @@ public class RealTimeController {
 
 	@Operation(summary = "실시간 피드백 음성")
 	@ApiResponses({
-		@ApiResponse(responseCode = "200", description = "실시간 피드백 코치 음성 생성 성공")
+		@ApiResponse(responseCode = "200", description = "실시간 피드백 코치 음성 생성 성공"),
+		@ApiResponse(responseCode = "502", description = "GPU 서버 통신 오류로 음성 생성 실패")
 	})
 	@PostMapping("/feedback")
-	public Mono<ResponseEntity<?>> createRealTimeFeedback(@RequestBody RealTimeFeedbackRequest realTimeFeedbackRequest) {
+	public Mono<ResponseEntity<?>> createRealTimeFeedback(
+		@RequestBody RealTimeFeedbackRequest realTimeFeedbackRequest) {
 		Instant start = Instant.now();
 
 		return openAiService.createRealTimeChatCompletions(realTimeFeedbackRequest)
@@ -50,6 +53,27 @@ public class RealTimeController {
 				return ResponseEntity.ok()
 					.header(HttpHeaders.CONTENT_TYPE, "audio/wav")
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"feedback.wav\"")
+					.body(wavFile);
+			});
+	}
+
+	@Operation(summary = "실시간 러닝 안내 메세지 TTS 생성")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "실시간 러닝 안내 코치 음성 TTS 생성 성공"),
+		@ApiResponse(responseCode = "502", description = "GPU 서버 통신 오류로 음성 생성 실패")
+	})
+	@PostMapping("/tts")
+	public Mono<ResponseEntity<byte[]>> createRealTimeTts(@RequestBody RealTimeTtsRequest realTimeTtsRequest) {
+		Instant start = Instant.now();
+
+		return realTimeService.createRealTimeTts(realTimeTtsRequest.message(), realTimeTtsRequest.coachIndex())
+			.map(wavFile -> {
+				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
+				System.out.println("TTS creation Time = " + timeElapsed + " milliseconds");
+
+				return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_TYPE, "audio/wav")
+					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"tts.wav\"")
 					.body(wavFile);
 			});
 	}
