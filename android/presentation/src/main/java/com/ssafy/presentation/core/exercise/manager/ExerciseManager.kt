@@ -8,6 +8,7 @@ import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
 import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,7 +42,7 @@ class ExerciseManager @Inject constructor(
     fun startRunning() {
         isDuringSession = true
         currentSessionData.update { listOf() }
-        coroutineScope.launch { collectExerciseSessionData() }
+        collectExerciseSessionData()
     }
 
     fun stopRunning() {
@@ -54,16 +55,16 @@ class ExerciseManager @Inject constructor(
     fun startJogging() {
         isDuringSession = true
         currentSessionData.update { listOf() }
-        coroutineScope.launch { collectExerciseSessionData() }
+        collectExerciseSessionData()
     }
 
     fun stopJogging() {
         isDuringSession = false
     }
 
-    private suspend fun collectExerciseSessionData() {
-        exerciseMonitor.exerciseSessionData.collect { exerciseSessionData ->
-            if (isDuringSession) {
+    private fun collectExerciseSessionData() {
+        coroutineScope.launch {
+            exerciseMonitor.exerciseSessionData.takeWhile { isDuringSession }.collect { exerciseSessionData ->
                 updateExerciseData(exerciseServiceState.value.exerciseMetrics)
                 currentSessionData.update {
                     currentSessionData.value.toMutableList().apply { add(exerciseSessionData) }

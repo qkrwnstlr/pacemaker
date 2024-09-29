@@ -6,9 +6,12 @@ import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
 import com.ssafy.presentation.core.exercise.data.distance
 import com.ssafy.presentation.core.exercise.data.duration
 import com.ssafy.presentation.utils.toLocalDate
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDate
 import javax.inject.Inject
@@ -16,8 +19,11 @@ import javax.inject.Singleton
 
 @Singleton
 class TrainManager @Inject constructor(
-    private val getPlanInfoUseCase: GetPlanInfoUseCase
+    private val getPlanInfoUseCase: GetPlanInfoUseCase,
+    private val coroutineScope: CoroutineScope,
 ) {
+    private var isConnected = false
+
     lateinit var train: PlanTrain
     private lateinit var running: TrainSession
     private lateinit var jogging: TrainSession
@@ -25,10 +31,11 @@ class TrainManager @Inject constructor(
     val trainState: MutableStateFlow<TrainState> = MutableStateFlow(TrainState.Before)
 
     suspend fun connect(exerciseSessionFlow: Flow<List<ExerciseSessionData>>) {
+        isConnected = true
         runCatching {
             getPlanInfoUseCase()
         }.onSuccess {
-            train = getPlanInfoUseCase().planTrains.firstOrNull {
+            train = it.planTrains.firstOrNull {
                 it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
             } ?: PlanTrain()
         }.onFailure {
@@ -52,17 +59,23 @@ class TrainManager @Inject constructor(
         collectExerciseSessionData(exerciseSessionFlow)
     }
 
-    private suspend fun collectExerciseSessionData(
+    fun disconnect() {
+        isConnected = false
+    }
+
+    private fun collectExerciseSessionData(
         exerciseSessionFlow: Flow<List<ExerciseSessionData>>,
     ) {
-        exerciseSessionFlow.collect {
-            val isTrainAchieved = when (train.paramType) {
-                "time" -> checkIsAchieved(it.duration)
-                "distance" -> checkIsAchieved(it.distance)
-                else -> return@collect
-            }
+        coroutineScope.launch {
+            exerciseSessionFlow.takeWhile { isConnected }.collect {
+                val isTrainAchieved = when (train.paramType) {
+                    "time" -> checkIsAchieved(it.duration)
+                    "distance" -> checkIsAchieved(it.distance)
+                    else -> return@collect
+                }
 
-            if (isTrainAchieved) setToNextTrainState()
+                if (isTrainAchieved) setToNextTrainState()
+            }
         }
     }
 

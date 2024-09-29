@@ -31,9 +31,7 @@ class ExerciseMonitor @Inject constructor(
         isConnect = true
         exerciseSessionData.update { ExerciseSessionData() }
         wearableClientManager.dataClient.addListener(this)
-        coroutineScope.launch {
-            collectExerciseMetrics()
-        }
+        collectExerciseMetrics()
     }
 
     fun stop() {
@@ -56,22 +54,24 @@ class ExerciseMonitor @Inject constructor(
         }
     }
 
-    private suspend fun collectExerciseMetrics() {
-        while (isConnect) {
-            var lastDistance = 0.0
-            val exerciseState = exerciseServiceState.value.exerciseState
-            when (exerciseState) {
-                ExerciseState.ACTIVE -> {
-                    val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
-                    exerciseSessionData.update {
-                        exerciseMetrics.toExerciseSessionData(lastDistance)
+    private fun collectExerciseMetrics() {
+        coroutineScope.launch {
+            while (isConnect) {
+                var lastDistance = 0.0
+                val exerciseState = exerciseServiceState.value.exerciseState
+                when (exerciseState) {
+                    ExerciseState.ACTIVE -> {
+                        val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
+                        exerciseSessionData.update {
+                            exerciseMetrics.toExerciseSessionData(lastDistance)
+                        }
+                        exerciseMetrics.distance?.let { lastDistance = it }
                     }
-                    exerciseMetrics.distance?.let { lastDistance = it }
-                }
 
-                ExerciseState.ENDED -> break
+                    ExerciseState.ENDED -> break
+                }
+                delay(1_000)
             }
-            delay(1_000)
         }
     }
 

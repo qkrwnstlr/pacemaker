@@ -14,6 +14,7 @@ import com.ssafy.presentation.core.exercise.data.speed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,16 +34,14 @@ class CoachingManager @Inject constructor(
     fun connect(train: PlanTrain) {
         isConnected = true
         this.train = train
-        coroutineScope.launch {
-            collectExerciseSessionData()
-        }
+        collectExerciseSessionData()
     }
 
     fun disconnect() {
         isConnected = false
     }
 
-    private suspend fun collectExerciseSessionData() {
+    private fun collectExerciseSessionData() {
         val collectedList = mutableListOf<ExerciseSessionData>()
 
         coroutineScope.launch {
@@ -64,7 +63,9 @@ class CoachingManager @Inject constructor(
             }
         }
 
-        exerciseMonitor.exerciseSessionData.collect(collectedList::add)
+        coroutineScope.launch{
+            exerciseMonitor.exerciseSessionData.takeWhile { isConnected }.collect(collectedList::add)
+        }
     }
 
     private suspend fun getCoaching(

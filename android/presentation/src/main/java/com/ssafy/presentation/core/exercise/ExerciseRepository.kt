@@ -1,6 +1,8 @@
 package com.ssafy.presentation.core.exercise
 
 import android.content.Context
+import androidx.health.services.client.data.ExerciseState
+import com.ssafy.presentation.utils.BinderConnection
 import com.ssafy.presentation.utils.bindService
 import dagger.hilt.android.ActivityRetainedLifecycle
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -8,10 +10,9 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,38 +20,46 @@ import javax.inject.Inject
 class ExerciseRepository @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     private val coroutineScope: CoroutineScope,
-    lifecycle: ActivityRetainedLifecycle
+    private val lifecycle: ActivityRetainedLifecycle
 ) {
-    // TODO : service 운동 시작 시 bind, 운동 종료시 unbound 하도록 변경
-    
-    private val binderConnection by lazy {
-        lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
-    }
+    private var binderConnection: BinderConnection<ExerciseService.LocalBinder>? = null
 
-    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> by lazy {
-        binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
-    }
+    private var exerciseServiceStateUpdates: Flow<ExerciseServiceState>? = null
 
-    val serviceState: StateFlow<ServiceState> by lazy {
-        exerciseServiceStateUpdates.map { exerciseServiceState ->
-            ServiceState.Connected(exerciseServiceState)
-        }.stateIn(
-            coroutineScope,
-            started = SharingStarted.Eagerly,
-            initialValue = ServiceState.Disconnected
-        )
-    }
+    val serviceState: MutableStateFlow<ServiceState> = MutableStateFlow(ServiceState.Disconnected)
 
-    private fun serviceCall(function: suspend ExerciseService.() -> Unit) = coroutineScope.launch(Dispatchers.Main) {
-        binderConnection.runWhenConnected {
-            function(it.getService())
+    private fun bindService() {
+        binderConnection = lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
+
+        exerciseServiceStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
+
+        coroutineScope.launch {
+            exerciseServiceStateUpdates?.takeWhile { binderConnection != null }?.collect { exerciseServiceState ->
+                serviceState.update { ServiceState.Connected(exerciseServiceState) }
+                // TODO : 할꺼 다하고 service 종료하기
+                if (exerciseServiceState.exerciseState == ExerciseState.ENDED) unbindService()
+            }
         }
     }
 
-    fun startExercise() = serviceCall { startExercise() }
+    private fun unbindService() {
+        binderConnection?.unbind()
+        binderConnection = null
+        exerciseServiceStateUpdates = null
+        serviceState.update { ServiceState.Disconnected }
+    }
+
+    private fun serviceCall(function: suspend ExerciseService.() -> Unit) =
+        coroutineScope.launch(Dispatchers.Main) {
+            binderConnection?.runWhenConnected {
+                function(it.getService())
+            }
+        }
+
+    fun startExercise() = bindService()
     fun pauseExercise() = serviceCall { pauseExercise() }
-    fun endExercise() = serviceCall { endExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
+    fun endExercise() = serviceCall { endExercise() }
 }
 
 sealed class ServiceState {
