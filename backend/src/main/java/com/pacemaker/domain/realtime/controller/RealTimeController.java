@@ -52,5 +52,5 @@ public class RealTimeController {
 					.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"feedback.wav\"")
 					.body(wavFile);
 			});
-	};
+	}
 }

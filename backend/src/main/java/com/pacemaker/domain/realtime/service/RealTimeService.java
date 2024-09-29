@@ -14,7 +14,7 @@ public class RealTimeService {
 		this.gpuServerWebClient = gpuServerWebClient;
 	}
 
-	public Mono<byte[]> createRealTimeTts(String message, int coachIndex) {
+	public Mono<byte[]> createRealTimeTts(String message, Long coachIndex) {
 		return gpuServerWebClient.get()
 			.uri(uriBuilder -> uriBuilder
 				.path("/tts")

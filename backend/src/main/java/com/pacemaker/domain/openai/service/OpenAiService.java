@@ -14,8 +14,8 @@ import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.ContentResponse;
-import com.pacemaker.domain.realtime.dto.RealTimeRequest;
-import com.pacemaker.domain.realtime.dto.RealTimeResponse;
+import com.pacemaker.domain.realtime.dto.RealTimeFeedbackRequest;
+import com.pacemaker.domain.realtime.dto.RealTimeFeedbackResponse;
 import com.pacemaker.domain.report.dto.CreateTrainEvaluationRequest;
 import com.pacemaker.domain.report.dto.CreateTrainEvaluationResponse;
 
@@ -119,11 +119,11 @@ public class OpenAiService {
 			.bodyToMono(String.class);
 	}
 
-	public Mono<String> createRealTimeChatCompletions(RealTimeRequest realTimeRequest) {
+	public Mono<String> createRealTimeChatCompletions(RealTimeFeedbackRequest realTimeFeedbackRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createRealTimeSystem(realTimeRequest.coachTone()),
-				Message.createUser(new Gson().toJson(realTimeRequest)), Message.createRealTimeResponseFormat(
+			.messages(List.of(Message.createRealTimeSystem(realTimeFeedbackRequest.coachTone()),
+				Message.createUser(new Gson().toJson(realTimeFeedbackRequest)), Message.createRealTimeResponseFormat(
 					ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
 			.build();
 
@@ -134,11 +134,11 @@ public class OpenAiService {
 			.bodyToMono(String.class)
 			.map(response -> {
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
-				RealTimeResponse realTimeResponse = new Gson().fromJson(
-					request.choices().getFirst().message().content(), RealTimeResponse.class);
-				System.out.println("realTimeResponse = " + realTimeResponse);
+				RealTimeFeedbackResponse realTimeFeedbackResponse = new Gson().fromJson(
+					request.choices().getFirst().message().content(), RealTimeFeedbackResponse.class);
+				System.out.println("realTimeFeedbackResponse = " + realTimeFeedbackResponse);
 
-				return realTimeResponse.textFeedback() + " " + realTimeResponse.textCheer();
+				return realTimeFeedbackResponse.textFeedback() + " " + realTimeFeedbackResponse.textCheer();
 			});
 	}
 
