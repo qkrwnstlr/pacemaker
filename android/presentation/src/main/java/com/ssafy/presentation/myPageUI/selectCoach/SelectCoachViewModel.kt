@@ -40,23 +40,21 @@ class SelectCoachViewModel @Inject constructor(
             .also { _selectCoachState.emit(0L to 0) }
     }
 
-    fun selectCoach(coachIndex: Long, showCoachText: suspend (String) -> Unit) =
-        viewModelScope.launch(Dispatchers.IO) {
-            val prevState = selectCoachState.value
-            val index = prevState.first
-            val count = prevState.second
+    fun selectCoach(coachIndex: Long) = viewModelScope.launch(Dispatchers.IO) {
+        val prevState = selectCoachState.value
+        val index = prevState.first
+        val count = prevState.second
 
-            if (coachIndex == index) _selectCoachState.update { prevState.copy(second = count + 1) }
-            else _selectCoachState.update { coachIndex to 1 }
+        if (coachIndex == index) _selectCoachState.update { prevState.copy(second = count + 1) }
+        else _selectCoachState.update { coachIndex to 1 }
 
-            val message = getMessage()
-            if (message.first.isBlank() || message.second == 0L) return@launch
+        val message = getMessage()
+        if (message.first.isBlank() || message.second == 0L) return@launch
 
-            showCoachText(message.first)
-            runCatching { getTTSUseCase(message = message.first, coachIndex = message.second) }
-                .onSuccess { voicePath -> _voiceEvent.emit(voicePath) }
-                .onFailure { it.printStackTrace() }
-        }
+        runCatching { getTTSUseCase(message = message.first, coachIndex = message.second) }
+            .onSuccess { voicePath -> _voiceEvent.emit(voicePath) }
+            .onFailure { it.printStackTrace() }
+    }
 
     private fun getMessage(): Pair<String, Long> {
         val (index, count) = selectCoachState.value

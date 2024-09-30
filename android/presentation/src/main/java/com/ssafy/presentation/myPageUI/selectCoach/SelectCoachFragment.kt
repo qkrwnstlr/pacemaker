@@ -51,9 +51,9 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     }
 
     private fun initListener() = with(binding) {
-        clRed.setOnClickListener { viewModel.selectCoach(MIKE, ::showSnackBar) }
-        clYellow.setOnClickListener { viewModel.selectCoach(JAMIE, ::showSnackBar) }
-        clBlue.setOnClickListener { viewModel.selectCoach(DANNY, ::showSnackBar) }
+        clRed.setOnClickListener { viewModel.selectCoach(MIKE) }
+        clYellow.setOnClickListener { viewModel.selectCoach(JAMIE) }
+        clBlue.setOnClickListener { viewModel.selectCoach(DANNY) }
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -76,6 +76,7 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
             val file = File(voicePath)
             if (!file.exists()) return@collectLatest
 
+            showSnackBar(MAKE_TWICE)
             mediaPlayer.apply {
                 reset()
                 setDataSource(file.path)
@@ -112,5 +113,6 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     companion object {
         const val ILLEGAL_DESTINATION = "잘못된 목적지입니다."
         const val SELECT_MAX_COUNT = 2
+        const val MAKE_TWICE = "한번 더 선택하시면 코치가 저장됩니다."
     }
 }
