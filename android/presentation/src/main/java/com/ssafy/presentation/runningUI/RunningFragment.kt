@@ -1,6 +1,7 @@
 package com.ssafy.presentation.runningUI
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -10,8 +11,11 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.health.services.client.data.LocationData
 import androidx.lifecycle.Lifecycle
@@ -44,6 +48,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     private val viewModel: RunningViewModel by viewModels()
     private var map: GoogleMap? = null
     private var myLocationListener: LocationListener? = null
+    private lateinit var onBackPressed: OnBackPressedCallback
+    private var doubleBackToExitPressedOnce = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.startExercise()
@@ -125,6 +131,24 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                 }
             }
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        onBackPressed = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (doubleBackToExitPressedOnce) {
+                    viewModel.endExercise()
+                    return
+                }
+
+                doubleBackToExitPressedOnce = true
+                showSnackStringBar("한번더 뒤로가기를 누르면 훈련이 종료됩니다.")
+
+                Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressed)
     }
 
     private fun addMarker(location: LocationData) {

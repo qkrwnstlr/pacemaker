@@ -54,6 +54,8 @@ class ExerciseService : LifecycleService() {
     suspend fun startExercise() {
         wearableClientManager.startMobileActivity()
         exerciseClientManager.startExercise()
+        exerciseServiceMonitor.connect()
+        exerciseMonitor.connect()
     }
 
     suspend fun pauseExercise() {
