@@ -3,6 +3,7 @@ package com.ssafy.presentation.core.exercise.manager
 import androidx.health.connect.client.records.HeartRateRecord
 import com.ssafy.domain.dto.reports.SplitData
 import com.ssafy.domain.dto.reports.TrainResult
+import com.ssafy.domain.usecase.reports.CreateFreeReportsUseCase
 import com.ssafy.domain.usecase.reports.CreatePlanReportsUseCase
 import com.ssafy.presentation.core.exercise.data.ExerciseData
 import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
@@ -18,9 +19,10 @@ import javax.inject.Singleton
 
 @Singleton
 class ReportsManager @Inject constructor(
-    private val createPlanReportsUseCase: CreatePlanReportsUseCase
+    private val createPlanReportsUseCase: CreatePlanReportsUseCase,
+    private val createFreeReportsUseCase: CreateFreeReportsUseCase
 ) {
-    suspend fun createPlanReports(
+    suspend fun createReports(
         planTrainId: Long,
         exerciseData: ExerciseData,
     ) {
@@ -37,7 +39,8 @@ class ReportsManager @Inject constructor(
         )
 
         runCatching {
-            createPlanReportsUseCase(planTrainId, trainResult)
+            if (planTrainId != 0L) createPlanReportsUseCase(planTrainId, trainResult)
+            else createFreeReportsUseCase(trainResult)
         }.onFailure {
 
         }

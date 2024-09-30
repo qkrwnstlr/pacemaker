@@ -32,6 +32,7 @@ class CoachingManager @Inject constructor(
     val coachVoicePath = MutableStateFlow("")
 
     fun connect(train: PlanTrain) {
+        if(isConnected) return
         isConnected = true
         this.train = train
         collectExerciseSessionData()

@@ -25,6 +25,7 @@ val TrainState.message
         is TrainState.CoolDown -> "Cool Down 세션 시작. ${session.message}"
 
         TrainState.Ended -> "훈련이 종료되었습니다."
+        TrainState.Default -> "자유롭게 달려보세요"
     }
 
 val TrainSession.message

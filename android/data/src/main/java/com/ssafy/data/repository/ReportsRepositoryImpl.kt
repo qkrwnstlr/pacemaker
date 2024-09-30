@@ -3,6 +3,8 @@ package com.ssafy.data.repository
 import com.ssafy.data.di.IoDispatcher
 import com.ssafy.data.response.toResponseResult
 import com.ssafy.data.source.reports.ReportsDataSource
+import com.ssafy.domain.dto.reports.CreateFreeReportsRequest
+import com.ssafy.domain.dto.reports.CreateFreeReportsResponse
 import com.ssafy.domain.dto.reports.CreatePlanReportsRequest
 import com.ssafy.domain.dto.reports.CreatePlanReportsResponse
 import com.ssafy.domain.dto.reports.Report
@@ -19,6 +21,12 @@ class ReportsRepositoryImpl @Inject constructor(
     override suspend fun createPlanReports(createPlanReportsRequest: CreatePlanReportsRequest): ResponseResult<CreatePlanReportsResponse> {
         val response =
             withContext(ioDispatcher) { reportsDataSource.createPlanReports(createPlanReportsRequest) }
+        return response.toResponseResult()
+    }
+
+    override suspend fun createFreeReports(createFreeReportsRequest: CreateFreeReportsRequest): ResponseResult<CreateFreeReportsResponse> {
+        val response =
+            withContext(ioDispatcher) { reportsDataSource.createFreeReports(createFreeReportsRequest) }
         return response.toResponseResult()
     }
 
