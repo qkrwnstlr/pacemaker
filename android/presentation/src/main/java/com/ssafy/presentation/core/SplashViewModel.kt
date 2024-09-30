@@ -22,7 +22,7 @@ class SplashViewModel @Inject constructor(
     val uidState: StateFlow<String?> = _uidState.asStateFlow()
 
     fun login() = viewModelScope.launch(Dispatchers.IO) {
-        val uid = Firebase.auth.uid ?: return@launch
+        val uid = Firebase.auth.uid ?: ""
         runCatching { getUserInfoUseCase(uid) }
             .onSuccess { _uidState.emit(uid) }
             .onFailure { _uidState.emit("") }

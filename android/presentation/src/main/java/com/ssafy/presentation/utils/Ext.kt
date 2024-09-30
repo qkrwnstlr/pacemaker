@@ -18,10 +18,14 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 
-fun DayOfWeek.displayText(uppercase: Boolean = false, narrow: Boolean = false): String {
+fun DayOfWeek.displayText(
+    uppercase: Boolean = false,
+    narrow: Boolean = false,
+    locale: Locale = Locale.ENGLISH
+): String {
     val style = if (narrow) TextStyle.NARROW else TextStyle.SHORT
-    return getDisplayName(style, Locale.ENGLISH).let { value ->
-        if (uppercase) value.uppercase(Locale.ENGLISH) else value
+    return getDisplayName(style, locale).let { value ->
+        if (uppercase) value.uppercase(locale) else value
     }
 }
 
@@ -64,7 +68,7 @@ fun List<String>.toInjuries(): String {
 fun Double.toPaceString(): String {
     val pace = roundToInt()
     val minute = pace / 60
-    val second = pace % 60
+    val second = (pace % 60).toString().padStart(2, '0')
     return "${minute}'${second}\""
 }
 
@@ -122,7 +126,7 @@ fun String.toLocalDateDot(): String {
 
 fun Int.toTrainPace(): String {
     val minute = this / 60
-    val second = this % 60
+    val second = (this % 60).toString().padStart(2, '0')
     return "${minute}'${second}\""
 }
 
@@ -172,6 +176,11 @@ fun PlanTrain?.toTrainText(): String {
     return "${totalString}\n${runCount}\n${interCount}"
 }
 
+fun DayOfWeek.toDayString(): String {
+    val displayName = getDisplayName(TextStyle.FULL, Locale.ENGLISH)
+    return displayName.lowercase().replaceFirstChar { it.uppercase() }
+}
+
 fun User.toUserInfo() = UserInfo(
     age = age.toString(),
     height = height,
@@ -183,11 +192,12 @@ fun User.toUserInfo() = UserInfo(
     recentRunHeartRate = 0
 )
 
-fun PlanInfo.toPlan(): Plan = Plan(
+fun PlanInfo.toPlan(showPlan: Boolean = true): Plan = Plan(
     totalDays = totalDays,
     totalTimes = totalTimes,
     totalDistances = totalDistances,
-    planTrains = planTrains
+    planTrains = planTrains,
+    showPlan = showPlan
 )
 
 const val ERROR = "에러 발생!"
@@ -242,4 +252,14 @@ val WEEK_LIST = listOf(
     "Friday" to "금",
     "Saturday" to "토",
     "Sunday" to "일"
+)
+
+val weekMap = mapOf(
+    "Monday" to DayOfWeek.MONDAY,
+    "Tuesday" to DayOfWeek.TUESDAY,
+    "Wednesday" to DayOfWeek.WEDNESDAY,
+    "Thursday" to DayOfWeek.THURSDAY,
+    "Friday" to DayOfWeek.FRIDAY,
+    "Saturday" to DayOfWeek.SATURDAY,
+    "Sunday" to DayOfWeek.SUNDAY
 )
