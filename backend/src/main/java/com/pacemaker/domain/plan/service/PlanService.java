@@ -102,14 +102,16 @@ public class PlanService {
 		// 사용자의 활성 Plan 찾기
 		Plan findActivePlan = findActivePlan(uid);
 
+		List<PlanTrain> planTrains = findActivePlan.getPlanTrains();
+		int size = planTrains.size();
+
 		// Before PlanTrain 제거
-		// 여기에서 고려사항이 있을까?
-		for (PlanTrain planTrain : findActivePlan.getPlanTrains()) {
-			if (planTrain.getStatus() == PlanTrainStatus.DONE) {
+		for (int i = size - 1; i >= 0; i--) {
+			if (planTrains.get(i).getStatus() == PlanTrainStatus.DONE) {
 				continue;
 			}
 
-			findActivePlan.getPlanTrains().remove(planTrain);
+			findActivePlan.getPlanTrains().remove(i);
 		}
 
 		if (findActivePlan.getPlanTrains().isEmpty()) {
