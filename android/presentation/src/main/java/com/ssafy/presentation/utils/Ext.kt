@@ -253,3 +253,13 @@ val WEEK_LIST = listOf(
     "Saturday" to "토",
     "Sunday" to "일"
 )
+
+val weekMap = mapOf(
+    "Monday" to DayOfWeek.MONDAY,
+    "Tuesday" to DayOfWeek.TUESDAY,
+    "Wednesday" to DayOfWeek.WEDNESDAY,
+    "Thursday" to DayOfWeek.THURSDAY,
+    "Friday" to DayOfWeek.FRIDAY,
+    "Saturday" to DayOfWeek.SATURDAY,
+    "Sunday" to DayOfWeek.SUNDAY
+)
