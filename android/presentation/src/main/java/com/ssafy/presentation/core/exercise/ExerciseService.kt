@@ -129,14 +129,14 @@ class ExerciseService : LifecycleService() {
                 when (it.exerciseState) {
                     ExerciseState.ENDED -> {
                         // TODO : Plan 비어있을때 생명주기 만들기
-//                        healthConnectManager.writeExerciseSession(
-//                            "${trainManager.train.id} (#${trainManager.train.index})",
-//                            exerciseManager.exerciseData.value,
-//                        )
-//                        reportsManager.createPlanReports(
-//                            trainManager.train.id,
-//                            exerciseManager.exerciseData.value,
-//                        )
+                        healthConnectManager.writeExerciseSession(
+                            "${trainManager.train.id} (#${trainManager.train.index})",
+                            exerciseManager.exerciseData.value,
+                        )
+                        reportsManager.createPlanReports(
+                            trainManager.train.id,
+                            exerciseManager.exerciseData.value,
+                        )
                         stopSelf()
                     }
                 }
@@ -204,7 +204,6 @@ class ExerciseService : LifecycleService() {
             exerciseManager.disconnect()
             coachingManager.disconnect()
             stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
         }
         return true
     }

@@ -25,17 +25,17 @@ class ExerciseMonitor @Inject constructor(
 
     val exerciseSessionData = MutableStateFlow(ExerciseSessionData())
 
-    private var isConnect = false
+    private var isRunning = false
 
     fun run() {
-        isConnect = true
+        isRunning = true
         exerciseSessionData.update { ExerciseSessionData() }
         wearableClientManager.dataClient.addListener(this)
         collectExerciseMetrics()
     }
 
     fun stop() {
-        isConnect = false
+        isRunning = false
         wearableClientManager.dataClient.removeListener(this)
     }
 
@@ -56,7 +56,7 @@ class ExerciseMonitor @Inject constructor(
 
     private fun collectExerciseMetrics() {
         coroutineScope.launch {
-            while (isConnect) {
+            while (isRunning) {
                 var lastDistance = 0.0
                 val exerciseState = exerciseServiceState.value.exerciseState
                 when (exerciseState) {
