@@ -3,7 +3,7 @@ package com.ssafy.domain.dto.reports
 data class TrainReport(
     val trainDuration: List<String>, // time 타입을 String으로 가정
     val trainResult: TrainResult,
-    val trainEvaluation: TrainEvaluation
+    val trainEvaluation: TrainEvaluation?
 )
 
 /*

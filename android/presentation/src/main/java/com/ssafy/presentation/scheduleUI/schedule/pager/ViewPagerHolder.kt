@@ -11,30 +11,33 @@ import com.ssafy.presentation.utils.toContentString
 class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding.root) {
 
     fun bind(item: Report) {
+        val trainInfoTitle = binding.tvInst
         if (item.planTrain != null) {
-            val trainInfoTitle = binding.tvInst
-            trainInfoTitle.setTitle(
-                item.planTrain?.trainDate ?: "",
-                item.planTrain.toContentString(),
-            )
+            trainInfoTitle.text = item.planTrain.toContentString()
+            trainInfoTitle.isVisible = true
         }
         if (item.planTrain != null) {
             binding.lyResultInfo.isVisible = true
             val trainInfoView = binding.lyResultInfo
             trainInfoView.makeEntryChart(item.planTrain)
         } else {
+            trainInfoTitle.text = "자율 훈련"
             binding.lyResultInfo.isVisible = false
         }
 
         if (item.trainReport != null) {
-            binding.lyTrainResult.isVisible = true
-            binding.map.isVisible = true
-            binding.lyTrainResultCoach.isVisible = true
-
             item.trainReport?.apply {
                 makeResult(trainEvaluation, trainResult)
+                binding.map.isVisible = true
                 makeMap(trainResult.trainMap)
-                makeCoach(trainResult.coachNumber, trainResult.coachMessage)
+
+                if (trainResult.coachNumber != null && trainResult.coachMessage != null) {
+                    binding.lyTrainResultCoach.isVisible = true
+                    binding.lyTrainResultCoach.isVisible = true
+                    makeCoach(trainResult.coachNumber, trainResult.coachMessage)
+                } else {
+                    binding.lyTrainResultCoach.isVisible = false
+                }
             }
         } else {
             binding.lyTrainResult.isVisible = false
@@ -49,16 +52,20 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
 
     }
 
-    private fun makeCoach(coachNumber: Long, messages: List<String>) {
+    private fun makeCoach(coachNumber: Long?, messages: List<String>?) {
         val coachList = binding.lyTrainResultCoach
-        coachList.setList(messages)
-        coachList.setCoachImage(coachNumber)
+        if (messages != null) {
+            coachList.setList(messages)
+        }
+        if (coachNumber != null) {
+            coachList.setCoachImage(coachNumber)
+        }
     }
 
-    private fun makeResult(score: TrainEvaluation, result: TrainResult) {
-        val pacePercent = score.paceEvaluation
-        val heartPercent = score.heartRateEvaluation
-        val stepPercent = score.cadenceEvaluation
+    private fun makeResult(score: TrainEvaluation?, result: TrainResult) {
+        val pacePercent = score?.paceEvaluation
+        val heartPercent = score?.heartRateEvaluation
+        val stepPercent = score?.cadenceEvaluation
 
         val trainResultView = binding.lyTrainResult
         trainResultView.setResultData(
@@ -69,12 +76,14 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
             result.pace,
             result.kcal
         )
-        trainResultView.setPieChart(
-            pacePercent.toFloat(),
-            heartPercent.toFloat(),
-            stepPercent.toFloat()
-        )
+        if (pacePercent != null && heartPercent != null && stepPercent != null) {
+            trainResultView.setPieChart(
+                pacePercent.toFloat(),
+                heartPercent.toFloat(),
+                stepPercent.toFloat()
+            )
+        } else {
+            trainResultView.unvisibleChart()
+        }
     }
-
-
 }

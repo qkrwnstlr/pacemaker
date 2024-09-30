@@ -10,6 +10,6 @@ data class TrainResult(
     val heartZone: List<Int>,
     val splitData: List<SplitData>,
     val trainMap: List<List<Double>>,
-    val coachMessage: List<String> = listOf(),
-    val coachNumber: Long = 0L
+    val coachMessage: List<String>? = listOf(),
+    val coachNumber: Long? = 0L
 )

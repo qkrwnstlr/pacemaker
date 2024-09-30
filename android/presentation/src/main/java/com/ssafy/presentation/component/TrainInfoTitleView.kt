@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.TrainInfoTitleCustomViewBinding
 import com.ssafy.presentation.utils.toLocalDateDot
@@ -27,9 +28,14 @@ class TrainInfoTitleView : ConstraintLayout {
         addView(binding.root)
     }
 
-    fun setTitle(date: String, content: String = context.getString(R.string.nothing)) =
+    fun setTitle(date: String, content: String?) =
         with(binding) {
             tvResultTitle.text = date.toLocalDateDot()
-            tvPlanInst.text = content
+            if (content == null) {
+                tvPlanInst.isVisible = false
+            } else {
+                tvPlanInst.isVisible = true
+                tvPlanInst.text = content
+            }
         }
 }

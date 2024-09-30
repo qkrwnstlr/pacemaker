@@ -22,7 +22,6 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.ssafy.domain.dto.schedule.ContentListDto
 import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.presentation.R
-import com.ssafy.presentation.component.TrainInfoTitleView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentScheduleBinding
 import com.ssafy.presentation.scheduleUI.schedule.pager.ViewPagerAdapter
@@ -95,7 +94,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     }
 
     private fun setProgress(progressData: ProgressData?) {
-        if (progressData==null) {
+        if (progressData == null) {
             planStateView.isVisible = false
         } else {
             planStateView.isVisible = true
@@ -204,12 +203,17 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     }
 
     private fun setResultView(selectedDate: LocalDate, contentList: List<ContentListDto>) {
+        val trainInfo = binding.tvInst
+        trainInfo.isVisible = true
         if (contentList.isEmpty()) {
+            trainInfo.setTitle(
+                selectedDate.toString(),
+                requireContext().getString(R.string.nothing)
+            )
             binding.vpReport.isVisible = false
             binding.lyNothing.isVisible = true
-            val traininfo = binding.lyNothing.findViewById<TrainInfoTitleView>(R.id.tv_nothing_inst)
-            traininfo.setTitle(date = selectedDate.toString())
         } else {
+            trainInfo.setTitle(selectedDate.toString(), null)
             binding.lyNothing.isVisible = false
             binding.vpReport.isVisible = true
             adapter.updateItems(contentList)

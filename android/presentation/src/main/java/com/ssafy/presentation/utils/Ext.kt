@@ -57,6 +57,18 @@ fun makeProgressString(goal: String, total: Int): String {
 fun String.toGenderString(): String =
     if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
 
+fun Float.toRank(): String {
+    return if (this <= 50) "C"
+    else if (this <= 75) "B"
+    else "A"
+}
+
+fun Float.toRankColor(): String {
+    return if (this <= 50) "#FF6C6C"
+    else if (this <= 75) "#FFB45E"
+    else "#5973FF"
+}
+
 fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
 fun Int.toEmptyOrHeight(): String = if (this == 0) "" else "${toString()}cm"
 fun Int.toEmptyOrWeight(): String = if (this == 0) "" else "${toString()}kg"
