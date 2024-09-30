@@ -1,34 +1,12 @@
-package com.ssafy.presentation.core.exercise
+package com.ssafy.presentation.core.exercise.data
 
 import androidx.health.connect.client.records.ExerciseRoute
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.SpeedRecord
 import androidx.health.connect.client.records.StepsCadenceRecord
-import androidx.health.connect.client.units.Energy
-import androidx.health.connect.client.units.Length
-import androidx.health.connect.client.units.calories
 import androidx.health.connect.client.units.kilometersPerHour
-import androidx.health.connect.client.units.meters
-import androidx.health.services.client.data.LocationData
 import java.time.Duration
 import java.time.ZonedDateTime
-
-data class ExerciseData(
-    val start: ZonedDateTime,
-    val end: ZonedDateTime,
-    val totalSteps: Long? = null,
-    val totalDistance: Length? = null,
-    val totalEnergyBurned: Energy? = null,
-)
-
-data class ExerciseSessionData(
-    val time: ZonedDateTime = ZonedDateTime.now(),
-    val distance: Double? = null,
-    val heartRate: Long? = null,
-    val pace: Double? = null,
-    val cadence: Long? = null,
-    val location: LocationData? = null,
-)
 
 val List<ExerciseSessionData>.location: List<ExerciseRoute.Location>
     get() = this.filter {
@@ -39,7 +17,7 @@ val List<ExerciseSessionData>.location: List<ExerciseRoute.Location>
             it.location!!.latitude,
             it.location.longitude,
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
 
 val List<ExerciseSessionData>.distance: Double
     get() = this.filter {
@@ -56,7 +34,10 @@ val List<ExerciseSessionData>.heartRate: List<HeartRateRecord.Sample>
             time = it.time.toInstant(),
             beatsPerMinute = it.heartRate!!
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
+
+val List<ExerciseSessionData>.heartRateAvg: Double
+    get() = this.heartRate.map { it.beatsPerMinute }.average()
 
 val List<ExerciseSessionData>.cadence: List<StepsCadenceRecord.Sample>
     get() = this.filter {
@@ -66,7 +47,10 @@ val List<ExerciseSessionData>.cadence: List<StepsCadenceRecord.Sample>
             time = it.time.toInstant(),
             rate = it.cadence!!.toDouble()
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
+
+val List<ExerciseSessionData>.cadenceAvg: Double
+    get() = this.cadence.map { it.rate }.average()
 
 val List<ExerciseSessionData>.speed: List<SpeedRecord.Sample>
     get() = this.filter {
@@ -76,20 +60,19 @@ val List<ExerciseSessionData>.speed: List<SpeedRecord.Sample>
             time = it.time.toInstant(),
             speed = (it.pace!! / 1000 * 60 * 60).kilometersPerHour
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
 
-val List<ExerciseSessionData>.time: Duration
-    get() = Duration.between(this.first().time, this.last().time)
+val List<ExerciseSessionData>.speedAvg: Double
+    get() = this.speed.map { it.speed.inKilometersPerHour }.average()
 
-fun parseExerciseData(
-    exerciseMetrics: ExerciseMetrics,
-    exerciseSessionData: List<ExerciseSessionData>
-): ExerciseData {
-    return ExerciseData(
-        exerciseSessionData.first().time,
-        exerciseSessionData.last().time.plusSeconds(1),
-        exerciseMetrics.steps,
-        exerciseMetrics.distance?.meters,
-        exerciseMetrics.calories?.calories,
-    )
-}
+val List<ExerciseSessionData>.paceAvg: Double
+    get() = 60 * 60 / this.speedAvg
+
+val List<ExerciseSessionData>.startTime: ZonedDateTime
+    get() = this.first().time
+
+val List<ExerciseSessionData>.endTime: ZonedDateTime
+    get() = this.last().time
+
+val List<ExerciseSessionData>.duration: Duration
+    get() = Duration.between(this.startTime, this.endTime)

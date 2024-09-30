@@ -15,6 +15,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.ssafy.presentation.BuildConfig
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.core.MainViewModel
+import com.ssafy.presentation.core.SplashActivity
 import com.ssafy.presentation.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -34,6 +35,10 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
     }
 
     private fun initCheck() {
+        val uid = requireActivity().intent.getStringExtra(SplashActivity.UID)
+        if (uid.isNullOrBlank()) return
+
+        mainViewModel.updateNewUid(uid)
         if (getUid().isNotBlank()) {
             moveToHomeFragment()
         }

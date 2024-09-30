@@ -68,6 +68,7 @@
     <string name="plan_period">훈련 기간</string>
     <string name="plan_week">훈련 요일</string>
     <string name="plan_count">훈련 횟수</string>
+    <string name="plan_week_title">훈련 일정\u00A0:\u00A0</string>
     <string name="plan_week_modify">훈련 요일 수정</string>
     <string name="plan_delete">훈련 삭제</string>
     <string name="go_back_to_home">홈으로 이동하기</string>

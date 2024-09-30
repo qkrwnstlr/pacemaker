@@ -30,6 +30,7 @@ import com.ssafy.presentation.utils.toEmptyOrWeight
 import com.ssafy.presentation.utils.toGenderString
 import com.ssafy.presentation.utils.toInjuries
 import com.ssafy.presentation.utils.toLocalDate
+import com.ssafy.presentation.utils.toWeekString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +77,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         val isModify = isFromPlanDetailFragment()
 
         tvTitle.startAnimation(slideDown)
-        viewModel.initData(::setSendClickable, isModify)
+        viewModel.initData(::setSendClickable, ::showSelectWeekDialog, isModify)
         rvPlanChat.adapter = adapter
     }
 
@@ -85,8 +86,14 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         return previousFragmentId == R.id.planDetailFragment2
     }
 
+    private fun showSelectWeekDialog() {
+        if (viewModel.contextData.value.trainDayOfWeek.isNotEmpty()) return
+        modifyPlanWeek()
+    }
+
     private fun setSendClickable(able: Boolean) = with(binding.chatUi) {
         ivSend.isClickable = able
+        ivWeekModify.isClickable = able
     }
 
     private fun initListener() = with(binding) {
@@ -94,12 +101,11 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             val text = chatUi.etChat.text.toString()
             if (text.isBlank()) return@setOnClickListener
             chatUi.etChat.text = null
-            viewModel.sendMyMessage(text, ::makeFailMessage)
+            viewModel.sendMyMessage(text)
         }
-        setSendClickable(false)
 
         topSheetTrain.fabBlue.setOnClickListener {
-            viewModel.makePlan(getUid(), ::moveToPlanDetailFragment, ::makeFailMessage)
+            viewModel.makePlan(getUid(), ::moveToPlanDetailFragment)
         }
 
         chatUi.tvTitle.setOnClickListener {
@@ -108,6 +114,11 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
                 visibility = visible
             }
         }
+
+        chatUi.ivWeekModify.setOnClickListener {
+            modifyPlanWeek()
+        }
+        setSendClickable(false)
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -115,6 +126,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             collectChatList()
             collectContext()
             collectPlan()
+            collectErrorEvent()
         }
     }
 
@@ -127,6 +139,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
     private fun CoroutineScope.collectContext() = launch {
         viewModel.contextData.collectLatest { context ->
             val userInfo = context.userInfo
+            binding.chatUi.tvWeek.text = context.trainDayOfWeek.toWeekString()
             binding.chatUi.userInfo.apply {
                 tvAge.text = userInfo.age.toAgeString()
                 tvGender.text = userInfo.gender.toGenderString()
@@ -143,8 +156,14 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             setUpCalendar(dateList)
             binding.topSheetTrain.fabBlue.isEnabled = !dateList.isEmpty()
 
-            if (dateList.isEmpty()) scrollUpCalender()
+            if (dateList.isEmpty() || !plan.showPlan) scrollUpCalender()
             else scrollDownCalendar()
+        }
+    }
+
+    private fun CoroutineScope.collectErrorEvent() = launch {
+        viewModel.failEvent.collectLatest { message ->
+            showSnackBar(message)
         }
     }
 
@@ -167,6 +186,12 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
                 cvDays.smoothScrollToMonth(it.yearMonth.previousMonth)
             }
         }
+    }
+
+    private fun modifyPlanWeek() {
+        val manager = requireActivity().supportFragmentManager
+        val trainDays = viewModel.contextData.value.trainDayOfWeek
+        SelectWeekDialog(trainDays, viewModel::setPlanDate).show(manager, "SelectWeek")
     }
 
     private fun setUpCalendar(
@@ -215,10 +240,6 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         }
 
         ScheduleDialogFragment(date, planTrain).show(manager, "ScheduleDialog")
-    }
-
-    private suspend fun makeFailMessage(message: String) = withContext(Dispatchers.Main) {
-        showSnackStringBar(message)
     }
 
     private suspend fun moveToPlanDetailFragment() = withContext(Dispatchers.Main) {

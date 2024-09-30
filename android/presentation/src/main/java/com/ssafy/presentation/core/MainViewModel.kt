@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class MainViewModel : ViewModel() {
 
@@ -12,6 +13,10 @@ class MainViewModel : ViewModel() {
 
     suspend fun setNewUid(newUid: String) {
         _uid.emit(newUid)
+    }
+
+    fun updateNewUid(newUid: String){
+        _uid.update { newUid }
     }
 
     suspend fun clearUid() {
