@@ -1,5 +1,7 @@
 package com.ssafy.data.api
 
+import com.ssafy.domain.dto.reports.CreateFreeReportsRequest
+import com.ssafy.domain.dto.reports.CreateFreeReportsResponse
 import com.ssafy.domain.dto.reports.CreatePlanReportsRequest
 import com.ssafy.domain.dto.reports.CreatePlanReportsResponse
 import com.ssafy.domain.dto.reports.Report
@@ -12,6 +14,9 @@ import retrofit2.http.Path
 interface ReportsAPI {
     @POST("reports/plan")
     suspend fun createPlanReports(@Body createPlanReportsRequest: CreatePlanReportsRequest): Response<CreatePlanReportsResponse>
+
+    @POST("reports/free")
+    suspend fun createFreeReports(@Body createFreeReportsRequest: CreateFreeReportsRequest): Response<CreateFreeReportsResponse>
 
     @GET("reports/{id}/daily/user/{uid}")
     suspend fun getDailyReport(@Path("id") id: Int, @Path("uid") uid: String): Response<Report>

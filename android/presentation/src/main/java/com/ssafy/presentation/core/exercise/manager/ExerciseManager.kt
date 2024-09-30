@@ -29,6 +29,8 @@ class ExerciseManager @Inject constructor(
     val currentSessionData = MutableStateFlow<List<ExerciseSessionData>>(listOf())
 
     fun connect() {
+        if (isConnected) return
+        isConnected = true
         exerciseMonitor.run()
         exerciseData.update { ExerciseData() }
         currentSessionData.update { listOf() }
@@ -64,12 +66,13 @@ class ExerciseManager @Inject constructor(
 
     private fun collectExerciseSessionData() {
         coroutineScope.launch {
-            exerciseMonitor.exerciseSessionData.takeWhile { isDuringSession }.collect { exerciseSessionData ->
-                updateExerciseData(exerciseServiceState.value.exerciseMetrics)
-                currentSessionData.update {
-                    currentSessionData.value.toMutableList().apply { add(exerciseSessionData) }
+            exerciseMonitor.exerciseSessionData.takeWhile { isDuringSession }
+                .collect { exerciseSessionData ->
+                    updateExerciseData(exerciseServiceState.value.exerciseMetrics)
+                    currentSessionData.update {
+                        currentSessionData.value.toMutableList().apply { add(exerciseSessionData) }
+                    }
                 }
-            }
         }
     }
 
@@ -78,7 +81,8 @@ class ExerciseManager @Inject constructor(
             it.copy(
                 totalSteps = exerciseMetrics.steps ?: it.totalSteps,
                 totalDistance = exerciseMetrics.distance?.let(Length::meters) ?: it.totalDistance,
-                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::calories) ?: it.totalEnergyBurned,
+                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::calories)
+                    ?: it.totalEnergyBurned,
             )
         }
     }

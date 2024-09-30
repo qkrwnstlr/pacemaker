@@ -28,6 +28,7 @@ class ExerciseMonitor @Inject constructor(
     private var isRunning = false
 
     fun run() {
+        if (isRunning) return
         isRunning = true
         exerciseSessionData.update { ExerciseSessionData() }
         wearableClientManager.dataClient.addListener(this)

@@ -17,7 +17,7 @@ val List<ExerciseSessionData>.location: List<ExerciseRoute.Location>
             it.location!!.latitude,
             it.location.longitude,
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
 
 val List<ExerciseSessionData>.distance: Double
     get() = this.filter {
@@ -34,7 +34,7 @@ val List<ExerciseSessionData>.heartRate: List<HeartRateRecord.Sample>
             time = it.time.toInstant(),
             beatsPerMinute = it.heartRate!!
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
 
 val List<ExerciseSessionData>.heartRateAvg: Double
     get() = this.heartRate.map { it.beatsPerMinute }.average()
@@ -47,7 +47,7 @@ val List<ExerciseSessionData>.cadence: List<StepsCadenceRecord.Sample>
             time = it.time.toInstant(),
             rate = it.cadence!!.toDouble()
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
 
 val List<ExerciseSessionData>.cadenceAvg: Double
     get() = this.cadence.map { it.rate }.average()
@@ -60,7 +60,7 @@ val List<ExerciseSessionData>.speed: List<SpeedRecord.Sample>
             time = it.time.toInstant(),
             speed = (it.pace!! / 1000 * 60 * 60).kilometersPerHour
         )
-    }
+    }.filter { it.time < this.endTime.toInstant() }
 
 val List<ExerciseSessionData>.speedAvg: Double
     get() = this.speed.map { it.speed.inKilometersPerHour }.average()

@@ -27,7 +27,6 @@ import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
@@ -83,7 +82,7 @@ class ExerciseService : LifecycleService() {
 
     private fun collectTrainState() {
         lifecycleScope.launch {
-            trainManager.trainState.collectLatest {
+            trainManager.trainState.collect {
                 lifecycleScope.launch { speakMessage(it.message) }
 
                 when (it) {
@@ -118,6 +117,8 @@ class ExerciseService : LifecycleService() {
                     TrainState.Ended -> {
                         endExercise()
                     }
+
+                    TrainState.Default -> exerciseManager.startJogging()
                 }
             }
         }
@@ -128,12 +129,24 @@ class ExerciseService : LifecycleService() {
             exerciseManager.exerciseServiceState.collect {
                 when (it.exerciseState) {
                     ExerciseState.ENDED -> {
-                        // TODO : Plan 비어있을때 생명주기 만들기
+                        with(trainManager.trainState.value) {
+                            when(this) {
+                                TrainState.Default -> {
+                                    exerciseManager.stopRunning()
+                                }
+                                is TrainState.During -> when(session) {
+                                    is TrainSession.Running -> exerciseManager.stopRunning()
+                                    is TrainSession.Jogging -> exerciseManager.stopJogging()
+                                }
+                                is TrainState.WarmUp, is TrainState.CoolDown -> exerciseManager.stopJogging()
+                                else -> {}
+                            }
+                        }
                         healthConnectManager.writeExerciseSession(
                             "${trainManager.train.id} (#${trainManager.train.index})",
                             exerciseManager.exerciseData.value,
                         )
-                        reportsManager.createPlanReports(
+                        reportsManager.createReports(
                             trainManager.train.id,
                             exerciseManager.exerciseData.value,
                         )

@@ -31,12 +31,13 @@ class TrainManager @Inject constructor(
     val trainState: MutableStateFlow<TrainState> = MutableStateFlow(TrainState.Before)
 
     suspend fun connect(exerciseSessionFlow: Flow<List<ExerciseSessionData>>) {
+        if (isConnected) return
         isConnected = true
         runCatching {
             getPlanInfoUseCase()
         }.onSuccess {
             train = it.planTrains.firstOrNull {
-                it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
+                it.status == "ACTIVE" && it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
             } ?: PlanTrain()
         }.onFailure {
             train = PlanTrain()
@@ -71,7 +72,10 @@ class TrainManager @Inject constructor(
                 val isTrainAchieved = when (train.paramType) {
                     "time" -> checkIsAchieved(it.duration)
                     "distance" -> checkIsAchieved(it.distance)
-                    else -> return@collect
+                    else -> {
+                        trainState.update { TrainState.Default }
+                        return@collect
+                    }
                 }
 
                 if (isTrainAchieved) setToNextTrainState()
@@ -105,7 +109,7 @@ class TrainManager @Inject constructor(
                     TrainState.Ended
                 }
 
-                TrainState.Ended -> return@with
+                else -> return@with
             }
         }
     }
@@ -117,6 +121,7 @@ class TrainManager @Inject constructor(
             is TrainState.During -> duration.seconds >= session.goal
             is TrainState.CoolDown -> duration.seconds >= session.goal
             TrainState.Ended -> false
+            TrainState.Default -> false
         }
     }
 
@@ -127,6 +132,7 @@ class TrainManager @Inject constructor(
             is TrainState.During -> distance >= session.goal
             is TrainState.CoolDown -> distance >= session.goal
             TrainState.Ended -> false
+            TrainState.Default -> false
         }
     }
 }
@@ -137,6 +143,7 @@ sealed class TrainState {
     class During(val session: TrainSession, val step: Int) : TrainState()
     class CoolDown(val session: TrainSession = TrainSession.COOL_DOWN) : TrainState()
     data object Ended : TrainState()
+    data object Default: TrainState()
 }
 
 sealed class TrainSession(val type: Type, val goal: Int) {

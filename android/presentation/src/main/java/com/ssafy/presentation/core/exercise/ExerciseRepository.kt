@@ -36,7 +36,6 @@ class ExerciseRepository @Inject constructor(
         coroutineScope.launch {
             exerciseServiceStateUpdates?.takeWhile { binderConnection != null }?.collect { exerciseServiceState ->
                 serviceState.update { ServiceState.Connected(exerciseServiceState) }
-                // TODO : 할꺼 다하고 service 종료하기
                 if (exerciseServiceState.exerciseState == ExerciseState.ENDED) unbindService()
             }
         }
