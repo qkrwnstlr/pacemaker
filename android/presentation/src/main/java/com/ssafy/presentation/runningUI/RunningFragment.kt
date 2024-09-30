@@ -13,10 +13,12 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
+import androidx.health.services.client.data.ExerciseState
 import androidx.health.services.client.data.LocationData
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -40,6 +42,10 @@ import com.ssafy.presentation.utils.formatPace
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import java.time.Duration
+
+private const val TAG = "RunningFragment_PACEMAKER"
 
 @AndroidEntryPoint
 class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBinding::inflate),
@@ -53,6 +59,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.startExercise()
+        initView()
         initCollect()
         initListener()
         initMapView()
@@ -84,6 +91,26 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
             runningText.root.visibility = View.VISIBLE
             runningMap.root.visibility = View.INVISIBLE
         }
+    }
+
+    private fun initView() {
+        initRunningTextView()
+        initRunningMapView()
+    }
+
+
+    private fun initRunningTextView() = with(binding.runningText.runningInfo) {
+        boxBpm.tvRunningTitle.text = "심박수"
+        boxKcal.tvRunningTitle.text = "총 소모 칼로리"
+        boxPace.tvRunningTitle.text = "페이스"
+        boxTime.tvRunningTitle.text = "총 시간"
+    }
+
+    private fun initRunningMapView() = with(binding.runningMap.runningInfo) {
+        boxBpm.tvRunningTitle.text = "심박수"
+        boxKcal.tvRunningTitle.text = "총 소모 칼로리"
+        boxPace.tvRunningTitle.text = "페이스"
+        boxTime.tvRunningTitle.text = "총 시간"
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -118,15 +145,27 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
             it.exerciseState?.let { exerciseState ->
                 binding.runningText.tvDistance.text =
                     formatDistanceKm(exerciseState.exerciseMetrics.distance)
+
+                val duration = if (exerciseState.activeDurationCheckpoint != null) {
+                    exerciseState.activeDurationCheckpoint.activeDuration.plusMillis(
+                        System.currentTimeMillis() - exerciseState.activeDurationCheckpoint.time.toEpochMilli()
+                    )
+                } else {
+                    Duration.ZERO
+                }
+
                 with(binding.runningText.runningInfo) {
-                    boxBpm.tvRunningContent.text =
-                        formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                    boxKcal.tvRunningContent.text =
-                        formatCalories(exerciseState.exerciseMetrics.calories)
-                    boxPace.tvRunningContent.text =
-                        formatPace(exerciseState.exerciseMetrics.pace)
-                    boxTime.tvRunningContent.text =
-                        formatElapsedTime(exerciseState.activeDurationCheckpoint?.activeDuration)
+                    boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                    boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                    boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
+                    boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
+                    exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
+                }
+                with(binding.runningMap.runningInfo) {
+                    boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                    boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                    boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
+                    boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                     exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
                 }
             }
@@ -145,7 +184,10 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                 doubleBackToExitPressedOnce = true
                 showSnackStringBar("한번더 뒤로가기를 누르면 훈련이 종료됩니다.")
 
-                Handler(Looper.getMainLooper()).postDelayed({ doubleBackToExitPressedOnce = false }, 2000)
+                Handler(Looper.getMainLooper()).postDelayed(
+                    { doubleBackToExitPressedOnce = false },
+                    2000
+                )
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressed)

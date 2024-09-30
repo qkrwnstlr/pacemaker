@@ -5,7 +5,6 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
@@ -18,8 +17,6 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
-
-private const val TAG = "ExerciseService_PACEMAKER"
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -85,8 +82,6 @@ class ExerciseService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        Log.d(TAG, "onStartCommand: ")
-
         if (!isStarted) {
             isStarted = true
 
@@ -107,7 +102,6 @@ class ExerciseService : LifecycleService() {
         }
 
         if (intent?.action == RUNNING_ACTION) {
-            Log.d(TAG, "onStartCommand: RUNNING_ACTION")
             lifecycleScope.launch { startExercise() }
         }
 

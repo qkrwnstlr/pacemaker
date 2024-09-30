@@ -189,6 +189,7 @@ class ExerciseService : LifecycleService() {
         if (!file.exists()) return
 
         mediaPlayer.apply {
+            reset()
             setDataSource(file.path)
             prepare()
             start()
