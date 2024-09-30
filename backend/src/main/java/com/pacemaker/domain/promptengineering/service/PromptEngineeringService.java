@@ -2,7 +2,6 @@ package com.pacemaker.domain.promptengineering.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
@@ -16,8 +15,11 @@ import com.opencsv.CSVWriter;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
 import com.pacemaker.domain.openai.dto.Message;
+import com.pacemaker.domain.openai.dto.ResponseFormatString;
 import com.pacemaker.domain.plan.dto.ContentResponse;
 import com.pacemaker.domain.promptengineering.dto.PromptEngineeringRequest;
+import com.pacemaker.domain.promptengineering.dto.UsageResponse;
+import com.pacemaker.global.exception.CsvFileWriteException;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -28,17 +30,27 @@ public class PromptEngineeringService {
 
 	private final WebClient openAIWebClient;
 
-	private final String csvFilePath = "/promptengineering";
-	private final String csvColumns[] = {"System Message", "Response Format", "Content Request", "Content Response"};
+	private final String csvFilePath = "promptengineering";
+	private final String csvColumns[] = {"System Message", "Response Format", "Content Request", "Content Response",
+		"Usage", "Response Format Mismatch"};
 
 	public Mono<String> chat(PromptEngineeringRequest request) {
+
+		Message responseFormat = Message.createPlanResponseFormat((request.getResponseFormat() == null ?
+			ResponseFormatString.planChatResponseFormat :
+			request.getResponseFormat()).replaceAll("\\s", ""));
+
+		Message system = request.getSystemMessage() == null ?
+			Message.createPlanEngSystem(request.getContentRequest().coachTone()) :
+			Message.createSystem(request.getSystemMessage());
 
 		// OpenAI API로 요청을 보낼 request 생성하기
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
-			.messages(List.of(Message.createPlanResponseFormat(request.getResponseFormat()),
-				Message.createUser(new Gson().toJson(request.getContentRequest())),
-				Message.createPlanResponseFormat(request.getResponseFormat().replaceAll("\\s+", ""))))
+			.messages(
+				List.of(responseFormat, Message.createUser(new Gson().toJson(request.getContentRequest())), system))
+			.temperature(request.getChatCompletionRequest().temperature())
+			.maxTokens(request.getChatCompletionRequest().maxTokens())
 			.build();
 
 		return openAIWebClient.post()
@@ -51,15 +63,26 @@ public class PromptEngineeringService {
 				ChatCompletionResponse chatCompletionResponse = new Gson().fromJson(response,
 					ChatCompletionResponse.class);
 
-				ContentResponse contentResponse = new Gson().fromJson(
-					chatCompletionResponse.choices().getFirst().message().content(),
-					ContentResponse.class);
+				ContentResponse contentResponse = null;
+				boolean responseFormatMismatch = false;
+				try {
+					contentResponse = new Gson().fromJson(
+						chatCompletionResponse.choices().getFirst().message().content(),
+						ContentResponse.class);
+				} catch (Exception e) {
+					System.out.println("response format에 어긋난 try-catch");
+					responseFormatMismatch = true;
+					contentResponse = new Gson().fromJson("{\"message\":\"%s\"}".formatted(
+						chatCompletionResponse.choices().getFirst().message().content()), ContentResponse.class);
+				}
 
 				// session 구하기
 				calculateSession(contentResponse);
 
+				UsageResponse usageResponse = new Gson().fromJson(response, UsageResponse.class);
+
 				// csv 파일 생성
-				writeCSV(request, contentResponse);
+				writeCSV("createPlanChat", request, contentResponse, usageResponse, responseFormatMismatch);
 
 				return new Gson().toJson(contentResponse);
 			});
@@ -80,17 +103,26 @@ public class PromptEngineeringService {
 		}
 	}
 
-	private void writeCSV(PromptEngineeringRequest request, ContentResponse contentResponse) {
+	private void writeCSV(String type, PromptEngineeringRequest request, ContentResponse contentResponse,
+		UsageResponse usageResponse, boolean responseFormatMismatch) {
 
-		String filePath = csvFilePath + "/" + request.getName() + "/" + request.getFilename();
+		// 디렉토리 경로 생성 및 확인
+		String dirPath = csvFilePath + File.separator + type + File.separator + request.getUsername();
+		File dir = new File(dirPath);
+		if (!dir.exists()) {
+			try {
+				dir.mkdirs(); // 디렉토리 생성
+			} catch (Exception e) {
+				throw new CsvFileWriteException("디렉토리 생성에 실패했습니다. -> " + dirPath);
+			}
+		}
+
+		String filePath = dirPath + File.separator + request.getFilename();
 
 		// try-catch-resource로도 할 수 있으나 직관적으로 보이기 위해 이렇게 함
 		CSVWriter writer = null;
 		OutputStreamWriter osw = null;
 		FileOutputStream fos = null;
-
-		String reqStr = null;
-		String resStr = null;
 
 		try {
 			fos = new FileOutputStream(filePath, true); // true: append mode
@@ -102,16 +134,25 @@ public class PromptEngineeringService {
 				writer.writeNext(csvColumns);
 			}
 
-			reqStr = new Gson().toJson(request.getContentRequest());
-			resStr = new Gson().toJson(contentResponse);
+			String system = request.getSystemMessage();
+			String responseFormat = request.getResponseFormat();
+			String reqStr = new Gson().toJson(request.getContentRequest());
+			String resStr = new Gson().toJson(contentResponse);
+			String usage = new Gson().toJson(usageResponse);
 
-			String[] record = {request.getSystemMessage(), request.getResponseFormat(),
-				reqStr == null ? "null" : reqStr, resStr == null ? "null" : resStr};
+			String[] record = {
+				system == null ? "null" : system,
+				responseFormat == null ? "null" : responseFormat,
+				reqStr == null ? "null" : reqStr,
+				resStr == null ? "null" : resStr,
+				usage == null ? "null" : usage,
+				responseFormatMismatch ? "TRUE" : "FALSE"
+			};
 			writer.writeNext(record);
 
 		} catch (IOException e) {
 			// 예외 처리 추가
-			throw new RuntimeException("CSV 파일 작성 중 오류가 발생했습니다: " + e.getMessage(), e);
+			throw new CsvFileWriteException("CSV 파일 작성 중 오류가 발생했습니다.");
 
 		} finally {
 			// 자원 해제
@@ -129,7 +170,7 @@ public class PromptEngineeringService {
 				}
 
 			} catch (IOException e) {
-				throw new RuntimeException("자원 해제 중 오류가 발생했습니다: " + e.getMessage(), e);
+				throw new CsvFileWriteException("자원 해제 중 오류가 발생했습니다.");
 			}
 		}
 	}

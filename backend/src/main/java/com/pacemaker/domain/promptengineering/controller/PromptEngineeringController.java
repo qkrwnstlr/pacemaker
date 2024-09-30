@@ -1,6 +1,6 @@
 package com.pacemaker.domain.promptengineering.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,12 +24,12 @@ public class PromptEngineeringController {
 
 	private final PromptEngineeringService promptEngineeringService;
 
-	@Operation(summary = "프롬프트 엔지니어링 로그 쌓기!")
+	@Operation(summary = "프롬프트 엔지니어링 플랜 생성 채팅 로그 쌓기!")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "csv 작성 성공"),
 		@ApiResponse(responseCode = "500", description = "csv 작성 중 오류 발생"),
 	})
-	@GetMapping("/chat")
+	@PostMapping("/chat")
 	public Mono<?> chat(@Valid @RequestBody PromptEngineeringRequest request) {
 
 		return promptEngineeringService.chat(request);
