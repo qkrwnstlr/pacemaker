@@ -1,6 +1,5 @@
 package com.ssafy.domain.usecase.train
 
-import com.ssafy.domain.dto.train.CoachingRequest
 import com.ssafy.domain.dto.train.TTSRequest
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.repository.TrainRepository
@@ -12,9 +11,9 @@ class GetTTSUseCase @Inject constructor(
     private val coachingRepository: TrainRepository
 ) {
 
-    suspend operator fun invoke(message: String): String {
-        val coachIndex = dataStoreRepository.getUser().coachNumber
-        val newRequest = TTSRequest(message, coachIndex)
+    suspend operator fun invoke(message: String, coachIndex: Long? = null): String {
+        val coachNumber = coachIndex ?: dataStoreRepository.getUser().coachNumber
+        val newRequest = TTSRequest(message, coachNumber)
         val response = coachingRepository.getTTS(newRequest)
         if (response is ResponseResult.Error) throw RuntimeException()
 
