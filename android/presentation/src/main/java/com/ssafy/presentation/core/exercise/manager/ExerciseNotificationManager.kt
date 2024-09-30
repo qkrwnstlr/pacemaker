@@ -1,4 +1,4 @@
-package com.ssafy.presentation.core.exercise
+package com.ssafy.presentation.core.exercise.manager
 
 import android.app.Notification
 import android.app.NotificationChannel

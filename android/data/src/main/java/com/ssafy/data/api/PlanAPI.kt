@@ -10,7 +10,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
-import java.time.LocalDate
+import retrofit2.http.Query
 
 interface PlanAPI {
 
@@ -26,7 +26,12 @@ interface PlanAPI {
     @DELETE("plans/active/user/{uid}")
     suspend fun deletePlan(@Path("uid") uid: String): Response<Unit>
 
-    @GET("plans/status/{date}")
-    suspend fun getProgress(@Path("date") date: LocalDate): Response<ProgressData>
+    @GET("plans/progress/user/{uid}")
+    suspend fun getProgress(
+        @Path("uid") uid: String,
+        @Query("year") year: Int,
+        @Query("month") month: Int,
+        @Query("day") day: Int
+    ): Response<ProgressData>
 }
 

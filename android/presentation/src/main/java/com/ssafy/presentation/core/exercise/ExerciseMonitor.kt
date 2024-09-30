@@ -4,6 +4,9 @@ import androidx.health.services.client.data.ExerciseState
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.gson.Gson
+import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
+import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
+import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +16,6 @@ import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val TAG = "ExerciseMonitor_PACEMAKER"
-
 @Singleton
 class ExerciseMonitor @Inject constructor(
     private val wearableClientManager: WearableClientManager,
@@ -22,21 +23,19 @@ class ExerciseMonitor @Inject constructor(
 ) : DataClient.OnDataChangedListener {
     val exerciseServiceState = MutableStateFlow(ExerciseServiceState())
 
-    val exerciseSessionData = MutableStateFlow<List<ExerciseSessionData>>(listOf())
+    val exerciseSessionData = MutableStateFlow(ExerciseSessionData())
 
-    private var isConnect = false
+    private var isRunning = false
 
-    fun connect() {
-        isConnect = true
-        exerciseSessionData.update { listOf() }
+    fun run() {
+        isRunning = true
+        exerciseSessionData.update { ExerciseSessionData() }
         wearableClientManager.dataClient.addListener(this)
-        coroutineScope.launch {
-            collectExerciseMetrics()
-        }
+        collectExerciseMetrics()
     }
 
-    fun disconnect() {
-        isConnect = false
+    fun stop() {
+        isRunning = false
         wearableClientManager.dataClient.removeListener(this)
     }
 
@@ -55,24 +54,24 @@ class ExerciseMonitor @Inject constructor(
         }
     }
 
-    private suspend fun collectExerciseMetrics() {
-        while (isConnect) {
-            var lastDistance = 0.0
-            val exerciseState = exerciseServiceState.value.exerciseState
-            when (exerciseState) {
-                ExerciseState.ACTIVE -> {
-                    val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
-                    exerciseSessionData.update {
-                        exerciseSessionData.value.toMutableList().apply {
-                            add(exerciseMetrics.toExerciseSessionData(lastDistance))
+    private fun collectExerciseMetrics() {
+        coroutineScope.launch {
+            while (isRunning) {
+                var lastDistance = 0.0
+                val exerciseState = exerciseServiceState.value.exerciseState
+                when (exerciseState) {
+                    ExerciseState.ACTIVE -> {
+                        val exerciseMetrics = exerciseServiceState.value.exerciseMetrics
+                        exerciseSessionData.update {
+                            exerciseMetrics.toExerciseSessionData(lastDistance)
                         }
+                        exerciseMetrics.distance?.let { lastDistance = it }
                     }
-                    exerciseMetrics.distance?.let { lastDistance = it }
-                }
 
-                ExerciseState.ENDED -> break
+                    ExerciseState.ENDED -> break
+                }
+                delay(1_000)
             }
-            delay(1_000)
         }
     }
 
