@@ -104,81 +104,90 @@
         app:layout_constraintStart_toEndOf="@id/tv_result_kcal_title"
         app:layout_constraintTop_toTopOf="@id/tv_result_kcal_title" />
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart_pace"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ly_chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_30"
-        app:layout_constraintEnd_toStartOf="@+id/chart_heart"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_result_pace_title" />
-
-    <TextView
-        android:id="@+id/textView"
-        style="@style/SmallBoldText"
-        android:text="@string/pace"
-        app:layout_constraintEnd_toEndOf="@+id/chart_pace"
-        app:layout_constraintStart_toStartOf="@+id/chart_pace"
-        app:layout_constraintTop_toBottomOf="@+id/chart_pace" />
-
-    <TextView
-        android:id="@+id/rank_pace"
-        style="@style/RankText"
-        android:text="A"
-        app:layout_constraintBottom_toBottomOf="@+id/chart_pace"
-        app:layout_constraintEnd_toEndOf="@+id/chart_pace"
-        app:layout_constraintStart_toStartOf="@+id/chart_pace"
-        app:layout_constraintTop_toTopOf="@+id/chart_pace" />
-
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart_heart"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        app:layout_constraintEnd_toStartOf="@+id/chart_step"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/chart_pace"
-        app:layout_constraintTop_toTopOf="@+id/chart_pace" />
-
-    <TextView
-        style="@style/SmallBoldText"
-        android:text="@string/heart"
-        app:layout_constraintEnd_toEndOf="@+id/chart_heart"
-        app:layout_constraintStart_toStartOf="@+id/chart_heart"
-        app:layout_constraintTop_toBottomOf="@+id/chart_heart" />
-
-    <TextView
-        android:id="@+id/rank_heart"
-        style="@style/RankText"
-        android:text="B"
-        app:layout_constraintBottom_toBottomOf="@+id/chart_heart"
-        app:layout_constraintEnd_toEndOf="@+id/chart_heart"
-        app:layout_constraintStart_toStartOf="@+id/chart_heart"
-        app:layout_constraintTop_toTopOf="@+id/chart_heart" />
-
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart_step"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/chart_heart"
-        app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_result_pace_title">
 
-    <TextView
-        style="@style/SmallBoldText"
-        android:text="@string/step"
-        app:layout_constraintEnd_toEndOf="@+id/chart_step"
-        app:layout_constraintStart_toStartOf="@+id/chart_step"
-        app:layout_constraintTop_toBottomOf="@+id/chart_step" />
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chart_pace"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintEnd_toStartOf="@+id/chart_heart"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/rank_step"
-        style="@style/RankText"
-        android:text="A"
-        app:layout_constraintBottom_toBottomOf="@+id/chart_step"
-        app:layout_constraintEnd_toEndOf="@+id/chart_step"
-        app:layout_constraintStart_toStartOf="@+id/chart_step"
-        app:layout_constraintTop_toTopOf="@+id/chart_step" />
+        <TextView
+            style="@style/SmallBoldText"
+            android:text="@string/pace"
+            app:layout_constraintEnd_toEndOf="@+id/chart_pace"
+            app:layout_constraintStart_toStartOf="@+id/chart_pace"
+            app:layout_constraintTop_toBottomOf="@+id/chart_pace" />
+
+        <TextView
+            android:id="@+id/rank_pace"
+            style="@style/RankText"
+            android:text="A"
+            app:layout_constraintBottom_toBottomOf="@+id/chart_pace"
+            app:layout_constraintEnd_toEndOf="@+id/chart_pace"
+            app:layout_constraintStart_toStartOf="@+id/chart_pace"
+            app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chart_heart"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintEnd_toStartOf="@+id/chart_step"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/chart_pace"
+            app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+
+        <TextView
+            style="@style/SmallBoldText"
+            android:text="@string/heart"
+            app:layout_constraintEnd_toEndOf="@+id/chart_heart"
+            app:layout_constraintStart_toStartOf="@+id/chart_heart"
+            app:layout_constraintTop_toBottomOf="@+id/chart_heart" />
+
+        <TextView
+            android:id="@+id/rank_heart"
+            style="@style/RankText"
+            android:text="B"
+            app:layout_constraintBottom_toBottomOf="@+id/chart_heart"
+            app:layout_constraintEnd_toEndOf="@+id/chart_heart"
+            app:layout_constraintStart_toStartOf="@+id/chart_heart"
+            app:layout_constraintTop_toTopOf="@+id/chart_heart" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chart_step"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/chart_heart"
+            app:layout_constraintTop_toTopOf="@+id/chart_pace" />
+
+        <TextView
+            style="@style/SmallBoldText"
+            android:text="@string/step"
+            app:layout_constraintEnd_toEndOf="@+id/chart_step"
+            app:layout_constraintStart_toStartOf="@+id/chart_step"
+            app:layout_constraintTop_toBottomOf="@+id/chart_step" />
+
+        <TextView
+            android:id="@+id/rank_step"
+            style="@style/RankText"
+            android:text="A"
+            app:layout_constraintBottom_toBottomOf="@+id/chart_step"
+            app:layout_constraintEnd_toEndOf="@+id/chart_step"
+            app:layout_constraintStart_toStartOf="@+id/chart_step"
+            app:layout_constraintTop_toTopOf="@+id/chart_step" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

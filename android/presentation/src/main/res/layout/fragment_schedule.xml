@@ -137,6 +137,16 @@
                 android:layout_height="1dp"
                 app:dividerColor="@color/lightGray" />
 
+            <com.ssafy.presentation.component.TrainInfoTitleView
+                android:id="@+id/tv_inst"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_16"
+                android:paddingTop="@dimen/margin_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/vp_report"
                 android:layout_width="match_parent"
@@ -148,13 +158,6 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/margin_16">
 
-                <com.ssafy.presentation.component.TrainInfoTitleView
-                    android:id="@+id/tv_nothing_inst"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_nothing"
@@ -167,7 +170,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_nothing_inst" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/tv_nothing_content"
