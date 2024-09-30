@@ -71,6 +71,7 @@ class SplashActivity : AppCompatActivity() {
             putExtra(UID, uid)
         }
         startActivity(intent)
+        finish()
     }
 
     companion object {
