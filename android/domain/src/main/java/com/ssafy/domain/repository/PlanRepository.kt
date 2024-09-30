@@ -5,13 +5,12 @@ import com.ssafy.domain.dto.plan.PlanInfo
 import com.ssafy.domain.dto.plan.PlanRequest
 import com.ssafy.domain.dto.schedule.ProgressData
 import com.ssafy.domain.response.ResponseResult
-import java.time.LocalDate
 
 interface PlanRepository {
 
     suspend fun chatForPlan(chat: Chat): ResponseResult<Chat>
 
-    suspend fun getProgress(date: LocalDate): ResponseResult<ProgressData>
+    suspend fun getProgress(uid:String, year:Int, month:Int, day:Int): ResponseResult<ProgressData>
 
     suspend fun makePlan(planRequest: PlanRequest): ResponseResult<Unit>
 

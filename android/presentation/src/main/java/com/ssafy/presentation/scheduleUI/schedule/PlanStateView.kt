@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.PlanCustomViewBinding
+import com.ssafy.presentation.utils.makeProgressString
 
 class PlanStateView : ConstraintLayout {
     constructor(context: Context) : super(context) {
@@ -29,8 +30,15 @@ class PlanStateView : ConstraintLayout {
         addView(binding.root)
     }
 
-    fun setPlanData(planString: String, current: Int, total: Int, state: String) {
-        binding.tvPlanInst.text = planString
+    fun setPlanData(
+        planString: String,
+        current: Int,
+        total: Int,
+        state: String,
+        totalDistance: Int,
+        totalTime: Int
+    ) {
+        binding.tvPlanInst.text = makeProgressString(planString,total)
         val progressPercentage = (current.toFloat() / total * 100).toInt()
         binding.progressBar.progress = progressPercentage
 
@@ -40,7 +48,6 @@ class PlanStateView : ConstraintLayout {
 
         constraintSet.applyTo(binding.root)
 
-        binding.root.isVisible = true
         when (state) {
             "ACTIVE" -> {
                 binding.root.isVisible = true
