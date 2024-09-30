@@ -64,9 +64,9 @@ fun Float.toRank(): String {
 }
 
 fun Float.toRankColor(): String {
-    return if (this <= 50) "#FF6C6C"
-    else if (this <= 75) "#FFB45E"
-    else "#5973FF"
+    return if (this <= 50) "#FFFF6C6C"
+    else if (this <= 75) "#FFFFB45E"
+    else "#FF5973FF"
 }
 
 fun String.toAgeString(): String = if (isBlank()) "" else "${this}세"
