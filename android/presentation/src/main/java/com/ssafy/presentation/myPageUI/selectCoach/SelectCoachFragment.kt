@@ -1,9 +1,13 @@
 package com.ssafy.presentation.myPageUI.selectCoach
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
@@ -12,20 +16,26 @@ import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companio
 import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companion.JAMIE
 import com.ssafy.presentation.myPageUI.selectCoach.SelectCoachViewModel.Companion.MIKE
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 
 @AndroidEntryPoint
 class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     FragmentSelectCoachBinding::inflate
 ) {
     private val viewModel: SelectCoachViewModel by viewModels()
+    private val mediaPlayer by lazy { MediaPlayer() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initView()
         initListener()
+        initCollect()
     }
 
     private fun initView() = with(binding) {
@@ -41,10 +51,43 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     }
 
     private fun initListener() = with(binding) {
-        val uid = getUid()
-        clRed.setOnClickListener { viewModel.setCoach(uid, MIKE, next(), ::failToSetCoach) }
-        clYellow.setOnClickListener { viewModel.setCoach(uid, JAMIE, next(), ::failToSetCoach) }
-        clBlue.setOnClickListener { viewModel.setCoach(uid, DANNY, next(), ::failToSetCoach) }
+        clRed.setOnClickListener { viewModel.selectCoach(MIKE, ::showSnackBar) }
+        clYellow.setOnClickListener { viewModel.selectCoach(JAMIE, ::showSnackBar) }
+        clBlue.setOnClickListener { viewModel.selectCoach(DANNY, ::showSnackBar) }
+    }
+
+    private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            collectCoachState()
+            collectVoiceEvent()
+        }
+    }
+
+    private fun CoroutineScope.collectCoachState() = launch {
+        viewModel.selectCoachState.collectLatest { (coachIndex, count) ->
+            if (count == SELECT_MAX_COUNT) {
+                viewModel.setCoach(coachIndex, next(), ::showSnackBar)
+            }
+        }
+    }
+
+    private fun CoroutineScope.collectVoiceEvent() = launch {
+        viewModel.voiceEvent.collectLatest { voicePath ->
+            val file = File(voicePath)
+            if (!file.exists()) return@collectLatest
+
+            mediaPlayer.apply {
+                reset()
+                setDataSource(file.path)
+                prepare()
+                start()
+
+                setOnCompletionListener {
+                    reset()
+                    file.delete()
+                }
+            }
+        }
     }
 
     private fun next(): suspend () -> Unit {
@@ -66,11 +109,8 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
         findNavController().popBackStack()
     }
 
-    private suspend fun failToSetCoach(message: String) = withContext(Dispatchers.Main) {
-        showSnackStringBar(message)
-    }
-
     companion object {
         const val ILLEGAL_DESTINATION = "잘못된 목적지입니다."
+        const val SELECT_MAX_COUNT = 2
     }
 }
