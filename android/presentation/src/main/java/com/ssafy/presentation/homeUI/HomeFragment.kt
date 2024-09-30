@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -40,6 +41,7 @@ import com.ssafy.presentation.homeUI.TopSheetBehavior.TopSheetCallback
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -123,12 +125,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         initListener()
         initCollect()
         // TODO 추후에 리포트 API가 나오면 변경됩니다. 현재는 진행중인 플랜의 유무만 확인합니다.
+        // TODO Home 화면에 보이는 최대 달은 +- 2달입니다. 초기에 총 5달을 불러와주세요.
         viewModel.getPlanInfo()
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             collectTrainingState()
+            collectSelectDate()
         }
     }
 
@@ -199,6 +203,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
+    private fun CoroutineScope.collectSelectDate() = launch {
+        var prevDate = viewModel.selectDate.value
+        viewModel.selectDate.collectLatest { date ->
+            binding.topSheet.weekCalendar.notifyWeekChanged(date)
+            binding.topSheet.weekCalendar.notifyWeekChanged(prevDate)
+            prevDate = date
+        }
+    }
+
     private fun initView() = with(binding) {
         initWeekCalendar()
         initTopSheet()
@@ -214,13 +227,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             setTopSheetCallback(object : TopSheetCallback() {
                 override fun onStateChanged(topSheet: View, newState: Int) {
                     when (newState) {
-                        TopSheetBehavior.STATE_COLLAPSED -> {
-                            topSheetBody.visibility = View.GONE
-                        }
-
-                        else -> {
-                            topSheetBody.visibility = View.VISIBLE
-                        }
+                        TopSheetBehavior.STATE_COLLAPSED -> topSheetBody.visibility = View.GONE
+                        else -> topSheetBody.visibility = View.VISIBLE
                     }
                 }
 
@@ -236,7 +244,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun initWeekCalendar() {
-        val today = LocalDate.now()
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(1)
         val endMonth = currentMonth.plusMonths(1)
@@ -249,8 +256,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 container.apply {
                     day = data
                     textView.text = data.date.dayOfMonth.toString()
-                    if (data.date == today) container.ly.setBackgroundResource(R.drawable.day_selected_bg)
-                    setOnClickListener { showSnackStringBar("다른날짜 로직 넣으세욤") }
+                    setOnClickListener { viewModel.setDate(data.date) }
+
+                    val selectDate = viewModel.selectDate.value
+                    if (data.date == selectDate) container.ly.setBackgroundResource(R.drawable.day_selected_bg)
+                    else container.ly.setBackgroundColor(Color.TRANSPARENT)
                 }
             }
         }

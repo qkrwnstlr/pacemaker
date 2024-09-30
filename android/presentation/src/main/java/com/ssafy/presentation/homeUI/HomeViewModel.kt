@@ -11,7 +11,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +27,9 @@ class HomeViewModel @Inject constructor(
 
     private val _coachState: MutableStateFlow<Int> = MutableStateFlow(1)
     val coachState: StateFlow<Int> = _coachState.asStateFlow()
+
+    private val _selectDate: MutableStateFlow<LocalDate> = MutableStateFlow(LocalDate.now())
+    val selectDate: StateFlow<LocalDate> = _selectDate.asStateFlow()
 
     fun profileUrlFlow(): Flow<String> {
         return dataStoreRepository.getImgUrl()
@@ -41,4 +46,7 @@ class HomeViewModel @Inject constructor(
             .onSuccess { _trainingState.emit(3) }
             .onFailure { _trainingState.emit(4) }
     }
+
+    fun setDate(localDate: LocalDate) = _selectDate.update { localDate }
+
 }
