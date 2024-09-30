@@ -7,7 +7,6 @@ import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.presentation.core.exercise.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,7 +32,6 @@ class HomeViewModel @Inject constructor(
 
     fun startExercise() {
         viewModelScope.launch {
-            delay(3_000)
             exerciseRepository.startExercise()
         }
     }

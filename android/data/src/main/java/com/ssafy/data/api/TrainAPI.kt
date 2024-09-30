@@ -1,6 +1,7 @@
 package com.ssafy.data.api
 
 import com.ssafy.domain.dto.train.CoachingRequest
+import com.ssafy.domain.dto.train.TTSRequest
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -13,4 +14,7 @@ interface TrainAPI {
     @Streaming
     suspend fun getCoaching(@Body dto: CoachingRequest): Response<ResponseBody>
 
+    @POST("realtimes/tts")
+    @Streaming
+    suspend fun getTTS(@Body dto: TTSRequest): Response<ResponseBody>
 }

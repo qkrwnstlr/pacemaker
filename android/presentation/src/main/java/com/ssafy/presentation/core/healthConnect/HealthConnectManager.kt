@@ -29,15 +29,14 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.response.InsertRecordsResponse
 import androidx.health.connect.client.time.TimeRangeFilter
-import androidx.health.connect.client.units.calories
-import androidx.health.connect.client.units.meters
 import androidx.lifecycle.lifecycleScope
-import com.ssafy.presentation.core.exercise.ExerciseData
-import com.ssafy.presentation.core.exercise.ExerciseSessionData
-import com.ssafy.presentation.core.exercise.cadence
-import com.ssafy.presentation.core.exercise.heartRate
-import com.ssafy.presentation.core.exercise.location
-import com.ssafy.presentation.core.exercise.speed
+import com.ssafy.presentation.core.exercise.data.ExerciseData
+import com.ssafy.presentation.core.exercise.data.cadence
+import com.ssafy.presentation.core.exercise.data.endTime
+import com.ssafy.presentation.core.exercise.data.heartRate
+import com.ssafy.presentation.core.exercise.data.location
+import com.ssafy.presentation.core.exercise.data.speed
+import com.ssafy.presentation.core.exercise.data.startTime
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -158,60 +157,59 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
     suspend fun writeExerciseSession(
         title: String,
         exerciseData: ExerciseData,
-        exerciseSessionData: List<ExerciseSessionData>
-    ): InsertRecordsResponse {
+    ): InsertRecordsResponse = with(exerciseData) {
         return healthConnectClient.insertRecords(
             listOf(
                 ExerciseSessionRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
                     exerciseType = ExerciseSessionRecord.EXERCISE_TYPE_RUNNING,
                     title = title,
-                    exerciseRoute = ExerciseRoute(exerciseSessionData.location)
+                    exerciseRoute = ExerciseRoute(location)
                 ),
                 StepsRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
-                    count = exerciseData.totalSteps ?: 1L
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
+                    count = totalSteps
                 ),
                 DistanceRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
-                    distance = exerciseData.totalDistance ?: 0.meters
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
+                    distance = totalDistance
                 ),
                 TotalCaloriesBurnedRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
-                    energy = exerciseData.totalEnergyBurned ?: 0.calories
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
+                    energy = totalEnergyBurned
                 ),
                 HeartRateRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
-                    samples = exerciseSessionData.heartRate
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
+                    samples = heartRate
                 ),
                 StepsCadenceRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
-                    samples = exerciseSessionData.cadence,
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
+                    samples = cadence,
                 ),
                 SpeedRecord(
-                    startTime = exerciseData.start.toInstant(),
-                    startZoneOffset = exerciseData.start.offset,
-                    endTime = exerciseData.end.toInstant(),
-                    endZoneOffset = exerciseData.end.offset,
-                    samples = exerciseSessionData.speed
+                    startTime = startTime.toInstant(),
+                    startZoneOffset = startTime.offset,
+                    endTime = endTime.toInstant(),
+                    endZoneOffset = endTime.offset,
+                    samples = speed
                 ),
             )
         )

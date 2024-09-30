@@ -162,11 +162,27 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
     }
 
     suspend fun pauseExercise() {
-        exerciseClient.pauseExercise()
+        val exerciseInfo = exerciseClient.getCurrentExerciseInfoAsync().await()
+        when (exerciseInfo.exerciseTrackedStatus) {
+            OTHER_APP_IN_PROGRESS -> {}
+            OWNED_EXERCISE_IN_PROGRESS -> {
+                exerciseClient.pauseExercise()
+            }
+
+            NO_EXERCISE_IN_PROGRESS -> {}
+        }
     }
 
     suspend fun resumeExercise() {
-        exerciseClient.resumeExercise()
+        val exerciseInfo = exerciseClient.getCurrentExerciseInfoAsync().await()
+        when (exerciseInfo.exerciseTrackedStatus) {
+            OTHER_APP_IN_PROGRESS -> {}
+            OWNED_EXERCISE_IN_PROGRESS -> {
+                exerciseClient.resumeExercise()
+            }
+
+            NO_EXERCISE_IN_PROGRESS -> {}
+        }
     }
 
     suspend fun markLap() {
