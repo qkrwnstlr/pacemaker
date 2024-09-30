@@ -142,31 +142,33 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                 findNavController().popBackStack()
             }
 
-            it.exerciseState?.let { exerciseState ->
-                binding.runningText.tvDistance.text =
-                    formatDistanceKm(exerciseState.exerciseMetrics.distance)
+            if(it.isActive) {
+                it.exerciseState?.let { exerciseState ->
+                    binding.runningText.tvDistance.text =
+                        formatDistanceKm(exerciseState.exerciseMetrics.distance)
 
-                val duration = if (exerciseState.activeDurationCheckpoint != null) {
-                    exerciseState.activeDurationCheckpoint.activeDuration.plusMillis(
-                        System.currentTimeMillis() - exerciseState.activeDurationCheckpoint.time.toEpochMilli()
-                    )
-                } else {
-                    Duration.ZERO
-                }
+                    val duration = if (exerciseState.activeDurationCheckpoint != null) {
+                        exerciseState.activeDurationCheckpoint.activeDuration.plusMillis(
+                            System.currentTimeMillis() - exerciseState.activeDurationCheckpoint.time.toEpochMilli()
+                        )
+                    } else {
+                        Duration.ZERO
+                    }
 
-                with(binding.runningText.runningInfo) {
-                    boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                    boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
-                    boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
-                    boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
-                    exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
-                }
-                with(binding.runningMap.runningInfo) {
-                    boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                    boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
-                    boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
-                    boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
-                    exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
+                    with(binding.runningText.runningInfo) {
+                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
+                        boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
+                        exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
+                    }
+                    with(binding.runningMap.runningInfo) {
+                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
+                        boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
+                        exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
+                    }
                 }
             }
         }
