@@ -206,5 +206,9 @@
         android:id="@+id/runningFragment"
         android:name="com.ssafy.presentation.runningUI.RunningFragment"
         android:label="fragment_running"
-        tools:layout="@layout/fragment_running" />
+        tools:layout="@layout/fragment_running" >
+        <action
+          android:id="@+id/action_runningFragment_to_scheduleFragment"
+          app:destination="@id/scheduleFragment" />
+    </fragment>
 </navigation>

@@ -1,5 +1,6 @@
 package com.ssafy.presentation.loginUI.connect
 
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
@@ -11,5 +12,6 @@ class ConnectViewModel @Inject constructor(
     private val healthConnectManager: HealthConnectManager,
 ) : ViewModel() {
     suspend fun hasAllPermissions() = healthConnectManager.hasAllPermissions()
-    fun launchPermissionsLauncher(fragment: Fragment) = healthConnectManager.launchPermissionsLauncher(fragment)
+    fun requestPermissionsActivityContract() = healthConnectManager.requestPermissionsActivityContract()
+    fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) = healthConnectManager.launchPermissionsLauncher(activityResultLauncher)
 }

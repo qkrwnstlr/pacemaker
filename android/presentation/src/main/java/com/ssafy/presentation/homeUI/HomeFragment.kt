@@ -36,6 +36,7 @@ import com.ssafy.presentation.component.CreatePlanButton
 import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.component.TrainRestMessageView
 import com.ssafy.presentation.core.BaseFragment
+import com.ssafy.presentation.core.MainActivity
 import com.ssafy.presentation.databinding.FragmentHomeBinding
 import com.ssafy.presentation.homeUI.TopSheetBehavior.TopSheetCallback
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
@@ -277,8 +278,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private fun initListener() {
         binding.startRunButton.setOnClickListener {
             viewModel.startExercise()
-            val action = HomeFragmentDirections.actionHomeFragmentToRunningFragment()
-            findNavController().navigate(action)
+            // TODO : show 3, 2, 1 or spinner
         }
 
         binding.profileButton.setOnClickListener {

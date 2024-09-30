@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.ServiceCompat
-import androidx.health.services.client.data.ExerciseState
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.ssafy.pacemaker.data.ExerciseClientManager
@@ -15,6 +14,7 @@ import com.ssafy.pacemaker.data.WearableClientManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
@@ -44,9 +44,6 @@ class ExerciseService : LifecycleService() {
     private var isStarted = false
     private val localBinder = LocalBinder()
 
-    private val serviceRunningInForeground: Boolean
-        get() = this.foregroundServiceType != ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE
-
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()
 
     suspend fun prepareExercise() {
@@ -75,6 +72,7 @@ class ExerciseService : LifecycleService() {
     fun clearExercise() {
         exerciseServiceMonitor.disconnect()
         exerciseMonitor.disconnect()
+        stopSelf()
     }
 
     fun markLap() {
@@ -93,8 +91,17 @@ class ExerciseService : LifecycleService() {
 
             if (!isBound) stopSelfIfNotRunning()
 
-            postOngoingActivityNotification()
+            startForeground()
             exerciseMonitor.connect()
+            exerciseServiceMonitor.connect()
+            lifecycleScope.launch {
+                exerciseServiceMonitor.exerciseServiceState.collect {exerciseServiceState ->
+                    wearableClientManager.sendToMobileDevice(
+                        WearableClientManager.EXERCISE_DATA_PATH,
+                        exerciseServiceState
+                    )
+                }
+            }
         }
 
         return START_STICKY
@@ -103,9 +110,7 @@ class ExerciseService : LifecycleService() {
     private fun stopSelfIfNotRunning() {
         lifecycleScope.launch {
             if (!isExerciseInProgress()) {
-                if (exerciseServiceMonitor.exerciseServiceState.value.exerciseState == ExerciseState.PREPARING) {
-                    lifecycleScope.launch { endExercise() }
-                }
+                lifecycleScope.launch { endExercise() }
                 stopSelf()
             }
         }
@@ -141,30 +146,30 @@ class ExerciseService : LifecycleService() {
         return true
     }
 
-    fun removeOngoingActivityNotification() {
-        if (serviceRunningInForeground) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        }
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycleScope.launch { endExercise() }
     }
 
-    private fun postOngoingActivityNotification() {
-        if (!serviceRunningInForeground) {
+    private fun removeOngoingActivityNotification() {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+    }
 
-            exerciseNotificationManager.createNotificationChannel()
-            val serviceState = exerciseServiceMonitor.exerciseServiceState.value
-            ServiceCompat.startForeground(
-                this,
-                ExerciseNotificationManager.NOTIFICATION_ID,
-                exerciseNotificationManager.buildNotification(
-                    serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
-                ),
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK or
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-                            ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
-                        else
-                            0
-            )
-        }
+    private fun startForeground() {
+        exerciseNotificationManager.createNotificationChannel()
+        val serviceState = exerciseServiceMonitor.exerciseServiceState.value
+        ServiceCompat.startForeground(
+            this,
+            ExerciseNotificationManager.NOTIFICATION_ID,
+            exerciseNotificationManager.buildNotification(
+                serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
+            ),
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK or
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+                        ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
+                    else
+                        0
+        )
     }
 
     inner class LocalBinder : Binder() {

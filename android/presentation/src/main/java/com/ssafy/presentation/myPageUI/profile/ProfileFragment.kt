@@ -5,6 +5,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +29,12 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBinding::inflate) {
     private val viewModel: ProfileViewModel by viewModels()
+    private lateinit var permissionLauncher: ActivityResultLauncher<Set<String>>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) { }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -114,21 +121,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun checkPermissions() {
-        lifecycleScope.launch {
-            try {
-                if (viewModel.hasAllPermissions()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "All permissions granted",
-                        Toast.LENGTH_LONG,
-                    ).show()
-                } else {
-                    viewModel.launchPermissionsLauncher(this@ProfileFragment)
-                }
-            } catch (exception: Exception) {
-                Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_LONG)
-                    .show()
-            }
-        }
+        viewModel.launchPermissionsLauncher(permissionLauncher)
     }
 }

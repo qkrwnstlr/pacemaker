@@ -1,5 +1,6 @@
 package com.ssafy.presentation.myPageUI.profile
 
+import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,5 +30,6 @@ class ProfileViewModel @Inject constructor(
     }
 
     suspend fun hasAllPermissions() = healthConnectManager.hasAllPermissions()
-    fun launchPermissionsLauncher(fragment: Fragment) = healthConnectManager.launchPermissionsLauncher(fragment)
+    fun requestPermissionsActivityContract() = healthConnectManager.requestPermissionsActivityContract()
+    fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) = healthConnectManager.launchPermissionsLauncher(activityResultLauncher)
 }

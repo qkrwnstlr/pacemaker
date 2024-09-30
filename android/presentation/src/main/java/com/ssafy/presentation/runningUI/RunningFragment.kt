@@ -17,6 +17,7 @@ import androidx.health.services.client.data.LocationData
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -45,6 +46,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     private var myLocationListener: LocationListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.startExercise()
         initCollect()
         initListener()
         initMapView()
@@ -104,6 +106,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
             if (it.isEnded) {
                 showSnackStringBar("훈련 종료!")
+                findNavController().popBackStack()
             }
 
             it.exerciseState?.let { exerciseState ->
@@ -149,6 +152,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
+        // TODO : 두번째 키면 binding null pointer exception 해결하기
         getMyLocation()
     }
 

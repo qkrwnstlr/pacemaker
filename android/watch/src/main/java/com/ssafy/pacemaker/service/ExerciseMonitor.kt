@@ -8,9 +8,11 @@ import com.ssafy.pacemaker.data.WearableClientManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val TAG = "ExerciseMonitor_PACEMAKER"
 
+@Singleton
 class ExerciseMonitor @Inject constructor(
     private val wearableClientManager: WearableClientManager,
     private val exerciseClientManager: ExerciseClientManager,

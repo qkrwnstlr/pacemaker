@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -44,6 +46,8 @@ import java.time.Duration
 import java.time.Instant
 import javax.inject.Inject
 import kotlin.reflect.KClass
+
+private const val TAG = "HealthConnectManager_PACEMAKER"
 
 class HealthConnectManager @Inject constructor(@ApplicationContext val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
@@ -118,27 +122,12 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
             .containsAll(permissions)
     }
 
-    private fun requestPermissionsActivityContract(): ActivityResultContract<Set<String>, Set<String>> {
+    fun requestPermissionsActivityContract(): ActivityResultContract<Set<String>, Set<String>> {
         return PermissionController.createRequestPermissionResultContract()
     }
 
-    fun launchPermissionsLauncher(fragment: Fragment) {
-        fragment.registerForActivityResult(requestPermissionsActivityContract()) { granted ->
-            fragment.lifecycleScope.launch {
-                if (granted.isNotEmpty() && hasAllPermissions()) {
-                    Toast.makeText(
-                        fragment.requireContext(),
-                        "All permissions granted",
-                        Toast.LENGTH_SHORT,
-                    ).show()
-                } else {
-                    AlertDialog.Builder(fragment.requireContext())
-                        .setMessage("Permissions are not granted. Please grant data permissions in the Health Connect permission settings.")
-                        .setPositiveButton("OK", null)
-                        .show()
-                }
-            }
-        }.launch(permissions)
+    fun launchPermissionsLauncher(launcher: ActivityResultLauncher<Set<String>>) {
+        launcher.launch(permissions)
     }
 
     suspend fun revokeAllPermissions() {

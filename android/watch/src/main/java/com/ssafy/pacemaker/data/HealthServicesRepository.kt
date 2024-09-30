@@ -2,6 +2,8 @@ package com.ssafy.pacemaker.data
 
 import android.content.Context
 import android.util.Log
+import androidx.health.services.client.data.ExerciseState
+import com.google.android.horologist.health.service.BinderConnection
 import com.ssafy.pacemaker.di.bindService
 import com.ssafy.pacemaker.service.ExerciseService
 import com.ssafy.pacemaker.service.ExerciseServiceState
@@ -9,12 +11,15 @@ import dagger.hilt.android.ActivityRetainedLifecycle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +29,6 @@ private const val TAG = "HealthServicesRepository_PACEMAKER"
 class HealthServicesRepository @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
     private val exerciseClientManager: ExerciseClientManager,
-    private val wearableClientManager: WearableClientManager,
     private val coroutineScope: CoroutineScope,
     lifecycle: ActivityRetainedLifecycle
 ) {
@@ -38,10 +42,6 @@ class HealthServicesRepository @Inject constructor(
 
     val serviceState: StateFlow<ServiceState> =
         exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
-            wearableClientManager.sendToMobileDevice(
-                WearableClientManager.EXERCISE_DATA_PATH,
-                exerciseServiceState
-            )
             if (exerciseServiceState.exerciseState == null) {
                 ServiceState.Disconnected
             } else {
