@@ -246,7 +246,6 @@ class ExerciseService : LifecycleService() {
     private fun startForeground() {
         exerciseNotificationManager.createNotificationChannel()
         val notification = exerciseNotificationManager.buildNotification()
-
         ServiceCompat.startForeground(
             this,
             ExerciseNotificationManager.NOTIFICATION_ID,

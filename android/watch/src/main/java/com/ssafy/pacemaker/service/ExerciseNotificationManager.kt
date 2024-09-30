@@ -42,7 +42,7 @@ class ExerciseNotificationManager @Inject constructor(
             NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL)
                 .setContentTitle(NOTIFICATION_TITLE)
                 .setContentText(NOTIFICATION_TEXT)
-                .setSmallIcon(R.drawable.ic_baseline_directions_run_24)
+                .setSmallIcon(R.drawable.logo)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true)
                 .setCategory(NotificationCompat.CATEGORY_WORKOUT)
@@ -55,8 +55,8 @@ class ExerciseNotificationManager @Inject constructor(
             .build()
         val ongoingActivity =
             OngoingActivity.Builder(applicationContext, NOTIFICATION_ID, notificationBuilder)
-                .setAnimatedIcon(R.drawable.ic_baseline_directions_run_24)
-                .setStaticIcon(R.drawable.ic_baseline_directions_run_24)
+                .setAnimatedIcon(R.drawable.logo)
+                .setStaticIcon(R.drawable.logo)
                 .setTouchIntent(pendingIntent)
                 .setStatus(ongoingActivityStatus)
                 .build()
@@ -67,9 +67,8 @@ class ExerciseNotificationManager @Inject constructor(
     }
 
     companion object {
-        const val NOTIFICATION_ID = 1
-        private const val NOTIFICATION_CHANNEL =
-            "com.ssafy.pacemaker.ONGOING_EXERCISE"
+        const val NOTIFICATION_ID = 100001
+        private const val NOTIFICATION_CHANNEL = "com.ssafy.pacemaker.ONGOING_EXERCISE"
         private const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Exercise"
         private const val NOTIFICATION_TITLE = "PaceMaker"
         private const val NOTIFICATION_TEXT = "Ongoing Exercise"

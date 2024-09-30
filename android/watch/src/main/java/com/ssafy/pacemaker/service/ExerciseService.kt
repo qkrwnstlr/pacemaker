@@ -159,13 +159,14 @@ class ExerciseService : LifecycleService() {
     private fun startForeground() {
         exerciseNotificationManager.createNotificationChannel()
         val serviceState = exerciseServiceMonitor.exerciseServiceState.value
+        val notification = exerciseNotificationManager.buildNotification(
+            serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
+        )
         ServiceCompat.startForeground(
             this,
             ExerciseNotificationManager.NOTIFICATION_ID,
-            exerciseNotificationManager.buildNotification(
-                serviceState.activeDurationCheckpoint?.activeDuration ?: Duration.ZERO
-            ),
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK or
+            notification,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION or ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC or
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
                         ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
                     else
