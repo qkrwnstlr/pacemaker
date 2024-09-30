@@ -1,6 +1,5 @@
 package com.ssafy.presentation.core.exercise
 
-import android.util.Log
 import androidx.health.services.client.data.ExerciseState
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
@@ -16,8 +15,6 @@ import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
 import javax.inject.Inject
 import javax.inject.Singleton
-
-private const val TAG = "ExerciseMonitor_PACEMAKER"
 
 @Singleton
 class ExerciseMonitor @Inject constructor(
@@ -53,7 +50,6 @@ class ExerciseMonitor @Inject constructor(
                             ExerciseServiceState::class.java
                         )
                     }
-                    Log.d(TAG, "onDataChanged: ${exerciseServiceState.value.exerciseState}")
                 }
             }
         }

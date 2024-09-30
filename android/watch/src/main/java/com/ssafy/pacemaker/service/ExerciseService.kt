@@ -14,7 +14,6 @@ import com.ssafy.pacemaker.data.WearableClientManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
@@ -96,14 +95,20 @@ class ExerciseService : LifecycleService() {
             startForeground()
             exerciseMonitor.connect()
             exerciseServiceMonitor.connect()
+
             lifecycleScope.launch {
-                exerciseServiceMonitor.exerciseServiceState.collect {exerciseServiceState ->
+                exerciseServiceMonitor.exerciseServiceState.collect { exerciseServiceState ->
                     wearableClientManager.sendToMobileDevice(
                         WearableClientManager.EXERCISE_DATA_PATH,
                         exerciseServiceState
                     )
                 }
             }
+        }
+
+        if (intent?.action == RUNNING_ACTION) {
+            Log.d(TAG, "onStartCommand: RUNNING_ACTION")
+            lifecycleScope.launch { startExercise() }
         }
 
         return START_STICKY
@@ -183,5 +188,6 @@ class ExerciseService : LifecycleService() {
 
     companion object {
         private val UNBIND_DELAY = 3.seconds
+        const val RUNNING_ACTION = "com.ssafy.pacemaker.action.running"
     }
 }

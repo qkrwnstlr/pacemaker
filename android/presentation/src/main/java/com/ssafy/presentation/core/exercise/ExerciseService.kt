@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.ssafy.domain.usecase.train.GetTTSUseCase
 import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
+import com.ssafy.presentation.core.exercise.data.duration
 import com.ssafy.presentation.core.exercise.data.message
 import com.ssafy.presentation.core.exercise.manager.CoachingManager
 import com.ssafy.presentation.core.exercise.manager.ExerciseManager
@@ -29,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.time.Duration
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -71,7 +73,6 @@ class ExerciseService : LifecycleService() {
             startForeground()
             lifecycleScope.launch {
                 exerciseManager.connect()
-                trainManager.connect(exerciseManager.currentSessionData)
                 wearableClientManager.startWearableActivity()
                 collectTrainState()
                 collectExerciseServiceState()
@@ -88,9 +89,7 @@ class ExerciseService : LifecycleService() {
                 lifecycleScope.launch { speakMessage(it.message) }
 
                 when (it) {
-                    TrainState.Before -> {
-                        startExercise()
-                    }
+                    TrainState.Before -> {}
 
                     is TrainState.WarmUp -> {
                         speakMessage(trainManager.train.message)
@@ -130,6 +129,9 @@ class ExerciseService : LifecycleService() {
         lifecycleScope.launch {
             exerciseManager.exerciseServiceState.collect {
                 when (it.exerciseState) {
+                    ExerciseState.PREPARING -> {
+                        trainManager.connect(exerciseManager.currentSessionData)
+                    }
                     ExerciseState.ENDED -> {
                         with(trainManager.trainState.value) {
                             when (this) {
@@ -147,16 +149,18 @@ class ExerciseService : LifecycleService() {
                             }
                         }
                         try {
-                            healthConnectManager.writeExerciseSession(
-                                "${trainManager.train.id} (#${trainManager.train.index})",
-                                exerciseManager.exerciseData.value,
-                            )
-                            reportsManager.createReports(
-                                trainManager.train.id,
-                                exerciseManager.exerciseData.value,
-                            )
+                            if(exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                                healthConnectManager.writeExerciseSession(
+                                    "${trainManager.train.id} (#${trainManager.train.index})",
+                                    exerciseManager.exerciseData.value,
+                                )
+                                reportsManager.createReports(
+                                    trainManager.train.id,
+                                    exerciseManager.exerciseData.value,
+                                )
+                            }
                         } catch (exception: Exception) {
-                            stopSelf()
+                            exception.printStackTrace()
                         }
                     }
                 }
@@ -185,7 +189,6 @@ class ExerciseService : LifecycleService() {
         if (!file.exists()) return
 
         mediaPlayer.apply {
-            reset()
             setDataSource(file.path)
             prepare()
             start()
