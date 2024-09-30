@@ -46,6 +46,10 @@ fun Int.toTime(): String {
     return "${hour}h ${minute}m"
 }
 
+fun makeProgressString(goal: String, total: Int): String {
+    return "${goal}, 총 ${total}회차"
+}
+
 fun String.toGenderString(): String =
     if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
 

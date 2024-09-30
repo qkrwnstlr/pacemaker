@@ -35,11 +35,14 @@ class ScheduleViewModel @Inject constructor(
         }
     }
 
-    fun dateProgressInfo(date: LocalDate, setProgressView: (ProgressData) -> Unit) =
+    fun dateProgressInfo(uid: String, date: LocalDate, setProgressView: (ProgressData?) -> Unit) =
         viewModelScope.launch {
-            runCatching { getProgressUseCase.invoke(date) }
-                .onSuccess { result ->
-                    result.data?.let { setProgressView(it) }
+            runCatching { getProgressUseCase.invoke(uid, date) }
+                .onSuccess {
+                    setProgressView(it.data)
+                }
+                .onFailure {
+                    setProgressView(null)
                 }
         }
 

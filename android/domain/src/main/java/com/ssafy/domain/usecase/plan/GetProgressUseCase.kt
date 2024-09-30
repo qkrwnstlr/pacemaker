@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetProgressUseCase @Inject constructor(
     private val planRepository: PlanRepository
 ) {
-    suspend operator fun invoke(date: LocalDate): ResponseResult<ProgressData> =
-        planRepository.getProgress(date)
+    suspend operator fun invoke(uid: String, date: LocalDate): ResponseResult<ProgressData> =
+        planRepository.getProgress(uid, date.year, date.monthValue, date.dayOfMonth)
 }

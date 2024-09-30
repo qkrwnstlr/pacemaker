@@ -11,7 +11,6 @@ import com.ssafy.domain.repository.PlanRepository
 import com.ssafy.domain.response.ResponseResult
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,8 +40,8 @@ class PlanRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
-    override suspend fun getProgress(date: LocalDate): ResponseResult<ProgressData> {
-        val response = withContext(ioDispatcher) { planDataSource.getProgress(date) }
+    override suspend fun getProgress(uid:String, year:Int, month:Int, day:Int): ResponseResult<ProgressData> {
+        val response = withContext(ioDispatcher) { planDataSource.getProgress(uid, year, month, day) }
         return response.toResponseResult()
     }
 }
