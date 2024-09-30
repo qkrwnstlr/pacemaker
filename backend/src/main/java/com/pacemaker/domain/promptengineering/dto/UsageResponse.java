@@ -1,26 +1,35 @@
 package com.pacemaker.domain.promptengineering.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class UsageResponse {
 
-	private Usage usage;
+	Usage usage;
 
-	private class Usage {
-		@JsonProperty("prompt_tokens")
-		private Integer promptTokens;
+	@Getter
+	@Setter
+	public static class Usage {
+		@SerializedName("prompt_tokens") // Jackson은 JsonProperty지만 Gson은 SerializedName임!
+		Integer promptTokens;
 
-		@JsonProperty("completion_tokens")
-		private Integer completionTokens;
+		@SerializedName("completion_tokens")
+		Integer completionTokens;
 
-		@JsonProperty("total_tokens")
-		private Integer totalTokens;
+		@SerializedName("total_tokens")
+		Integer totalTokens;
 
-		@JsonProperty("completion_tokens_details")
-		private CompletionTokensDetails completionTokensDetails;
+		@SerializedName("completion_tokens_details")
+		CompletionTokensDetails completionTokensDetails;
 
-		private class CompletionTokensDetails {
-			@JsonProperty("reasoning_tokens")
+		@Getter
+		@Setter
+		public static class CompletionTokensDetails {
+			@SerializedName("reasoning_tokens")
 			Integer reasoningTokens;
 		}
 	}

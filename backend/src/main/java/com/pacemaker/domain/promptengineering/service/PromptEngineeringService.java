@@ -60,6 +60,8 @@ public class PromptEngineeringService {
 			.bodyToMono(String.class)
 			.map(response -> {
 
+				System.out.println(response);
+
 				ChatCompletionResponse chatCompletionResponse = new Gson().fromJson(response,
 					ChatCompletionResponse.class);
 
@@ -67,11 +69,12 @@ public class PromptEngineeringService {
 				boolean responseFormatMismatch = false;
 				try {
 					contentResponse = new Gson().fromJson(
-						chatCompletionResponse.choices().getFirst().message().content(),
-						ContentResponse.class);
+						chatCompletionResponse.choices().getFirst().message().content(), ContentResponse.class);
+
 				} catch (Exception e) {
 					System.out.println("response format에 어긋난 try-catch");
 					responseFormatMismatch = true;
+
 					contentResponse = new Gson().fromJson("{\"message\":\"%s\"}".formatted(
 						chatCompletionResponse.choices().getFirst().message().content()), ContentResponse.class);
 				}
@@ -80,7 +83,7 @@ public class PromptEngineeringService {
 				calculateSession(contentResponse);
 
 				UsageResponse usageResponse = new Gson().fromJson(response, UsageResponse.class);
-
+				
 				// csv 파일 생성
 				writeCSV("createPlanChat", request, contentResponse, usageResponse, responseFormatMismatch);
 
