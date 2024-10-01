@@ -32,7 +32,7 @@ public class PromptEngineeringService {
 
 	private final String csvFilePath = "promptengineering";
 	private final String csvColumns[] = {"System Message", "Response Format", "Content Request", "Content Response",
-		"Usage", "Response Format Mismatch"};
+		"Usage", "Correct Response Format"};
 
 	public Mono<String> chat(PromptEngineeringRequest request) {
 
@@ -60,20 +60,18 @@ public class PromptEngineeringService {
 			.bodyToMono(String.class)
 			.map(response -> {
 
-				System.out.println(response);
-
 				ChatCompletionResponse chatCompletionResponse = new Gson().fromJson(response,
 					ChatCompletionResponse.class);
 
 				ContentResponse contentResponse = null;
-				boolean responseFormatMismatch = false;
+				boolean correctResponseFormat = true;
 				try {
 					contentResponse = new Gson().fromJson(
 						chatCompletionResponse.choices().getFirst().message().content(), ContentResponse.class);
 
 				} catch (Exception e) {
 					System.out.println("response format에 어긋난 try-catch");
-					responseFormatMismatch = true;
+					correctResponseFormat = false;
 
 					contentResponse = new Gson().fromJson("{\"message\":\"%s\"}".formatted(
 						chatCompletionResponse.choices().getFirst().message().content()), ContentResponse.class);
@@ -83,9 +81,9 @@ public class PromptEngineeringService {
 				calculateSession(contentResponse);
 
 				UsageResponse usageResponse = new Gson().fromJson(response, UsageResponse.class);
-				
+
 				// csv 파일 생성
-				writeCSV("createPlanChat", request, contentResponse, usageResponse, responseFormatMismatch);
+				writeCSV("createPlanChat", request, contentResponse, usageResponse, correctResponseFormat);
 
 				return new Gson().toJson(contentResponse);
 			});
@@ -107,7 +105,7 @@ public class PromptEngineeringService {
 	}
 
 	private void writeCSV(String type, PromptEngineeringRequest request, ContentResponse contentResponse,
-		UsageResponse usageResponse, boolean responseFormatMismatch) {
+		UsageResponse usageResponse, boolean correctResponseFormat) {
 
 		// 디렉토리 경로 생성 및 확인
 		String dirPath = csvFilePath + File.separator + type + File.separator + request.getUsername();
@@ -149,7 +147,7 @@ public class PromptEngineeringService {
 				reqStr == null ? "null" : reqStr,
 				resStr == null ? "null" : resStr,
 				usage == null ? "null" : usage,
-				responseFormatMismatch ? "TRUE" : "FALSE"
+				correctResponseFormat ? "TRUE" : "FALSE"
 			};
 			writer.writeNext(record);
 
