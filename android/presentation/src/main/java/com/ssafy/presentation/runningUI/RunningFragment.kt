@@ -198,7 +198,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private fun addPolyline(location: LocationData) {
         val latLng = LatLng(location.latitude, location.longitude)
-        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17f)
         map?.animateCamera(cameraUpdate)
 
         val polylineOptions = PolylineOptions()
