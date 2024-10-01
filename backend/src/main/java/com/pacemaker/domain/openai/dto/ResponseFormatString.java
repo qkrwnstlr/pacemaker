@@ -34,7 +34,7 @@ public class ResponseFormatString {
 				   },
 				   "goalTime": {
 					 "type": "integer",
-					 "description": "goal duration of the goal run"
+					 "description": "goal time in seconds"
 				   },
 				   "goalDistance": {
 					 "type": "integer",

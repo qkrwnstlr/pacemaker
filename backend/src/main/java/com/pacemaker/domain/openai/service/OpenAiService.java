@@ -33,6 +33,7 @@ public class OpenAiService {
 	public Mono<String> createPlanChatCompletions(ContentRequest contentRequest) {
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
+			.maxTokens(8000)
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
 				Message.createUser(new Gson().toJson(contentRequest)),
 				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
