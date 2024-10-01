@@ -15,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,11 +30,12 @@ class CoachingManager @Inject constructor(
 
     private lateinit var train: PlanTrain
 
-    val coachVoicePath = MutableStateFlow("")
+    val coachVoicePath = MutableStateFlow<String?>(null)
 
     fun connect(train: PlanTrain) {
         if(isConnected) return
         isConnected = true
+        coachVoicePath.update { null }
         this.train = train
         collectExerciseSessionData()
     }

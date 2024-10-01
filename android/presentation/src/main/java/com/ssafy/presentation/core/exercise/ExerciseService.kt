@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseState
@@ -27,11 +28,16 @@ import com.ssafy.presentation.core.exercise.manager.TrainState
 import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.time.Duration
 import javax.inject.Inject
+
+private const val TAG = "ExerciseService_PACEMAKER"
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -74,6 +80,7 @@ class ExerciseService : LifecycleService() {
                 exerciseManager.connect()
                 wearableClientManager.startWearableActivity()
                 collectTrainState()
+                trainManager.connect(exerciseManager.currentSessionData)
                 collectExerciseServiceState()
                 collectCoachVoicePath()
             }
@@ -85,10 +92,10 @@ class ExerciseService : LifecycleService() {
     private fun collectTrainState() {
         lifecycleScope.launch {
             trainManager.trainState.collect {
-                lifecycleScope.launch { speakMessage(it.message) }
+                CoroutineScope(Dispatchers.IO).launch { speakMessage(it.message) }
 
                 when (it) {
-                    TrainState.Before -> {}
+                    TrainState.None, TrainState.Before -> {}
 
                     is TrainState.WarmUp -> {
                         speakMessage(trainManager.train.message)
@@ -128,9 +135,8 @@ class ExerciseService : LifecycleService() {
         lifecycleScope.launch {
             exerciseManager.exerciseServiceState.collect {
                 when (it.exerciseState) {
-                    ExerciseState.PREPARING -> {
-                        trainManager.connect(exerciseManager.currentSessionData)
-                    }
+                    ExerciseState.PREPARING -> {}
+
                     ExerciseState.ENDED -> {
                         with(trainManager.trainState.value) {
                             when (this) {
@@ -148,19 +154,26 @@ class ExerciseService : LifecycleService() {
                             }
                             trainManager.finishTrain()
                         }
-                        try {
-                            if(exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
-                                healthConnectManager.writeExerciseSession(
-                                    "${trainManager.train.id} (#${trainManager.train.index})",
-                                    exerciseManager.exerciseData.value,
-                                )
-                                reportsManager.createReports(
-                                    trainManager.train.id,
-                                    exerciseManager.exerciseData.value,
-                                )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                Log.d(TAG, "collectExerciseServiceState: ${exerciseManager.exerciseData.value.duration}")
+                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                                    healthConnectManager.writeExerciseSession(
+                                        "${trainManager.train.id} (#${trainManager.train.index})",
+                                        exerciseManager.exerciseData.value,
+                                    )
+                                    reportsManager.createReports(
+                                        trainManager.train.id,
+                                        exerciseManager.exerciseData.value,
+                                    )
+                                }
+                            } catch (exception: Exception) {
+                                exception.printStackTrace()
+                            } finally {
+                                trainManager.disconnect()
+                                exerciseManager.disconnect()
+                                coachingManager.disconnect()
                             }
-                        } catch (exception: Exception) {
-                            exception.printStackTrace()
                         }
                     }
                 }
@@ -171,7 +184,7 @@ class ExerciseService : LifecycleService() {
     private fun collectCoachVoicePath() {
         lifecycleScope.launch {
             coachingManager.coachVoicePath.collect { coachPath ->
-                speakCoaching(coachPath)
+                coachPath?.let { speakCoaching(it) }
             }
         }
     }
@@ -185,6 +198,7 @@ class ExerciseService : LifecycleService() {
     }
 
     private fun speakCoaching(coachPath: String) {
+        Log.d(TAG, "speakCoaching: $coachPath")
         val file = File(coachPath)
         if (!file.exists()) return
 
@@ -206,6 +220,8 @@ class ExerciseService : LifecycleService() {
 
         handleBind()
 
+        Log.d(TAG, "onBind: $this")
+
         return localBinder
     }
 
@@ -224,12 +240,16 @@ class ExerciseService : LifecycleService() {
 
     override fun onUnbind(intent: Intent?): Boolean {
         isBound = false
+        Log.d(TAG, "onUnbind: $this")
+
         lifecycleScope.launch {
             trainManager.disconnect()
             exerciseManager.disconnect()
             coachingManager.disconnect()
             stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
         }
+
         return true
     }
 
@@ -239,7 +259,7 @@ class ExerciseService : LifecycleService() {
         val exerciseServiceState: Flow<ExerciseServiceState>
             get() = this@ExerciseService.exerciseManager.exerciseServiceState
 
-        val coachVoicePathState: Flow<String>
+        val coachVoicePathState: Flow<String?>
             get() = this@ExerciseService.coachingManager.coachVoicePath
     }
 
