@@ -117,26 +117,26 @@ public class ResponseFormatString {
 
 	public static String realTimeResponseFormat = """
 		{
-		  "name": "realtimecoach",
-		  "strict": true,
-		  "schema": {
-		    "additionalProperties": false,
-		    "type": "object",
-		    "required": [
-		      "textFeedback",
-		      "textCheer"
-		    ],
-		    "properties": {
-		      "textCheer": {
-		        "type": "string",
-		        "description": "Cheer-up message within 2 sentences in Korean"
-		      },
-		      "textFeedback": {
-		        "type": "string",
-		        "description": "Feedback message about the user's run within 2 sentences in Korean"
-		      }
-		    }
-		  }
+		   "type": "json_schema",
+		   "json_schema": {
+		     "name": "realtimecoach",
+		     "strict": true,
+		     "schema": {
+		       "additionalProperties": false,
+		       "type": "object",
+		       "required": ["textFeedback", "textCheer"],
+		       "properties": {
+		         "textCheer": {
+		           "type": "string",
+		           "description": "Cheer-up message within 2 sentences in Korean"
+		         },
+		         "textFeedback": {
+		           "type": "string",
+		           "description": "Feedback message about the user's run within 2 sentences in Korean"
+		         }
+		       }
+		     }
+		   }
 		}""";
 
 	public static String dailyCreateChatResponseFormat = """
