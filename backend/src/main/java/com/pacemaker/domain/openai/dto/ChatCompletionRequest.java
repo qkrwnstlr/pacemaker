@@ -2,6 +2,7 @@ package com.pacemaker.domain.openai.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,6 @@ public record ChatCompletionRequest(
 	@JsonProperty("best_of") Integer bestOf, // 서버 측에서 가장 좋은 결과를 선택하고 반환하는 방식으로, "best" (토큰당 가장 낮은 로그 확률을 가진 것)를 선택함
 	@JsonProperty("logit_bias") Map<String, Integer> logitBias, // 지정된 토큰이 생성될 확률을 수정함
 	String user, // OpenAI가 남용을 감시하고 탐지할 수 있도록 도와주는 고유한 사용자 식별자
-	@JsonProperty("response_format") String responseFormat // response_format
+	@JsonProperty("response_format") JsonNode responseFormat // response_format
 ) {
 }
