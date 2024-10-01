@@ -1,5 +1,8 @@
 package com.pacemaker.domain.report.controller;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.pacemaker.domain.openai.service.OpenAiService;
+import com.pacemaker.domain.report.dto.CreateTrainEvaluationRequest;
 import com.pacemaker.domain.report.dto.ReportFreeCreateRequest;
 import com.pacemaker.domain.report.dto.ReportFreeResponse;
 import com.pacemaker.domain.report.dto.ReportPlanCreateRequest;
@@ -21,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 @Tag(name = "Report API", description = "Report API 입니다.")
 @RequestMapping("/reports")
@@ -29,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class ReportController {
 
 	private final ReportService reportService;
+	private final OpenAiService openAiService;
 
 	@PostMapping("/plan")
 	@Operation(summary = "레포트 생성 - 플랜 훈련")
@@ -81,5 +88,20 @@ public class ReportController {
 	public ResponseEntity<ReportFreeResponse> findReportFree(@PathVariable Long id, @PathVariable String uid) throws
 		JsonProcessingException {
 		return ResponseEntity.status(HttpStatus.OK).body(reportService.findReportFree(id, uid));
+	}
+
+	@PostMapping("/create/evaluation")
+	@Operation(summary = "훈련 평가 Test API")
+	public Mono<ResponseEntity<?>> createTrainEvaluation(@RequestBody CreateTrainEvaluationRequest createTrainEvaluationRequest) {
+
+		Instant start = Instant.now();
+
+		return openAiService.createTrainEvaluation(createTrainEvaluationRequest)
+			.map(response -> {
+				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
+				System.out.println("Request processing time: " + timeElapsed + " milliseconds"); // 나중에 log로 바꾸기
+
+				return ResponseEntity.ok(response);
+			});
 	}
 }
