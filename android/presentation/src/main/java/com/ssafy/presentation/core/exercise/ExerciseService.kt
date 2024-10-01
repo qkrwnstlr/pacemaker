@@ -63,7 +63,6 @@ class ExerciseService : LifecycleService() {
     private var isBound = false
     private var isStarted = false
     private val localBinder = LocalBinder()
-    private val mediaPlayer by lazy { MediaPlayer() }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -189,7 +188,7 @@ class ExerciseService : LifecycleService() {
         val file = File(coachPath)
         if (!file.exists()) return
 
-        mediaPlayer.apply {
+        MediaPlayer().apply {
             reset()
             setDataSource(file.path)
             prepare()
