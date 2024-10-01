@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
@@ -13,12 +14,10 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
-import androidx.health.services.client.data.ExerciseState
 import androidx.health.services.client.data.LocationData
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +29,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRunningBinding
@@ -42,7 +43,6 @@ import com.ssafy.presentation.utils.formatPace
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.Duration
 
 private const val TAG = "RunningFragment_PACEMAKER"
@@ -56,6 +56,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     private var myLocationListener: LocationListener? = null
     private lateinit var onBackPressed: OnBackPressedCallback
     private var doubleBackToExitPressedOnce = false
+
+    private var marker: Marker? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.startExercise()
@@ -160,14 +162,13 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                         boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
                         boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
-                        exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
                     }
                     with(binding.runningMap.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
                         boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
                         boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
-                        exerciseState.exerciseMetrics.location?.let { it1 -> addMarker(it1) }
+                        exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
                     }
                 }
             }
@@ -195,18 +196,18 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressed)
     }
 
-    private fun addMarker(location: LocationData) {
+    private fun addPolyline(location: LocationData) {
         val latLng = LatLng(location.latitude, location.longitude)
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
         map?.animateCamera(cameraUpdate)
 
-        val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
-        val markerOptions = MarkerOptions()
-            .position(latLng)
-            .icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
-        map?.addMarker(markerOptions)
+        val polylineOptions = PolylineOptions()
+            .color(Color.BLUE)
+            .width(10f)
+            .addAll(listOf(marker?.position ?: latLng, latLng))
 
-        showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
+        map?.addPolyline(polylineOptions)
+        marker?.position = latLng
     }
 
     private fun initMapView() {
@@ -265,14 +266,14 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15f)
 
         map?.animateCamera(cameraUpdate)
-        val circleBitmap = createCircleBitmap(Color.RED, 10) // 빨간색, 반지름 50
+        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
+        val resizeBitmap = Bitmap.createScaledBitmap(bitmap, MARKER_WIDTH, MARKER_HEIGHT, false)
+        val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(resizeBitmap)
+
         val markerOptions = MarkerOptions()
             .position(latLng)
-            .icon(BitmapDescriptorFactory.fromBitmap(circleBitmap))
-        map?.addMarker(markerOptions)
-
-        showSnackStringBar("위도 : ${location.latitude}, 경도 : ${location.longitude}")
-
+            .icon(bitmapDescriptor)
+        marker = map?.addMarker(markerOptions)
     }
 
     fun createCircleBitmap(color: Int, radius: Int): Bitmap {
@@ -301,5 +302,10 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                 if (!isShow) visibility = View.INVISIBLE
             }
         }
+    }
+
+    companion object {
+        const val MARKER_WIDTH = 200
+        const val MARKER_HEIGHT = 200
     }
 }
