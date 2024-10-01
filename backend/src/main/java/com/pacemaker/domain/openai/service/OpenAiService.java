@@ -186,4 +186,29 @@ public class OpenAiService {
 				return new Gson().toJson(createTrainEvaluationResponse);
 			});
 	}
+
+	public Mono<String> updatePlanChatCompletions(ContentRequest contentRequest) {
+		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+			.model("gpt-4o-2024-08-06")
+			.maxTokens(8000)
+			.messages(List.of(Message.updatePlanEngSystem(contentRequest.coachTone()),
+				Message.createUser(new Gson().toJson(contentRequest)),
+				Message.updatePlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+			.build();
+
+		return openAIWebClient.post()
+			.uri("/chat/completions")
+			.bodyValue(chatCompletionRequest)
+			.retrieve()
+			.bodyToMono(String.class)
+			.map(response -> {
+				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
+				ContentResponse contentResponse = new Gson().fromJson(request.choices().getFirst().message().content(),
+					ContentResponse.class);
+
+				calculateSession(contentResponse);
+
+				return new Gson().toJson(contentResponse);
+			});
+	}
 }

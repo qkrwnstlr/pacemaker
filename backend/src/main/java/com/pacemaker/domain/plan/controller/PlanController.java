@@ -23,9 +23,11 @@ import com.pacemaker.domain.plan.service.PlanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Plan API", description = "Plan API 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/plans")
@@ -69,7 +71,7 @@ public class PlanController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@GetMapping("train/before/{id}/user/{uid}")
+	@GetMapping("/train/before/{id}/user/{uid}")
 	@Operation(summary = "레포트 조회 - 플랜 훈련 / 플랜 훈련 단일 조회")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "플랜 훈련 조회 성공"),
@@ -128,5 +130,23 @@ public class PlanController {
 
 		planService.deleteActivePlanByUid(uid);
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+	}
+
+	@Operation(summary = "플랜 수정 채팅")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "OpenAI API 호출 성공")
+	})
+	@PostMapping("/update/chat")
+	public Mono<ResponseEntity<?>> updatePlanChat(@RequestBody ContentRequest contentRequest) {
+
+		Instant start = Instant.now();
+
+		return openAiService.updatePlanChatCompletions(contentRequest)
+			.map(response -> {
+				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
+				System.out.println("Request processing time: " + timeElapsed + " milliseconds");
+
+				return ResponseEntity.ok(response);
+			});
 	}
 }
