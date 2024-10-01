@@ -9,7 +9,7 @@ class WeekDayViewContainer(view: View) : ViewContainer(view) {
     lateinit var day: WeekDay
     val textView = CalendarDayMonthBinding.bind(view).exOneDayText
     val ly = CalendarDayMonthBinding.bind(view).lyDay
-
+    val hasTrain = CalendarDayMonthBinding.bind(view).hasTrain
     fun setOnClickListener(onClickListener: (day: WeekDay) -> Unit) {
         view.setOnClickListener { onClickListener(day) }
     }

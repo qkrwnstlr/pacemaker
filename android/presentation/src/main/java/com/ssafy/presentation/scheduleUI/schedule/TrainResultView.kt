@@ -11,6 +11,7 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.ssafy.domain.dto.reports.TrainReport
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.TrainResultCustomViewBinding
 import com.ssafy.presentation.utils.formatCadenceRate
@@ -47,6 +48,29 @@ class TrainResultView : ConstraintLayout {
         binding.tvResultStepContent.text = formatCadenceRate(cadence)
         binding.tvResultPaceContent.text = formatPace(pace.toDouble())
         binding.tvResultKcalContent.text = formatCadenceRate(kcal)
+    }
+
+    fun setResultData(trainReport: TrainReport) {
+        binding.tvResultDistanceContent.text =
+            trainReport.trainResult.trainDistance.toDistanceString()
+        binding.tvResultHeartContent.text =
+            formatHeartRate(trainReport.trainResult.heartRate.toDouble())
+        binding.tvResultTimeContent.text = trainReport.trainResult.trainTime.toTime()
+        binding.tvResultStepContent.text = formatCadenceRate(trainReport.trainResult.cadence)
+        binding.tvResultPaceContent.text = formatPace(trainReport.trainResult.pace.toDouble())
+        binding.tvResultKcalContent.text = formatCadenceRate(trainReport.trainResult.kcal)
+        if (trainReport.trainEvaluation != null) {
+            visibleChart()
+            trainReport.trainEvaluation?.apply {
+                setPieChart(
+                    paceEvaluation.toFloat(),
+                    heartRateEvaluation.toFloat(),
+                    cadenceEvaluation.toFloat()
+                )
+            }
+        } else {
+            unvisibleChart()
+        }
     }
 
     fun unvisibleChart() {
