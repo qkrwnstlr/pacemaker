@@ -98,17 +98,19 @@ class RegisterPlanViewModel @Inject constructor(
                     coachIndex = it.coachNumber
                     initChatMessage(it.coachNumber, sendAble, showSelectWeekDayDialog, isModify)
 
-                    val start = ZonedDateTime.now()
-                    val end = start.minusDays(30)
-                    val running = healthConnectManager.readExerciseSessions(
-                        end.toInstant(),
-                        start.toInstant()
-                    ).firstOrNull()?.let {
-                        healthConnectManager.readAssociatedSessionData(it.metadata.id)
-                    }
+                    var userInfo = it.toUserInfo()
 
-                    val context = contextData.value.copy(
-                        userInfo = it.toUserInfo().copy(
+                    if (healthConnectManager.hasAllPermissions()) {
+                        val start = ZonedDateTime.now()
+                        val end = start.minusDays(30)
+                        val running = healthConnectManager.readExerciseSessions(
+                            end.toInstant(),
+                            start.toInstant()
+                        ).firstOrNull()?.let {
+                            healthConnectManager.readAssociatedSessionData(it.metadata.id)
+                        }
+
+                        userInfo = userInfo.copy(
                             recentRunDistance = running?.totalDistance?.inKilometers?.toInt() ?: 0,
                             recentRunHeartRate = running?.avgHeartRate?.toInt() ?: 0,
                             recentRunPace = if (running?.totalActiveTime != null && running.totalDistance != null) {
@@ -117,7 +119,9 @@ class RegisterPlanViewModel @Inject constructor(
                                 0
                             },
                         )
-                    )
+                    }
+
+                    val context = contextData.value.copy(userInfo = userInfo)
                     _contextData.emit(context)
                 }
         }
