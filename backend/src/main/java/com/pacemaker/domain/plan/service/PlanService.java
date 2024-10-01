@@ -186,7 +186,7 @@ public class PlanService {
 			totalDistances += planTrain.getSessionDistance() != null ? planTrain.getSessionDistance() : 0;
 		}
 
-		plan.updatePlanDetails(totalDays, totalTimes, totalDistances,
+		plan.updatePlanDetails(totalDays, totalTimes, totalDistances, plan.getPlanTrains().getFirst().getTrainDate(),
 			LocalDate.parse(updatePlanRequest.plan().planTrains().getLast().trainDate()));
 
 		planRepository.save(plan);

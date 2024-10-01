@@ -101,10 +101,12 @@ public class Plan {
 		this.totalTimes = totalTimes;
 	}
 
-	public void updatePlanDetails(Integer totalDays, Integer totalTimes, Integer totalDistances, LocalDate expiredAt) {
+	public void updatePlanDetails(Integer totalDays, Integer totalTimes, Integer totalDistances, LocalDate createdAt,
+		LocalDate expiredAt) {
 		this.totalDays = totalDays;
 		this.totalTimes = totalTimes;
 		this.totalDistances = totalDistances;
+		this.createdAt = createdAt;
 		this.expiredAt = expiredAt;
 	}
 }
