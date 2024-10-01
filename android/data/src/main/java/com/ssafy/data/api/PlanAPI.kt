@@ -17,6 +17,9 @@ interface PlanAPI {
     @POST("plans/chat")
     suspend fun chatForPlan(@Body chat: Chat): Response<Chat>
 
+    @POST("plans/update/chat")
+    suspend fun chatForModifyPlan(@Body chat: Chat): Response<Chat>
+
     @POST("plans/create")
     suspend fun makePlan(@Body planRequest: PlanRequest): Response<Unit>
 

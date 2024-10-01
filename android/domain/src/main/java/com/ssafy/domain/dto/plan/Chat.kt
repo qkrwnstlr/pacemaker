@@ -4,5 +4,6 @@ data class Chat(
     val message: String = "",
     val context: Context? = null,
     val plan: Plan = Plan(),
-    val coachTone: String = ""
+    val coachTone: String = "",
+    @Transient val isModify: Boolean = false
 )

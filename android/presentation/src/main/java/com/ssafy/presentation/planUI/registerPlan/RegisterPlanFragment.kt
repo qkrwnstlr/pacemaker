@@ -74,10 +74,10 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             requireContext(),
             R.anim.fade_slide_down
         )
-        val isModify = isFromPlanDetailFragment()
+        viewModel.isModify = isFromPlanDetailFragment()
 
         tvTitle.startAnimation(slideDown)
-        viewModel.initData(::setSendClickable, ::showSelectWeekDialog, isModify)
+        viewModel.initData(::setSendClickable, ::showSelectWeekDialog)
         rvPlanChat.adapter = adapter
     }
 

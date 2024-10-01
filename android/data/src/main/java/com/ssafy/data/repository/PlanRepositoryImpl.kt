@@ -25,6 +25,11 @@ class PlanRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
+    override suspend fun chatForModifyPlan(chat: Chat): ResponseResult<Chat> {
+        val response = withContext(ioDispatcher) { planDataSource.chatForModifyPlan(chat) }
+        return response.toResponseResult()
+    }
+
     override suspend fun makePlan(planRequest: PlanRequest): ResponseResult<Unit> {
         val response = withContext(ioDispatcher) { planDataSource.makePlan(planRequest) }
         return response.toResponseResult()
@@ -40,8 +45,14 @@ class PlanRepositoryImpl @Inject constructor(
         return response.toResponseResult()
     }
 
-    override suspend fun getProgress(uid:String, year:Int, month:Int, day:Int): ResponseResult<ProgressData> {
-        val response = withContext(ioDispatcher) { planDataSource.getProgress(uid, year, month, day) }
+    override suspend fun getProgress(
+        uid: String,
+        year: Int,
+        month: Int,
+        day: Int
+    ): ResponseResult<ProgressData> {
+        val response =
+            withContext(ioDispatcher) { planDataSource.getProgress(uid, year, month, day) }
         return response.toResponseResult()
     }
 }

@@ -15,6 +15,9 @@ class PlanDataSourceImpl @Inject constructor(private val planAPI: PlanAPI) : Pla
     override suspend fun chatForPlan(chat: Chat): Response<Chat> =
         planAPI.chatForPlan(chat)
 
+    override suspend fun chatForModifyPlan(chat: Chat): Response<Chat> =
+        planAPI.chatForModifyPlan(chat)
+
     override suspend fun makePlan(planRequest: PlanRequest): Response<Unit> =
         planAPI.makePlan(planRequest)
 
