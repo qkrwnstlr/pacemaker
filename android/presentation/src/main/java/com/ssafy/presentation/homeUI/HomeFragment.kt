@@ -200,7 +200,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 else -> return@collect
             }
 
-            if (viewModel.trainingState.value == TRAIN_REST_MESSAGE) {
+            if (viewModel.trainingState.value == CREATE_PLAN) {
                 trainView.setOnClickListener {
                     val action =
                         HomeFragmentDirections.actionHomeFragmentToStartPlanFragment()

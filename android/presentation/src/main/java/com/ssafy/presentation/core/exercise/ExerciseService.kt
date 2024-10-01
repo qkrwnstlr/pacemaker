@@ -28,6 +28,8 @@ import com.ssafy.presentation.core.exercise.manager.TrainState
 import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -90,9 +92,7 @@ class ExerciseService : LifecycleService() {
     private fun collectTrainState() {
         lifecycleScope.launch {
             trainManager.trainState.collect {
-                Log.d(TAG, "collectTrainState: ${it}")
-                // TODO : stop 되어서 훈련이 종료되었습니다 출력안됨
-                lifecycleScope.launch { speakMessage(it.message) }
+                CoroutineScope(Dispatchers.IO).launch { speakMessage(it.message) }
 
                 when (it) {
                     TrainState.None, TrainState.Before -> {}
@@ -154,22 +154,26 @@ class ExerciseService : LifecycleService() {
                             }
                             trainManager.finishTrain()
                         }
-                        try {
-                            if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
-                                healthConnectManager.writeExerciseSession(
-                                    "${trainManager.train.id} (#${trainManager.train.index})",
-                                    exerciseManager.exerciseData.value,
-                                )
-                                reportsManager.createReports(
-                                    trainManager.train.id,
-                                    exerciseManager.exerciseData.value,
-                                )
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                Log.d(TAG, "collectExerciseServiceState: ${exerciseManager.exerciseData.value.duration}")
+                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                                    healthConnectManager.writeExerciseSession(
+                                        "${trainManager.train.id} (#${trainManager.train.index})",
+                                        exerciseManager.exerciseData.value,
+                                    )
+                                    reportsManager.createReports(
+                                        trainManager.train.id,
+                                        exerciseManager.exerciseData.value,
+                                    )
+                                }
+                            } catch (exception: Exception) {
+                                exception.printStackTrace()
+                            } finally {
+                                trainManager.disconnect()
+                                exerciseManager.disconnect()
+                                coachingManager.disconnect()
                             }
-                            trainManager.disconnect()
-                            exerciseManager.disconnect()
-                            coachingManager.disconnect()
-                        } catch (exception: Exception) {
-                            exception.printStackTrace()
                         }
                     }
                 }
