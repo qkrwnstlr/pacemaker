@@ -22,7 +22,11 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) { }
+        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) {
+            lifecycleScope.launch {
+                if(viewModel.hasAllPermissions()) viewModel.syncWithHealthConnect(getUid())
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

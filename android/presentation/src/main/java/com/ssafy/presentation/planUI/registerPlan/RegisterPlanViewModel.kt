@@ -13,6 +13,7 @@ import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
 import com.ssafy.domain.utils.ifNotHuman
 import com.ssafy.domain.utils.ifZero
+import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.ERROR
 import com.ssafy.presentation.utils.displayText
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.DayOfWeek
+import java.time.ZonedDateTime
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
@@ -42,7 +44,8 @@ class RegisterPlanViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val chatForPlanUseCase: ChatForPlanUseCase,
     private val makePlanUseCase: MakePlanUseCase,
-    private val getPlanInfoUseCase: GetPlanInfoUseCase
+    private val getPlanInfoUseCase: GetPlanInfoUseCase,
+    private val healthConnectManager: HealthConnectManager,
 ) : ViewModel() {
 
     private var coachIndex: Long = 1
@@ -94,8 +97,27 @@ class RegisterPlanViewModel @Inject constructor(
                 .onSuccess {
                     coachIndex = it.coachNumber
                     initChatMessage(it.coachNumber, sendAble, showSelectWeekDayDialog, isModify)
-                    // TODO 나중에는 최신 러닝 데이터도 같이 넣어야 함!
-                    val context = contextData.value.copy(userInfo = it.toUserInfo())
+
+                    val start = ZonedDateTime.now()
+                    val end = start.minusDays(30)
+                    val running = healthConnectManager.readExerciseSessions(
+                        end.toInstant(),
+                        start.toInstant()
+                    ).firstOrNull()?.let {
+                        healthConnectManager.readAssociatedSessionData(it.metadata.id)
+                    }
+
+                    val context = contextData.value.copy(
+                        userInfo = it.toUserInfo().copy(
+                            recentRunDistance = running?.totalDistance?.inKilometers?.toInt() ?: 0,
+                            recentRunHeartRate = running?.avgHeartRate?.toInt() ?: 0,
+                            recentRunPace = if (running?.totalActiveTime != null && running.totalDistance != null) {
+                                ((running.totalActiveTime.seconds / (60 * 60)) / running.totalDistance.inKilometers).toInt()
+                            } else {
+                                0
+                            },
+                        )
+                    )
                     _contextData.emit(context)
                 }
         }
@@ -191,6 +213,13 @@ class RegisterPlanViewModel @Inject constructor(
                 it.printStackTrace()
                 _failEvent.emit(it.message ?: ERROR)
             }
+
+        runCatching {
+            with(contextData.value.userInfo) {
+                healthConnectManager.writeWeightInput(weight.toDouble())
+                healthConnectManager.writeHeightInput(height.toDouble())
+            }
+        }
     }
 
     fun setPlanDate(planWeek: Set<DayOfWeek>) {

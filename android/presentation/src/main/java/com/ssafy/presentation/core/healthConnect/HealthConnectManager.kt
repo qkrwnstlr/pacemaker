@@ -31,7 +31,8 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.response.InsertRecordsResponse
 import androidx.health.connect.client.time.TimeRangeFilter
-import androidx.lifecycle.lifecycleScope
+import androidx.health.connect.client.units.Length
+import androidx.health.connect.client.units.Mass
 import com.ssafy.presentation.core.exercise.data.ExerciseData
 import com.ssafy.presentation.core.exercise.data.cadence
 import com.ssafy.presentation.core.exercise.data.endTime
@@ -41,9 +42,9 @@ import com.ssafy.presentation.core.exercise.data.speed
 import com.ssafy.presentation.core.exercise.data.startTime
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.Instant
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -300,6 +301,7 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
                 totalEnergyBurned = aggregateData[TotalCaloriesBurnedRecord.ENERGY_TOTAL],
                 avgHeartRate = aggregateData[HeartRateRecord.BPM_AVG],
                 avgCadence = aggregateData[StepsCadenceRecord.RATE_AVG],
+                avgSpeed = aggregateData[SpeedRecord.SPEED_AVG]
             )
         }
     }
@@ -308,31 +310,35 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
         return healthConnectClient.readRecord(ExerciseSessionRecord::class, uid).record
     }
 
-    suspend fun writeWeightInput(weight: WeightRecord) {
-        val records = listOf(weight)
+    suspend fun writeWeightInput(weight: Double) {
+        val current = ZonedDateTime.now()
+        val record = WeightRecord(current.toInstant(), current.offset, Mass.kilograms(weight))
+        val records = listOf(record)
         healthConnectClient.insertRecords(records)
     }
 
-    suspend fun readWeightInputs(start: Instant, end: Instant): List<WeightRecord> {
+    suspend fun readWeightInputs(start: Instant, end: Instant): Double? {
         val request = ReadRecordsRequest(
             recordType = WeightRecord::class,
             timeRangeFilter = TimeRangeFilter.between(start, end)
         )
         val response = healthConnectClient.readRecords(request)
-        return response.records
+        return response.records.lastOrNull()?.weight?.inKilograms
     }
 
-    suspend fun writeHeightInput(height: HeightRecord) {
-        val records = listOf(height)
+    suspend fun writeHeightInput(height: Double) {
+        val current = ZonedDateTime.now()
+        val record = HeightRecord(current.toInstant(), current.offset, Length.meters(height))
+        val records = listOf(record)
         healthConnectClient.insertRecords(records)
     }
 
-    suspend fun readHeightInputs(start: Instant, end: Instant): List<HeightRecord> {
+    suspend fun readHeightInputs(start: Instant, end: Instant): Double? {
         val request = ReadRecordsRequest(
             recordType = HeightRecord::class,
             timeRangeFilter = TimeRangeFilter.between(start, end)
         )
         val response = healthConnectClient.readRecords(request)
-        return response.records
+        return response.records.lastOrNull()?.height?.inMeters
     }
 }
