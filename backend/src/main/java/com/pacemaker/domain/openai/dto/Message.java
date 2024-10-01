@@ -205,7 +205,7 @@ public record Message(
 			**INSTRUCTION**
 			1. You should revise the running plan for the user based on the feedback provided in the "message" field.
 			2. Check if the feedback in the "message" requires modifying the training plan. Make adjustments to the relevant training sessions in the "planTrains" field.
-			3. If any context information such as the goal, goalTime, or goalDistance changes, inform the user with the message: "목표가 변경되는 경우 기존의 플랜을 삭제 후 새로운 플랜을 생성해주세요." Do not generate a new plan.
+			3. If any context information such as the goal, goalTime, or goalDistance changes, inform the user with the message: "사용자의 정보 또는 목표가 변경되는 경우 기존의 플랜을 삭제 후 새로운 플랜을 생성해주세요." Do not generate a new plan.
 			4. If no context change is detected, simply modify the training sessions that the user found difficult or requested to adjust.
 			5. If the user struggles with the current pace or difficulty of the plan, consider adjusting the overall duration of the plan to allow for steady progress. The plan duration should support the user’s ability to achieve their goal while maintaining realistic training intensity.
 			6. "plan", "planTrains", "trainDate" should be in "date" format.
