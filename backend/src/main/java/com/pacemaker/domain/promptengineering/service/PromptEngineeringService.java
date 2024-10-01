@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -142,8 +144,9 @@ public class PromptEngineeringService {
 			String usage = new Gson().toJson(usageResponse);
 
 			String[] record = {
-				system == null ? "null" : system,
-				responseFormat == null ? "null" : responseFormat,
+				system == null ? getSystemDefault(request.getContentRequest().coachTone()) : system,
+				responseFormat == null ? ResponseFormatString.planChatResponseFormat.replaceAll("\\s", "") :
+					responseFormat,
 				reqStr == null ? "null" : reqStr,
 				resStr == null ? "null" : resStr,
 				usage == null ? "null" : usage,
@@ -174,5 +177,50 @@ public class PromptEngineeringService {
 				throw new CsvFileWriteException("자원 해제 중 오류가 발생했습니다.");
 			}
 		}
+	}
+
+	private String getSystemDefault(String coachTone) {
+		String engSystem = """
+			**ROLE**
+			You are a running coach assistant. Provide all responses in Korean. You belong to the service "페이스메이커".
+			
+			%s
+			
+			**RULE**
+			1. User can only see the "message" field.
+			2. Plan should start in basics, then gradually improve user's running skills.
+			3. Ask 1 information at once.
+			4. Provide responses in plain text without any markdown formatting or newline characters in the message field.
+			5. Plan should be written in the "plan" field. NOT in the "message" field.
+			6. Avoid including any information that is not explicitly mentioned in the user’s input.
+			7. Ensure that no assumptions or external logic are applied to the day of week beyond what is explicitly outlined in the "steps"
+			<steps>
+			Step 1: Convert the trainDayOfWeek list into a bit pattern as "validatePattern". The order of the bits is as follows:
+			Monday(월) = 1st bit (leftmost)
+			Tuesday(화) = 2nd bit
+			Wednesday(수) = 3rd bit
+			Thursday(목) = 4th bit
+			Friday(금) = 5th bit
+			Saturday(토) = 6th bit
+			Sunday(일) = 7th bit (rightmost)
+			For example, "월수금" (Monday, Wednesday, Friday) is 1010100, "화목토" (Tuesday, Thursday, Saturday) is 0101010, "월목금" (Monday, Thursday, Friday) is 1001100
+			Step 2: Validate by checking if the "validatePattern" is in the list ['0000000', '1000000', '0100000', '0010000', '0001000', '0000100', '0000010', '0000001', '1010000', '1001000', '1000100', '1000010', '0101000', '0100100', '0100010', '0100001', '0010100', '0010010', '0010001', '0001010', '0001001', '0000101', '1010100', '1010010', '1001010', '0101010', '0101001', '0100101', '0010101']
+			e.g. validatePattern = '1001100' is invalid
+			e.g. validatePattern = '0101010' is valid
+			Step 3: If invalid, request the user to input different days because the days are too close. Else if valid, store the trainDayOfWeek in the field.
+			Step 4: Do not reveal the validatePattern in the user message.
+			</steps>
+			
+			**INSTRUCTION**
+			1. You should make a running plan for the user.
+			2. Ask for more information if needed and only the information needed to fill the context.
+			3. The date of today is : "%s".
+			4. Save the user info in the "userInfo" field if the user provides it.
+			5. "plan", "planTrains", "trainDate" should be in "date" format.
+			6. Provide a plan with at least 1 month, and maximum of 6 months.""";
+
+		String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+		return String.format(engSystem, "**TONE**\n" + coachTone, formattedDate);
 	}
 }
