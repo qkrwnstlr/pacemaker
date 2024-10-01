@@ -239,11 +239,9 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
         val aggregateDataTypes = setOf(
             ExerciseSessionRecord.EXERCISE_DURATION_TOTAL,
             StepsRecord.COUNT_TOTAL,
-            SpeedRecord.SPEED_AVG,
             DistanceRecord.DISTANCE_TOTAL,
             TotalCaloriesBurnedRecord.ENERGY_TOTAL,
             HeartRateRecord.BPM_AVG,
-            StepsCadenceRecord.RATE_AVG,
         )
         val dataOriginFilter = setOf(exerciseSession.record.metadata.dataOrigin)
         val aggregateRequest = AggregateRequest(
@@ -260,7 +258,6 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
             totalDistance = aggregateData[DistanceRecord.DISTANCE_TOTAL],
             totalEnergyBurned = aggregateData[TotalCaloriesBurnedRecord.ENERGY_TOTAL],
             avgHeartRate = aggregateData[HeartRateRecord.BPM_AVG],
-            avgCadence = aggregateData[StepsCadenceRecord.RATE_AVG],
         )
     }
 
@@ -275,7 +272,6 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
         val aggregateDataTypes = setOf(
             ExerciseSessionRecord.EXERCISE_DURATION_TOTAL,
             StepsRecord.COUNT_TOTAL,
-            SpeedRecord.SPEED_AVG,
             DistanceRecord.DISTANCE_TOTAL,
             TotalCaloriesBurnedRecord.ENERGY_TOTAL,
             HeartRateRecord.BPM_AVG,
@@ -300,8 +296,6 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
                 totalDistance = aggregateData[DistanceRecord.DISTANCE_TOTAL],
                 totalEnergyBurned = aggregateData[TotalCaloriesBurnedRecord.ENERGY_TOTAL],
                 avgHeartRate = aggregateData[HeartRateRecord.BPM_AVG],
-                avgCadence = aggregateData[StepsCadenceRecord.RATE_AVG],
-                avgSpeed = aggregateData[SpeedRecord.SPEED_AVG]
             )
         }
     }
