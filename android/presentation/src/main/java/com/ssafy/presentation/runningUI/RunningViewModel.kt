@@ -20,6 +20,7 @@ class RunningViewModel @Inject constructor(
 ) : ViewModel() {
 
     val uiState: StateFlow<RunningScreenState> = exerciseRepository.serviceState.map {
+        Log.d(TAG, "uiState: $it")
         RunningScreenState(
             serviceState = it,
             exerciseState = (it as? ServiceState.Connected)?.exerciseServiceState
@@ -34,6 +35,10 @@ class RunningViewModel @Inject constructor(
             )
         }
     )
+
+    fun startExercise() {
+        exerciseRepository.startExercise()
+    }
 
     fun pauseExercise() {
         exerciseRepository.pauseExercise()

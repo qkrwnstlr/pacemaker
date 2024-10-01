@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         when (intent?.action) {
             RUNNING_ACTION -> {
-                navController.navigate(R.id.runningFragment)
+                if(navController.currentDestination?.id != R.id.runningFragment) navController.navigate(R.id.runningFragment)
             }
         }
     }

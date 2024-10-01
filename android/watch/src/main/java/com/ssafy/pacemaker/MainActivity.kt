@@ -12,6 +12,7 @@ import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.ssafy.pacemaker.presentation.Screen
 import com.ssafy.pacemaker.presentation.WearApp
 import com.ssafy.pacemaker.presentation.exercise.ExerciseViewModel
+import com.ssafy.pacemaker.service.ExerciseService
 import com.ssafy.pacemaker.utils.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -61,7 +62,13 @@ class MainActivity : ComponentActivity() {
 
     private fun handleIntent(intent: Intent?) {
         when (intent?.action) {
-            RUNNING_ACTION -> {}
+            RUNNING_ACTION -> {
+                Intent(this, ExerciseService::class.java).apply {
+                    action = (ExerciseService.RUNNING_ACTION)
+                }.run {
+                    startForegroundService(this)
+                }
+            }
         }
     }
 

@@ -51,5 +51,5 @@ data class ExerciseServiceState(
     val activeDurationCheckpoint: ActiveDurationCheckpoint? = null,
     val locationAvailability: LocationAvailability = LocationAvailability.UNKNOWN,
     val error: String? = null,
-    val exerciseGoal: Set<ExerciseGoal<out Number>> = emptySet()
+    val exerciseGoal: Set<ExerciseGoal<out Number>> = emptySet(),
 )

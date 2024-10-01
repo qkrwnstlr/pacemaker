@@ -15,6 +15,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.ssafy.domain.usecase.train.GetTTSUseCase
 import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
+import com.ssafy.presentation.core.exercise.data.duration
 import com.ssafy.presentation.core.exercise.data.message
 import com.ssafy.presentation.core.exercise.manager.CoachingManager
 import com.ssafy.presentation.core.exercise.manager.ExerciseManager
@@ -29,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
+import java.time.Duration
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -70,10 +72,11 @@ class ExerciseService : LifecycleService() {
             isStarted = true
             startForeground()
             lifecycleScope.launch {
+                exerciseManager.connect()
+                wearableClientManager.startWearableActivity()
                 collectTrainState()
                 collectExerciseServiceState()
                 collectCoachVoicePath()
-                trainManager.connect(exerciseManager.currentSessionData)
             }
         }
 
@@ -86,9 +89,7 @@ class ExerciseService : LifecycleService() {
                 lifecycleScope.launch { speakMessage(it.message) }
 
                 when (it) {
-                    TrainState.Before -> {
-                        startExercise()
-                    }
+                    TrainState.Before -> {}
 
                     is TrainState.WarmUp -> {
                         speakMessage(trainManager.train.message)
@@ -128,29 +129,40 @@ class ExerciseService : LifecycleService() {
         lifecycleScope.launch {
             exerciseManager.exerciseServiceState.collect {
                 when (it.exerciseState) {
+                    ExerciseState.PREPARING -> {
+                        trainManager.connect(exerciseManager.currentSessionData)
+                    }
                     ExerciseState.ENDED -> {
                         with(trainManager.trainState.value) {
-                            when(this) {
+                            when (this) {
                                 TrainState.Default -> {
                                     exerciseManager.stopRunning()
                                 }
-                                is TrainState.During -> when(session) {
+
+                                is TrainState.During -> when (session) {
                                     is TrainSession.Running -> exerciseManager.stopRunning()
                                     is TrainSession.Jogging -> exerciseManager.stopJogging()
                                 }
+
                                 is TrainState.WarmUp, is TrainState.CoolDown -> exerciseManager.stopJogging()
                                 else -> {}
                             }
+                            trainManager.finishTrain()
                         }
-                        healthConnectManager.writeExerciseSession(
-                            "${trainManager.train.id} (#${trainManager.train.index})",
-                            exerciseManager.exerciseData.value,
-                        )
-                        reportsManager.createReports(
-                            trainManager.train.id,
-                            exerciseManager.exerciseData.value,
-                        )
-                        stopSelf()
+                        try {
+                            if(exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                                healthConnectManager.writeExerciseSession(
+                                    "${trainManager.train.id} (#${trainManager.train.index})",
+                                    exerciseManager.exerciseData.value,
+                                )
+                                reportsManager.createReports(
+                                    trainManager.train.id,
+                                    exerciseManager.exerciseData.value,
+                                )
+                            }
+                        } catch (exception: Exception) {
+                            exception.printStackTrace()
+                        }
                     }
                 }
             }
@@ -178,6 +190,7 @@ class ExerciseService : LifecycleService() {
         if (!file.exists()) return
 
         mediaPlayer.apply {
+            reset()
             setDataSource(file.path)
             prepare()
             start()
@@ -234,7 +247,6 @@ class ExerciseService : LifecycleService() {
     private fun startForeground() {
         exerciseNotificationManager.createNotificationChannel()
         val notification = exerciseNotificationManager.buildNotification()
-
         ServiceCompat.startForeground(
             this,
             ExerciseNotificationManager.NOTIFICATION_ID,
@@ -247,9 +259,7 @@ class ExerciseService : LifecycleService() {
     }
 
     private suspend fun startExercise() {
-        wearableClientManager.startWearableActivity()
         wearableClientManager.sendToWearableDevice(WearableClientManager.START_RUN_PATH)
-        exerciseManager.connect()
     }
 
     suspend fun pauseExercise() {

@@ -16,16 +16,12 @@ class DataLayerListenerService : WearableListenerService() {
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
-
         when (messageEvent.path) {
             START_ACTIVITY_PATH -> {
-                Intent(this, ExerciseService::class.java).run {
-                    startForegroundService(this)
-                }
-
-                Intent(this, MainActivity::class.java).run {
+                Intent(this, MainActivity::class.java).apply {
                     addFlags(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TOP)
                     action = MainActivity.RUNNING_ACTION
+                }.run {
                     startActivity(this)
                 }
             }

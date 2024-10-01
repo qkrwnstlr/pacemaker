@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,16 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBinding::inflate) {
     private val viewModel: ConnectViewModel by viewModels()
+    private lateinit var permissionLauncher: ActivityResultLauncher<Set<String>>
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) {
+            lifecycleScope.launch {
+                if(viewModel.hasAllPermissions()) viewModel.syncWithHealthConnect(getUid())
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -60,7 +72,7 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
                         Toast.LENGTH_LONG,
                     ).show()
                 } else {
-                    viewModel.launchPermissionsLauncher(this@ConnectFragment)
+                    viewModel.launchPermissionsLauncher(permissionLauncher)
                 }
             } catch (exception: Exception) {
                 Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_LONG)

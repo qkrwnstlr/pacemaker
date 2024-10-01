@@ -2,6 +2,7 @@ package com.ssafy.presentation.core.healthConnect
 
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
+import androidx.health.connect.client.units.Velocity
 import java.time.Duration
 
 data class ExerciseSessionDetail(
@@ -12,4 +13,5 @@ data class ExerciseSessionDetail(
     val totalEnergyBurned: Energy? = null,
     val avgHeartRate: Long? = null,
     val avgCadence: Double? = null,
+    val avgSpeed: Velocity? = null,
 )

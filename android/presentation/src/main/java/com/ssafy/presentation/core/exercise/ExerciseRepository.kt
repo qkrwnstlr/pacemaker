@@ -1,6 +1,7 @@
 package com.ssafy.presentation.core.exercise
 
 import android.content.Context
+import android.util.Log
 import androidx.health.services.client.data.ExerciseState
 import com.ssafy.presentation.utils.BinderConnection
 import com.ssafy.presentation.utils.bindService
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "ExerciseRepository_PACEMAKER"
+
 @ActivityRetainedScoped
 class ExerciseRepository @Inject constructor(
     @ApplicationContext private val applicationContext: Context,
@@ -29,12 +32,14 @@ class ExerciseRepository @Inject constructor(
     val serviceState: MutableStateFlow<ServiceState> = MutableStateFlow(ServiceState.Disconnected)
 
     private fun bindService() {
+        serviceState.update { ServiceState.Disconnected }
+
         binderConnection = lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
         exerciseServiceStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
 
         coroutineScope.launch {
-            exerciseServiceStateUpdates?.takeWhile { binderConnection != null }?.collect { exerciseServiceState ->
+            exerciseServiceStateUpdates?.collect { exerciseServiceState ->
                 serviceState.update { ServiceState.Connected(exerciseServiceState) }
                 if (exerciseServiceState.exerciseState == ExerciseState.ENDED) unbindService()
             }
@@ -45,7 +50,6 @@ class ExerciseRepository @Inject constructor(
         binderConnection?.unbind()
         binderConnection = null
         exerciseServiceStateUpdates = null
-        serviceState.update { ServiceState.Disconnected }
     }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) =
