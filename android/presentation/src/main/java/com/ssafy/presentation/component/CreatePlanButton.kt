@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
-import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.ButtonCreatePlanBinding
 
 class CreatePlanButton @JvmOverloads constructor(
@@ -12,11 +11,9 @@ class CreatePlanButton @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : FrameLayout(context, attrs, defStyleAttr) {
-    private val binding by lazy {
-        ButtonCreatePlanBinding.bind(
-            LayoutInflater.from(context).inflate(R.layout.button_create_plan, this, true)
-        )
-    }
+    private val binding: ButtonCreatePlanBinding = ButtonCreatePlanBinding.inflate(
+        LayoutInflater.from(context), this
+    )
 
     fun setIconResource(iconResourceId: Int) =
         binding.createPlanButton.setIconResource(iconResourceId)

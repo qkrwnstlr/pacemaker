@@ -141,7 +141,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         initView()
         initListener()
         initCollect()
-
+        viewModel.getCoach()
         viewModel.setDate(LocalDate.now())
     }
 
@@ -186,8 +186,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 }
 
                 TRAIN_REST_MESSAGE -> TrainRestMessageView(requireContext())
-                CREATE_PLAN -> CreatePlanButton(requireContext()).also { setTopSheetHalfExpand() }
+
+                CREATE_PLAN -> CreatePlanButton(requireContext()).also {
+                    val coachImgId = when (viewModel.coachState.value) {
+                        0, 1 -> R.drawable.coach_mike_white
+                        2 -> R.drawable.coach_jamie_white
+                        3 -> R.drawable.coach_danny_white
+                        else -> return@also
+                    }
+                    it.setIconResource(coachImgId)
+                }
+
                 else -> return@collect
+            }
+
+            if (viewModel.trainingState.value == TRAIN_REST_MESSAGE) {
+                trainView.setOnClickListener {
+                    val action =
+                        HomeFragmentDirections.actionHomeFragmentToStartPlanFragment()
+                    findNavController().navigate(action)
+                }
             }
 
             bodyLayout.addView(trainView)
@@ -233,67 +251,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             binding.topSheet.weekCalendar.notifyWeekChanged(date)
             binding.topSheet.weekCalendar.notifyWeekChanged(prevDate)
             prevDate = date
-
-            val bodyLayout = binding.topSheet.topSheetBody
-            bodyLayout.removeAllViews()
-
-            val trainView = when (viewModel.trainingState.value) {
-                TRAIN_INFO -> {
-                    val trainInfoView =
-                        TrainInfoChartView(requireContext())// TrainInfoView(requireContext())
-                    viewModel.report.value.planTrain?.let { plan ->
-                        trainInfoView.makeEntryChart(plan)
-                    }
-                    trainInfoView
-                }
-
-                TRAIN_RESULT -> {
-                    val trainResultView = TrainResultView(requireContext())
-                    viewModel.report.value.trainReport?.let { report ->
-                        trainResultView.setResultData(report)
-                    }
-                    trainResultView
-                }
-
-                TRAIN_REST_MESSAGE -> TrainRestMessageView(requireContext())
-                CREATE_PLAN -> CreatePlanButton(requireContext()).also { setTopSheetHalfExpand() }
-                else -> return@collectLatest
-            }
-
-            bodyLayout.addView(trainView)
-            bodyLayout.doOnNextLayout {
-                if (bodyLayout.measuredHeight != 0) {
-                    behavior.setHalfHeight(bodyLayout.measuredHeight)
-                    behavior.state = TopSheetBehavior.STATE_HALF_EXPANDED
-                }
-            }
-
-            when (viewModel.trainingState.value) {
-                TRAIN_INFO -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "오늘의 훈련 목표"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.isVisible = true
-                    binding.topSheet.trainInfoTitle.tvPlanInst.text =
-                        viewModel.report.value.planTrain.toContentString()
-                }
-
-                TRAIN_RESULT -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "오늘의 훈련 목표"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.isVisible = true
-                    binding.topSheet.trainInfoTitle.tvPlanInst.text =
-                        viewModel.report.value.planTrain.toContentString()
-                }
-
-                TRAIN_REST_MESSAGE -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "오늘은 훈련이 없어요"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.isVisible = true
-                    binding.topSheet.trainInfoTitle.tvPlanInst.text = "잘 쉬는 것도 훈련입니다."
-                }
-
-                CREATE_PLAN -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "진행중인 훈련이 없어요"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.visibility = View.INVISIBLE
-                }
-            }
         }
     }
 
