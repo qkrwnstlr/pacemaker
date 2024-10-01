@@ -71,6 +71,16 @@ public class PromptEngineeringService {
 					contentResponse = new Gson().fromJson(
 						chatCompletionResponse.choices().getFirst().message().content(), ContentResponse.class);
 
+					if (contentResponse.getContext() == null) {
+						System.out.println("contentResponse.getContext() == null");
+						correctResponseFormat = false;
+					}
+
+					if (contentResponse.getPlan() == null) {
+						System.out.println("contentResponse.getPlan() == null");
+						correctResponseFormat = false;
+					}
+
 				} catch (Exception e) {
 					System.out.println("response format에 어긋난 try-catch");
 					correctResponseFormat = false;
