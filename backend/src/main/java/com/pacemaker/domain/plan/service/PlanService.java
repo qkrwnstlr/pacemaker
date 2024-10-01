@@ -12,6 +12,7 @@ import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanResponse;
 import com.pacemaker.domain.plan.dto.ProgressPlanResponse;
+import com.pacemaker.domain.plan.dto.UpdatePlanRequest;
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.entity.PlanStatus;
 import com.pacemaker.domain.plan.entity.PlanTrain;
@@ -157,6 +158,38 @@ public class PlanService {
 		return ProgressPlanResponse.builder()
 			.plan(findPlan)
 			.build();
+	}
+
+	@Transactional
+	public void updatePlan(Long planId, UpdatePlanRequest updatePlanRequest) {
+		User user = findUserByUid(updatePlanRequest.uid());
+		Plan plan = findPlanById(planId);
+
+		if (user != plan.getUser()) {
+			throw new UserMismatchException("본인의 플랜만 수정할 수 있습니다.");
+		}
+
+		plan.removeBeforePlanTrains();
+
+		for (ContentRequest.Plan.PlanTrain newPlanTrain : updatePlanRequest.plan().planTrains()) {
+			PlanTrain planTrainEntity = createPlanTrainEntity(newPlanTrain);
+			plan.addPlanTrain(planTrainEntity);
+		}
+
+		int totalDays = 0;
+		int totalTimes = 0;
+		int totalDistances = 0;
+
+		for (PlanTrain planTrain : plan.getPlanTrains()) {
+			totalDays++;
+			totalTimes += planTrain.getSessionTime() != null ? planTrain.getSessionTime() : 0;
+			totalDistances += planTrain.getSessionDistance() != null ? planTrain.getSessionDistance() : 0;
+		}
+
+		plan.updatePlanDetails(totalDays, totalTimes, totalDistances,
+			LocalDate.parse(updatePlanRequest.plan().planTrains().getLast().trainDate()));
+
+		planRepository.save(plan);
 	}
 
 	private User findUserByUid(String uid) {

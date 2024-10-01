@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import com.pacemaker.domain.openai.service.OpenAiService;
 import com.pacemaker.domain.plan.dto.ActivePlanTrainResponse;
 import com.pacemaker.domain.plan.dto.ContentRequest;
 import com.pacemaker.domain.plan.dto.CreatePlanRequest;
+import com.pacemaker.domain.plan.dto.UpdatePlanRequest;
 import com.pacemaker.domain.plan.service.PlanService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -132,11 +134,11 @@ public class PlanController {
 		return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 	}
 
+	@PostMapping("/update/chat")
 	@Operation(summary = "플랜 수정 채팅")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "OpenAI API 호출 성공")
 	})
-	@PostMapping("/update/chat")
 	public Mono<ResponseEntity<?>> updatePlanChat(@RequestBody ContentRequest contentRequest) {
 
 		Instant start = Instant.now();
@@ -148,5 +150,17 @@ public class PlanController {
 
 				return ResponseEntity.ok(response);
 			});
+	}
+
+	@PutMapping("/{id}")
+	@Operation(summary = "플랜 수정")
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "플랜 수정 성공"),
+		@ApiResponse(responseCode = "400", description = "회원정보 불일치"),
+		@ApiResponse(responseCode = "404", description = "플랜정보 조회 실패")
+	})
+	public ResponseEntity<?> updatePlan(@PathVariable Long id, @RequestBody UpdatePlanRequest updatePlanRequest) {
+		planService.updatePlan(id, updatePlanRequest);
+		return ResponseEntity.status(HttpStatus.OK).body(null);
 	}
 }
