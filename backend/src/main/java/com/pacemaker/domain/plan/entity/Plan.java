@@ -51,7 +51,7 @@ public class Plan {
 	@Enumerated(EnumType.STRING)
 	private PlanStatus status;
 
-	@OneToMany(mappedBy = "plan", cascade = CascadeType.PERSIST, orphanRemoval = true)
+	@OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PlanTrain> planTrains = new ArrayList<>();
 
 	@PrePersist
@@ -84,6 +84,10 @@ public class Plan {
 		planTrains.remove(planTrain);
 	}
 
+	public void removeBeforePlanTrains() {
+		this.planTrains.removeIf(planTrain -> planTrain.getStatus() == PlanTrainStatus.BEFORE);
+	}
+
 	public void updateCompletedCount() {
 		this.completedCount += 1;
 	}
@@ -95,5 +99,14 @@ public class Plan {
 	public void updatePlanTrainReport(Integer totalDistances, Integer totalTimes) {
 		this.totalDistances = totalDistances;
 		this.totalTimes = totalTimes;
+	}
+
+	public void updatePlanDetails(Integer totalDays, Integer totalTimes, Integer totalDistances, LocalDate createdAt,
+		LocalDate expiredAt) {
+		this.totalDays = totalDays;
+		this.totalTimes = totalTimes;
+		this.totalDistances = totalDistances;
+		this.createdAt = createdAt;
+		this.expiredAt = expiredAt;
 	}
 }
