@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.pacemaker.domain.daily.dto.DailyCreateChatRequest;
 import com.pacemaker.domain.daily.dto.DailyCreateChatResponse;
@@ -31,12 +33,24 @@ public class OpenAiService {
 	}
 
 	public Mono<String> createPlanChatCompletions(ContentRequest contentRequest) {
+
+		String planResponseFormatString = ResponseFormatString.planChatResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(planResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.maxTokens(8000)
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
-				Message.createUser(new Gson().toJson(contentRequest)),
-				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+				Message.createUser(new Gson().toJson(contentRequest))
+				// ,Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+			))
+			.responseFormat(responseFormatNode)
 			.build();
 
 		return openAIWebClient.post()
@@ -83,12 +97,23 @@ public class OpenAiService {
 	}
 
 	public Mono<String> testMini(ContentRequest contentRequest) {
+
+		String planResponseFormatString = ResponseFormatString.planChatResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(planResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-mini")
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
-				Message.createUser(new Gson().toJson(contentRequest)),
+				Message.createUser(new Gson().toJson(contentRequest))))
+			.responseFormat(responseFormatNode)
 				// Message.createResponseFormat(ResponseFormatString.responseFormat)))
-				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+				// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
@@ -103,14 +128,25 @@ public class OpenAiService {
 	}
 
 	public Mono<String> test4o(ContentRequest contentRequest) {
+
+		String planResponseFormatString = ResponseFormatString.planChatResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(planResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
-				Message.createUser(new Gson().toJson(contentRequest)),
-				Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+				Message.createUser(new Gson().toJson(contentRequest))))
+				// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
+			.responseFormat(responseFormatNode)
 			.build();
 
 		return openAIWebClient.post()
@@ -121,11 +157,21 @@ public class OpenAiService {
 	}
 
 	public Mono<String> createRealTimeChatCompletions(RealTimeFeedbackRequest realTimeFeedbackRequest) {
+
+		String realTimeResponseFormatString = ResponseFormatString.realTimeResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(realTimeResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createRealTimeSystem(realTimeFeedbackRequest.coachTone()),
-				Message.createUser(new Gson().toJson(realTimeFeedbackRequest)), Message.createRealTimeResponseFormat(
-					ResponseFormatString.realTimeResponseFormat.replaceAll("\\s+", ""))))
+				Message.createUser(new Gson().toJson(realTimeFeedbackRequest))))
+			.responseFormat(responseFormatNode)
 			.build();
 
 		return openAIWebClient.post()
@@ -144,11 +190,21 @@ public class OpenAiService {
 	}
 
 	public Mono<String> createDailyCreateChat(DailyCreateChatRequest dailyCreateChatRequest) {
+
+		String dialyResponseFormatString = ResponseFormatString.dailyCreateChatResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(dialyResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createDailySystem(dailyCreateChatRequest.coachTone()),
-				Message.createUser(new Gson().toJson(dailyCreateChatRequest)), Message.createDailyResponseFormat(
-					ResponseFormatString.dailyCreateChatResponseFormat.replaceAll("\\s+", ""))))
+				Message.createUser(new Gson().toJson(dailyCreateChatRequest))))
+			.responseFormat(responseFormatNode)
 			.build();
 
 		return openAIWebClient.post()
@@ -166,12 +222,21 @@ public class OpenAiService {
 	}
 
 	public Mono<String> createTrainEvaluation(CreateTrainEvaluationRequest createTrainEvaluationRequest) {
+
+		String evaluationResponseFormatString = ResponseFormatString.createTrainEvaluationResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(evaluationResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createTrainEvaluation(createTrainEvaluationRequest.coachTone()),
-				Message.createUser(new Gson().toJson(createTrainEvaluationRequest)),
-				Message.createTrainEvaluationResponseFormat(
-					ResponseFormatString.createTrainEvaluationResponseFormat.replaceAll("\\s+", ""))))
+				Message.createUser(new Gson().toJson(createTrainEvaluationRequest))))
+			.responseFormat(responseFormatNode)
 			.build();
 
 		return openAIWebClient.post()
