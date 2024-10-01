@@ -147,6 +147,7 @@ class ExerciseService : LifecycleService() {
                                 is TrainState.WarmUp, is TrainState.CoolDown -> exerciseManager.stopJogging()
                                 else -> {}
                             }
+                            trainManager.finishTrain()
                         }
                         try {
                             if(exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {

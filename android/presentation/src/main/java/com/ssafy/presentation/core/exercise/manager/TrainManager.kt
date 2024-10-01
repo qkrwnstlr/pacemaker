@@ -135,6 +135,10 @@ class TrainManager @Inject constructor(
             TrainState.Default -> false
         }
     }
+
+    fun finishTrain() {
+        trainState.update { TrainState.Ended }
+    }
 }
 
 sealed class TrainState {
