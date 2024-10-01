@@ -51,6 +51,7 @@ class ExerciseMonitor @Inject constructor(
     fun stop() {
         isRunning = false
         wearableClientManager.dataClient.removeListener(this)
+        exerciseServiceState.update { ExerciseServiceState() }
     }
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {

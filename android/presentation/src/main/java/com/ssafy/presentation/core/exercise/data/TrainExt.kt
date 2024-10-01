@@ -13,6 +13,8 @@ val PlanTrain.message
 
 val TrainState.message
     get() = when (this) {
+        TrainState.None -> ""
+
         TrainState.Before -> "훈련이 시작되었습니다."
 
         is TrainState.WarmUp -> "Warm Up 세션 시작. ${session.message}"
