@@ -23,6 +23,7 @@ pipeline {
                             --name pacemaker-backend-container \
                             -e TZ=Asia/Seoul \
                             --env-file /var/jenkins_home/.env \
+			    -v /home/ubuntu/promptengineering:/promptengineering \
                             --network pacemaker-network \
                             pacemaker-backend-image
                         '''

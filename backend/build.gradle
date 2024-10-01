@@ -68,6 +68,9 @@ dependencies {
 
     // WebFlux -> Spring Web Reactive의 구현체 중 하나
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // csv
+    implementation 'com.opencsv:opencsv:5.9'
 }
 
 tasks.named('test') {
