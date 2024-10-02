@@ -358,7 +358,7 @@
         android:layout_marginStart="@dimen/padding_16"
         android:layout_marginTop="@dimen/margin_30"
         android:layout_marginBottom="@dimen/margin_16"
-        android:text="@string/plan_week_modify"
+        android:text="@string/plan_modify"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/fab_delete"
