@@ -244,7 +244,7 @@ class ExerciseService : LifecycleService() {
             trainManager.disconnect()
             exerciseManager.disconnect()
             coachingManager.disconnect()
-            voiceManager.release()
+            voiceManager.disconnect()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
