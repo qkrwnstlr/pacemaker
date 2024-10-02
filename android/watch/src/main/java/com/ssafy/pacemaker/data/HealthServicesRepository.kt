@@ -1,9 +1,6 @@
 package com.ssafy.pacemaker.data
 
 import android.content.Context
-import android.util.Log
-import androidx.health.services.client.data.ExerciseState
-import com.google.android.horologist.health.service.BinderConnection
 import com.ssafy.pacemaker.di.bindService
 import com.ssafy.pacemaker.service.ExerciseService
 import com.ssafy.pacemaker.service.ExerciseServiceState
@@ -11,19 +8,14 @@ import dagger.hilt.android.ActivityRetainedLifecycle
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.takeWhile
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private const val TAG = "HealthServicesRepository_PACEMAKER"
 
 @ActivityRetainedScoped
 class HealthServicesRepository @Inject constructor(
@@ -32,15 +24,17 @@ class HealthServicesRepository @Inject constructor(
     private val coroutineScope: CoroutineScope,
     lifecycle: ActivityRetainedLifecycle
 ) {
-    private val binderConnection =
+    private val binderConnection by lazy {
         lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
+    }
 
-    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> =
+    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> by lazy {
         binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
+    }
 
     private var errorState: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    val serviceState: StateFlow<ServiceState> =
+    val serviceState: StateFlow<ServiceState> by lazy {
         exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
             if (exerciseServiceState.exerciseState == null) {
                 ServiceState.Disconnected
@@ -52,6 +46,7 @@ class HealthServicesRepository @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = ServiceState.Disconnected
         )
+    }
 
     suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
 

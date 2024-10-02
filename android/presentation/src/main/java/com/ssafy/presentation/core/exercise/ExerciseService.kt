@@ -36,8 +36,6 @@ import java.io.File
 import java.time.Duration
 import javax.inject.Inject
 
-private const val TAG = "ExerciseService_PACEMAKER"
-
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
     @Inject
@@ -163,14 +161,7 @@ class ExerciseService : LifecycleService() {
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
-                                Log.d(
-                                    TAG,
-                                    "collectExerciseServiceState: ${exerciseManager.exerciseData.value.duration}"
-                                )
-                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(
-                                        30
-                                    )
-                                ) {
+                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
                                     healthConnectManager.writeExerciseSession(
                                         "${trainManager.train.id} (#${trainManager.train.index})",
                                         exerciseManager.exerciseData.value,
@@ -211,7 +202,6 @@ class ExerciseService : LifecycleService() {
     }
 
     private fun speakCoaching(coachPath: String) {
-        Log.d(TAG, "speakCoaching: $coachPath")
         val file = File(coachPath)
         if (!file.exists()) return
 
@@ -233,8 +223,6 @@ class ExerciseService : LifecycleService() {
 
         handleBind()
 
-        Log.d(TAG, "onBind: $this")
-
         return localBinder
     }
 
@@ -248,13 +236,11 @@ class ExerciseService : LifecycleService() {
         if (!isBound) {
             isBound = true
             startService(Intent(this, this::class.java))
-//            startForegroundService(Intent(this, this::class.java))
         }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         isBound = false
-        Log.d(TAG, "onUnbind: $this")
 
         lifecycleScope.launch {
             trainManager.disconnect()
