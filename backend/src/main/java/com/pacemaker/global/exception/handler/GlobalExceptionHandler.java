@@ -11,6 +11,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import com.pacemaker.global.exception.ActivePlanNotFoundException;
 import com.pacemaker.global.exception.ConflictException;
 import com.pacemaker.global.exception.CsvFileWriteException;
+import com.pacemaker.global.exception.DuplicateReportException;
 import com.pacemaker.global.exception.InvalidDateException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
@@ -96,6 +97,13 @@ public class GlobalExceptionHandler {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(DuplicateReportException.class)
+	public ResponseEntity<String> handleDuplicateReportException(DuplicateReportException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
 	}
 
 	@ExceptionHandler(NoResourceFoundException.class)
