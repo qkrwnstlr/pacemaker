@@ -1,17 +1,30 @@
 package com.pacemaker.domain.plan.entity;
 
-import com.pacemaker.domain.user.entity.User;
-
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.pacemaker.domain.user.entity.User;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -107,6 +120,10 @@ public class Plan {
 		this.totalTimes = totalTimes;
 		this.totalDistances = totalDistances;
 		this.createdAt = createdAt;
+		this.expiredAt = expiredAt;
+	}
+
+	public void updatePlanExpiredAt(LocalDate expiredAt) {
 		this.expiredAt = expiredAt;
 	}
 }
