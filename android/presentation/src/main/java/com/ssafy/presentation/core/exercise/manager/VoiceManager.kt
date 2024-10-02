@@ -11,11 +11,12 @@ import java.io.File
 import javax.inject.Inject
 
 @ServiceScoped
-class VoiceManager @Inject constructor(coroutineScope: CoroutineScope) {
+class VoiceManager @Inject constructor(private val coroutineScope: CoroutineScope) {
     private val voiceChannel = Channel<String>(Channel.UNLIMITED)
-    private val mediaPlayer = MediaPlayer()
+    private var mediaPlayer: MediaPlayer? = null
 
-    init {
+    fun connect() {
+        mediaPlayer = MediaPlayer()
         coroutineScope.launch(Dispatchers.Main) {
             for (path in voiceChannel) {
                 playVoice(path)
@@ -29,21 +30,20 @@ class VoiceManager @Inject constructor(coroutineScope: CoroutineScope) {
         val file = File(path)
         if (!file.exists()) return
 
-        with(mediaPlayer) {
+        mediaPlayer?.run {
             reset()
             setDataSource(file.path)
             prepare()
             start()
-
-            while (mediaPlayer.isPlaying) delay(100)
-            reset()
-            file.delete()
+            while (mediaPlayer?.isPlaying == true) delay(100)
+            mediaPlayer?.reset()
         }
+        file.delete()
     }
 
-    fun release() = runCatching {
+    fun disconnect() = runCatching {
         voiceChannel.close()
-        mediaPlayer.release()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }.onFailure { it.printStackTrace() }
-
 }

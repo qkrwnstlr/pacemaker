@@ -78,6 +78,7 @@ class ExerciseService : LifecycleService() {
                 if (!isStarted) {
                     isStarted = true
                     exerciseManager.connect()
+                    voiceManager.connect()
                     collectTrainState()
                     trainManager.connect(exerciseManager.currentSessionData)
                     collectExerciseServiceState()
@@ -232,7 +233,7 @@ class ExerciseService : LifecycleService() {
             trainManager.disconnect()
             exerciseManager.disconnect()
             coachingManager.disconnect()
-            voiceManager.release()
+            voiceManager.disconnect()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
