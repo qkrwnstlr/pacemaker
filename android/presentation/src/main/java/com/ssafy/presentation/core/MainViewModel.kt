@@ -15,12 +15,12 @@ class MainViewModel : ViewModel() {
         _uid.emit(newUid)
     }
 
-    fun updateNewUid(newUid: String){
+    fun updateNewUid(newUid: String) {
         _uid.update { newUid }
     }
 
-    suspend fun clearUid() {
-        _uid.emit("")
+    fun clearUid() {
+        _uid.update { "" }
     }
 
 }
