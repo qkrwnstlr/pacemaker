@@ -24,7 +24,9 @@ class DataLayerListenerService : WearableListenerService() {
                     this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(this)
                 }
-                Intent(this, ExerciseService::class.java).run {
+                Intent(this, ExerciseService::class.java).apply {
+                    action = ExerciseService.RUNNING_ACTION
+                }.run {
                     startForegroundService(this)
                 }
             }

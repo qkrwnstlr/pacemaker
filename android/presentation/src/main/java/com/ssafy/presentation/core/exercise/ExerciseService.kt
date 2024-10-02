@@ -30,7 +30,6 @@ import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
@@ -68,21 +67,29 @@ class ExerciseService : LifecycleService() {
 
     private var isBound = false
     private var isStarted = false
+    private var isForeground = false
     private val localBinder = LocalBinder()
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        if (!isStarted) {
-            isStarted = true
+        if (intent?.action == RUNNING_ACTION && !isForeground) {
             startForeground()
             lifecycleScope.launch {
-                exerciseManager.connect()
+                if (!isStarted) {
+                    isStarted = true
+                    exerciseManager.connect()
+                    collectTrainState()
+                    trainManager.connect(exerciseManager.currentSessionData)
+                    collectExerciseServiceState()
+                    collectCoachVoicePath()
+                }
+            }
+        }
+
+        if (!isStarted) {
+            lifecycleScope.launch {
                 wearableClientManager.startWearableActivity()
-                collectTrainState()
-                trainManager.connect(exerciseManager.currentSessionData)
-                collectExerciseServiceState()
-                collectCoachVoicePath()
             }
         }
 
@@ -156,8 +163,14 @@ class ExerciseService : LifecycleService() {
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
-                                Log.d(TAG, "collectExerciseServiceState: ${exerciseManager.exerciseData.value.duration}")
-                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                                Log.d(
+                                    TAG,
+                                    "collectExerciseServiceState: ${exerciseManager.exerciseData.value.duration}"
+                                )
+                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(
+                                        30
+                                    )
+                                ) {
                                     healthConnectManager.writeExerciseSession(
                                         "${trainManager.train.id} (#${trainManager.train.index})",
                                         exerciseManager.exerciseData.value,
@@ -234,7 +247,8 @@ class ExerciseService : LifecycleService() {
     private fun handleBind() {
         if (!isBound) {
             isBound = true
-            startForegroundService(Intent(this, this::class.java))
+            startService(Intent(this, this::class.java))
+//            startForegroundService(Intent(this, this::class.java))
         }
     }
 
@@ -264,6 +278,7 @@ class ExerciseService : LifecycleService() {
     }
 
     private fun startForeground() {
+        isForeground = true
         exerciseNotificationManager.createNotificationChannel()
         val notification = exerciseNotificationManager.buildNotification()
         ServiceCompat.startForeground(
@@ -291,6 +306,10 @@ class ExerciseService : LifecycleService() {
 
     suspend fun endExercise() {
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
+    }
+
+    companion object {
+        const val RUNNING_ACTION = "com.ssafy.pacemaker.action.running"
     }
 }
 
