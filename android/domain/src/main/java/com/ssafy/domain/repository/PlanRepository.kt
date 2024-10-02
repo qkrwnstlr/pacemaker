@@ -18,6 +18,8 @@ interface PlanRepository {
 
     suspend fun getPlan(uid: String): ResponseResult<PlanInfo>
 
+    suspend fun modifyPlan(planRequest: PlanRequest) : ResponseResult<Unit>
+
     suspend fun deletePlan(uid: String): ResponseResult<Unit>
 
 }

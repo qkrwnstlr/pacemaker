@@ -11,6 +11,7 @@ import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
+import com.ssafy.domain.usecase.plan.ModifyPlanUseCase
 import com.ssafy.domain.utils.ifNotHuman
 import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
@@ -44,6 +45,7 @@ class RegisterPlanViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val chatForPlanUseCase: ChatForPlanUseCase,
     private val makePlanUseCase: MakePlanUseCase,
+    private val modifyPlanUseCase: ModifyPlanUseCase,
     private val getPlanInfoUseCase: GetPlanInfoUseCase,
     private val healthConnectManager: HealthConnectManager,
 ) : ViewModel() {
@@ -217,7 +219,7 @@ class RegisterPlanViewModel @Inject constructor(
             plan = planData.value
         )
 
-        runCatching { makePlanUseCase(planRequest) }
+        runCatching { if (isModify) modifyPlanUseCase(planRequest) else makePlanUseCase(planRequest) }
             .onSuccess { successToMakePlan() }
             .onFailure {
                 it.printStackTrace()

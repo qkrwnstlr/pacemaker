@@ -13,6 +13,7 @@ interface PlanDataSource {
     suspend fun getProgress(uid: String, year: Int, month: Int, day: Int): Response<ProgressData>
     suspend fun makePlan(planRequest: PlanRequest): Response<Unit>
     suspend fun getPlan(uid: String): Response<PlanInfo>
+    suspend fun modifyPlan(planRequest: PlanRequest): Response<Unit>
     suspend fun deletePlan(uid: String): Response<Unit>
 
 }

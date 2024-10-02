@@ -9,6 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -25,6 +26,9 @@ interface PlanAPI {
 
     @GET("plans/active/user/{uid}")
     suspend fun getPlan(@Path("uid") uid: String): Response<PlanInfo>
+
+    @PUT("plans")
+    suspend fun modifyPlan(@Body planRequest: PlanRequest): Response<Unit>
 
     @DELETE("plans/active/user/{uid}")
     suspend fun deletePlan(@Path("uid") uid: String): Response<Unit>
