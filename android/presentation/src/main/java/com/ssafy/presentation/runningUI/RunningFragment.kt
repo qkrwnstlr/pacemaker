@@ -45,8 +45,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.time.Duration
 
-private const val TAG = "RunningFragment_PACEMAKER"
-
 @AndroidEntryPoint
 class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBinding::inflate),
     OnMapReadyCallback {

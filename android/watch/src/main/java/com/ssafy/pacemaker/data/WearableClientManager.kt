@@ -1,13 +1,11 @@
 package com.ssafy.pacemaker.data
 
 import android.content.Context
-import android.util.Log
 import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpoint
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.DataItem
 import com.google.android.gms.wearable.PutDataRequest
 import com.google.android.gms.wearable.Wearable
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -20,13 +18,10 @@ import com.google.gson.JsonSerializer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.tasks.await
-import java.time.Instant
-import javax.inject.Singleton
 import java.lang.reflect.Type
 import java.time.Duration
-
-
-private const val TAG = "WearableClientManager_PACEMAKER"
+import java.time.Instant
+import javax.inject.Singleton
 
 @Singleton
 class WearableClientManager @Inject constructor(
@@ -47,9 +42,6 @@ class WearableClientManager @Inject constructor(
 
         val request = PutDataRequest.create(path)
             .apply { setData(gson.toJson(data).toByteArray()) }
-
-        Log.d(TAG, "sendToMobileDevice: ${data}")
-        Log.d(TAG, "sendToMobileDevice: ${gson.toJson(data)}")
 
         return dataClient.putDataItem(request).await()
     }

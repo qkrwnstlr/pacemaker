@@ -13,10 +13,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val healthServicesRepository: HealthServicesRepository,
 ) : ViewModel() {
-    init {
-        healthServicesRepository.prepareExercise()
-    }
-
     private var isConnected = false
 
     fun startExercise() {

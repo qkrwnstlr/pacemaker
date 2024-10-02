@@ -9,6 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.takeWhile
@@ -29,9 +30,7 @@ class ExerciseRepository @Inject constructor(
     val serviceState: MutableStateFlow<ServiceState> = MutableStateFlow(ServiceState.Disconnected)
 
     private fun bindService() {
-        if(binderConnection != null) return
-
-        serviceState.update { ServiceState.Disconnected }
+        if (binderConnection != null) return
 
         binderConnection = lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
@@ -40,7 +39,10 @@ class ExerciseRepository @Inject constructor(
         coroutineScope.launch {
             exerciseServiceStateUpdates?.takeWhile { binderConnection != null }?.collect { exerciseServiceState ->
                 serviceState.update { ServiceState.Connected(exerciseServiceState) }
-                if (exerciseServiceState.exerciseState == ExerciseState.ENDED) unbindService()
+                if (exerciseServiceState.exerciseState == ExerciseState.ENDED) {
+                    delay(100) // TODO : 연속으로 같은 state를 2번 update하니까 하나가 씹힘...
+                    unbindService()
+                }
             }
         }
     }
@@ -49,6 +51,7 @@ class ExerciseRepository @Inject constructor(
         binderConnection?.unbind()
         binderConnection = null
         exerciseServiceStateUpdates = null
+        serviceState.update { ServiceState.Disconnected }
     }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) =

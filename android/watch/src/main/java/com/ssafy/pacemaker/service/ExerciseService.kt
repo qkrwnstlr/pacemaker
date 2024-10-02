@@ -70,6 +70,7 @@ class ExerciseService : LifecycleService() {
     fun clearExercise() {
         exerciseServiceMonitor.disconnect()
         exerciseMonitor.disconnect()
+        isStarted = false
         stopSelf()
     }
 
@@ -82,7 +83,7 @@ class ExerciseService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
-        if (!isStarted) {
+        if (intent?.action == RUNNING_ACTION && !isStarted) {
             isStarted = true
 
             if (!isBound) stopSelfIfNotRunning()
