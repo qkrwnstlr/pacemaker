@@ -19,7 +19,14 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	@Override
 	public void deleteUserRelatedData(Long userId) {
 		queryFactory.delete(reportPlanTrain)
-			.where(reportPlanTrain.report.user.id.eq(userId))
+			.where(report.user.id.eq(userId)
+				.and(reportPlanTrain.report.eq(report))
+				.or(planTrain.plan.user.id.eq(userId)
+					.and(reportPlanTrain.planTrain.eq(planTrain))))
+			.execute();
+
+		queryFactory.delete(report)
+			.where(report.user.id.eq(userId))
 			.execute();
 
 		queryFactory.delete(planTrain)
@@ -28,10 +35,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
 		queryFactory.delete(plan)
 			.where(plan.user.id.eq(userId))
-			.execute();
-
-		queryFactory.delete(report)
-			.where(report.user.id.eq(userId))
 			.execute();
 	}
 }
