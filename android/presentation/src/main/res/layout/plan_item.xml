@@ -28,6 +28,13 @@
         android:layout_marginTop="@dimen/padding_36"
         android:padding="@dimen/padding_16" />
 
+    <com.ssafy.presentation.scheduleUI.schedule.HeartView
+        android:id="@+id/hv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_16"
+        android:visibility="gone" />
+
     <com.ssafy.presentation.scheduleUI.schedule.TrainResultCoachView
         android:id="@+id/ly_train_result_coach"
         android:layout_width="match_parent"
