@@ -56,12 +56,12 @@ public class ResponseFormatString {
 						 },
 						 "recentRunPace": {
 						   "type": "integer",
-						   "description": "running pace of the recent runs (seconds per kilometer)"
+						   "description": "running pace of the recent runs (seconds per kilometer), -1 if none"
 						 },
-						 "recentRunDistance": { "type": "integer", "description": "running distance of the recent runs" },
+						 "recentRunDistance": { "type": "integer", "description": "running distance of the recent runs, -1 if none" },
 						 "recentRunHeartRate": {
 						   "type": "integer",
-						   "description": "running average heart rate of the recent runs"
+						   "description": "running average heart rate of the recent runs, -1 if none"
 						 }
 					   },
 					   "required": [
