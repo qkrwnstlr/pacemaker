@@ -92,3 +92,19 @@ fun formatPace(pace: Double?) = buildAnnotatedString {
         append('"')
     }
 }
+
+@Composable
+fun formatSpeed(speed: Double?) = buildAnnotatedString {
+    if (speed == null || speed.isNaN()) {
+        append("--")
+    } else {
+        val secondsPerKm = 1000 / speed
+        val minutes = (secondsPerKm / 60).toInt()
+        val seconds = (secondsPerKm % 60).toInt()
+
+        append("%02d".format(minutes))
+        append("'")
+        append("%02d".format(seconds))
+        append('"')
+    }
+}
