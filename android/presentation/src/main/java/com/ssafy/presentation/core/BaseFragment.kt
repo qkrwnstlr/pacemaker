@@ -7,14 +7,12 @@ import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 typealias Inflate<T> = (LayoutInflater, ViewGroup?, Boolean) -> T
@@ -51,9 +49,8 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
     }
 
     fun getUid() = viewModel.uid.value
-    fun clearUid(goLogin: () -> Unit) = viewLifecycleOwner.lifecycleScope.launch {
-        runCatching { viewModel.clearUid() }
-            .onSuccess { goLogin() }
+    fun clearUid(goLogin: () -> Unit) {
+        viewModel.clearUid(goLogin)
     }
 
     var auth: FirebaseAuth = Firebase.auth
