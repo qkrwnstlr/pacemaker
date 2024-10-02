@@ -2,7 +2,6 @@ package com.ssafy.presentation.core.exercise
 
 import android.content.Intent
 import android.content.pm.ServiceInfo
-import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -25,6 +24,7 @@ import com.ssafy.presentation.core.exercise.manager.ReportsManager
 import com.ssafy.presentation.core.exercise.manager.TrainManager
 import com.ssafy.presentation.core.exercise.manager.TrainSession
 import com.ssafy.presentation.core.exercise.manager.TrainState
+import com.ssafy.presentation.core.exercise.manager.VoiceManager
 import com.ssafy.presentation.core.exercise.manager.WearableClientManager
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import java.io.File
 import java.time.Duration
 import javax.inject.Inject
 
@@ -60,6 +59,9 @@ class ExerciseService : LifecycleService() {
 
     @Inject
     lateinit var healthConnectManager: HealthConnectManager
+
+    @Inject
+    lateinit var voiceManager: VoiceManager
 
     @Inject
     lateinit var getTTSUseCase: GetTTSUseCase
@@ -197,7 +199,7 @@ class ExerciseService : LifecycleService() {
     private fun collectCoachVoicePath() {
         lifecycleScope.launch {
             coachingManager.coachVoicePath.collect { coachPath ->
-                coachPath?.let { speakCoaching(it) }
+                coachPath?.let { voiceManager.addVoicePath(it) }
             }
         }
     }
@@ -206,25 +208,7 @@ class ExerciseService : LifecycleService() {
         runCatching {
             getTTSUseCase(message)
         }.onSuccess { path ->
-            speakCoaching(path)
-        }
-    }
-
-    private fun speakCoaching(coachPath: String) {
-        Log.d(TAG, "speakCoaching: $coachPath")
-        val file = File(coachPath)
-        if (!file.exists()) return
-
-        MediaPlayer().apply {
-            reset()
-            setDataSource(file.path)
-            prepare()
-            start()
-
-            setOnCompletionListener { mp ->
-                mp.release()
-                file.delete()
-            }
+            voiceManager.addVoicePath(path)
         }
     }
 
@@ -260,6 +244,7 @@ class ExerciseService : LifecycleService() {
             trainManager.disconnect()
             exerciseManager.disconnect()
             coachingManager.disconnect()
+            voiceManager.release()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }

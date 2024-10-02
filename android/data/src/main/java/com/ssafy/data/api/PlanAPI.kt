@@ -24,7 +24,7 @@ interface PlanAPI {
     @GET("plans/active/user/{uid}")
     suspend fun getPlan(@Path("uid") uid: String): Response<PlanInfo>
 
-    @POST("plans")
+    @POST("plans/create")
     suspend fun makePlan(@Body planRequest: PlanRequest): Response<Unit>
 
     @PATCH("plans")

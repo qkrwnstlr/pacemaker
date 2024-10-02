@@ -65,7 +65,7 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
 
     private fun CoroutineScope.collectCoachState() = launch {
         viewModel.selectCoachState.collectLatest { (coachIndex, count) ->
-            if (count == SELECT_MAX_COUNT) {
+            if (count >= SELECT_MAX_COUNT) {
                 viewModel.setCoach(coachIndex, next(), ::showSnackBar)
             }
         }
