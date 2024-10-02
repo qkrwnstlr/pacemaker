@@ -83,8 +83,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onMapReady(map: GoogleMap) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val latitude = viewModel.latitudeFlow()
-            val longitude = viewModel.longitudeFlow()
+            val latitude = viewModel.getLatitude()
+            val longitude = viewModel.getLongitude()
             val point = LatLng(latitude, longitude)
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 17f))
             getMyLocation(map)

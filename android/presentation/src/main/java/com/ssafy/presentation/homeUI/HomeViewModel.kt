@@ -50,13 +50,13 @@ class HomeViewModel @Inject constructor(
         dataStoreRepository.setLocation(latitude, longitude)
     }
 
-    suspend fun latitudeFlow(): Double {
-        return dataStoreRepository.getLatitude().firstOrNull() ?: 0.0
-    }
+    suspend fun getLatitude(): Double =
+        dataStoreRepository.getLatitude().firstOrNull() ?: 0.0
 
-    suspend fun longitudeFlow(): Double {
-        return dataStoreRepository.getLongitude().firstOrNull() ?: 0.0
-    }
+
+    suspend fun getLongitude(): Double =
+        dataStoreRepository.getLongitude().firstOrNull() ?: 0.0
+
 
     fun getCoach() = viewModelScope.launch(Dispatchers.IO) {
         runCatching {
