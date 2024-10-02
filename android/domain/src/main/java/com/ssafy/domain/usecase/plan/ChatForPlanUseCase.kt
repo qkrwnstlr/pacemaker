@@ -27,7 +27,12 @@ class ChatForPlanUseCase @Inject constructor(
         val feature = dataStoreRepository.getUser().toMakeFeature()
         val newChat = chat.copy(plan = newPlan, coachTone = feature)
 
-        val response = planRepository.chatForPlan(newChat)
+        val response = if (!chat.isModify) {
+            planRepository.chatForPlan(newChat)
+        } else {
+            planRepository.chatForModifyPlan(newChat)
+        }
+        
         if (response is ResponseResult.Error) throw RuntimeException(response.message)
 
         return response.data ?: throw RuntimeException()

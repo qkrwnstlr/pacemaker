@@ -11,6 +11,7 @@ import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
+import com.ssafy.domain.usecase.plan.ModifyPlanUseCase
 import com.ssafy.domain.utils.ifNotHuman
 import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
@@ -44,11 +45,13 @@ class RegisterPlanViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
     private val chatForPlanUseCase: ChatForPlanUseCase,
     private val makePlanUseCase: MakePlanUseCase,
+    private val modifyPlanUseCase: ModifyPlanUseCase,
     private val getPlanInfoUseCase: GetPlanInfoUseCase,
     private val healthConnectManager: HealthConnectManager,
 ) : ViewModel() {
 
     private var coachIndex: Long = 1
+    var isModify: Boolean = false
 
     private val _chatData = MutableStateFlow<List<ChatData>>(emptyList())
     private val _contextData = MutableStateFlow(Context())
@@ -64,7 +67,6 @@ class RegisterPlanViewModel @Inject constructor(
         index: Long,
         sendAble: (Boolean) -> Unit,
         showSelectWeekDayDialog: () -> Unit,
-        isModify: Boolean
     ) {
         val coachMessages = index.toCoachMessage(isModify)
             .map { ChatData.CoachData(it, index) }
@@ -90,13 +92,12 @@ class RegisterPlanViewModel @Inject constructor(
     fun initData(
         sendAble: (Boolean) -> Unit,
         showSelectWeekDayDialog: () -> Unit,
-        isModify: Boolean = false
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching { dataStoreRepository.getUser() }
                 .onSuccess {
                     coachIndex = it.coachNumber
-                    initChatMessage(it.coachNumber, sendAble, showSelectWeekDayDialog, isModify)
+                    initChatMessage(it.coachNumber, sendAble, showSelectWeekDayDialog)
 
                     var userInfo = it.toUserInfo()
 
@@ -156,7 +157,14 @@ class RegisterPlanViewModel @Inject constructor(
 
     private fun makeChat(text: String) =
         viewModelScope.launch(Dispatchers.IO) {
-            val chat = Chat(message = text, context = contextData.value, plan = planData.value)
+
+            val chat = Chat(
+                message = text,
+                context = contextData.value,
+                plan = planData.value,
+                isModify = isModify
+            )
+
             runCatching { chatForPlanUseCase(chat) }
                 .onSuccess { emitChatResponse(it) }
                 .onFailure {
@@ -211,7 +219,7 @@ class RegisterPlanViewModel @Inject constructor(
             plan = planData.value
         )
 
-        runCatching { makePlanUseCase(planRequest) }
+        runCatching { if (isModify) modifyPlanUseCase(planRequest) else makePlanUseCase(planRequest) }
             .onSuccess { successToMakePlan() }
             .onFailure {
                 it.printStackTrace()

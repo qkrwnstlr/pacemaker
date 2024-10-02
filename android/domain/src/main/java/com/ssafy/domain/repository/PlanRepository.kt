@@ -10,11 +10,15 @@ interface PlanRepository {
 
     suspend fun chatForPlan(chat: Chat): ResponseResult<Chat>
 
+    suspend fun chatForModifyPlan(chat: Chat): ResponseResult<Chat>
+
     suspend fun getProgress(uid:String, year:Int, month:Int, day:Int): ResponseResult<ProgressData>
 
     suspend fun makePlan(planRequest: PlanRequest): ResponseResult<Unit>
 
     suspend fun getPlan(uid: String): ResponseResult<PlanInfo>
+
+    suspend fun modifyPlan(planRequest: PlanRequest) : ResponseResult<Unit>
 
     suspend fun deletePlan(uid: String): ResponseResult<Unit>
 

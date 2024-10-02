@@ -7,7 +7,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.dotlottie.dlplayer.Mode
 import com.lottiefiles.dotlottie.core.model.Config
 import com.lottiefiles.dotlottie.core.util.DotLottieEventListener
@@ -15,6 +17,7 @@ import com.lottiefiles.dotlottie.core.util.DotLottieSource
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.ActivitySplashBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -22,6 +25,7 @@ import kotlinx.coroutines.launch
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
     private val viewModel: SplashViewModel by viewModels()
+    private var collectJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,8 +55,14 @@ class SplashActivity : AppCompatActivity() {
             addEventListener(object : DotLottieEventListener {
                 override fun onComplete() {
                     super.onComplete()
-                    collectUID()
+                    collectJob = collectUID()
                     removeEventListener(this)
+                }
+
+                override fun onLoadError(error: Throwable) {
+                    super.onLoadError(error)
+                    collectJob?.cancel()
+                    collectJob = collectUID()
                 }
             })
 
@@ -60,9 +70,11 @@ class SplashActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectUID() = lifecycleScope.launch {
-        viewModel.uidState.collectLatest { uid ->
-            uid?.let { moveToMainActivity(it) }
+    private fun collectUID(): Job = lifecycleScope.launch {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.uidState.collectLatest { uid ->
+                uid?.let { moveToMainActivity(it) }
+            }
         }
     }
 
