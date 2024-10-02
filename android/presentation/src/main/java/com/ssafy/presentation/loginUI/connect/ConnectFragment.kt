@@ -25,6 +25,8 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
         permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) {
             lifecycleScope.launch {
                 if(viewModel.hasAllPermissions()) viewModel.syncWithHealthConnect(getUid())
+                val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
+                findNavController().navigate(action)
             }
         }
     }
@@ -57,8 +59,7 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
 
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
-            val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
-            findNavController().navigate(action)
+            viewModel.launchPermissionsLauncher(permissionLauncher)
         }
     }
 
