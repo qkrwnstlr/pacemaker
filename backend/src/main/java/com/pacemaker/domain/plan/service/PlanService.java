@@ -161,13 +161,9 @@ public class PlanService {
 	}
 
 	@Transactional
-	public void updatePlan(Long planId, UpdatePlanRequest updatePlanRequest) {
-		User user = findUserByUid(updatePlanRequest.uid());
-		Plan plan = findPlanById(planId);
+	public void updatePlan(UpdatePlanRequest updatePlanRequest) {
 
-		if (user != plan.getUser()) {
-			throw new UserMismatchException("본인의 플랜만 수정할 수 있습니다.");
-		}
+		Plan plan = findActivePlan(updatePlanRequest.uid());
 
 		plan.removeBeforePlanTrains();
 

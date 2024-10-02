@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -152,15 +153,16 @@ public class PlanController {
 			});
 	}
 
-	@PutMapping("/{id}")
-	@Operation(summary = "플랜 수정")
+	@PatchMapping
+	@Operation(summary = "Active Plan 수정")
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "플랜 수정 성공"),
 		@ApiResponse(responseCode = "400", description = "회원정보 불일치"),
 		@ApiResponse(responseCode = "404", description = "플랜정보 조회 실패")
 	})
-	public ResponseEntity<?> updatePlan(@PathVariable Long id, @RequestBody UpdatePlanRequest updatePlanRequest) {
-		planService.updatePlan(id, updatePlanRequest);
-		return ResponseEntity.status(HttpStatus.OK).body(null);
+	public ResponseEntity<?> updateActivePlan(@RequestBody UpdatePlanRequest updatePlanRequest) {
+		
+		planService.updatePlan(updatePlanRequest);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
