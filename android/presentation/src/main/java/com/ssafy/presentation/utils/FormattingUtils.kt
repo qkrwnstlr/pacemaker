@@ -71,7 +71,7 @@ fun formatPace(pace: Double?) = buildSpannedString {
     if (pace == null || pace.isNaN()) {
         append("--")
     } else {
-        val secondsPerKm = pace / 1000.0
+        val secondsPerKm = 1000.0 / pace
         val minutes = (secondsPerKm / 60).toInt()
         val seconds = (secondsPerKm % 60).toInt()
 

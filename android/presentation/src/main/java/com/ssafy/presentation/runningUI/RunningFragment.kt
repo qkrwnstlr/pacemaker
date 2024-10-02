@@ -158,13 +158,13 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                     with(binding.runningText.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
                         boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
-                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
+                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                     }
                     with(binding.runningMap.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
                         boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
-                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.pace)
+                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                         exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
                     }

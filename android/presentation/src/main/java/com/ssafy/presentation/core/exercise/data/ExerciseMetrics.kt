@@ -4,6 +4,7 @@ import androidx.health.services.client.data.LocationData
 
 data class ExerciseMetrics(
     val heartRate: Double? = null,
+    val speed: Double? = null,
     val pace: Double? = null,
     val steps: Long? = null,
     val cadence: Long? = null,
