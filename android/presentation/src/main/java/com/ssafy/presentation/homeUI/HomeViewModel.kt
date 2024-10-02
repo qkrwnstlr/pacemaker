@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -49,12 +50,12 @@ class HomeViewModel @Inject constructor(
         dataStoreRepository.setLocation(latitude, longitude)
     }
 
-    fun latitudeFlow(): Flow<Double> {
-        return dataStoreRepository.getLatitude()
+    suspend fun latitudeFlow(): Double {
+        return dataStoreRepository.getLatitude().firstOrNull() ?: 0.0
     }
 
-    fun longitudeFlow(): Flow<Double> {
-        return dataStoreRepository.getLongitude()
+    suspend fun longitudeFlow(): Double {
+        return dataStoreRepository.getLongitude().firstOrNull() ?: 0.0
     }
 
     fun getCoach() = viewModelScope.launch(Dispatchers.IO) {
