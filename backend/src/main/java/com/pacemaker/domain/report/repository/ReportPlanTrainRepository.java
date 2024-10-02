@@ -8,7 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.pacemaker.domain.report.entity.ReportPlanTrain;
 
 @Repository
-public interface ReportPlanTrainRepository extends JpaRepository<ReportPlanTrain, Long> {
+public interface ReportPlanTrainRepository
+	extends JpaRepository<ReportPlanTrain, Long>, ReportPlanTrainRepositoryCustom {
 
 	Optional<ReportPlanTrain> findReportPlanTrainByReportId(Long reportId);
 }

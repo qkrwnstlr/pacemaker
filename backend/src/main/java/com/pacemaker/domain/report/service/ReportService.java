@@ -39,6 +39,7 @@ import com.pacemaker.domain.report.repository.ReportPlanTrainRepository;
 import com.pacemaker.domain.report.repository.ReportRepository;
 import com.pacemaker.domain.user.entity.User;
 import com.pacemaker.domain.user.repository.UserRepository;
+import com.pacemaker.global.exception.DuplicateReportException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.UserMismatchException;
 
@@ -60,12 +61,15 @@ public class ReportService {
 	@Transactional
 	public ReportPlanResponse createReportPlan(ReportPlanCreateRequest reportPlanCreateRequest) throws
 		JsonProcessingException {
-		// TODO: 플랜 자동 수정 필요
 
 		User user = findUserByUid(reportPlanCreateRequest.uid());
 		PlanTrain planTrain = findPlanTrainById(reportPlanCreateRequest.planTrainId());
 		Plan plan = planTrain.getPlan();
 		Coach coach = findCoachById(reportPlanCreateRequest.coachNumber());
+
+		if (reportPlanTrainRepository.reportExists(planTrain.getId())) {
+			throw new DuplicateReportException("해당 플랜 훈련에 대한 레포트가 이미 존재합니다.");
+		}
 
 		planTrain.updatePlanTrainStatus(PlanTrainStatus.DONE);
 		user.updateUserTrainReport(reportPlanCreateRequest.trainResult().trainTime(),

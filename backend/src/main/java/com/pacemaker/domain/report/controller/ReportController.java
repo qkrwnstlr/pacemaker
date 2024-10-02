@@ -43,7 +43,8 @@ public class ReportController {
 		@ApiResponse(responseCode = "201", description = "플랜 훈련 레포트 생성 성공"),
 		@ApiResponse(responseCode = "404", description = "회원정보 조회 실패"),
 		@ApiResponse(responseCode = "404", description = "코치정보 조회 실패"),
-		@ApiResponse(responseCode = "404", description = "훈련정보 조회 실패")
+		@ApiResponse(responseCode = "404", description = "훈련정보 조회 실패"),
+		@ApiResponse(responseCode = "409", description = "동일한 훈련에 대한 레포트 생성 불가")
 	})
 	public ResponseEntity<ReportPlanResponse> createReportPlan(
 		@RequestBody ReportPlanCreateRequest reportPlanCreateRequest) throws JsonProcessingException {
