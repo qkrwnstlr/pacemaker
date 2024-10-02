@@ -5,8 +5,6 @@ import static com.pacemaker.domain.plan.entity.QPlanTrain.*;
 import static com.pacemaker.domain.report.entity.QReport.*;
 import static com.pacemaker.domain.report.entity.QReportPlanTrain.*;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
@@ -19,7 +17,6 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	@Transactional
 	public void deleteUserRelatedData(Long userId) {
 		queryFactory.delete(reportPlanTrain)
 			.where(reportPlanTrain.report.user.id.eq(userId))
