@@ -20,6 +20,21 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 			""")
 	boolean existsActivePlan(Long userId);
 
+	/*
+	 * 나중에 바꿔서 테스트 해 볼것!
+	 * 이렇게 하면 user를 join하는 건 없지만 되는지 궁금함
+	 * 1. 아마도 user정보를 사용하지 않는 거라면 경로 탐색? 을 통해서 조건을 사용한다고 해서 join fetch가 필요 없는 것으로 판단됨
+	 * 2. 즉 잘 동작할 것이다!!
+	@Query("""
+			select p
+			  from Plan p
+			  join fetch p.planTrains pt
+			  where p.user.uid = :uid
+			    and p.status = 'ACTIVE'
+			  order by pt.trainDate
+			""")
+
+	 */
 	@Query("""
 			select p
 			  from Plan p
