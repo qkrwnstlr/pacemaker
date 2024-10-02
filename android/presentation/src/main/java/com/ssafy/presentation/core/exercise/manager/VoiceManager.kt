@@ -1,56 +1,49 @@
 package com.ssafy.presentation.core.exercise.manager
 
 import android.media.MediaPlayer
+import dagger.hilt.android.scopes.ServiceScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class VoiceManager @Inject constructor(private val coroutineScope: CoroutineScope) {
+@ServiceScoped
+class VoiceManager @Inject constructor(coroutineScope: CoroutineScope) {
     private val voiceChannel = Channel<String>(Channel.UNLIMITED)
     private val mediaPlayer = MediaPlayer()
-    private val mutex = Mutex()
 
     init {
         coroutineScope.launch(Dispatchers.Main) {
             for (path in voiceChannel) {
-                mutex.withLock {
-                    mutex.unlock()
-                    playVoice(path)
-                }
+                playVoice(path)
             }
         }
     }
 
-    suspend fun addVoicePath(path: String) {
-        voiceChannel.send(path)
-    }
+    fun addVoicePath(path: String) = voiceChannel.trySend(path)
 
-    private fun playVoice(path: String) {
+    private suspend fun playVoice(path: String) {
         val file = File(path)
         if (!file.exists()) return
 
-        mediaPlayer.apply {
+        with(mediaPlayer) {
             reset()
             setDataSource(file.path)
             prepare()
             start()
-            setOnCompletionListener {
-                reset()
-                file.delete()
-                coroutineScope.launch { mutex.lock() }
-            }
+
+            while (mediaPlayer.isPlaying) delay(100)
+            reset()
+            file.delete()
         }
     }
 
-    fun release() {
+    fun release() = runCatching {
         voiceChannel.close()
         mediaPlayer.release()
-    }
+    }.onFailure { it.printStackTrace() }
+
 }
