@@ -98,12 +98,19 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         initRunningMapView()
     }
 
+    private fun initRunningTextView() = with(binding.runningText) {
+        tvDistance.text = "--"
+        with(runningInfo) {
+            boxBpm.tvRunningTitle.text = "심박수"
+            boxKcal.tvRunningTitle.text = "총 소모 칼로리"
+            boxPace.tvRunningTitle.text = "페이스"
+            boxTime.tvRunningTitle.text = "총 시간"
 
-    private fun initRunningTextView() = with(binding.runningText.runningInfo) {
-        boxBpm.tvRunningTitle.text = "심박수"
-        boxKcal.tvRunningTitle.text = "총 소모 칼로리"
-        boxPace.tvRunningTitle.text = "페이스"
-        boxTime.tvRunningTitle.text = "총 시간"
+            boxBpm.tvRunningContent.text = "--"
+            boxKcal.tvRunningContent.text = "--"
+            boxPace.tvRunningContent.text = "--"
+            boxTime.tvRunningContent.text = "--"
+        }
     }
 
     private fun initRunningMapView() = with(binding.runningMap.runningInfo) {
@@ -111,6 +118,11 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         boxKcal.tvRunningTitle.text = "총 소모 칼로리"
         boxPace.tvRunningTitle.text = "페이스"
         boxTime.tvRunningTitle.text = "총 시간"
+
+        boxBpm.tvRunningContent.text = "--"
+        boxKcal.tvRunningContent.text = "--"
+        boxPace.tvRunningContent.text = "--"
+        boxTime.tvRunningContent.text = "--"
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -142,7 +154,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                 findNavController().popBackStack()
             }
 
-            if(it.isActive) {
+            if (it.isActive) {
                 it.exerciseState?.let { exerciseState ->
                     binding.runningText.tvDistance.text =
                         formatDistanceKm(exerciseState.exerciseMetrics.distance)
@@ -156,15 +168,21 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                     }
 
                     with(binding.runningText.runningInfo) {
-                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
-                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.speed)
+                        boxBpm.tvRunningContent.text =
+                            formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxKcal.tvRunningContent.text =
+                            formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxPace.tvRunningContent.text =
+                            formatPace(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                     }
                     with(binding.runningMap.runningInfo) {
-                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
-                        boxPace.tvRunningContent.text = formatPace(exerciseState.exerciseMetrics.speed)
+                        boxBpm.tvRunningContent.text =
+                            formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxKcal.tvRunningContent.text =
+                            formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxPace.tvRunningContent.text =
+                            formatPace(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                         exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
                     }
