@@ -27,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.atStartOfMonth
@@ -38,7 +39,6 @@ import com.ssafy.presentation.component.CreatePlanButton
 import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.component.TrainRestMessageView
 import com.ssafy.presentation.core.BaseFragment
-import com.ssafy.presentation.core.MainActivity
 import com.ssafy.presentation.databinding.FragmentHomeBinding
 import com.ssafy.presentation.homeUI.TopSheetBehavior.TopSheetCallback
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
@@ -72,15 +72,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun initMapView() {
-        val mapFragment = SupportMapFragment.newInstance()
-        getParentFragmentManager().beginTransaction().add(R.id.map, mapFragment).commit()
+
+        val existingFragment =
+            childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+        val mapFragment = existingFragment ?: SupportMapFragment.newInstance().also {
+            childFragmentManager.beginTransaction().replace(R.id.map, it).commit()
+        }
         mapFragment.getMapAsync(this)
     }
 
     override fun onMapReady(map: GoogleMap) {
-        val point = LatLng(37.514655, 126.979974)
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 17f))
-        getMyLocation(map)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val latitude = viewModel.getLatitude()
+            val longitude = viewModel.getLongitude()
+            val point = LatLng(latitude, longitude)
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 17f))
+            getMyLocation(map)
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -103,6 +111,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     }
 
+    private var recentMarker: Marker? = null
     private fun setMyLocation(map: GoogleMap, location: Location) {
         if (myLocationListener != null) {
             val locationManager =
@@ -112,9 +121,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
 
         val latLng = LatLng(location.latitude, location.longitude)
+        lifecycleScope.launch {
+            viewModel.setLocation(location.latitude, location.longitude)
+        }
         val cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 17f)
         map.animateCamera(cameraUpdate)
 
+        recentMarker?.remove()
         val bitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
         val resizeBitmap = Bitmap.createScaledBitmap(bitmap, MARKER_WIDTH, MARKER_HEIGHT, false)
         val bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(resizeBitmap)
@@ -122,8 +135,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         val markerOptions = MarkerOptions()
             .position(latLng)
             .icon(bitmapDescriptor)
+        recentMarker = map.addMarker(markerOptions)
 
-        map.addMarker(markerOptions)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

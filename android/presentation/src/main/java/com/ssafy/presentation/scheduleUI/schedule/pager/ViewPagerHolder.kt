@@ -29,8 +29,9 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
             item.trainReport?.apply {
                 makeResult(trainEvaluation, trainResult)
                 binding.map.isVisible = true
+                binding.hv.isVisible = true
                 makeMap(trainResult.trainMap)
-
+                binding.hv.setData(trainResult.heartZone)
                 if (trainResult.coachNumber != null && trainResult.coachMessage != null) {
                     binding.lyTrainResultCoach.isVisible = true
                     binding.lyTrainResultCoach.isVisible = true
@@ -68,6 +69,7 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
         val stepPercent = score?.cadenceEvaluation
 
         val trainResultView = binding.lyTrainResult
+        binding.lyTrainResult.isVisible = true
         trainResultView.setResultData(
             result.trainDistance,
             result.trainTime,
