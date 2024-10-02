@@ -25,6 +25,8 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext val contex
     DataStoreRepository {
     private val Context.datastore: DataStore<Preferences> by preferencesDataStore(name = "user")
     private val imgUrlKey = stringPreferencesKey("imgUrl")
+    private val glongitude = floatPreferencesKey("longitude")
+    private val glatitude = floatPreferencesKey("latitude")
 
     override suspend fun setImgUrl(newImgUrl: String) {
         context.datastore.edit { preference ->
@@ -86,5 +88,21 @@ class DataStoreRepositoryImpl @Inject constructor(@ApplicationContext val contex
             }
             .first() // 코루틴에서 첫 번째 값을 반환
     }
+
+    override suspend fun setLocation(latitude: Double, longitude: Double) {
+        context.datastore.edit { preferences ->
+            preferences[glatitude] = latitude.toFloat()
+            preferences[glongitude] = longitude.toFloat()
+        }
+    }
+
+    override fun getLatitude(): Flow<Double> =
+        context.datastore.data.catch { emit(emptyPreferences()) }
+            .map { preference -> (preference[glatitude] ?: 37.514655).toDouble() }
+
+    override fun getLongitude(): Flow<Double> =
+        context.datastore.data.catch { emit(emptyPreferences()) }
+            .map { preference -> (preference[glongitude] ?: 126.979974).toDouble() }
+
 
 }

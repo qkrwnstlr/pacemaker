@@ -45,6 +45,18 @@ class HomeViewModel @Inject constructor(
     private val _report = MutableStateFlow(Report())
     val report = _report.asStateFlow()
 
+    suspend fun setLocation(latitude: Double, longitude: Double) {
+        dataStoreRepository.setLocation(latitude, longitude)
+    }
+
+    fun latitudeFlow(): Flow<Double> {
+        return dataStoreRepository.getLatitude()
+    }
+
+    fun longitudeFlow(): Flow<Double> {
+        return dataStoreRepository.getLongitude()
+    }
+
     fun getCoach() = viewModelScope.launch(Dispatchers.IO) {
         runCatching {
             dataStoreRepository.getUser().coachNumber.toCoachIndex()

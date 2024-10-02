@@ -10,4 +10,7 @@ interface DataStoreRepository {
     fun getImgUrl(): Flow<String>
     suspend fun clearImgUrl()
     suspend fun getUser(): User
+    suspend fun setLocation(latitude: Double, longitude: Double)
+    fun getLatitude(): Flow<Double>
+    fun getLongitude(): Flow<Double>
 }
