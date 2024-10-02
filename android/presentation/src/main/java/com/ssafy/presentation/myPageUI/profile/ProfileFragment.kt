@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -33,7 +32,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) { }
+        permissionLauncher =
+            registerForActivityResult(viewModel.requestPermissionsActivityContract()) { }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -113,11 +113,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun logout() {
-        lifecycleScope.launch {
-            auth.signOut()
-            clearUid()
-            moveToLoginFragment()
-        }
+        auth.signOut()
+        clearUid(::moveToLoginFragment)
     }
 
     private fun checkPermissions() {
