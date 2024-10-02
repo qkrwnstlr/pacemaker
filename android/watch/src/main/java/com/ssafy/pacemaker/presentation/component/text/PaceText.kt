@@ -10,21 +10,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Text
 import com.ssafy.pacemaker.R
-import com.ssafy.pacemaker.utils.formatPace
+import com.ssafy.pacemaker.utils.formatSpeed
 
 @Composable
-fun PaceText(pace: Double?) {
+fun PaceText(speed: Double?) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
             imageVector = Icons.Default.Timer,
             contentDescription = stringResource(id = R.string.duration)
         )
-        Text(text = formatPace(pace))
+        Text(text = formatSpeed(speed))
     }
 }
 
 @Preview
 @Composable
 fun PaceTextPreview() {
-    PaceText(pace = 100.0)
+    PaceText(speed = 100.0)
 }

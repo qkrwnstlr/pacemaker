@@ -101,7 +101,7 @@ class ExerciseMonitor @Inject constructor(
         return ExerciseSessionData(
             distance = distance?.let { it - lastDistance } ?: 0.0,
             heartRate = heartRate?.toLong(),
-            pace = pace,
+            speed = speed,
             cadence = cadence,
             location = location
         )

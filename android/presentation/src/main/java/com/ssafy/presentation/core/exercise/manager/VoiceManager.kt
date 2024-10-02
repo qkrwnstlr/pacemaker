@@ -1,56 +1,51 @@
 package com.ssafy.presentation.core.exercise.manager
 
 import android.media.MediaPlayer
+import dagger.hilt.android.scopes.ServiceScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import java.io.File
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ServiceScoped
 class VoiceManager @Inject constructor(private val coroutineScope: CoroutineScope) {
-    private val voiceChannel = Channel<String>(Channel.UNLIMITED)
-    private val mediaPlayer = MediaPlayer()
-    private val mutex = Mutex()
+    private lateinit var voiceChannel: Channel<String>
+    private var mediaPlayer: MediaPlayer? = null
 
-    init {
+    fun connect() {
+        if (mediaPlayer != null) return
+        mediaPlayer = MediaPlayer()
+        voiceChannel = Channel(Channel.UNLIMITED)
         coroutineScope.launch(Dispatchers.Main) {
             for (path in voiceChannel) {
-                mutex.withLock {
-                    mutex.unlock()
-                    playVoice(path)
-                }
+                playVoice(path)
             }
         }
     }
 
-    suspend fun addVoicePath(path: String) {
-        voiceChannel.send(path)
-    }
+    fun addVoicePath(path: String) = voiceChannel.trySend(path)
 
-    private fun playVoice(path: String) {
+    private suspend fun playVoice(path: String) {
         val file = File(path)
         if (!file.exists()) return
 
-        mediaPlayer.apply {
+        mediaPlayer?.run {
             reset()
             setDataSource(file.path)
             prepare()
             start()
-            setOnCompletionListener {
-                reset()
-                file.delete()
-                coroutineScope.launch { mutex.lock() }
-            }
+            while (mediaPlayer?.isPlaying == true) delay(100)
+            mediaPlayer?.reset()
         }
+        file.delete()
     }
 
-    fun release() {
+    fun disconnect() = runCatching {
         voiceChannel.close()
-        mediaPlayer.release()
-    }
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }.onFailure { it.printStackTrace() }
 }
