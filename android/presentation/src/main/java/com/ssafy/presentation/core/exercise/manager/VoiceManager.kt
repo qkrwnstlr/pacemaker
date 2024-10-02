@@ -12,11 +12,13 @@ import javax.inject.Inject
 
 @ServiceScoped
 class VoiceManager @Inject constructor(private val coroutineScope: CoroutineScope) {
-    private val voiceChannel = Channel<String>(Channel.UNLIMITED)
+    private lateinit var voiceChannel: Channel<String>
     private var mediaPlayer: MediaPlayer? = null
 
     fun connect() {
+        if (mediaPlayer != null) return
         mediaPlayer = MediaPlayer()
+        voiceChannel = Channel(Channel.UNLIMITED)
         coroutineScope.launch(Dispatchers.Main) {
             for (path in voiceChannel) {
                 playVoice(path)
