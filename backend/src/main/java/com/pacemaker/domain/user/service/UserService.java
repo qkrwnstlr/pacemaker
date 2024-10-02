@@ -89,6 +89,7 @@ public class UserService {
 	@Transactional
 	public void deleteUser(String uid) {
 		User user = findUserByUid(uid);
+		userRepository.deleteUserRelatedData(user.getId());
 		userRepository.delete(user);
 	}
 
