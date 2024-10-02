@@ -34,8 +34,7 @@ public interface PlanTrainRepository extends JpaRepository<PlanTrain, Long>, Pla
 		  from PlanTrain pt
 		  join fetch Plan p
 		    on pt.plan.id = p.id
-		  join fetch User u
-		    on p.user.id = u.id
+		    and p.user.id = :userId
 		  where pt.trainDate = current_date
 		""")
 	boolean existsNowPlanTrain(Long userId);
