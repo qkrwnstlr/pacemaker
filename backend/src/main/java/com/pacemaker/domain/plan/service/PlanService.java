@@ -109,6 +109,11 @@ public class PlanService {
 		// Before PlanTrain 제거
 		for (int i = size - 1; i >= 0; i--) {
 			if (planTrains.get(i).getStatus() == PlanTrainStatus.DONE) {
+				if (i == size - 1) {
+					// 플랜 마감 날짜 수정 (2개만 완료하고 삭제했다면 2개까지의 범위만 progress 범위로 하기 위해!)
+					findActivePlan.updatePlanExpiredAt(planTrains.get(i).getTrainDate());
+				}
+
 				continue;
 			}
 
@@ -118,7 +123,12 @@ public class PlanService {
 		if (findActivePlan.getPlanTrains().isEmpty()) {
 			// 관련된 PlanTrain이 없기 때문에 Plan도 삭제
 			planRepository.delete(findActivePlan);
+
 		} else {
+			// totalTimes 와 totalDistances 변경
+			findActivePlan.updatePlanTrainReport(planRepository.findSumPlanDistanceByPlanId(findActivePlan.getId()),
+				planRepository.findSumPlanTimeByPlanId(findActivePlan.getId()));
+
 			// 플랜 삭제 상태로 변경
 			findActivePlan.updatePlanStatus(PlanStatus.DELETED);
 		}
