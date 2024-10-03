@@ -53,7 +53,7 @@ class ReportsManager @Inject constructor(
             this.count { it.beatsPerMinute in 138..156 },
             this.count { it.beatsPerMinute in 157..176 },
             this.count { it.beatsPerMinute in 177..196 },
-        ).map { it / size * 100 }
+        ).map { (it.toDouble() / size * 100).toInt() }
 
     private val List<ExerciseSessionData>.splitData: SplitData
         get() = SplitData(

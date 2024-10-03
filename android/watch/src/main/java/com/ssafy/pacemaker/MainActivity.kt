@@ -2,6 +2,7 @@ package com.ssafy.pacemaker
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,6 +24,8 @@ class MainActivity : ComponentActivity() {
     private val exerciseViewModel by viewModels<ExerciseViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         val splash = installSplashScreen()
         var pendingNavigation = true
 
