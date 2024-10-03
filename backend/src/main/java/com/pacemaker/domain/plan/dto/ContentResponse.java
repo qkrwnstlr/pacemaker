@@ -7,9 +7,11 @@ import com.pacemaker.global.util.TempValue;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.Setter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
+@Setter
 public class ContentResponse {
 
 	@NotNull
@@ -22,6 +24,7 @@ public class ContentResponse {
 	private Plan plan;
 
 	@Getter
+	@Setter
 	public class Context {
 		private String goal;
 		private Integer goalTime;
@@ -31,6 +34,7 @@ public class ContentResponse {
 	}
 
 	@Getter
+	@Setter
 	public class UserInfo {
 		private Integer age;
 		private Integer height;
@@ -43,7 +47,8 @@ public class ContentResponse {
 	}
 
 	@Getter
-	public class Plan {
+	@Setter
+	public static class Plan {
 		private Integer totalDays;
 		private Integer totalTimes;
 		private Integer totalDistances;
@@ -51,7 +56,8 @@ public class ContentResponse {
 	}
 
 	@Getter
-	public class PlanTrain {
+	@Setter
+	public static class PlanTrain {
 		private Integer index;
 		private String trainDate;
 		private String paramType;
