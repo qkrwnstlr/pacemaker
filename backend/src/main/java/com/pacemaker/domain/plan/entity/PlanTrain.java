@@ -78,6 +78,10 @@ public class PlanTrain {
 		this.status = status;
 	}
 
+	public void updateTrainDate(LocalDate trainDate) {
+		this.trainDate = trainDate;
+	}
+
 	// 연관관계 편의 메서드
 	// public void setPlan(Plan plan) { // lombok으로 대체
 	// 	this.plan = plan;

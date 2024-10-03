@@ -126,4 +126,8 @@ public class Plan {
 	public void updatePlanExpiredAt(LocalDate expiredAt) {
 		this.expiredAt = expiredAt;
 	}
+
+	public void updatePlanCreatedAt(LocalDate createdAt) {
+		this.createdAt = createdAt;
+	}
 }
