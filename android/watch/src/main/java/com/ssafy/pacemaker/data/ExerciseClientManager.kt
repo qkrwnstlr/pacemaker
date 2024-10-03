@@ -1,5 +1,6 @@
 package com.ssafy.pacemaker.data
 
+import android.util.Log
 import androidx.health.services.client.ExerciseClient
 import androidx.health.services.client.ExerciseUpdateCallback
 import androidx.health.services.client.HealthServicesClient

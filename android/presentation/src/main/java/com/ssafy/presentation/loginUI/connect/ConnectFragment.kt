@@ -5,7 +5,6 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,13 +21,14 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) {
-            lifecycleScope.launch {
-                if(viewModel.hasAllPermissions()) viewModel.syncWithHealthConnect(getUid())
-                val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
-                findNavController().navigate(action)
+        permissionLauncher =
+            registerForActivityResult(viewModel.requestPermissionsActivityContract()) {
+                lifecycleScope.launch {
+                    if (viewModel.hasAllPermissions()) viewModel.syncWithHealthConnect(getUid())
+                    val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
+                    findNavController().navigate(action)
+                }
             }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,7 +59,9 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
 
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
-            viewModel.launchPermissionsLauncher(permissionLauncher)
+            lifecycleScope.launch {
+                viewModel.launchPermissionsLauncher(permissionLauncher)
+            }
         }
     }
 

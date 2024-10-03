@@ -15,12 +15,14 @@ import com.ssafy.domain.dto.reports.TrainReport
 import com.ssafy.presentation.R
 import com.ssafy.presentation.databinding.TrainResultCustomViewBinding
 import com.ssafy.presentation.utils.formatCadenceRate
+import com.ssafy.presentation.utils.formatCalories
+import com.ssafy.presentation.utils.formatDistanceKm
+import com.ssafy.presentation.utils.formatElapsedTime
 import com.ssafy.presentation.utils.formatHeartRate
 import com.ssafy.presentation.utils.formatPace
-import com.ssafy.presentation.utils.toDistanceString
 import com.ssafy.presentation.utils.toRank
 import com.ssafy.presentation.utils.toRankColor
-import com.ssafy.presentation.utils.toTime
+import java.time.Duration
 
 class TrainResultView : ConstraintLayout {
     constructor(context: Context) : super(context) {
@@ -42,23 +44,21 @@ class TrainResultView : ConstraintLayout {
     }
 
     fun setResultData(distance: Int, time: Int, hearRate: Int, cadence: Int, pace: Int, kcal: Int) {
-        binding.tvResultDistanceContent.text = distance.toDistanceString()
+        binding.tvResultDistanceContent.text = formatDistanceKm(distance.toDouble())
         binding.tvResultHeartContent.text = formatHeartRate(hearRate.toDouble())
-        binding.tvResultTimeContent.text = time.toTime()
+        binding.tvResultTimeContent.text = formatElapsedTime(Duration.ofSeconds(time.toLong()), true)
         binding.tvResultStepContent.text = formatCadenceRate(cadence)
         binding.tvResultPaceContent.text = formatPace(pace.toDouble())
-        binding.tvResultKcalContent.text = formatCadenceRate(kcal)
+        binding.tvResultKcalContent.text = formatCalories(kcal.toDouble())
     }
 
     fun setResultData(trainReport: TrainReport) {
-        binding.tvResultDistanceContent.text =
-            trainReport.trainResult.trainDistance.toDistanceString()
-        binding.tvResultHeartContent.text =
-            formatHeartRate(trainReport.trainResult.heartRate.toDouble())
-        binding.tvResultTimeContent.text = trainReport.trainResult.trainTime.toTime()
+        binding.tvResultDistanceContent.text = formatDistanceKm(trainReport.trainResult.trainDistance.toDouble())
+        binding.tvResultHeartContent.text = formatHeartRate(trainReport.trainResult.heartRate.toDouble())
+        binding.tvResultTimeContent.text = formatElapsedTime(Duration.ofSeconds(trainReport.trainResult.trainTime.toLong()), true)
         binding.tvResultStepContent.text = formatCadenceRate(trainReport.trainResult.cadence)
         binding.tvResultPaceContent.text = formatPace(trainReport.trainResult.pace.toDouble())
-        binding.tvResultKcalContent.text = formatCadenceRate(trainReport.trainResult.kcal)
+        binding.tvResultKcalContent.text = formatCalories(trainReport.trainResult.kcal.toDouble())
         if (trainReport.trainEvaluation != null) {
             visibleChart()
             trainReport.trainEvaluation?.apply {

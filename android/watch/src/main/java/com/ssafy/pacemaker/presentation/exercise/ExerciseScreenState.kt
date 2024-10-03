@@ -1,5 +1,6 @@
 package com.ssafy.pacemaker.presentation.exercise
 
+import androidx.health.services.client.data.ExerciseState
 import com.ssafy.pacemaker.data.ServiceState
 import com.ssafy.pacemaker.service.ExerciseServiceState
 
@@ -14,6 +15,9 @@ data class ExerciseScreenState(
 
     val isEnded: Boolean
         get() = exerciseState?.exerciseState?.isEnded == true
+
+    val isPausing: Boolean
+        get() = exerciseState?.exerciseState == ExerciseState.USER_PAUSING || exerciseState?.exerciseState == ExerciseState.AUTO_PAUSING || exerciseState?.exerciseState?.isResuming == true
 
     val isPaused: Boolean
         get() = exerciseState?.exerciseState?.isPaused == true
