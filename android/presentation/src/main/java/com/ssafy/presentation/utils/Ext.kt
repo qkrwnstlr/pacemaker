@@ -55,7 +55,7 @@ fun makeProgressString(goal: String, total: Int): String {
 }
 
 fun String.toGenderString(): String =
-    if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "미상"
+    if (this == "FEMALE") "여성" else if (this == "MALE") "남성" else "-"
 
 fun Float.toRank(): String {
     return if (this <= 50) "C"

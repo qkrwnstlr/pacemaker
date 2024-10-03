@@ -36,6 +36,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>(FragmentLoginBinding::i
 
     private fun initCheck() {
         val uid = requireActivity().intent.getStringExtra(SplashActivity.UID)
+        requireActivity().intent.removeExtra(SplashActivity.UID)
         if (uid.isNullOrBlank()) return
 
         mainViewModel.updateNewUid(uid)

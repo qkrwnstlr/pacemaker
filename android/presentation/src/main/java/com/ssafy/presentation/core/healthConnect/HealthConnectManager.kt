@@ -4,15 +4,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
+import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.HealthConnectClient.Companion.SDK_AVAILABLE
 import androidx.health.connect.client.HealthConnectClient.Companion.SDK_UNAVAILABLE
+import androidx.health.connect.client.HealthConnectClient.Companion.SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED
 import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.DistanceRecord
@@ -127,8 +127,33 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
         return PermissionController.createRequestPermissionResultContract()
     }
 
-    fun launchPermissionsLauncher(launcher: ActivityResultLauncher<Set<String>>) {
-        launcher.launch(permissions)
+    suspend fun launchPermissionsLauncher(launcher: ActivityResultLauncher<Set<String>>) {
+        checkAvailability()
+        when (availability.value) {
+            SDK_AVAILABLE -> {
+                if (hasAllPermissions()) {
+                    val intent = Intent("android.health.connect.action.HEALTH_HOME_SETTINGS")
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    context.startActivity(intent)
+                } else {
+                    launcher.launch(permissions)
+                }
+            }
+
+            SDK_UNAVAILABLE_PROVIDER_UPDATE_REQUIRED -> {
+                val url = Uri.parse("market://details")
+                    .buildUpon()
+                    .appendQueryParameter("id", "com.google.android.apps.healthdata")
+                    .appendQueryParameter("url", "healthconnect://onboarding")
+                    .build()
+
+                val intent = Intent(Intent.ACTION_VIEW, url)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                context.startActivity(intent)
+            }
+
+            SDK_UNAVAILABLE -> {}
+        }
     }
 
     suspend fun revokeAllPermissions() {

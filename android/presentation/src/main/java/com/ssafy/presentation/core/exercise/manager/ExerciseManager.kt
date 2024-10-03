@@ -1,5 +1,6 @@
 package com.ssafy.presentation.core.exercise.manager
 
+import android.util.Log
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import com.ssafy.presentation.core.exercise.ExerciseMonitor
@@ -81,8 +82,7 @@ class ExerciseManager @Inject constructor(
             it.copy(
                 totalSteps = exerciseMetrics.steps ?: it.totalSteps,
                 totalDistance = exerciseMetrics.distance?.let(Length::meters) ?: it.totalDistance,
-                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::calories)
-                    ?: it.totalEnergyBurned,
+                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::kilocalories) ?: it.totalEnergyBurned,
             )
         }
     }
