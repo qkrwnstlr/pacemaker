@@ -39,7 +39,7 @@ import com.ssafy.presentation.utils.formatCalories
 import com.ssafy.presentation.utils.formatDistanceKm
 import com.ssafy.presentation.utils.formatElapsedTime
 import com.ssafy.presentation.utils.formatHeartRate
-import com.ssafy.presentation.utils.formatPace
+import com.ssafy.presentation.utils.formatSpeed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -168,21 +168,15 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                     }
 
                     with(binding.runningText.runningInfo) {
-                        boxBpm.tvRunningContent.text =
-                            formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxKcal.tvRunningContent.text =
-                            formatCalories(exerciseState.exerciseMetrics.calories)
-                        boxPace.tvRunningContent.text =
-                            formatPace(exerciseState.exerciseMetrics.speed)
+                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                     }
                     with(binding.runningMap.runningInfo) {
-                        boxBpm.tvRunningContent.text =
-                            formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxKcal.tvRunningContent.text =
-                            formatCalories(exerciseState.exerciseMetrics.calories)
-                        boxPace.tvRunningContent.text =
-                            formatPace(exerciseState.exerciseMetrics.speed)
+                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                         exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
                     }
