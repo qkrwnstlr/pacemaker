@@ -83,7 +83,7 @@ fun ExerciseScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            if (uiState.isPaused) {
+            if (uiState.isPausing || uiState.isPaused) {
                 ResumeButton(onResumeClick)
                 StopButton(onEndClick)
             } else {
