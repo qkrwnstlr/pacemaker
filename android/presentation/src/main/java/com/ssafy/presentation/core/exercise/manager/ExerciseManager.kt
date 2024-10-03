@@ -81,8 +81,7 @@ class ExerciseManager @Inject constructor(
             it.copy(
                 totalSteps = exerciseMetrics.steps ?: it.totalSteps,
                 totalDistance = exerciseMetrics.distance?.let(Length::meters) ?: it.totalDistance,
-                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::calories)
-                    ?: it.totalEnergyBurned,
+                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::calories) ?: it.totalEnergyBurned,
             )
         }
     }
