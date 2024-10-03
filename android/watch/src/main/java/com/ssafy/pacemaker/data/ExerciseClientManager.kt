@@ -64,10 +64,7 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
         val exerciseInfo = exerciseClient.getCurrentExerciseInfoAsync().await()
         when (exerciseInfo.exerciseTrackedStatus) {
             OTHER_APP_IN_PROGRESS -> {}
-            OWNED_EXERCISE_IN_PROGRESS -> {
-                endExercise()
-                startExercise()
-            }
+            OWNED_EXERCISE_IN_PROGRESS -> {}
             NO_EXERCISE_IN_PROGRESS -> {
                 val dataTypes = setOf(
                     DataType.HEART_RATE_BPM,
