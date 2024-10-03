@@ -4,7 +4,6 @@ import androidx.health.services.client.data.ExerciseState
 import androidx.health.services.client.data.ExerciseUpdate.ActiveDurationCheckpoint
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEventBuffer
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -102,7 +101,7 @@ class ExerciseMonitor @Inject constructor(
         return ExerciseSessionData(
             distance = distance?.let { it - lastDistance } ?: 0.0,
             heartRate = heartRate?.toLong(),
-            pace = pace,
+            speed = speed,
             cadence = cadence,
             location = location
         )

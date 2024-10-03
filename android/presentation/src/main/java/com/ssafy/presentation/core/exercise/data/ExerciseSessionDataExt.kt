@@ -4,7 +4,7 @@ import androidx.health.connect.client.records.ExerciseRoute
 import androidx.health.connect.client.records.HeartRateRecord
 import androidx.health.connect.client.records.SpeedRecord
 import androidx.health.connect.client.records.StepsCadenceRecord
-import androidx.health.connect.client.units.kilometersPerHour
+import androidx.health.connect.client.units.metersPerSecond
 import java.time.Duration
 import java.time.ZonedDateTime
 
@@ -54,11 +54,11 @@ val List<ExerciseSessionData>.cadenceAvg: Double
 
 val List<ExerciseSessionData>.speed: List<SpeedRecord.Sample>
     get() = this.filter {
-        it.pace != null
+        it.speed != null
     }.map {
         SpeedRecord.Sample(
             time = it.time.toInstant(),
-            speed = (it.pace!! / 1000 * 60 * 60).kilometersPerHour
+            speed = it.speed!!.metersPerSecond
         )
     }.filter { it.time < this.endTime.toInstant() }
 

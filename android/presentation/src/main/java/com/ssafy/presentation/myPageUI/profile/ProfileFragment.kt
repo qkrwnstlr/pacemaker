@@ -32,7 +32,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        permissionLauncher = registerForActivityResult(viewModel.requestPermissionsActivityContract()) { }
+        permissionLauncher =
+            registerForActivityResult(viewModel.requestPermissionsActivityContract()) { }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,9 +113,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
     }
 
     private fun logout() {
-            auth.signOut()
-            clearUid()
-            moveToLoginFragment()
+        auth.signOut()
+        clearUid(::moveToLoginFragment)
     }
 
     private fun checkPermissions() {

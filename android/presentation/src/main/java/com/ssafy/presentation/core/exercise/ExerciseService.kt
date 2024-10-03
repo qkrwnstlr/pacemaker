@@ -5,7 +5,6 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
 import androidx.core.app.ServiceCompat
 import androidx.health.services.client.data.ExerciseGoal
 import androidx.health.services.client.data.ExerciseState
@@ -34,8 +33,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.time.Duration
 import javax.inject.Inject
-
-private const val TAG = "ExerciseService_PACEMAKER"
 
 @AndroidEntryPoint
 class ExerciseService : LifecycleService() {
@@ -81,6 +78,7 @@ class ExerciseService : LifecycleService() {
                 if (!isStarted) {
                     isStarted = true
                     exerciseManager.connect()
+                    voiceManager.connect()
                     collectTrainState()
                     trainManager.connect(exerciseManager.currentSessionData)
                     collectExerciseServiceState()
@@ -165,14 +163,7 @@ class ExerciseService : LifecycleService() {
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             try {
-                                Log.d(
-                                    TAG,
-                                    "collectExerciseServiceState: ${exerciseManager.exerciseData.value.duration}"
-                                )
-                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(
-                                        30
-                                    )
-                                ) {
+                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
                                     healthConnectManager.writeExerciseSession(
                                         "${trainManager.train.id} (#${trainManager.train.index})",
                                         exerciseManager.exerciseData.value,
@@ -217,8 +208,6 @@ class ExerciseService : LifecycleService() {
 
         handleBind()
 
-        Log.d(TAG, "onBind: $this")
-
         return localBinder
     }
 
@@ -231,14 +220,14 @@ class ExerciseService : LifecycleService() {
     private fun handleBind() {
         if (!isBound) {
             isBound = true
-            startService(Intent(this, this::class.java))
-//            startForegroundService(Intent(this, this::class.java))
+            lifecycleScope.launch {
+                wearableClientManager.startWearableActivity()
+            }
         }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         isBound = false
-        Log.d(TAG, "onUnbind: $this")
 
         lifecycleScope.launch {
             trainManager.disconnect()

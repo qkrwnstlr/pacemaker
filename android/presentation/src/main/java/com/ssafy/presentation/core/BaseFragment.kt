@@ -49,7 +49,9 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
     }
 
     fun getUid() = viewModel.uid.value
-    fun clearUid() = viewModel.clearUid()
+    fun clearUid(goLogin: () -> Unit) {
+        viewModel.clearUid(goLogin)
+    }
 
     var auth: FirebaseAuth = Firebase.auth
 

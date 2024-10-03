@@ -47,6 +47,7 @@ fun ExerciseRoute(
     )
 }
 
+@OptIn(ExperimentalHorologistApi::class)
 @Composable
 fun ExerciseScreen(
     onPauseClick: () -> Unit,
@@ -76,7 +77,7 @@ fun ExerciseScreen(
         }
         SpaceAroundRow {
             DistanceText(uiState.exerciseState?.exerciseMetrics?.distance)
-            PaceText(uiState.exerciseState?.exerciseMetrics?.pace)
+            PaceText(uiState.exerciseState?.exerciseMetrics?.speed)
         }
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,

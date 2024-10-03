@@ -70,6 +70,8 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     DataType.HEART_RATE_BPM_STATS,
                     DataType.CALORIES_TOTAL,
                     DataType.DISTANCE_TOTAL,
+                    DataType.SPEED,
+                    DataType.SPEED_STATS,
                     DataType.PACE,
                     DataType.PACE_STATS,
                     DataType.RUNNING_STEPS_TOTAL,
@@ -93,7 +95,6 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     )
                 }
 
-                // Set a distance goal if it's supported by the exercise and the user has entered one
                 if (supportsDistanceMilestone(capabilities) && thresholds.distanceIsSet) {
                     exerciseGoals.add(
                         ExerciseGoal.createOneTimeGoal(
@@ -106,7 +107,6 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                     )
                 }
 
-                // Set a duration goal if it's supported by the exercise and the user has entered one
                 if (supportsDurationMilestone(capabilities) && thresholds.durationIsSet) {
                     exerciseGoals.add(
                         ExerciseGoal.createOneTimeGoal(
@@ -201,12 +201,9 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
                 trySendBlocking(ExerciseMessage.LapSummaryMessage(lapSummary))
             }
 
-            override fun onRegistered() {
-            }
+            override fun onRegistered() {}
 
-            override fun onRegistrationFailed(throwable: Throwable) {
-                TODO("Not yet implemented")
-            }
+            override fun onRegistrationFailed(throwable: Throwable) {}
 
             override fun onAvailabilityChanged(
                 dataType: DataType<*, *>, availability: Availability
@@ -219,7 +216,6 @@ class ExerciseClientManager @Inject constructor(healthServicesClient: HealthServ
 
         exerciseClient.setUpdateCallback(callback)
         awaitClose {
-            // Ignore async result
             exerciseClient.clearUpdateCallbackAsync(callback)
         }
     }

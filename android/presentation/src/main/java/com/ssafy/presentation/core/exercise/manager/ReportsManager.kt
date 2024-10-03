@@ -47,16 +47,13 @@ class ReportsManager @Inject constructor(
     }
 
     private val List<HeartRateRecord.Sample>.zone: List<Int>
-        get() = this.filter { it.beatsPerMinute in 98..196 }.groupBy {
-            when (it.beatsPerMinute) {
-                in 98..117 -> 1
-                in 118..137 -> 2
-                in 138..156 -> 3
-                in 157..176 -> 4
-                in 177..196 -> 5
-                else -> ""
-            }
-        }.map { it.value.size }
+        get() = listOf(
+            this.count { it.beatsPerMinute in 98..117 },
+            this.count { it.beatsPerMinute in 118..137 },
+            this.count { it.beatsPerMinute in 138..156 },
+            this.count { it.beatsPerMinute in 157..176 },
+            this.count { it.beatsPerMinute in 177..196 },
+        ).map { (it.toDouble() / size * 100).toInt() }
 
     private val List<ExerciseSessionData>.splitData: SplitData
         get() = SplitData(
