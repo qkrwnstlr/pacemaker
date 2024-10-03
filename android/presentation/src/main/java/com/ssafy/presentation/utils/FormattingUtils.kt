@@ -36,7 +36,7 @@ fun formatCalories(calories: Double?) = buildSpannedString {
         append("--")
     } else {
         append(calories.roundToInt().toString())
-        append(" cal")
+        append("kcal")
     }
 }
 
@@ -63,7 +63,22 @@ fun formatCadenceRate(cadence: Int?) = buildSpannedString {
         append("--")
     } else {
         append("%d".format(cadence))
-        append("kcal")
+        append("spm")
+    }
+}
+
+fun formatSpeed(speed: Double?) = buildSpannedString {
+    if (speed == null || speed.isNaN()) {
+        append("--")
+    } else {
+        val secondsPerKm = 1000.0 / speed
+        val minutes = (secondsPerKm / 60).toInt()
+        val seconds = (secondsPerKm % 60).toInt()
+
+        append("%02d".format(minutes))
+        append("'")
+        append("%02d".format(seconds))
+        append('"')
     }
 }
 
@@ -71,9 +86,8 @@ fun formatPace(pace: Double?) = buildSpannedString {
     if (pace == null || pace.isNaN()) {
         append("--")
     } else {
-        val secondsPerKm = 1000.0 / pace
-        val minutes = (secondsPerKm / 60).toInt()
-        val seconds = (secondsPerKm % 60).toInt()
+        val minutes = (pace / 60).toInt()
+        val seconds = (pace % 60).toInt()
 
         append("%02d".format(minutes))
         append("'")

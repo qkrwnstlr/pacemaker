@@ -22,7 +22,7 @@ class ConnectViewModel @Inject constructor(
     fun requestPermissionsActivityContract() =
         healthConnectManager.requestPermissionsActivityContract()
 
-    fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) =
+    suspend fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) =
         healthConnectManager.launchPermissionsLauncher(activityResultLauncher)
 
     suspend fun syncWithHealthConnect(uid: String) {

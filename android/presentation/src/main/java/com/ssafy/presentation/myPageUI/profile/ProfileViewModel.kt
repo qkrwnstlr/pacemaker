@@ -1,7 +1,6 @@
 package com.ssafy.presentation.myPageUI.profile
 
 import androidx.activity.result.ActivityResultLauncher
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.User
@@ -29,7 +28,6 @@ class ProfileViewModel @Inject constructor(
         runCatching { _userInfo.emit(dataStoreRepository.getUser()) }
     }
 
-    suspend fun hasAllPermissions() = healthConnectManager.hasAllPermissions()
     fun requestPermissionsActivityContract() = healthConnectManager.requestPermissionsActivityContract()
-    fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) = healthConnectManager.launchPermissionsLauncher(activityResultLauncher)
+    suspend fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) = healthConnectManager.launchPermissionsLauncher(activityResultLauncher)
 }
