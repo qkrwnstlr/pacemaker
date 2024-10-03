@@ -13,9 +13,11 @@ import com.pacemaker.global.exception.ConflictException;
 import com.pacemaker.global.exception.CsvFileWriteException;
 import com.pacemaker.global.exception.DuplicateReportException;
 import com.pacemaker.global.exception.InvalidDateException;
+import com.pacemaker.global.exception.InvalidDayOfWeekException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
+import com.pacemaker.global.exception.ScheduledTaskException;
 import com.pacemaker.global.exception.UserMismatchException;
 import com.pacemaker.global.exception.WebClientTtsException;
 import com.pacemaker.global.util.mattermost.NotificationManager;
@@ -97,6 +99,20 @@ public class GlobalExceptionHandler {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(InvalidDayOfWeekException.class)
+	public ResponseEntity<String> handleInvalidDayOfWeekException(InvalidDayOfWeekException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(ScheduledTaskException.class)
+	public ResponseEntity<String> handleScheduledTaskException(ScheduledTaskException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
 	}
 
 	@ExceptionHandler(DuplicateReportException.class)
