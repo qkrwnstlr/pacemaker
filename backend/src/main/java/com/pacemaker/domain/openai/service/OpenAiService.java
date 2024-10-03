@@ -1,6 +1,8 @@
 package com.pacemaker.domain.openai.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -12,6 +14,7 @@ import com.pacemaker.domain.daily.dto.DailyCreateChatRequest;
 import com.pacemaker.domain.daily.dto.DailyCreateChatResponse;
 import com.pacemaker.domain.openai.dto.ChatCompletionRequest;
 import com.pacemaker.domain.openai.dto.ChatCompletionResponse;
+import com.pacemaker.domain.openai.dto.LlmContent;
 import com.pacemaker.domain.openai.dto.Message;
 import com.pacemaker.domain.openai.dto.ResponseFormatString;
 import com.pacemaker.domain.plan.dto.ContentRequest;
@@ -43,11 +46,17 @@ public class OpenAiService {
 			throw new RuntimeException("Response Format Json 생성 에러");
 		}
 
+		// 직렬화 -> 역직렬화로 llmContent에 meessage, context 필드 채우기
+		LlmContent llmRequestContent = new Gson().fromJson(new Gson().toJson(contentRequest), LlmContent.class);
+
+		// contentRequest -> llmContent 변경
+		LlmContent convertedLlmContent = convertContentRequestToLlmContent(contentRequest, llmRequestContent);
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.maxTokens(8000)
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
-				Message.createUser(new Gson().toJson(contentRequest))
+				Message.createUser(new Gson().toJson(convertedLlmContent))
 				// ,Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			))
 			.responseFormat(responseFormatNode)
@@ -67,17 +76,24 @@ public class OpenAiService {
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
 				ContentResponse contentResponse = new Gson().fromJson(request.choices().getFirst().message().content(),
 					ContentResponse.class);
+				LlmContent llmContent = new Gson().fromJson(request.choices().getFirst().message().content(),
+					LlmContent.class);
 				System.out.println("contentResponse = " + contentResponse);
+				System.out.println("llmContentResponse = " + llmContent);
+
+				ContentResponse convertedContentResponse = convertLlmResponseToContentResponse(contentResponse,
+					llmContent);
+				System.out.println("convertedContentResponse = " + convertedContentResponse);
 
 				// session 구하기
-				calculateSession(contentResponse);
+				// calculateSession(contentResponse);
 
 				// 날짜 변환
 				// System.out.println(contentResponse.plan().planTrains().get(0).trainDate());
 				// System.out.println("LocalDate: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()));
 				// System.out.println("LocalDateTime: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()).atTime(0, 0));
 
-				return new Gson().toJson(contentResponse);
+				return new Gson().toJson(convertedContentResponse);
 			});
 	}
 
@@ -112,8 +128,8 @@ public class OpenAiService {
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
 				Message.createUser(new Gson().toJson(contentRequest))))
 			.responseFormat(responseFormatNode)
-				// Message.createResponseFormat(ResponseFormatString.responseFormat)))
-				// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+			// Message.createResponseFormat(ResponseFormatString.responseFormat)))
+			// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
@@ -142,7 +158,7 @@ public class OpenAiService {
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
 				Message.createUser(new Gson().toJson(contentRequest))))
-				// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+			// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
 			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
 			// .responseFormat(ResponseFormatString.responseFormat)
 			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
@@ -275,5 +291,112 @@ public class OpenAiService {
 
 				return new Gson().toJson(contentResponse);
 			});
+	}
+
+	public ContentResponse convertLlmResponseToContentResponse(ContentResponse contentResponse, LlmContent llmContent) {
+
+		System.out.println("llmContentResponse = " + new Gson().toJson(llmContent));
+
+		ContentResponse convertedContentResponse = new ContentResponse();
+		// content, message 복사
+		convertedContentResponse.setMessage(contentResponse.getMessage());
+		convertedContentResponse.setContext(contentResponse.getContext());
+
+		// Plan 변환
+		LlmContent.Plan llmPlan = llmContent.getPlan();
+		ContentResponse.Plan convertedPlan = new ContentResponse.Plan();
+
+		List<Integer> indices = llmPlan.getIndex();
+		List<String> trainDates = llmPlan.getTrainDate();
+		List<String> paramTypes = llmPlan.getParamType();
+		List<Integer> repetitions = llmPlan.getRepetition();
+		List<Integer> trainParams = llmPlan.getTrainParam();
+		List<Integer> trainPaces = llmPlan.getTrainPace();
+		List<Integer> interParams = llmPlan.getInterParam();
+
+		List<ContentResponse.PlanTrain> planTrains = new ArrayList<>();
+
+		// 간혹 배열의 크기가 잘려서 오는 경우가 있어서, 에러 방지를 위한 최소값 구하기
+		int minSize = Stream.of(indices.size(), trainDates.size(), paramTypes.size(),
+				repetitions.size(), trainParams.size(), trainPaces.size(), interParams.size())
+			.min(Integer::compare)
+			.orElse(0);
+
+		for (int i = 0; i < minSize; i++) {
+			ContentResponse.PlanTrain planTrain = new ContentResponse.PlanTrain();
+			planTrain.setIndex(indices.get(i));
+			planTrain.setTrainDate(trainDates.get(i));
+			planTrain.setParamType(paramTypes.get(i));
+			planTrain.setRepetition(repetitions.get(i));
+			planTrain.setTrainParam(trainParams.get(i));
+			planTrain.setTrainPace(trainPaces.get(i));
+			planTrain.setInterParam(interParams.get(i));
+
+			// 세션 계산
+			planTrain.calculateSession();
+
+			planTrains.add(planTrain);
+		}
+
+		convertedPlan.setPlanTrains(planTrains);
+
+		convertedContentResponse.setPlan(convertedPlan);
+
+		return convertedContentResponse;
+	}
+
+	public LlmContent convertContentRequestToLlmContent(ContentRequest contentRequest, LlmContent llmContent) {
+
+		LlmContent convertedLlmContent = new LlmContent();
+
+		// context, message 복사
+		convertedLlmContent.setMessage(llmContent.getMessage());
+		convertedLlmContent.setContext(llmContent.getContext());
+
+		// Plan 변환
+		ContentRequest.Plan contentPlan = contentRequest.plan();
+		LlmContent.Plan llmPlan = llmContent.new Plan();
+
+		if (contentPlan.planTrains() == null) {
+			return convertedLlmContent;
+		}
+
+		List<Integer> indices = contentPlan.planTrains().stream().map(ContentRequest.Plan.PlanTrain::index).toList();
+		List<String> trainDates = contentPlan.planTrains()
+			.stream()
+			.map(ContentRequest.Plan.PlanTrain::trainDate)
+			.toList();
+		List<String> paramTypes = contentPlan.planTrains()
+			.stream()
+			.map(ContentRequest.Plan.PlanTrain::paramType)
+			.toList();
+		List<Integer> repetitions = contentPlan.planTrains()
+			.stream()
+			.map(ContentRequest.Plan.PlanTrain::repetition)
+			.toList();
+		List<Integer> trainParams = contentPlan.planTrains()
+			.stream()
+			.map(ContentRequest.Plan.PlanTrain::trainParam)
+			.toList();
+		List<Integer> trainPaces = contentPlan.planTrains()
+			.stream()
+			.map(ContentRequest.Plan.PlanTrain::trainPace)
+			.toList();
+		List<Integer> interParams = contentPlan.planTrains()
+			.stream()
+			.map(ContentRequest.Plan.PlanTrain::interParam)
+			.toList();
+
+		llmPlan.setIndex(indices);
+		llmPlan.setTrainDate(trainDates);
+		llmPlan.setParamType(paramTypes);
+		llmPlan.setRepetition(repetitions);
+		llmPlan.setTrainParam(trainParams);
+		llmPlan.setTrainPace(trainPaces);
+		llmPlan.setInterParam(interParams);
+
+		convertedLlmContent.setPlan(llmPlan);
+
+		return convertedLlmContent;
 	}
 }
