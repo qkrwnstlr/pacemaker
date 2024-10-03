@@ -46,9 +46,9 @@ class ScheduleViewModel @Inject constructor(
                 }
         }
 
-    fun getReport(item: ContentListDto, uid: String, callback: (Report) -> Unit) {
+    fun getReport(item: ContentListDto, callback: (Report) -> Unit) {
         viewModelScope.launch {
-            runCatching { getReportUseCase.invoke(item, uid) }
+            runCatching { getReportUseCase.invoke(item) }
                 .onSuccess { callback(it) }
                 .onFailure { it.printStackTrace() }
 
