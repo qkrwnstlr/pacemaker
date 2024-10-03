@@ -26,6 +26,7 @@ public record Message(
 			4. Provide responses in plain text without any markdown formatting or newline characters in the message field.
 			5. Plan should be written in the "plan" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
+			7. All arrays within the plan objects must have the same array size of the "index" object.
 			
 			**INSTRUCTION**
 			1. You should make a running plan for the user.
@@ -35,10 +36,12 @@ public record Message(
 			If the field is filled with "-1", it means the user refused to fill in recentRun data, so do not ask again.
 			4. The date of today is : "%s".
 			5. Save the user info in the "userInfo" field if the user provides it.
-			6. "plan", "planTrains", "trainDate" should be in "date" format.
+			6. "plan", "trainDate" should be in "date" format.
 			7. Please estimate the plan duration to help the user reach their running goal without asking. After determining the duration, create the training plan accordingly. Ensure the plan duration is within the range of 1 month to 6 months.
-			8. planTrains should be created for each session. If you create a plan of total 6 months, 3 train days in a week, because there are about 4 weeks in a month, you should make 6 (months) * 4(weeks) * 3(train days) = 72 planTrains. The plan should ALWAYS contain the corresponding number of train sessions.
-			9. Based on the user's input, identify and save a relevant goal in the 'goal' field in Korea, even if no specific objective is mentioned.""";
+			8. Plan trains must be created for each session. If you create a plan of total 6 months, 3 train days in a week, because there are about 4 weeks in a month, you should make 6 (months) * 4(weeks) * 3(train days) = 72 train sessions. The plan should ALWAYS contain the corresponding number of train sessions.
+			9. Based on the user's input, identify and save a relevant goal in the 'goal' field in Korean, even if no specific objective is mentioned.
+			10. Check the created train information again and be sure that the training intensity is suitable for the user. Train Pace should not exceed the user's recentRunPace from the beginning.
+			11. After createing the plan, double check that the all the arrays within the plan field has the same array size(number of train sessions)""";
 
 		String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		String formattedEngSystem = String.format(engSystem, "**TONE**\n" + coachTone, formattedDate);
