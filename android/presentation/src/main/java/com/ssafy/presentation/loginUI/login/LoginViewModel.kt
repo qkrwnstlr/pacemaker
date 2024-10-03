@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 setProfileUrl(url)
-                signUpUseCase(uid, name)
+                signUpUseCase.invoke(uid, name)
             }.onSuccess { result ->
                 saveUid(uid)
                 result.data?.let {

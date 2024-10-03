@@ -1,10 +1,12 @@
 package com.ssafy.presentation.core
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
@@ -15,12 +17,13 @@ class MainViewModel : ViewModel() {
         _uid.emit(newUid)
     }
 
-    fun updateNewUid(newUid: String){
+    fun updateNewUid(newUid: String) {
         _uid.update { newUid }
     }
 
-    suspend fun clearUid() {
-        _uid.emit("")
+    fun clearUid(goLogin: () -> Unit) = viewModelScope.launch {
+        runCatching { _uid.emit("") }
+            .onSuccess { goLogin() }
     }
 
 }
