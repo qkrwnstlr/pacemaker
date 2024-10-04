@@ -180,7 +180,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 TRAIN_REST_MESSAGE -> makeTrainRestMessageView()
                 CREATE_PLAN -> makeCreatePlanButtonView()
                 else -> return@collectLatest
+            }.apply {
+                if (it.trainingState != CREATE_PLAN) return@apply
+                setOnClickListener { moveToPlanFragment() }
             }
+
             bodyLayout.addView(trainView)
         }
     }
@@ -294,7 +298,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 else -> return@apply
             }
             setIconResource(coachImgId)
-            setOnClickListener { moveToPlanFragment() }
         }
 
     private fun setTrainInfo(report: Report) = with(binding.topSheet.trainInfoTitle) {
