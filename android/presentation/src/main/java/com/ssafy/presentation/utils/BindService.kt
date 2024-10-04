@@ -42,7 +42,11 @@ class BinderConnection<T : IBinder>(
     private val binder = mutableBinder.asStateFlow()
 
     fun unbind() {
-        context.unbindService(this)
+        try {
+            context.unbindService(this)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     suspend fun <R> runWhenConnected(command: suspend (T) -> R): R =
