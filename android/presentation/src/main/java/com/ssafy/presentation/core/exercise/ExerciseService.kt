@@ -106,6 +106,7 @@ class ExerciseService : LifecycleService() {
 
                     is TrainState.WarmUp -> {
                         speakMessage(trainManager.train.message)
+                        exerciseManager.startJogging()
                     }
 
                     is TrainState.During -> {
@@ -126,10 +127,12 @@ class ExerciseService : LifecycleService() {
 
                     is TrainState.CoolDown -> {
                         coachingManager.disconnect()
+                        exerciseManager.startJogging()
                     }
 
                     TrainState.Ended -> {
                         endExercise()
+                        exerciseManager.stopJogging()
                     }
 
                     TrainState.Default -> exerciseManager.startJogging()

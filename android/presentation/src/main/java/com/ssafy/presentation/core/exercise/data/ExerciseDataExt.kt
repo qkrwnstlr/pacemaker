@@ -35,10 +35,10 @@ val ExerciseData.paceAvg: Double
     get() = 60 * 60 / this.speedAvg
 
 val ExerciseData.startTime: ZonedDateTime
-    get() = this.sessions.first().first().time
+    get() = this.sessions.firstOrNull()?.firstOrNull()?.time ?: ZonedDateTime.now()
 
 val ExerciseData.endTime: ZonedDateTime
-    get() = this.sessions.last().last().time
+    get() = this.sessions.lastOrNull()?.lastOrNull()?.time ?: ZonedDateTime.now()
 
 val ExerciseData.duration: Duration
     get() = Duration.between(this.startTime, this.endTime)
