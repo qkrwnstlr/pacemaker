@@ -36,7 +36,7 @@ import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRunningBinding
 import com.ssafy.presentation.utils.formatCadenceRate
-import com.ssafy.presentation.utils.formatDistanceKm
+import com.ssafy.presentation.utils.formatDistance
 import com.ssafy.presentation.utils.formatHeartRate
 import com.ssafy.presentation.utils.formatSpeed
 import dagger.hilt.android.AndroidEntryPoint
@@ -162,7 +162,7 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
             if (it.isActive) {
                 it.exerciseState?.let { exerciseState ->
-                    binding.runningText.tvDistance.text = formatDistanceKm(exerciseState.exerciseMetrics.distance)
+                    binding.runningText.tvDistance.text = formatDistance(exerciseState.exerciseMetrics.distance)
 
                     with(binding.runningText.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)

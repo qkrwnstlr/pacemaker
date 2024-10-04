@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
-private const val TAG = "RunningViewModel_PACEMAKER"
-
 @HiltViewModel
 class RunningViewModel @Inject constructor(
     private val exerciseRepository: ExerciseRepository,
