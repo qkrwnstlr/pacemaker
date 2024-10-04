@@ -22,10 +22,10 @@ import com.ssafy.pacemaker.presentation.component.button.PauseButton
 import com.ssafy.pacemaker.presentation.component.button.ResumeButton
 import com.ssafy.pacemaker.presentation.component.button.StopButton
 import com.ssafy.pacemaker.presentation.component.text.CadenceText
-import com.ssafy.pacemaker.presentation.component.text.CaloriesText
 import com.ssafy.pacemaker.presentation.component.text.DistanceText
 import com.ssafy.pacemaker.presentation.component.text.DurationText
 import com.ssafy.pacemaker.presentation.component.text.HRText
+import com.ssafy.pacemaker.presentation.component.text.PaceText
 import com.ssafy.pacemaker.service.ExerciseServiceState
 
 @Composable
@@ -73,11 +73,11 @@ fun ExerciseScreen(
         }
         SpaceAroundRow {
             HRText(uiState.exerciseState?.exerciseMetrics?.heartRate)
-            CaloriesText(uiState.exerciseState?.exerciseMetrics?.calories)
+            CadenceText(uiState.exerciseState?.exerciseMetrics?.cadence)
         }
         SpaceAroundRow {
             DistanceText(uiState.exerciseState?.exerciseMetrics?.distance)
-            CadenceText(uiState.exerciseState?.exerciseMetrics?.cadence)
+            PaceText(uiState.exerciseState?.exerciseMetrics?.speed)
         }
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
