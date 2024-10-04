@@ -15,7 +15,8 @@ class MakePlanUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(body: PlanRequest) {
-        val response = planRepository.makePlan(body)
+        val uid = dataStoreRepository.getUser().uid
+        val response = planRepository.makePlan(body.copy(uid = uid))
         if (response is ResponseResult.Error) throw RuntimeException(response.message)
 
         val prevUser = dataStoreRepository.getUser()

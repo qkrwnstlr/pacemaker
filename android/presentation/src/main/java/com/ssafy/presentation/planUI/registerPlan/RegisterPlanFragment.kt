@@ -105,7 +105,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         }
 
         topSheetTrain.fabBlue.setOnClickListener {
-            viewModel.makePlan(getUid(), ::moveToPlanDetailFragment)
+            viewModel.makePlan(::moveToPlanDetailFragment)
         }
 
         chatUi.tvTitle.setOnClickListener {
