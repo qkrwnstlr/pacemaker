@@ -13,7 +13,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -32,14 +31,21 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.kizitonwose.calendar.core.WeekDay
 import com.kizitonwose.calendar.core.atStartOfMonth
 import com.kizitonwose.calendar.core.daysOfWeek
-import com.kizitonwose.calendar.view.WeekCalendarView
 import com.kizitonwose.calendar.view.WeekDayBinder
+import com.ssafy.domain.dto.plan.PlanTrain
+import com.ssafy.domain.dto.reports.Report
+import com.ssafy.domain.dto.reports.TrainReport
 import com.ssafy.presentation.R
 import com.ssafy.presentation.component.CreatePlanButton
 import com.ssafy.presentation.component.TrainInfoChartView
 import com.ssafy.presentation.component.TrainRestMessageView
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentHomeBinding
+import com.ssafy.presentation.homeUI.HomeViewModel.Companion.CREATE_PLAN
+import com.ssafy.presentation.homeUI.HomeViewModel.Companion.TRAIN_INFO
+import com.ssafy.presentation.homeUI.HomeViewModel.Companion.TRAIN_REST_MESSAGE
+import com.ssafy.presentation.homeUI.HomeViewModel.Companion.TRAIN_RESULT
+import com.ssafy.presentation.homeUI.TopSheetBehavior.STATE_COLLAPSED
 import com.ssafy.presentation.homeUI.TopSheetBehavior.TopSheetCallback
 import com.ssafy.presentation.scheduleUI.schedule.TrainResultView
 import com.ssafy.presentation.utils.toContentString
@@ -56,13 +62,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     OnMapReadyCallback {
 
     private val viewModel: HomeViewModel by viewModels()
-    private var myLocationListener: LocationListener? = null
     private lateinit var behavior: TopSheetBehavior<ConstraintLayout>
-    private val currentMonth = YearMonth.now()
-    private val startMonth = currentMonth.minusMonths(1)
-    private val endMonth = currentMonth.plusMonths(1)
-    private val daysOfWeek = daysOfWeek()
-    private val weekCalendarView: WeekCalendarView get() = binding.topSheet.weekCalendar
+    private var myLocationListener: LocationListener? = null
+    private var recentMarker: Marker? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -111,12 +113,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     }
 
-    private var recentMarker: Marker? = null
     private fun setMyLocation(map: GoogleMap, location: Location) {
-        if (myLocationListener != null) {
+
+        myLocationListener?.let {
             val locationManager =
                 requireContext().getSystemService(LOCATION_SERVICE) as LocationManager
-            locationManager.removeUpdates(myLocationListener!!)
+            locationManager.removeUpdates(it)
             myLocationListener = null
         }
 
@@ -141,21 +143,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.setTermMonthHasTrain(
-            getUid(),
-            startMonth.year,
-            startMonth.monthValue,
-            currentMonth.year,
-            currentMonth.monthValue,
-            endMonth.year,
-            endMonth.monthValue
-        )
 
         initView()
         initListener()
         initCollect()
         viewModel.getCoach()
-        viewModel.setDate(LocalDate.now())
+        viewModel.getTrain()
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
@@ -168,93 +161,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun CoroutineScope.collectDateListState() = launch {
         viewModel.dateList.collect { newDateList ->
-            val newDates = newDateList.keys
-            for (date in newDates) {
-                weekCalendarView.notifyDateChanged(LocalDate.parse(date))
+            newDateList.keys.forEach { date ->
+                binding.topSheet.weekCalendar.notifyDateChanged(LocalDate.parse(date))
             }
         }
     }
 
     private fun CoroutineScope.collectTrainingState() = launch {
-        viewModel.report.collect {
+        viewModel.report.collectLatest {
             val bodyLayout = binding.topSheet.topSheetBody
             bodyLayout.removeAllViews()
 
-            val trainView = when (viewModel.trainingState.value) {
-                TRAIN_INFO -> {
-                    val trainInfoView =
-                        TrainInfoChartView(requireContext())// TrainInfoView(requireContext())
-                    it.planTrain?.let { plan ->
-                        trainInfoView.makeEntryChart(plan)
-                    }
-                    trainInfoView
-                }
+            setTrainInfo(it)
 
-                TRAIN_RESULT -> {
-                    val trainResultView = TrainResultView(requireContext())
-                    it.trainReport?.let { report ->
-                        trainResultView.setResultData(report)
-                    }
-                    trainResultView
-                }
-
-                TRAIN_REST_MESSAGE -> TrainRestMessageView(requireContext())
-
-                CREATE_PLAN -> CreatePlanButton(requireContext()).also {
-                    val coachImgId = when (viewModel.coachState.value) {
-                        0, 1 -> R.drawable.coach_mike_white
-                        2 -> R.drawable.coach_jamie_white
-                        3 -> R.drawable.coach_danny_white
-                        else -> return@also
-                    }
-                    it.setIconResource(coachImgId)
-                }
-
-                else -> return@collect
+            val trainView = when (it.trainingState) {
+                TRAIN_INFO -> makeTrainInfoChartView(it.planTrain)
+                TRAIN_RESULT -> makeTrainResultView(it.trainReport)
+                TRAIN_REST_MESSAGE -> makeTrainRestMessageView()
+                CREATE_PLAN -> makeCreatePlanButtonView()
+                else -> return@collectLatest
             }
-
-            if (viewModel.trainingState.value == CREATE_PLAN) {
-                trainView.setOnClickListener {
-                    val action =
-                        HomeFragmentDirections.actionHomeFragmentToStartPlanFragment()
-                    findNavController().navigate(action)
-                }
-            }
-
             bodyLayout.addView(trainView)
-            bodyLayout.doOnNextLayout {
-                if (bodyLayout.measuredHeight != 0) {
-                    behavior.setHalfHeight(bodyLayout.measuredHeight)
-                    behavior.state = TopSheetBehavior.STATE_HALF_EXPANDED
-                }
-            }
-
-            when (viewModel.trainingState.value) {
-                TRAIN_INFO -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "오늘의 훈련 목표"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.isVisible = true
-                    binding.topSheet.trainInfoTitle.tvPlanInst.text =
-                        it.planTrain.toContentString()
-                }
-
-                TRAIN_RESULT -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "오늘의 훈련 목표"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.isVisible = true
-                    binding.topSheet.trainInfoTitle.tvPlanInst.text =
-                        it.planTrain.toContentString()
-                }
-
-                TRAIN_REST_MESSAGE -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "오늘은 훈련이 없어요"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.isVisible = true
-                    binding.topSheet.trainInfoTitle.tvPlanInst.text = "잘 쉬는 것도 훈련입니다."
-                }
-
-                CREATE_PLAN -> {
-                    binding.topSheet.trainInfoTitle.tvResultTitle.text = "진행중인 훈련이 없어요"
-                    binding.topSheet.trainInfoTitle.tvPlanInst.visibility = View.INVISIBLE
-                }
-            }
         }
     }
 
@@ -278,53 +205,54 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun initTopSheet() = with(binding.topSheet) {
         behavior = TopSheetBehavior.from(root).apply {
-            setHalfable(true)
+            setHalfable(false)
             setTopSheetCallback(object : TopSheetCallback() {
                 override fun onStateChanged(topSheet: View, newState: Int) {
                     when (newState) {
-                        TopSheetBehavior.STATE_COLLAPSED -> topSheetBody.visibility = View.GONE
+                        STATE_COLLAPSED -> topSheetBody.visibility = View.GONE
                         else -> topSheetBody.visibility = View.VISIBLE
                     }
                 }
 
-                override fun onSlide(topSheet: View, slideOffset: Float) {
-                    if (slideOffset == 0f) return
-
-                    val height = ((topSheet.height - peekHeight) * slideOffset).toInt()
-                    topSheetBody.layoutParams.height = height
-                    topSheetBody.requestLayout()
-                }
+                override fun onSlide(topSheet: View, slideOffset: Float) {}
             })
         }
     }
 
-    private fun initWeekCalendar() {
-        weekCalendarView.dayBinder = object : WeekDayBinder<WeekDayViewContainer> {
+    private fun initWeekCalendar() = with(binding.topSheet.weekCalendar) {
+        dayBinder = object : WeekDayBinder<WeekDayViewContainer> {
             override fun create(view: View): WeekDayViewContainer = WeekDayViewContainer(view)
             override fun bind(container: WeekDayViewContainer, data: WeekDay) {
                 container.apply {
-                    day = data
-                    textView.text = data.date.dayOfMonth.toString()
-                    setOnClickListener {
-                        viewModel.setDate(data.date)
-                    }
-
                     val selectDate = viewModel.selectDate.value
-                    if (data.date == selectDate) container.ly.setBackgroundResource(R.drawable.day_selected_bg)
+                    val trainDates = viewModel.dateList.value.keys
+                    val bindDate = data.date
+
+                    day = data
+                    textView.text = bindDate.dayOfMonth.toString()
+                    setOnClickListener { viewModel.setDate(bindDate) }
+
+                    if (bindDate == selectDate) container.ly.setBackgroundResource(R.drawable.day_selected_bg)
                     else container.ly.setBackgroundColor(Color.TRANSPARENT)
-                    hasTrain.visibility =
-                        if (viewModel.dateList.value.containsKey(data.date.toString())) View.VISIBLE else View.INVISIBLE
+
+                    if (trainDates.contains(bindDate.toString())) {
+                        hasTrain.visibility = View.VISIBLE
+                    } else {
+                        hasTrain.visibility = View.INVISIBLE
+                    }
                 }
             }
         }
 
-        weekCalendarView.setup(
-            startMonth.atStartOfMonth(),
-            endMonth.atEndOfMonth(),
-            daysOfWeek.first(),
+
+        val now = YearMonth.now()
+        setup(
+            startDate = now.minusMonths(1).atStartOfMonth(),
+            endDate = now.plusMonths(1).atStartOfMonth(),
+            firstDayOfWeek = daysOfWeek().first()
         )
 
-        weekCalendarView.scrollToWeek(LocalDate.now())
+        scrollToWeek(LocalDate.now())
     }
 
     private fun initListener() {
@@ -344,17 +272,78 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
-    private fun setTopSheetHalfExpand() {
-        behavior.state = TopSheetBehavior.STATE_HALF_EXPANDED
+    private fun makeTrainInfoChartView(planTrain: PlanTrain?): TrainInfoChartView =
+        TrainInfoChartView(requireContext()).apply {
+            planTrain?.let { makeEntryChart(it) }
+        }
+
+    private fun makeTrainResultView(trainReport: TrainReport?): TrainResultView =
+        TrainResultView(requireContext()).apply {
+            trainReport?.let { setResultData(it) }
+        }
+
+    private fun makeTrainRestMessageView(): TrainRestMessageView =
+        TrainRestMessageView(requireContext())
+
+    private fun makeCreatePlanButtonView(): CreatePlanButton =
+        CreatePlanButton(requireContext()).apply {
+            val coachImgId = when (viewModel.coachState.value) {
+                1 -> R.drawable.coach_mike_white
+                0, 2 -> R.drawable.coach_jamie_white
+                3 -> R.drawable.coach_danny_white
+                else -> return@apply
+            }
+            setIconResource(coachImgId)
+            setOnClickListener { moveToPlanFragment() }
+        }
+
+    private fun setTrainInfo(report: Report) = with(binding.topSheet.trainInfoTitle) {
+        when (report.trainingState) {
+            TRAIN_INFO, TRAIN_RESULT -> {
+                tvResultTitle.text = report.date.toTitleString()
+                tvPlanInst.isVisible = true
+                tvPlanInst.text = report.planTrain.toContentString()
+            }
+
+            TRAIN_REST_MESSAGE -> {
+                tvResultTitle.text = NO_TRAIN
+                tvPlanInst.isVisible = true
+                tvPlanInst.text = REST_IS_GOOD
+            }
+
+            CREATE_PLAN -> {
+                tvResultTitle.text = NO_PLAN
+                tvPlanInst.visibility = View.INVISIBLE
+            }
+
+            else -> {}
+        }
+        setPeekHeight()
+    }
+
+    private fun setPeekHeight() = with(binding.topSheet) {
+        val bodyHeight = if (topSheetBody.visibility == View.GONE) 0 else topSheetBody.height
+        val height = root.height - bodyHeight - 9
+        if (height > 0) behavior.peekHeight = height
+    }
+
+    private fun moveToPlanFragment() {
+        val action = HomeFragmentDirections.actionHomeFragmentToStartPlanFragment()
+        findNavController().navigate(action)
+    }
+
+    private fun LocalDate.toTitleString(): String {
+        val today = LocalDate.now()
+        return if (this == today) "오늘의 훈련 목표"
+        else "${monthValue}월 ${dayOfMonth}일의 훈련 목표"
     }
 
     companion object {
         const val MARKER_WIDTH = 200
         const val MARKER_HEIGHT = 200
 
-        const val TRAIN_INFO = 1
-        const val TRAIN_RESULT = 2
-        const val TRAIN_REST_MESSAGE = 3
-        const val CREATE_PLAN = 4
+        const val NO_TRAIN = "훈련이 없는 날이에요"
+        const val NO_PLAN = "진행중인 훈련이 없어요"
+        const val REST_IS_GOOD = "잘 쉬는 것도 훈련입니다."
     }
 }
