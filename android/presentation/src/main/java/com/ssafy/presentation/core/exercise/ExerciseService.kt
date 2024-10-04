@@ -162,20 +162,19 @@ class ExerciseService : LifecycleService() {
                             trainManager.finishTrain()
                         }
                         CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
-                                    healthConnectManager.writeExerciseSession(
-                                        "${trainManager.train.id} (#${trainManager.train.index})",
-                                        exerciseManager.exerciseData.value,
-                                    )
+                            if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                                runCatching {
                                     reportsManager.createReports(
                                         trainManager.train.id,
                                         exerciseManager.exerciseData.value,
                                     )
                                 }
-                            } catch (exception: Exception) {
-                                exception.printStackTrace()
-                            } finally {
+                                runCatching {
+                                    healthConnectManager.writeExerciseSession(
+                                        "${trainManager.train.id} (#${trainManager.train.index})",
+                                        exerciseManager.exerciseData.value,
+                                    )
+                                }
                                 trainManager.disconnect()
                                 exerciseManager.disconnect()
                                 coachingManager.disconnect()
