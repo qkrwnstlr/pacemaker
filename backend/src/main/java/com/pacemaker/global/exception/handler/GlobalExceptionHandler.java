@@ -16,6 +16,7 @@ import com.pacemaker.global.exception.InvalidDateException;
 import com.pacemaker.global.exception.InvalidDayOfWeekException;
 import com.pacemaker.global.exception.NotFoundException;
 import com.pacemaker.global.exception.PlanAlreadyExistsException;
+import com.pacemaker.global.exception.PlanPostponeException;
 import com.pacemaker.global.exception.PlanTrainEmptyException;
 import com.pacemaker.global.exception.ScheduledTaskException;
 import com.pacemaker.global.exception.UserMismatchException;
@@ -110,6 +111,13 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ScheduledTaskException.class)
 	public ResponseEntity<String> handleScheduledTaskException(ScheduledTaskException e, HttpServletRequest req) {
+		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
+
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
+	}
+
+	@ExceptionHandler(PlanPostponeException.class)
+	public ResponseEntity<String> handlePlanPostponeException(PlanPostponeException e, HttpServletRequest req) {
 		notificationManager.sendNotification(e, req.getRequestURI(), req.getMethod(), getParams(req));
 
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.SERVICE_UNAVAILABLE);
