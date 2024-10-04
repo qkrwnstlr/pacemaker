@@ -37,13 +37,11 @@ import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRunningBinding
 import com.ssafy.presentation.utils.formatCadenceRate
 import com.ssafy.presentation.utils.formatDistanceKm
-import com.ssafy.presentation.utils.formatElapsedTime
 import com.ssafy.presentation.utils.formatHeartRate
 import com.ssafy.presentation.utils.formatSpeed
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.Duration
 
 @AndroidEntryPoint
 class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBinding::inflate),
@@ -57,12 +55,18 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private var marker: Marker? = null
 
+    private var timer: ActiveDurationTimerController? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.startExercise()
         initView()
         initCollect()
         initListener()
         initMapView()
+        timer = ActiveDurationTimerController(this, listOf(
+            binding.runningText.runningInfo.boxTime.tvRunningContent,
+            binding.runningMap.runningInfo.boxTime.tvRunningContent,
+        ))
     }
 
     private fun initListener() = with(binding) {
@@ -133,6 +137,8 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private fun CoroutineScope.collectTrainingState() = launch {
         viewModel.uiState.collect {
+            it.exerciseState?.run { timer?.updateExerciseState(exerciseState, activeDurationCheckpoint) }
+
             if (it.isPaused) {
                 with(binding) {
                     btnPlay.showAnimate(true)
@@ -156,28 +162,17 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
             if (it.isActive) {
                 it.exerciseState?.let { exerciseState ->
-                    binding.runningText.tvDistance.text =
-                        formatDistanceKm(exerciseState.exerciseMetrics.distance)
-
-                    val duration = if (exerciseState.activeDurationCheckpoint != null) {
-                        exerciseState.activeDurationCheckpoint.activeDuration.plusMillis(
-                            System.currentTimeMillis() - exerciseState.activeDurationCheckpoint.time.toEpochMilli()
-                        )
-                    } else {
-                        Duration.ZERO
-                    }
+                    binding.runningText.tvDistance.text = formatDistanceKm(exerciseState.exerciseMetrics.distance)
 
                     with(binding.runningText.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
                         boxCadence.tvRunningContent.text = formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
                         boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
-                        boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                     }
                     with(binding.runningMap.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
                         boxCadence.tvRunningContent.text = formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
                         boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
-                        boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                         exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
                     }
                 }
