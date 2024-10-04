@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_6"
-        app:layout_constraintBottom_toTopOf="@+id/box_kcal"
+        app:layout_constraintBottom_toTopOf="@+id/box_cadence"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/box_time"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,12 +34,12 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_6"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/box_kcal"
+        app:layout_constraintEnd_toStartOf="@+id/box_cadence"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/box_time" />
 
     <include
-        android:id="@+id/box_kcal"
+        android:id="@+id/box_cadence"
         layout="@layout/runbox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -55,5 +55,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/box_kcal" />
+        app:layout_constraintTop_toBottomOf="@id/box_cadence" />
 </androidx.constraintlayout.widget.ConstraintLayout>
