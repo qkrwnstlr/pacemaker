@@ -25,8 +25,7 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
             registerForActivityResult(viewModel.requestPermissionsActivityContract()) {
                 lifecycleScope.launch {
                     if (viewModel.hasAllPermissions()) viewModel.syncWithHealthConnect(getUid())
-                    val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
-                    findNavController().navigate(action)
+                    navigateToStartFragment()
                 }
             }
     }
@@ -60,7 +59,7 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
     private fun initListener() = with(binding.baseLayout) {
         fabBlue.setOnClickListener {
             lifecycleScope.launch {
-                viewModel.launchPermissionsLauncher(permissionLauncher)
+                viewModel.launchPermissionsLauncher(permissionLauncher, ::navigateToStartFragment)
             }
         }
     }
@@ -69,18 +68,20 @@ class ConnectFragment : BaseFragment<FragmentConnectBinding>(FragmentConnectBind
         lifecycleScope.launch {
             try {
                 if (viewModel.hasAllPermissions()) {
-                    Toast.makeText(
-                        requireContext(),
-                        "All permissions granted",
-                        Toast.LENGTH_LONG,
-                    ).show()
+                    viewModel.syncWithHealthConnect(getUid())
+                    navigateToStartFragment()
                 } else {
-                    viewModel.launchPermissionsLauncher(permissionLauncher)
+                    viewModel.launchPermissionsLauncher(permissionLauncher, ::navigateToStartFragment)
                 }
             } catch (exception: Exception) {
                 Toast.makeText(requireContext(), "Error: $exception", Toast.LENGTH_LONG)
                     .show()
             }
         }
+    }
+
+    private fun navigateToStartFragment() {
+        val action = ConnectFragmentDirections.actionConnectFragmentToStartFragment()
+        findNavController().navigate(action)
     }
 }

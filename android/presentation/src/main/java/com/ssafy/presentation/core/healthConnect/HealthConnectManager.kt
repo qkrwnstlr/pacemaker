@@ -127,7 +127,7 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
         return PermissionController.createRequestPermissionResultContract()
     }
 
-    suspend fun launchPermissionsLauncher(launcher: ActivityResultLauncher<Set<String>>) {
+    suspend fun launchPermissionsLauncher(launcher: ActivityResultLauncher<Set<String>>, onNotAbleAction: () -> Unit = {}) {
         checkAvailability()
         when (availability.value) {
             SDK_AVAILABLE -> {
@@ -150,9 +150,12 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
                 val intent = Intent(Intent.ACTION_VIEW, url)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 context.startActivity(intent)
+                onNotAbleAction()
             }
 
-            SDK_UNAVAILABLE -> {}
+            SDK_UNAVAILABLE -> {
+                onNotAbleAction()
+            }
         }
     }
 

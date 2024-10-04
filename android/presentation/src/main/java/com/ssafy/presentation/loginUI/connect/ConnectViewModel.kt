@@ -19,18 +19,18 @@ class ConnectViewModel @Inject constructor(
 ) : ViewModel() {
     suspend fun hasAllPermissions() = healthConnectManager.hasAllPermissions()
 
-    fun requestPermissionsActivityContract() =
-        healthConnectManager.requestPermissionsActivityContract()
+    fun requestPermissionsActivityContract() = healthConnectManager.requestPermissionsActivityContract()
 
-    suspend fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>) =
-        healthConnectManager.launchPermissionsLauncher(activityResultLauncher)
+    suspend fun launchPermissionsLauncher(activityResultLauncher: ActivityResultLauncher<Set<String>>, onNotAbleAction: () -> Unit) =
+        healthConnectManager.launchPermissionsLauncher(activityResultLauncher, onNotAbleAction)
 
     suspend fun syncWithHealthConnect(uid: String) {
         val userInfo = getUserInfoUseCase(uid)
-        val start = ZonedDateTime.now()
-        val end = start.minusDays(30)
-        val height = healthConnectManager.readHeightInputs(end.toInstant(), start.toInstant())
-        val weight = healthConnectManager.readHeightInputs(end.toInstant(), start.toInstant())
+        val end = ZonedDateTime.now()
+        val start = end.minusDays(30)
+        val height = healthConnectManager.readHeightInputs(start.toInstant(), end.toInstant())?.run { this * 100 }
+        val weight = healthConnectManager.readWeightInputs(start.toInstant(), end.toInstant())
+
         val user = userInfo.copy(
             height = height?.toInt() ?: userInfo.height,
             weight = weight?.toInt() ?: userInfo.weight,
