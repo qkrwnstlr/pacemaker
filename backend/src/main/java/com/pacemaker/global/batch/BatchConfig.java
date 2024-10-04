@@ -1,61 +1,44 @@
 package com.pacemaker.global.batch;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.support.DefaultBatchConfiguration;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.pacemaker.domain.plan.entity.Plan;
 import com.pacemaker.domain.plan.service.PlanService;
+import com.pacemaker.global.batch.listener.CustomJobListener;
 import com.pacemaker.global.batch.listener.CustomSkipListener;
 import com.pacemaker.global.batch.listener.CustomStepListener;
-import com.pacemaker.global.exception.ScheduledTaskException;
+import com.pacemaker.global.exception.PlanPostponeException;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+// @EnableBatchProcessing  //  배치 기능 활성 -> extends DefaultBatchConfiguration으로 대체 -> 순환 참조 발생하여 없앰
 @Configuration
 @RequiredArgsConstructor
-// @EnableBatchProcessing  //  배치 기능 활성 -> extends DefaultBatchConfiguration으로 대체 (batch v5)
-public class BatchConfig extends DefaultBatchConfiguration {
+public class BatchConfig {
 
 	private final JobRepository jobRepository;
 	private final PlatformTransactionManager transactionManager;
 	private final PlanService planService;
-	private final JobLauncher jobLauncher;  // 배치 작업 실행을 위한 런처
-	private final Job planPostponeJob;  // Job을 직접 주입받음
-
-	// 배치 작업을 24시마다 실행
-	@Scheduled(cron = "0 0 0 * * *")  // 매일 24시
-	public void runPlanPostponeJob() {
-		try {
-			JobParameters jobParameters = new JobParametersBuilder()
-				.addLong("time", System.currentTimeMillis())  // 매 실행마다 고유한 파라미터
-				.toJobParameters();
-			jobLauncher.run(planPostponeJob, jobParameters);  // 배치 작업 실행
-
-		} catch (Exception e) {
-			throw new ScheduledTaskException("스케줄링 작업 중 오류 발생");
-		}
-	}
 
 	@Bean
 	public Job planPostponeJob() {
 		return new JobBuilder("planPostponeJob", jobRepository)
+			.listener(new CustomJobListener()) // Job 리스너 등록
 			.start(planPostponeStep())
 			.build();
 	}
@@ -64,20 +47,35 @@ public class BatchConfig extends DefaultBatchConfiguration {
 	public Step planPostponeStep() {
 		return new StepBuilder("planPostponeStep", jobRepository)
 			.<Plan, Plan>chunk(10, transactionManager)
-			.reader(activePlanReader())
+			.reader(planPostponeReader())
 			.processor(planPostponeProcessor())
 			.writer(planPostponeWriter())
-			.listener(new CustomStepListener()) // 스텝 리스너 등록
-			.listener(new CustomSkipListener()) // 스킵 리스너 등록
+			.listener(new CustomJobListener()) // Job 리스너 등록
+			.listener(new CustomStepListener()) // Step 리스너 등록
+			.listener(new CustomSkipListener()) // Skip 리스너 등록
 			.faultTolerant()
-			.skip(Exception.class)
+			.skip(PlanPostponeException.class)
 			.skipLimit(10)
 			.build();
 	}
 
 	@Bean
-	public ItemReader<Plan> activePlanReader() {
-		return new ListItemReader<>(planService.getPlansForPostpone());  // ListItemReader로 List<Plan> 처리
+	public ItemReader<Plan> planPostponeReader() {
+		return new ItemReader<Plan>() {
+			List<Plan> plans = null;
+			Iterator<Plan> planIterator = null;
+
+			@Override
+			public Plan read() {
+				if (plans == null) {
+					plans = planService.getPlansForPostpone();
+					planIterator = plans.iterator();
+				}
+
+				// 다음 Plan이 있으면 반환하고, 없으면 null을 반환합니다
+				return planIterator.hasNext() ? planIterator.next() : null;
+			}
+		};
 	}
 
 	@Bean
@@ -85,6 +83,7 @@ public class BatchConfig extends DefaultBatchConfiguration {
 		return new ItemProcessor<Plan, Plan>() {
 			@Override
 			public Plan process(@NonNull Plan plan) throws Exception {
+				System.out.println("planPostponeProcessor실행 - process 실행");
 				planService.planPostponeAndPlanTrain(plan);
 				return plan;
 			}
@@ -108,7 +107,9 @@ public class BatchConfig extends DefaultBatchConfiguration {
 		return new ItemWriter<Plan>() {
 			@Override
 			public void write(@NonNull Chunk<? extends Plan> plans) throws Exception {
+				System.out.println("planPostponeWriter실행 - write 실행");
 				for (Plan plan : plans) {
+					System.out.println("planPostponeWriter실행 - write 반복문!!");
 					planService.updatePlan(plan);
 				}
 			}
