@@ -85,14 +85,6 @@ public class OpenAiService {
 					llmContent);
 				System.out.println("convertedContentResponse = " + convertedContentResponse);
 
-				// session 구하기
-				// calculateSession(contentResponse);
-
-				// 날짜 변환
-				// System.out.println(contentResponse.plan().planTrains().get(0).trainDate());
-				// System.out.println("LocalDate: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()));
-				// System.out.println("LocalDateTime: "+ LocalDate.parse(contentResponse.plan().planTrains().get(0).trainDate()).atTime(0, 0));
-
 				return new Gson().toJson(convertedContentResponse);
 			});
 	}
@@ -128,12 +120,6 @@ public class OpenAiService {
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
 				Message.createUser(new Gson().toJson(contentRequest))))
 			.responseFormat(responseFormatNode)
-			// Message.createResponseFormat(ResponseFormatString.responseFormat)))
-			// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
-			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
-			// .responseFormat(ResponseFormatString.responseFormat)
-			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
-			// .responseFormat("{\"type\": \"json_object\"}")
 			.build();
 
 		return openAIWebClient.post()
@@ -158,10 +144,6 @@ public class OpenAiService {
 			.model("gpt-4o-2024-08-06")
 			.messages(List.of(Message.createPlanEngSystem(contentRequest.coachTone()),
 				Message.createUser(new Gson().toJson(contentRequest))))
-			// Message.createPlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
-			// .messages(List.of(Message.createSystem(), Message.createUser(content)))
-			// .responseFormat(ResponseFormatString.responseFormat)
-			// .responseFormat(new Gson().toJson(ResponseFormatString.responseFormat))
 			.responseFormat(responseFormatNode)
 			.build();
 
@@ -310,8 +292,6 @@ public class OpenAiService {
 				ContentResponse convertedContentResponse = convertLlmResponseToContentResponse(contentResponse,
 					llmContent);
 				System.out.println("convertedContentResponse = " + convertedContentResponse);
-
-				// calculateSession(convertedContentResponse);
 
 				return new Gson().toJson(convertedContentResponse);
 			});
