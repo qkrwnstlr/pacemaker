@@ -14,105 +14,143 @@ public class ResponseFormatString {
 
 	public static String planChatResponseFormat = """
 		{
-		   "type": "json_schema",
-		   "json_schema": {
-			 "name": "pacemaker",
-			 "strict": true,
-			 "schema": {
-			   "additionalProperties": false,
-			   "type": "object",
-			   "properties": {
-				 "message": { "type": "string", "description": "response message of the GPT" },
-				 "context": {
-				   "additionalProperties": false,
-				   "type": "object",
-				   "properties": {
-					 "goal": {
-					   "type": "string",
-					   "description": "user's running goal (ex. lose weight, running a marathon)"
-					 },
-					 "goalTime": { "type": "integer", "description": "goal time in seconds" },
-					 "goalDistance": { "type": "integer", "description": "goal distance" },
-					 "trainDayOfWeek": {
-					   "type": "array",
-					   "items": {
-						 "type": "string",
-						 "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-						 "description": "day of the week"
-					   },
-					   "description": "days of the week for the train"
-					 },
-					 "userInfo": {
-					   "type": "object",
-					   "additionalProperties": false,
-					   "properties": {
-						 "age": { "type": "integer", "description": "user's age" },
-						 "height": { "type": "integer", "description": "user's height (cm)" },
-						 "weight": { "type": "integer", "description": "user's weight (kg)" },
-						 "gender": { "type": "string", "enum": ["MALE", "FEMALE", ""], "description": "user's gender" },
-						 "injuries": {
-						   "type": "array",
-						   "items": { "type": "string", "description": "history of all injuries" }
-						 },
-						 "recentRunPace": {
-						   "type": "integer",
-						   "description": "running pace of the recent runs (seconds per kilometer), -1 if none"
-						 },
-						 "recentRunDistance": { "type": "integer", "description": "running distance of the recent runs, -1 if none" },
-						 "recentRunHeartRate": {
-						   "type": "integer",
-						   "description": "running average heart rate of the recent runs, -1 if none"
-						 }
-					   },
-					   "required": [
-						 "age",
-						 "height",
-						 "weight",
-						 "gender",
-						 "injuries",
-						 "recentRunPace",
-						 "recentRunDistance",
-						 "recentRunHeartRate"
-					   ]
-					 }
-				   },
-				   "required": ["goal", "goalTime", "goalDistance", "trainDayOfWeek", "userInfo"]
-				 },
-				 "plan": {
-				   "type": "object",
-				   "additionalProperties": false,
-				   "properties": {
-					 "planTrains": {
-					   "type": "array",
-					   "items": {
-						 "type": "object",
-						 "additionalProperties": false,
-						 "properties": {
-						   "index": { "type": "integer", "description": "index" },
-						   "trainDate": { "type": "string", "description": "train date" },
-						   "paramType": { "type": "string", "enum": ["time", "distance"], "description": "type " },
-						   "repetition": { "type": "integer", "description": "number of repetition of the main train" },
-						   "trainParam": {
-							 "type": "integer",
-							 "description": "time duration or distance of the main(repetition) train in seconds"
-						   },
-						   "trainPace": { "type": "integer", "description": "train pace in sec/km" },
-						   "interParam": {
-							 "type": "integer",
-							 "description": "time duration or distance of recovery jog in between in repetition of the main train"
-						   }
-						 },
-						 "required": ["index", "trainDate", "paramType", "repetition", "trainParam", "trainPace", "interParam"]
-					   }
-					 }
-				   },
-				   "required": ["planTrains"]
-				 }
-			   },
-			   "required": ["message", "context", "plan"]
-			 }
-		   }
-		 }
+		    "type": "json_schema",
+		    "json_schema": {
+		      "name": "pacemaker",
+		      "strict": true,
+		      "schema": {
+		        "additionalProperties": false,
+		        "type": "object",
+		        "properties": {
+		          "message": { "type": "string", "description": "response message of the GPT" },
+		          "context": {
+		            "additionalProperties": false,
+		            "type": "object",
+		            "properties": {
+		              "goal": {
+		                "type": "string",
+		                "description": "user's running goal (ex. lose weight, running a marathon)"
+		              },
+		              "goalTime": { "type": "integer", "description": "goal time in seconds" },
+		              "goalDistance": { "type": "integer", "description": "goal distance" },
+		              "trainDayOfWeek": {
+		                "type": "array",
+		                "items": {
+		                  "type": "string",
+		                  "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+		                  "description": "day of the week"
+		                },
+		                "description": "days of the week for the train"
+		              },
+		              "userInfo": {
+		                "type": "object",
+		                "additionalProperties": false,
+		                "properties": {
+		                  "age": { "type": "integer", "description": "user's age" },
+		                  "height": { "type": "integer", "description": "user's height (cm)" },
+		                  "weight": { "type": "integer", "description": "user's weight (kg)" },
+		                  "gender": { "type": "string", "enum": ["MALE", "FEMALE", ""], "description": "user's gender" },
+		                  "injuries": {
+		                    "type": "array",
+		                    "items": { "type": "string", "description": "history of all injuries" }
+		                  },
+		                  "recentRunPace": {
+		                    "type": "integer",
+		                    "description": "running pace of the recent runs (seconds per kilometer), -1 if none"
+		                  },
+		                  "recentRunDistance": {
+		                    "type": "integer",
+		                    "description": "running distance of the recent runs, -1 if none"
+		                  },
+		                  "recentRunHeartRate": {
+		                    "type": "integer",
+		                    "description": "running average heart rate of the recent runs, -1 if none"
+		                  }
+		                },
+		                "required": [
+		                  "age",
+		                  "height",
+		                  "weight",
+		                  "gender",
+		                  "injuries",
+		                  "recentRunPace",
+		                  "recentRunDistance",
+		                  "recentRunHeartRate"
+		                ]
+		              }
+		            },
+		            "required": ["goal", "goalTime", "goalDistance", "trainDayOfWeek", "userInfo"]
+		          },
+		          "plan": {
+		            "description": "plan of the total train sessions, the size of all the arrays within the objects must be same",
+		            "type": "object",
+		            "required": ["index", "trainDate", "paramType", "repetition", "trainParam", "trainPace", "interParam"],
+		            "properties": {
+		              "index": {
+		                "description": "indexs of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "index",
+		                  "type": "integer"
+		                }
+		              },
+		              "trainDate": {
+		                "description": "trainDates of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "trainDate in YYYY-mm-dd format",
+		                  "type": "string"
+		                }
+		              },
+		              "paramType": {
+		                "description": "parameter types of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "parameter types of each train session, the array size must correspond with the array size of index object.",
+		                  "type": "string",
+		                  "enum": ["time", "distance"]
+		                }
+		              },
+		              "repetition": {
+		                "description": "number of repetition of the main train of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "number of the repetition of the main train",
+		                  "type": "integer"
+		                }
+		              },
+		              "trainParam": {
+		                "description": "parameters of the main train of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "time duration or distance of the main(repetition) train in seconds or meters",
+		                  "type": "integer"
+		                }
+		              },
+		              "trainPace": {
+		                "description": "train pace of the main train of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "pace of the main train in sec/km",
+		                  "type": "integer"
+		                }
+		              },
+		              "interParam": {
+		                "description": "parameters of recovery jog in of each train session",
+		                "type": "array",
+		                "items": {
+		                  "description": "time duration or distance of recovery jog in between the repetition of the main train",
+		                  "type": "integer"
+		                }
+		              }
+		            },
+		            "additionalProperties": false
+		          }
+		        },
+		        "required": ["message", "context", "plan"]
+		      }
+		    }
+		  }
 		""";
 
 	public static String realTimeResponseFormat = """

@@ -26,6 +26,7 @@ public record Message(
 			4. Provide responses in plain text without any markdown formatting or newline characters in the message field.
 			5. Plan should be written in the "plan" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
+			7. All arrays within the plan objects must have the same array size of the "index" object.
 			
 			**INSTRUCTION**
 			1. You should make a running plan for the user.
@@ -35,10 +36,12 @@ public record Message(
 			If the field is filled with "-1", it means the user refused to fill in recentRun data, so do not ask again.
 			4. The date of today is : "%s".
 			5. Save the user info in the "userInfo" field if the user provides it.
-			6. "plan", "planTrains", "trainDate" should be in "date" format.
+			6. "plan", "trainDate" should be in "date" format.
 			7. Please estimate the plan duration to help the user reach their running goal without asking. After determining the duration, create the training plan accordingly. Ensure the plan duration is within the range of 1 month to 6 months.
-			8. planTrains should be created for each session. If you create a plan of total 6 months, 3 train days in a week, because there are about 4 weeks in a month, you should make 6 (months) * 4(weeks) * 3(train days) = 72 planTrains. The plan should ALWAYS contain the corresponding number of train sessions.
-			9. Based on the user's input, identify and save a relevant goal in the 'goal' field in Korea, even if no specific objective is mentioned.""";
+			8. Plan trains must be created for each session. If you create a plan of total 6 months, 3 train days in a week, because there are about 4 weeks in a month, you should make 6 (months) * 4(weeks) * 3(train days) = 72 train sessions. The plan should ALWAYS contain the corresponding number of train sessions.
+			9. Based on the user's input, identify and save a relevant goal in the 'goal' field in Korean, even if no specific objective is mentioned.
+			10. Check the created train information again and be sure that the training intensity is suitable for the user. Train Pace should not exceed the user's recentRunPace from the beginning.
+			11. After createing the plan, double check that the all the arrays within the plan field has the same array size(number of train sessions)""";
 
 		String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 		String formattedEngSystem = String.format(engSystem, "**TONE**\n" + coachTone, formattedDate);
@@ -200,22 +203,27 @@ public record Message(
 			**RULE**
 			1. User can only see the "message" field.
 			2. Plan should be revised based on the feedback provided by the user.
-			3. Ask 1 information at once.
+			3. Ask 1 information at once. e.g. to ask information about userInfos, do not ask age, height, weight, gender all at once.
 			4. Provide responses in plain text without any markdown formatting or newline characters in the message field.
-			5. Plan revisions should be written in the "planTrains" field. NOT in the "message" field.
+			5. Plan revisions should be written in the "plan" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
-			
+			7. All arrays within the plan objects must have the same array size of the "index" object.
+
 			**INSTRUCTION**
 			1. You should revise the running plan for the user based on the feedback provided in the "message" field.
-			2. Check if the feedback in the "message" requires modifying the training plan. Make adjustments to the relevant training sessions in the "planTrains" field.
-			3. If any context information such as the goal, goalTime, or goalDistance changes, inform the user with the message: "사용자의 정보 또는 목표가 변경되는 경우 기존의 플랜을 삭제 후 새로운 플랜을 생성해주세요." Do not generate a new plan.
-			4. If no context change is detected, simply modify the training sessions that the user found difficult or requested to adjust.
-			5. If the user struggles with the current pace or difficulty of the plan, consider adjusting the overall duration of the plan to allow for steady progress. The plan duration should support the user’s ability to achieve their goal while maintaining realistic training intensity.
-			6. "plan", "planTrains", "trainDate" should be in "date" format.
-			7. Maintain the structure of the original plan unless a complete overhaul is required, but adjust the plan duration if necessary to accommodate the user's pace of progress.
+			2. The date of today is : "%s".
+			3. Check if the feedback in the "message" requires modifying the training plan. Make adjustments to the relevant training sessions in the "planTrains" field.
+			4. If any context information such as the goal, goalTime, or goalDistance changes, inform the user with the message: "사용자의 정보 또는 목표가 변경되는 경우 기존의 플랜을 삭제 후 새로운 플랜을 생성해주세요." Do not generate a new plan.
+			5. If no context change is detected, simply modify the training sessions that the user found difficult or requested to adjust.
+			6. If the user struggles with the current pace or difficulty of the plan, consider adjusting the overall duration of the plan to allow for steady progress. The plan duration should support the user’s ability to achieve their goal while maintaining realistic training intensity.
+			7. "plan", "trainDate" should be in "date" format.
+			8. Maintain the structure of the original plan unless a complete overhaul is required, but adjust the plan duration if necessary to accommodate the user's pace of progress.
+			9. Check the created train information again and be sure that the training intensity is suitable for the user. Train Pace should not exceed the user's recentRunPace from the beginning.
+			10. After createing the plan, double check that the all the arrays within the plan field has the same array size(number of train sessions)
 			""";
 
-		String formattedSystem = String.format(system, "**TONE**\n" + coachTone);
+		String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+		String formattedSystem = String.format(system, "**TONE**\n" + coachTone, formattedDate);
 		return new Message("system", formattedSystem);
 	}
 
