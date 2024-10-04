@@ -14,14 +14,23 @@ public interface PlanTrainRepository extends JpaRepository<PlanTrain, Long>, Pla
 
 	Optional<PlanTrain> findPlanTrainById(Long id);
 
+	/*
+	 * 나중에 아래 쿼리랑 같은지 확인하기
+		select pt
+		  from PlanTrain pt
+		  join pt.plan p
+		  where p.user.uid = :uid
+			and pt.status = "BEFORE"
+			and function('year', pt.trainDate) = :year
+			and function('month', pt.trainDate) = :month
+		  order by pt.trainDate
+	 */
 	@Query("""
 		select pt
 		  from PlanTrain pt
 		  where pt.plan.id in (select p.id
 								 from Plan p
-								 where p.user.id = (select u.id
-													  from User u
-													  where u.uid = :uid))
+								 where p.user.uid = :uid)
 			and pt.status = "BEFORE"
 		    and function('year', pt.trainDate) = :year
 		    and function('month', pt.trainDate) = :month

@@ -72,8 +72,14 @@ public class BatchConfig {
 					planIterator = plans.iterator();
 				}
 
-				// 다음 Plan이 있으면 반환하고, 없으면 null을 반환합니다
-				return planIterator.hasNext() ? planIterator.next() : null;
+				if (planIterator.hasNext()) {
+					// 다음 Plan이 있으면 반환
+					return planIterator.next();
+				} else {
+					// 없으면 null을 반환 (plans = null 처리 안 해주면 getPlansForPostpone() 호출이 안됨)
+					plans = null;
+					return null;
+				}
 			}
 		};
 	}
@@ -83,7 +89,6 @@ public class BatchConfig {
 		return new ItemProcessor<Plan, Plan>() {
 			@Override
 			public Plan process(@NonNull Plan plan) throws Exception {
-				System.out.println("planPostponeProcessor실행 - process 실행");
 				planService.planPostponeAndPlanTrain(plan);
 				return plan;
 			}
@@ -107,9 +112,7 @@ public class BatchConfig {
 		return new ItemWriter<Plan>() {
 			@Override
 			public void write(@NonNull Chunk<? extends Plan> plans) throws Exception {
-				System.out.println("planPostponeWriter실행 - write 실행");
 				for (Plan plan : plans) {
-					System.out.println("planPostponeWriter실행 - write 반복문!!");
 					planService.updatePlan(plan);
 				}
 			}
