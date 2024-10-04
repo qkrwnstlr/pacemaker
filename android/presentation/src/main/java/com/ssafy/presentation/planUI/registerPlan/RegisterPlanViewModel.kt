@@ -107,8 +107,8 @@ class RegisterPlanViewModel @Inject constructor(
                         val running = healthConnectManager.readExerciseSessions(
                             start.toInstant(),
                             end.toInstant()
-                        ).firstOrNull()?.let {
-                            healthConnectManager.readAssociatedSessionData(it.metadata.id)
+                        ).firstOrNull()?.run {
+                            healthConnectManager.readAssociatedSessionData(metadata.id)
                         }
 
                         userInfo = userInfo.copy(
