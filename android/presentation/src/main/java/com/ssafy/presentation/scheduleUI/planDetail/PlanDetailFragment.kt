@@ -137,8 +137,11 @@ class PlanDetailFragment : BaseFragment<FragmentPlanDetail2Binding>(
         val firstMonth = dateList.firstOrNull()?.month ?: currentDate.month
         val lastMonth = dateList.lastOrNull()?.month ?: currentDate.month
 
-        val startMonth = YearMonth.of(currentDate.year, firstMonth)
-        val endMonth = YearMonth.of(currentDate.year, lastMonth)
+        val firstYear = dateList.firstOrNull()?.year ?: currentDate.year
+        val lastYear = dateList.lastOrNull()?.year ?: currentDate.year
+
+        val startMonth = YearMonth.of(firstYear, firstMonth)
+        val endMonth = YearMonth.of(lastYear, lastMonth)
         monthScrollListener = { updateTitle() }
         setup(startMonth, endMonth, daysOfWeek().first())
         scrollToMonth(currentDate)

@@ -129,6 +129,7 @@
 
             <com.ssafy.presentation.scheduleUI.schedule.PlanStateView
                 android:id="@+id/ly_plan"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -148,11 +149,13 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.viewpager2.widget.ViewPager2
+                android:visibility="gone"
                 android:id="@+id/vp_report"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
                 android:id="@+id/ly_nothing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
