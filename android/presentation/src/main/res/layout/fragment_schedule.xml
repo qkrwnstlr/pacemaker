@@ -129,9 +129,9 @@
 
             <com.ssafy.presentation.scheduleUI.schedule.PlanStateView
                 android:id="@+id/ly_plan"
-                android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -142,24 +142,24 @@
                 android:id="@+id/tv_inst"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/margin_16"
-                android:paddingTop="@dimen/margin_16"
+                android:paddingHorizontal="@dimen/padding_20"
+                android:paddingTop="@dimen/padding_20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.viewpager2.widget.ViewPager2
-                android:visibility="gone"
                 android:id="@+id/vp_report"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:visibility="gone"
                 android:id="@+id/ly_nothing"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/margin_16">
+                android:padding="@dimen/margin_16"
+                android:visibility="gone">
 
 
                 <TextView
@@ -189,9 +189,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_nothing" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-
         </LinearLayout>
     </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
