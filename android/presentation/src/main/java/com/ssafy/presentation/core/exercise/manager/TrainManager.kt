@@ -40,8 +40,8 @@ class TrainManager @Inject constructor(
             getPlanInfoUseCase()
         }.onSuccess {
             train = it.planTrains.firstOrNull {
-                it.status == "ACTIVE" && it.trainDate.toLocalDate()
-                    .atStartOfDay() == LocalDate.now().atStartOfDay()
+                it.status == "BEFORE" &&
+                        it.trainDate.toLocalDate().atStartOfDay() == LocalDate.now().atStartOfDay()
             } ?: PlanTrain()
         }.onFailure {
             train = PlanTrain()
@@ -125,6 +125,7 @@ class TrainManager @Inject constructor(
                 delay(3_000)
                 true
             }
+
             is TrainState.WarmUp -> duration.seconds >= session.goal
             is TrainState.During -> duration.seconds >= session.goal
             is TrainState.CoolDown -> duration.seconds >= session.goal
@@ -140,6 +141,7 @@ class TrainManager @Inject constructor(
                 delay(3_000)
                 true
             }
+
             is TrainState.WarmUp -> distance >= session.goal
             is TrainState.During -> distance >= session.goal
             is TrainState.CoolDown -> distance >= session.goal
