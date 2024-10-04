@@ -1,6 +1,7 @@
 package com.pacemaker.domain.plan.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,11 +14,11 @@ import com.pacemaker.domain.plan.entity.Plan;
 public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositoryCustom {
 
 	@Query("""
-			select count(p) > 0
-			  from Plan p
-			  where p.user.id = :userId
-			    and p.status = 'ACTIVE'
-			""")
+		select count(p) > 0
+		  from Plan p
+		  where p.user.id = :userId
+		    and p.status = 'ACTIVE'
+		""")
 	boolean existsActivePlan(Long userId);
 
 	/*
@@ -36,25 +37,36 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 
 	 */
 	@Query("""
-			select p
-			  from Plan p
-			  join fetch p.planTrains pt
-			  where p.user.id = (select u.id
-			  					   from User u
-			  					   where u.uid = :uid)
-			    and p.status = 'ACTIVE'
-			  order by pt.trainDate
-			""")
+		select p
+		  from Plan p
+		  join fetch p.planTrains pt
+		  where p.user.id = (select u.id
+		  					   from User u
+		  					   where u.uid = :uid)
+		    and p.status = 'ACTIVE'
+		  order by pt.trainDate
+		""")
 	Optional<Plan> findActivePlan(String uid); // @Param("uid")를 해주면 명시적이라 좋기도 하지만 생략도 가능!
+
 	Optional<Plan> findPlanById(Long planId);
 
 	@Query("""
-			select p
-			  from Plan p
-			  where p.user.id = (select u.id
-			  					   from User u
-			  					   where u.uid = :uid)
-			    and (:date between p.createdAt and p.expiredAt)
-			""")
+		select p
+		  from Plan p
+		  where p.user.id = (select u.id
+		  					   from User u
+		  					   where u.uid = :uid)
+		    and (:date between p.createdAt and p.expiredAt)
+		""")
 	Optional<Plan> findPlanByUidAndDate(String uid, LocalDate date);
+
+	@Query("""
+		select distinct p
+		  from Plan p
+		  join fetch p.planTrains pt
+		  where p.status = "ACTIVE"
+		    and pt.trainDate < current_date
+		    and pt.status = "BEFORE"
+		""")
+	List<Plan> findPlansForPostpone();
 }

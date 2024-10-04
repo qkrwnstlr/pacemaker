@@ -24,8 +24,8 @@ repositories {
 
     // spring ai는 아직 개발중이라 마일스톤과 스냅샷에 관리되어 있어서 그런거 같아서
     // 아래와 같이 추가해줘야 한다고 함
-    maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://repo.spring.io/snapshot' }
+//    maven { url 'https://repo.spring.io/milestone' }
+//    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
@@ -63,14 +63,17 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 
     // spring ai
-    implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
-    implementation 'org.springframework.ai:spring-ai-openai'
+//    implementation platform("org.springframework.ai:spring-ai-bom:1.0.0-SNAPSHOT")
+//    implementation 'org.springframework.ai:spring-ai-openai'
 
     // WebFlux -> Spring Web Reactive의 구현체 중 하나
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     // csv
     implementation 'com.opencsv:opencsv:5.9'
+
+    // Spring Boot Starter Batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
 }
 
 tasks.named('test') {
