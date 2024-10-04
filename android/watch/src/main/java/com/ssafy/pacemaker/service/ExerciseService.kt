@@ -86,8 +86,6 @@ class ExerciseService : LifecycleService() {
         if (intent?.action == RUNNING_ACTION && !isStarted) {
             isStarted = true
 
-            if (!isBound) stopSelfIfNotRunning()
-
             startForeground()
             exerciseMonitor.connect()
             exerciseServiceMonitor.connect()
@@ -135,7 +133,7 @@ class ExerciseService : LifecycleService() {
     private fun handleBind() {
         if (!isBound) {
             isBound = true
-            startForegroundService(Intent(this, this::class.java))
+            startService(Intent(this, this::class.java))
         }
     }
 
