@@ -102,22 +102,22 @@ class RegisterPlanViewModel @Inject constructor(
                     var userInfo = it.toUserInfo()
 
                     if (healthConnectManager.hasAllPermissions()) {
-                        val start = ZonedDateTime.now()
-                        val end = start.minusDays(30)
+                        val end = ZonedDateTime.now()
+                        val start = end.minusDays(30)
                         val running = healthConnectManager.readExerciseSessions(
-                            end.toInstant(),
-                            start.toInstant()
+                            start.toInstant(),
+                            end.toInstant()
                         ).firstOrNull()?.let {
                             healthConnectManager.readAssociatedSessionData(it.metadata.id)
                         }
 
                         userInfo = userInfo.copy(
-                            recentRunDistance = running?.totalDistance?.inKilometers?.toInt() ?: 0,
-                            recentRunHeartRate = running?.avgHeartRate?.toInt() ?: 0,
+                            recentRunDistance = running?.totalDistance?.inKilometers?.toInt() ?: userInfo.recentRunDistance,
+                            recentRunHeartRate = running?.avgHeartRate?.toInt() ?: userInfo.recentRunHeartRate,
                             recentRunPace = if (running?.totalActiveTime != null && running.totalDistance != null) {
-                                ((running.totalActiveTime.seconds / (60 * 60)) / running.totalDistance.inKilometers).toInt()
+                                (running.totalActiveTime.seconds / running.totalDistance.inKilometers).toInt()
                             } else {
-                                0
+                                userInfo.recentRunPace
                             },
                         )
                     }
@@ -210,11 +210,9 @@ class RegisterPlanViewModel @Inject constructor(
     }
 
     fun makePlan(
-        uid: String,
         successToMakePlan: suspend () -> Unit,
     ) = viewModelScope.launch(Dispatchers.IO) {
         val planRequest = PlanRequest(
-            uid = uid,
             context = contextData.value,
             plan = planData.value
         )
