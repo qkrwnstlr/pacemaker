@@ -34,9 +34,4 @@ public class PlanScheduler {
 			throw new ScheduledTaskException("스케줄링 작업 중 오류 발생", e);
 		}
 	}
-
-	@Scheduled(cron = "0 */2 * * * *")  // 2분마다
-	public void runTest() {
-		System.out.println("스케쥴링: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(System.currentTimeMillis())));
-	}
 }
