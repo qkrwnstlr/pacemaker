@@ -269,12 +269,28 @@ public class OpenAiService {
 	}
 
 	public Mono<String> updatePlanChatCompletions(ContentRequest contentRequest) {
+
+		String planResponseFormatString = ResponseFormatString.planChatResponseFormat;
+
+		JsonNode responseFormatNode;
+		try {
+			responseFormatNode = new ObjectMapper().readTree(planResponseFormatString);
+		} catch (Exception e) {
+			throw new RuntimeException("Response Format Json 생성 에러");
+		}
+
+		// 직렬화 -> 역직렬화로 llmContent에 meessage, context 필드 채우기
+		LlmContent llmRequestContent = new Gson().fromJson(new Gson().toJson(contentRequest), LlmContent.class);
+
+		// contentRequest -> llmContent 변경
+		LlmContent convertedLlmContent = convertContentRequestToLlmContent(contentRequest, llmRequestContent);
+
 		ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
 			.model("gpt-4o-2024-08-06")
 			.maxTokens(8000)
 			.messages(List.of(Message.updatePlanEngSystem(contentRequest.coachTone()),
-				Message.createUser(new Gson().toJson(contentRequest)),
-				Message.updatePlanResponseFormat(ResponseFormatString.planChatResponseFormat.replaceAll("\\s+", ""))))
+				Message.createUser(new Gson().toJson(convertedLlmContent))))
+			.responseFormat(responseFormatNode)
 			.build();
 
 		return openAIWebClient.post()
@@ -286,10 +302,18 @@ public class OpenAiService {
 				ChatCompletionResponse request = new Gson().fromJson(response, ChatCompletionResponse.class);
 				ContentResponse contentResponse = new Gson().fromJson(request.choices().getFirst().message().content(),
 					ContentResponse.class);
+				LlmContent llmContent = new Gson().fromJson(request.choices().getFirst().message().content(),
+					LlmContent.class);
+				System.out.println("contentResponse = " + contentResponse);
+				System.out.println("llmContentResponse = " + llmContent);
 
-				calculateSession(contentResponse);
+				ContentResponse convertedContentResponse = convertLlmResponseToContentResponse(contentResponse,
+					llmContent);
+				System.out.println("convertedContentResponse = " + convertedContentResponse);
 
-				return new Gson().toJson(contentResponse);
+				// calculateSession(convertedContentResponse);
+
+				return new Gson().toJson(convertedContentResponse);
 			});
 	}
 
