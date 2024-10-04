@@ -48,7 +48,19 @@ fun formatCalories(calories: Double?) = buildAnnotatedString {
     } else {
         append(calories.roundToInt().toString())
         withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
-            append(" cal")
+            append("kcal")
+        }
+    }
+}
+
+@Composable
+fun formatCadenceRate(cadence: Long?) = buildAnnotatedString {
+    if (cadence == null) {
+        append("--")
+    } else {
+        append("%d".format(cadence))
+        withStyle(style = MaterialTheme.typography.caption3.toSpanStyle()) {
+            append("spm")
         }
     }
 }
