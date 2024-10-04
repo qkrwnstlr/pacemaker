@@ -40,6 +40,14 @@ fun formatCalories(calories: Double?) = buildSpannedString {
     }
 }
 
+fun formatDistance(meters: Double?) = buildSpannedString {
+    if (meters == null) {
+        append("--")
+    } else {
+        append("%02.2f".format(meters / 1_000))
+    }
+}
+
 fun formatDistanceKm(meters: Double?) = buildSpannedString {
     if (meters == null) {
         append("--")
