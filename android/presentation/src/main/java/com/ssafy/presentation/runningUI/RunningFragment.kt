@@ -35,7 +35,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentRunningBinding
-import com.ssafy.presentation.utils.formatCalories
+import com.ssafy.presentation.utils.formatCadenceRate
 import com.ssafy.presentation.utils.formatDistanceKm
 import com.ssafy.presentation.utils.formatElapsedTime
 import com.ssafy.presentation.utils.formatHeartRate
@@ -102,12 +102,12 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
         tvDistance.text = "--"
         with(runningInfo) {
             boxBpm.tvRunningTitle.text = "심박수"
-            boxKcal.tvRunningTitle.text = "총 소모 칼로리"
+            boxCadence.tvRunningTitle.text = "케이던스"
             boxPace.tvRunningTitle.text = "페이스"
             boxTime.tvRunningTitle.text = "총 시간"
 
             boxBpm.tvRunningContent.text = "--"
-            boxKcal.tvRunningContent.text = "--"
+            boxCadence.tvRunningContent.text = "--"
             boxPace.tvRunningContent.text = "--"
             boxTime.tvRunningContent.text = "--"
         }
@@ -115,12 +115,12 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private fun initRunningMapView() = with(binding.runningMap.runningInfo) {
         boxBpm.tvRunningTitle.text = "심박수"
-        boxKcal.tvRunningTitle.text = "총 소모 칼로리"
+        boxCadence.tvRunningTitle.text = "케이던스"
         boxPace.tvRunningTitle.text = "페이스"
         boxTime.tvRunningTitle.text = "총 시간"
 
         boxBpm.tvRunningContent.text = "--"
-        boxKcal.tvRunningContent.text = "--"
+        boxCadence.tvRunningContent.text = "--"
         boxPace.tvRunningContent.text = "--"
         boxTime.tvRunningContent.text = "--"
     }
@@ -169,13 +169,13 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
                     with(binding.runningText.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxCadence.tvRunningContent.text = formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
                         boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                     }
                     with(binding.runningMap.runningInfo) {
                         boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxKcal.tvRunningContent.text = formatCalories(exerciseState.exerciseMetrics.calories)
+                        boxCadence.tvRunningContent.text = formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
                         boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
                         boxTime.tvRunningContent.text = formatElapsedTime(duration, true)
                         exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
