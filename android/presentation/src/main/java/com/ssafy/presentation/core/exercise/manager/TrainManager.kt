@@ -7,7 +7,6 @@ import com.ssafy.presentation.core.exercise.data.distance
 import com.ssafy.presentation.core.exercise.data.duration
 import com.ssafy.presentation.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.takeWhile
@@ -76,7 +75,6 @@ class TrainManager @Inject constructor(
                     "time" -> checkIsAchieved(it.duration)
                     "distance" -> checkIsAchieved(it.distance)
                     else -> {
-                        delay(3_000)
                         trainState.update { TrainState.Default }
                         return@collect
                     }
@@ -118,14 +116,10 @@ class TrainManager @Inject constructor(
         }
     }
 
-    private suspend fun checkIsAchieved(duration: Duration) = with(trainState.value) {
+    private fun checkIsAchieved(duration: Duration) = with(trainState.value) {
         when (this) {
             TrainState.None -> false
-            TrainState.Before -> {
-                delay(3_000)
-                true
-            }
-
+            TrainState.Before -> true
             is TrainState.WarmUp -> duration.seconds >= session.goal
             is TrainState.During -> duration.seconds >= session.goal
             is TrainState.CoolDown -> duration.seconds >= session.goal
@@ -134,14 +128,10 @@ class TrainManager @Inject constructor(
         }
     }
 
-    private suspend fun checkIsAchieved(distance: Double) = with(trainState.value) {
+    private fun checkIsAchieved(distance: Double) = with(trainState.value) {
         when (this) {
             TrainState.None -> false
-            TrainState.Before -> {
-                delay(3_000)
-                true
-            }
-
+            TrainState.Before -> true
             is TrainState.WarmUp -> distance >= session.goal
             is TrainState.During -> distance >= session.goal
             is TrainState.CoolDown -> distance >= session.goal
@@ -175,8 +165,8 @@ sealed class TrainSession(val type: Type, val goal: Int) {
         fun timeJogging(goal: Int) = Jogging(Type.TIME, goal)
         fun distanceJogging(goal: Int) = Jogging(Type.DISTANCE, goal)
 
-        val WARM_UP = timeJogging(Duration.ofMinutes(5).seconds.toInt())
-        val COOL_DOWN = timeJogging(Duration.ofMinutes(5).seconds.toInt())
+        val WARM_UP = timeJogging(Duration.ofMinutes(1).seconds.toInt())
+        val COOL_DOWN = timeJogging(Duration.ofMinutes(1).seconds.toInt())
     }
 
     enum class Type {
