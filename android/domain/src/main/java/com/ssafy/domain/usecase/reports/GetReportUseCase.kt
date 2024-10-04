@@ -2,14 +2,17 @@ package com.ssafy.domain.usecase.reports
 
 import com.ssafy.domain.dto.reports.Report
 import com.ssafy.domain.dto.schedule.ContentListDto
+import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.repository.ReportsRepository
 import com.ssafy.domain.response.ResponseResult
 import javax.inject.Inject
 
 class GetReportUseCase @Inject constructor(
-    private val reportsRepository: ReportsRepository
+    private val reportsRepository: ReportsRepository,
+    private val dataStoreRepository: DataStoreRepository
 ) {
-    suspend operator fun invoke(content: ContentListDto, uid: String): Report {
+    suspend operator fun invoke(content: ContentListDto): Report {
+        val uid = dataStoreRepository.getUser().uid
         val result =
             when (content.type) {
                 "DAILY_REPORT" -> {

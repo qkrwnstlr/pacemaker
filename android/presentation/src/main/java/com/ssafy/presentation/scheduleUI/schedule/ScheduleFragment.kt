@@ -50,7 +50,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     private var prevDateMap = emptyMap<String, List<ContentListDto>>()
     private var flag = true
     private val adapter = ViewPagerAdapter(emptyList()) { item, callback ->
-        viewModel.getReport(item, getUid()) { report ->
+        viewModel.getReport(item) { report ->
             callback(report)
         }
     }
