@@ -165,8 +165,8 @@ sealed class TrainSession(val type: Type, val goal: Int) {
         fun timeJogging(goal: Int) = Jogging(Type.TIME, goal)
         fun distanceJogging(goal: Int) = Jogging(Type.DISTANCE, goal)
 
-        val WARM_UP = timeJogging(Duration.ofMinutes(1).seconds.toInt())
-        val COOL_DOWN = timeJogging(Duration.ofMinutes(1).seconds.toInt())
+        val WARM_UP = timeJogging(Duration.ofMinutes(5).seconds.toInt())
+        val COOL_DOWN = timeJogging(Duration.ofMinutes(5).seconds.toInt())
     }
 
     enum class Type {
