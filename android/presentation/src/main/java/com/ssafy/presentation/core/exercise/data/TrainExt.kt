@@ -48,7 +48,7 @@ val Int.timeString
     get() = "${(this / 60).toKorean()}분${if(this % 60 != 0) " ${(this % 60).toKorean()}초" else ""}"
 
 val Int.distanceString
-    get() = "${this.toDouble() / 1000}km"
+    get() = "${(this.toDouble() / 1000).toKorean()}km"
 
 fun Int.toKorean(): String {
     val units = listOf("", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구")
@@ -58,13 +58,13 @@ fun Int.toKorean(): String {
     if (this == 0) return "영"
 
     var num = this
-    var result = StringBuilder()
+    val result = StringBuilder()
     var largeUnitIndex = 0
 
     while (num > 0) {
         val part = num % 10000
         if (part != 0) {
-            var partStr = StringBuilder()
+            val partStr = StringBuilder()
             var temp = part
             for (i in 0..3) {
                 val digit = temp % 10
@@ -81,4 +81,19 @@ fun Int.toKorean(): String {
     }
 
     return result.toString().trim()
+}
+
+fun Double.toKorean(): String {
+    val integerPart = this.toInt()
+    val decimalPart = this.toString().split(".").getOrNull(1)?.trimEnd('0') ?: ""
+
+    val intKorean = integerPart.toKorean()
+    val decimalKorean = decimalPart.map { it.toString().toInt().toKoreanDigit() }.joinToString("")
+
+    return if (decimalKorean.isNotEmpty()) "$intKorean 점 $decimalKorean" else intKorean
+}
+
+fun Int.toKoreanDigit(): String {
+    val units = listOf("영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구")
+    return units[this]
 }
