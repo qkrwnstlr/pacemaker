@@ -10,15 +10,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import com.ssafy.pacemaker.presentation.ExerciseNavigator
 import com.ssafy.pacemaker.presentation.Screen
 import com.ssafy.pacemaker.presentation.WearApp
 import com.ssafy.pacemaker.presentation.exercise.ExerciseViewModel
+import com.ssafy.pacemaker.presentation.navigateToTopLevel
 import com.ssafy.pacemaker.service.ExerciseService
 import com.ssafy.pacemaker.utils.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var exerciseNavigator: ExerciseNavigator
+
     private lateinit var navController: NavHostController
 
     private val exerciseViewModel by viewModels<ExerciseViewModel>()
@@ -40,6 +46,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             navController = rememberSwipeDismissableNavController()
 
+            exerciseNavigator.connect(navController)
+
             WearApp(navController)
 
             LaunchedEffect(Unit) {
@@ -54,7 +62,7 @@ class MainActivity : ComponentActivity() {
     private suspend fun prepareIfNoExercise() {
         val isRegularLaunch = navController.currentDestination?.route == Screen.Home.route
         if (isRegularLaunch && exerciseViewModel.isExerciseInProgress()) {
-            navController.navigate(Screen.Exercise.route)
+            navController.navigateToTopLevel(Screen.Exercise)
         }
     }
 
