@@ -80,5 +80,10 @@
     <string name="send">전송</string>
     <string name="create">생성</string>
     <string name="nothing">진행중인 훈련이 없어요</string>
+    <string name="zone5">5. 최대 심박수 운동</string>
+    <string name="zone4">4. 무산소 운동</string>
+    <string name="zone3">3. 유산소 운동</string>
+    <string name="zone2">2. 체중 조절 운동</string>
+    <string name="zone1">1. 저강도 운동</string>
 
 </resources>
