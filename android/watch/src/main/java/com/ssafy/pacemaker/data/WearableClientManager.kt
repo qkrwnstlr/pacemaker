@@ -38,7 +38,7 @@ class WearableClientManager @Inject constructor(
         ).registerTypeAdapter(
             ActiveDurationCheckpoint::class.java,
             ActiveDurationCheckpointDeserializer(),
-        ).create()
+        ).serializeSpecialFloatingPointValues().create()
 
         val request = PutDataRequest.create(path)
             .apply { setData(gson.toJson(data).toByteArray()) }
