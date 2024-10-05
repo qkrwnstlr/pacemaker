@@ -40,7 +40,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 		select p
 		  from Plan p
 		  join fetch p.planTrains pt
-		  where p.user.id = :uid
+		  where p.user.uid = :uid
 		    and p.status = 'ACTIVE'
 		  order by pt.trainDate
 		""")
