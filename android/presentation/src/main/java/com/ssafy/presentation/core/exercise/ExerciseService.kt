@@ -145,8 +145,6 @@ class ExerciseService : LifecycleService() {
         lifecycleScope.launch {
             exerciseManager.exerciseServiceState.collect {
                 when (it.exerciseState) {
-                    ExerciseState.PREPARING -> {}
-
                     ExerciseState.ENDED -> {
                         with(trainManager.trainState.value) {
                             when (this) {
