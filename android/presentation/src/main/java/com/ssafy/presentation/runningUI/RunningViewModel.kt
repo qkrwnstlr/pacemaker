@@ -32,6 +32,8 @@ class RunningViewModel @Inject constructor(
         }
     )
 
+    val trainState = exerciseRepository.trainState
+
     fun pauseExercise() {
         exerciseRepository.pauseExercise()
     }
@@ -43,4 +45,7 @@ class RunningViewModel @Inject constructor(
     fun resumeExercise() {
         exerciseRepository.resumeExercise()
     }
+
+    fun skipWarmUp() = exerciseRepository.skipWarmUp()
+    fun skipCoolDown() = exerciseRepository.skipCoolDown()
 }

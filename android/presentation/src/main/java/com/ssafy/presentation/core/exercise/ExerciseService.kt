@@ -214,7 +214,6 @@ class ExerciseService : LifecycleService() {
             trainManager.disconnect()
             exerciseManager.disconnect()
             coachingManager.disconnect()
-            voiceManager.disconnect()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
@@ -230,10 +229,6 @@ class ExerciseService : LifecycleService() {
 
         val trainState: Flow<TrainState>
             get() = this@ExerciseService.trainManager.trainState
-
-        fun skipWarmUp() = this@ExerciseService.trainManager.skipWarmUp()
-        
-        fun skipCoolDown() = this@ExerciseService.trainManager.skipCoolDown()
     }
 
     private fun startForeground() {
@@ -265,6 +260,18 @@ class ExerciseService : LifecycleService() {
 
     suspend fun endExercise() {
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
+    }
+
+    fun skipWarmUp() {
+        voiceManager.disconnect()
+        trainManager.skipWarmUp()
+        voiceManager.connect()
+    }
+
+    fun skipCoolDown() {
+        voiceManager.disconnect()
+        trainManager.skipCoolDown()
+        voiceManager.connect()
     }
 
     companion object {

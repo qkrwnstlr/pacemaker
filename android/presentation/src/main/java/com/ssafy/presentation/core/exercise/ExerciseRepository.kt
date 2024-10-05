@@ -2,6 +2,7 @@ package com.ssafy.presentation.core.exercise
 
 import android.content.Context
 import androidx.health.services.client.data.ExerciseState
+import com.ssafy.presentation.core.exercise.manager.TrainState
 import com.ssafy.presentation.utils.BinderConnection
 import com.ssafy.presentation.utils.bindService
 import dagger.hilt.android.ActivityRetainedLifecycle
@@ -27,7 +28,10 @@ class ExerciseRepository @Inject constructor(
 
     private var exerciseServiceStateUpdates: Flow<ExerciseServiceState>? = null
 
+    private var trainStateUpdates: Flow<TrainState>? = null
+
     val serviceState: MutableStateFlow<ServiceState> = MutableStateFlow(ServiceState.Disconnected)
+    val trainState: MutableStateFlow<TrainState> = MutableStateFlow(TrainState.None)
 
     private fun bindService() {
         if (binderConnection != null) return
@@ -35,6 +39,7 @@ class ExerciseRepository @Inject constructor(
         binderConnection = lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
         exerciseServiceStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
+        trainStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::trainState)
 
         coroutineScope.launch {
             exerciseServiceStateUpdates?.takeWhile { binderConnection != null }?.collect { exerciseServiceState ->
@@ -45,12 +50,19 @@ class ExerciseRepository @Inject constructor(
                 }
             }
         }
+
+        coroutineScope.launch {
+            trainStateUpdates?.takeWhile { binderConnection != null }?.collect { state ->
+                trainState.update { state }
+            }
+        }
     }
 
     private fun unbindService() {
         binderConnection?.unbind()
         binderConnection = null
         exerciseServiceStateUpdates = null
+        trainStateUpdates = null
         serviceState.update { ServiceState.Disconnected }
     }
 
@@ -65,6 +77,9 @@ class ExerciseRepository @Inject constructor(
     fun pauseExercise() = serviceCall { pauseExercise() }
     fun resumeExercise() = serviceCall { resumeExercise() }
     fun endExercise() = serviceCall { endExercise() }
+
+    fun skipWarmUp() = serviceCall { skipWarmUp() }
+    fun skipCoolDown() = serviceCall { skipCoolDown() }
 }
 
 sealed class ServiceState {
