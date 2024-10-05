@@ -21,6 +21,7 @@ import javax.inject.Singleton
 class TrainManager @Inject constructor(
     private val getPlanInfoUseCase: GetPlanInfoUseCase,
     private val coroutineScope: CoroutineScope,
+    private var exerciseManager: ExerciseManager
 ) {
     private var isConnected = false
 
@@ -30,8 +31,12 @@ class TrainManager @Inject constructor(
 
     val trainState: MutableStateFlow<TrainState> = MutableStateFlow(TrainState.Before)
 
-    suspend fun connect(exerciseSessionFlow: Flow<List<ExerciseSessionData>>) {
+    private var isUpdating = false
+
+    suspend fun connect() {
         if (isConnected) return
+
+        isUpdating = false
         trainState.emit(TrainState.Before)
 
         isConnected = true
@@ -58,7 +63,7 @@ class TrainManager @Inject constructor(
             }
         }
 
-        collectExerciseSessionData(exerciseSessionFlow)
+        collectExerciseSessionData()
     }
 
     fun disconnect() {
@@ -66,21 +71,24 @@ class TrainManager @Inject constructor(
         trainState.update { TrainState.None }
     }
 
-    private fun collectExerciseSessionData(
-        exerciseSessionFlow: Flow<List<ExerciseSessionData>>,
-    ) {
+    private fun collectExerciseSessionData() {
         coroutineScope.launch {
-            exerciseSessionFlow.takeWhile { isConnected }.collect {
-                val isTrainAchieved = when (train.paramType) {
-                    "time" -> checkIsAchieved(it.duration)
-                    "distance" -> checkIsAchieved(it.distance)
-                    else -> {
-                        trainState.update { TrainState.Default }
-                        return@collect
+            exerciseManager.currentSessionData.takeWhile { isConnected }.collect {
+                if (!isUpdating) {
+                    isUpdating = true
+                    val isTrainAchieved = when (train.paramType) {
+                        "time" -> checkIsAchieved(it.duration)
+                        "distance" -> checkIsAchieved(it.distance)
+                        else -> {
+                            exerciseManager.startJogging()
+                            trainState.update { TrainState.Default }
+                            return@collect
+                        }
                     }
-                }
 
-                if (isTrainAchieved) setToNextTrainState()
+                    if (isTrainAchieved) setToNextTrainState()
+                    isUpdating = false
+                }
             }
         }
     }
@@ -88,26 +96,36 @@ class TrainManager @Inject constructor(
     private fun setToNextTrainState() = with(trainState.value) {
         trainState.update {
             when (this) {
-                is TrainState.Before -> TrainState.WarmUp()
+                is TrainState.Before -> {
+                    exerciseManager.startJogging()
+                    TrainState.WarmUp()
+                }
 
                 is TrainState.WarmUp -> {
+                    exerciseManager.stopJogging()
+                    exerciseManager.startRunning()
                     TrainState.During(running, 1)
                 }
 
                 is TrainState.During -> {
                     when (session) {
                         is TrainSession.Running -> {
-                            if (step <= train.repetition) TrainState.During(jogging, step)
+                            exerciseManager.stopRunning()
+                            exerciseManager.startJogging()
+                            if (step < train.repetition) TrainState.During(jogging, step)
                             else TrainState.CoolDown()
                         }
 
                         is TrainSession.Jogging -> {
+                            exerciseManager.stopJogging()
+                            exerciseManager.startRunning()
                             TrainState.During(running, step + 1)
                         }
                     }
                 }
 
                 is TrainState.CoolDown -> {
+                    exerciseManager.stopJogging()
                     TrainState.Ended
                 }
 
@@ -137,6 +155,21 @@ class TrainManager @Inject constructor(
             is TrainState.CoolDown -> distance >= session.goal
             TrainState.Ended -> false
             TrainState.Default -> false
+        }
+    }
+
+    fun skipWarmUp() {
+        if (trainState.value is TrainState.WarmUp) {
+            exerciseManager.stopJogging()
+            exerciseManager.startRunning()
+            trainState.update { TrainState.During(running, 1) }
+        }
+    }
+
+    fun skipCoolDown() {
+        if (trainState.value is TrainState.WarmUp) {
+            exerciseManager.stopJogging()
+            trainState.update { TrainState.Ended }
         }
     }
 
