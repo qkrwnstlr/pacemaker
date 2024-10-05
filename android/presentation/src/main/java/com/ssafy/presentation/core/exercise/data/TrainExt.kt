@@ -20,8 +20,8 @@ val TrainState.message
         is TrainState.WarmUp -> "Warm Up 세션 시작. ${session.message}"
 
         is TrainState.During -> when (session) {
-            is TrainSession.Running -> "${step}번 세션 시작. ${session.message}"
-            is TrainSession.Jogging -> "${step}번 세션 종료. ${session.message}"
+            is TrainSession.Running -> "${step.toKorean()}번 세션 시작. ${session.message}"
+            is TrainSession.Jogging -> "${step.toKorean()}번 세션 종료. ${session.message}"
         }
 
         is TrainState.CoolDown -> "Cool Down 세션 시작. ${session.message}"
@@ -45,7 +45,55 @@ val TrainSession.message
     }
 
 val Int.timeString
-    get() = "${this / 60}분${if(this % 60 != 0) " ${this % 60}초" else ""}"
+    get() = "${(this / 60).toKorean()}분${if(this % 60 != 0) " ${(this % 60).toKorean()}초" else ""}"
 
 val Int.distanceString
-    get() = "${this.toDouble() / 1000}km"
+    get() = "${(this.toDouble() / 1000).toKorean()}km"
+
+fun Int.toKorean(): String {
+    val units = listOf("", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구")
+    val tens = listOf("", "십", "백", "천")
+    val largeUnits = listOf("", "만", "억", "조", "경")
+
+    if (this == 0) return "영"
+
+    var num = this
+    val result = StringBuilder()
+    var largeUnitIndex = 0
+
+    while (num > 0) {
+        val part = num % 10000
+        if (part != 0) {
+            val partStr = StringBuilder()
+            var temp = part
+            for (i in 0..3) {
+                val digit = temp % 10
+                if (digit != 0) {
+                    val unitStr = if (i == 1 && digit == 1) tens[i] else units[digit] + tens[i]
+                    partStr.insert(0, unitStr)
+                }
+                temp /= 10
+            }
+            result.insert(0, partStr.append(largeUnits[largeUnitIndex]))
+        }
+        num /= 10000
+        largeUnitIndex++
+    }
+
+    return result.toString().trim()
+}
+
+fun Double.toKorean(): String {
+    val integerPart = this.toInt()
+    val decimalPart = this.toString().split(".").getOrNull(1)?.trimEnd('0') ?: ""
+
+    val intKorean = integerPart.toKorean()
+    val decimalKorean = decimalPart.map { it.toString().toInt().toKoreanDigit() }.joinToString("")
+
+    return if (decimalKorean.isNotEmpty()) "$intKorean 점 $decimalKorean" else intKorean
+}
+
+fun Int.toKoreanDigit(): String {
+    val units = listOf("영", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구")
+    return units[this]
+}
