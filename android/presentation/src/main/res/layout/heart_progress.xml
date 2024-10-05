@@ -20,9 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginEnd="@dimen/margin_8"
-        android:text="zone1"
-        app:layout_constraintEnd_toStartOf="@+id/pb_zone1"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/zone1"
+        app:layout_constraintStart_toStartOf="@id/zone5"
         app:layout_constraintTop_toBottomOf="@id/tv_heart_rate" />
 
     <ProgressBar
@@ -31,8 +30,8 @@
         android:layout_width="0dp"
         android:progressDrawable="@drawable/progress_bar_blue"
         app:layout_constraintBottom_toBottomOf="@+id/zone1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/zone1"
+        app:layout_constraintEnd_toEndOf="@id/pb_zone5"
+        app:layout_constraintStart_toStartOf="@id/pb_zone5"
         app:layout_constraintTop_toTopOf="@+id/zone1" />
 
     <TextView
@@ -42,9 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginEnd="@dimen/margin_8"
-        android:text="zone2"
-        app:layout_constraintEnd_toStartOf="@+id/pb_zone2"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/zone2"
+        app:layout_constraintStart_toStartOf="@id/zone5"
         app:layout_constraintTop_toBottomOf="@id/zone1" />
 
     <ProgressBar
@@ -53,8 +51,8 @@
         android:layout_width="0dp"
         android:progressDrawable="@drawable/progress_bar_green"
         app:layout_constraintBottom_toBottomOf="@id/zone2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/zone2"
+        app:layout_constraintEnd_toEndOf="@id/pb_zone5"
+        app:layout_constraintStart_toStartOf="@id/pb_zone5"
         app:layout_constraintTop_toTopOf="@id/zone2" />
 
     <TextView
@@ -64,9 +62,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginEnd="@dimen/margin_8"
-        android:text="zone3"
-        app:layout_constraintEnd_toStartOf="@+id/pb_zone3"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/zone3"
+        app:layout_constraintStart_toStartOf="@id/zone5"
         app:layout_constraintTop_toBottomOf="@id/zone2" />
 
     <ProgressBar
@@ -75,8 +72,8 @@
         android:layout_width="0dp"
         android:progressDrawable="@drawable/progress_bar_yellow"
         app:layout_constraintBottom_toBottomOf="@id/zone3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/zone3"
+        app:layout_constraintEnd_toEndOf="@id/pb_zone5"
+        app:layout_constraintStart_toStartOf="@id/pb_zone5"
         app:layout_constraintTop_toTopOf="@id/zone3" />
 
     <TextView
@@ -86,9 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginEnd="@dimen/margin_8"
-        android:text="zone4"
-        app:layout_constraintEnd_toStartOf="@+id/pb_zone4"
-        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/zone4"
+        app:layout_constraintStart_toStartOf="@id/zone5"
         app:layout_constraintTop_toBottomOf="@id/zone3" />
 
     <ProgressBar
@@ -97,8 +93,8 @@
         android:layout_width="0dp"
         android:progressDrawable="@drawable/progress_bar_orange"
         app:layout_constraintBottom_toBottomOf="@id/zone4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/zone4"
+        app:layout_constraintEnd_toEndOf="@id/pb_zone5"
+        app:layout_constraintStart_toStartOf="@id/pb_zone5"
         app:layout_constraintTop_toTopOf="@id/zone4" />
 
     <TextView
@@ -108,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="@dimen/margin_8"
         android:layout_marginEnd="@dimen/margin_8"
-        android:text="zone5"
+        android:text="@string/zone5"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/pb_zone5"
         app:layout_constraintStart_toStartOf="parent"
