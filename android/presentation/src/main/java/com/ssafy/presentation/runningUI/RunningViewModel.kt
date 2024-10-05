@@ -32,10 +32,6 @@ class RunningViewModel @Inject constructor(
         }
     )
 
-    fun startExercise() {
-        exerciseRepository.startExercise()
-    }
-
     fun pauseExercise() {
         exerciseRepository.pauseExercise()
     }
