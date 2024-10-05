@@ -11,12 +11,13 @@ class GetUserInfoUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) {
 
-    suspend operator fun invoke(uid: String): User {
-        val response = userRepository.getInfo(uid)
+    suspend operator fun invoke(uid: String? = null): User {
+        val userId = uid ?: dataStoreRepository.getUser().uid
+        val response = userRepository.getInfo(userId)
         if (response is ResponseResult.Error) throw RuntimeException(response.message)
 
         val user = response.data ?: throw RuntimeException()
-        val newUser = user.copy(uid = uid)
+        val newUser = user.copy(uid = userId)
         dataStoreRepository.saveUser(newUser)
         return response.data
     }
