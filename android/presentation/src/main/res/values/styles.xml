@@ -46,7 +46,7 @@
     </style>
 
     <style name="ResultText" parent="Widget.AppCompat.TextView">
-        <item name="android:textSize">@dimen/text_18</item>
+        <item name="android:textSize">@dimen/text_14</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:layout_marginTop">@dimen/margin_6</item>
         <item name="android:layout_width">wrap_content</item>
