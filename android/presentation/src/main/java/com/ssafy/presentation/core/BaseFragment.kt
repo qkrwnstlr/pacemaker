@@ -38,12 +38,12 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
 
     override fun onResume() {
         super.onResume()
-        exerciseNavigator.connect(findNavController())
+        if(this::exerciseNavigator.isInitialized) exerciseNavigator.connect(findNavController())
     }
 
     override fun onPause() {
         super.onPause()
-        exerciseNavigator.disconnect()
+        if(this::exerciseNavigator.isInitialized) exerciseNavigator.disconnect()
     }
 
     override fun onDestroyView() {
