@@ -23,12 +23,8 @@ import com.ssafy.pacemaker.presentation.component.button.StartButton
 import com.ssafy.pacemaker.presentation.component.layout.Center
 
 @Composable
-fun HomeRoute(
-    modifier: Modifier = Modifier,
-    onStart: () -> Unit,
-) {
+fun HomeRoute() {
     val viewModel = hiltViewModel<HomeViewModel>()
-    viewModel.collectServiceState(onStart)
 
     HomeScreen(
         onStartClick = { viewModel.startExercise() }

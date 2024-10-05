@@ -15,6 +15,8 @@ class ExerciseServiceMonitor @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val exerciseClientManager: ExerciseClientManager,
 ) {
+    private var isConnected = false
+
     val exerciseServiceState = MutableStateFlow(
         ExerciseServiceState(
             exerciseState = null,
@@ -23,6 +25,8 @@ class ExerciseServiceMonitor @Inject constructor(
     )
 
     fun connect() {
+        if (isConnected) return
+        isConnected = true
         coroutineScope.launch {
             exerciseClientManager.exerciseUpdateFlow.collect {
                 when (it) {
@@ -60,6 +64,8 @@ class ExerciseServiceMonitor @Inject constructor(
     }
 
     fun disconnect() {
+        if (!isConnected) return
+        isConnected = false
         exerciseServiceState.update {
             ExerciseServiceState(
                 exerciseState = null,
