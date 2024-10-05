@@ -11,14 +11,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.fragment.NavHostFragment
 import com.ssafy.presentation.R
+import com.ssafy.presentation.core.exercise.ExerciseRepository
 import com.ssafy.presentation.utils.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var exerciseRepository: ExerciseRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +60,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleIntent(intent: Intent?) {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
-        val navController = navHostFragment.navController
         when (intent?.action) {
             RUNNING_ACTION -> {
-                if(navController.currentDestination?.id != R.id.runningFragment) navController.navigate(R.id.runningFragment)
+                exerciseRepository.startExercise()
             }
         }
     }
