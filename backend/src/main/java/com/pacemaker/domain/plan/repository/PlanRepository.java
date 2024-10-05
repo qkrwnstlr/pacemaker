@@ -40,9 +40,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 		select p
 		  from Plan p
 		  join fetch p.planTrains pt
-		  where p.user.id = (select u.id
-		  					   from User u
-		  					   where u.uid = :uid)
+		  where p.user.id = :uid
 		    and p.status = 'ACTIVE'
 		  order by pt.trainDate
 		""")
@@ -53,9 +51,7 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 	@Query("""
 		select p
 		  from Plan p
-		  where p.user.id = (select u.id
-		  					   from User u
-		  					   where u.uid = :uid)
+		  where p.user.uid = :uid
 		    and (:date between p.createdAt and p.expiredAt)
 		""")
 	Optional<Plan> findPlanByUidAndDate(String uid, LocalDate date);
@@ -65,8 +61,11 @@ public interface PlanRepository extends JpaRepository<Plan, Long>, PlanRepositor
 		  from Plan p
 		  join fetch p.planTrains pt
 		  where p.status = "ACTIVE"
-		    and pt.trainDate < current_date
-		    and pt.status = "BEFORE"
+		  	and exists (select 1
+		  				  from p.planTrains pt2
+		  				  where pt2.trainDate < current_date
+		  				    and pt2.status = "BEFORE")
+		  order by pt.trainDate
 		""")
 	List<Plan> findPlansForPostpone();
 }

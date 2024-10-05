@@ -189,15 +189,21 @@ public class PlanService {
 		int totalDays = 0;
 		int totalTimes = 0;
 		int totalDistances = 0;
+		LocalDate trainDate = plan.getPlanTrains().get(0).getTrainDate(); // getFirst()는 Java 21 이상 부터 가능
+		LocalDate createdAt = trainDate;
+		LocalDate expiredAt = trainDate;
 
 		for (PlanTrain planTrain : plan.getPlanTrains()) {
 			totalDays++;
 			totalTimes += planTrain.getSessionTime() != null ? planTrain.getSessionTime() : 0;
 			totalDistances += planTrain.getSessionDistance() != null ? planTrain.getSessionDistance() : 0;
+
+			trainDate = planTrain.getTrainDate();
+			createdAt = trainDate.isBefore(createdAt) ? trainDate : createdAt;
+			expiredAt = trainDate.isAfter(expiredAt) ? trainDate : expiredAt;
 		}
 
-		plan.updatePlanDetails(totalDays, totalTimes, totalDistances, plan.getPlanTrains().getFirst().getTrainDate(),
-			LocalDate.parse(updatePlanRequest.plan().planTrains().getLast().trainDate()));
+		plan.updatePlanDetails(totalDays, totalTimes, totalDistances, createdAt, expiredAt);
 
 		planRepository.save(plan);
 	}
@@ -220,10 +226,13 @@ public class PlanService {
 		List<PlanTrain> planTrains = plan.getPlanTrains();
 		int size = planTrains.size();
 		PlanTrain planTrain;
-
+		// 여기 우선 안정될 때까지 sout 남겨두기!!
+		System.out.println("plan.id: " + plan.getId());
+		System.out.println("size: " + size);
 		for (int i = 0; i < size - 1; i++) {
 			planTrain = planTrains.get(i);
-
+			// 여기도 안정될 때까지 sout 남겨두기!!
+			System.out.println(planTrain.getTrainDate());
 			// planTrain이 DONE인 경우는 넘기기
 			if (planTrain.getStatus() == PlanTrainStatus.DONE) {
 				continue;
@@ -312,16 +321,24 @@ public class PlanService {
 		int totalDays = 0;
 		int totalTimes = 0;
 		int totalDistance = 0;
+		LocalDate trainDate = LocalDate.parse(planTrains.get(0).trainDate()); // getFirst()는 Java 21 이상 부터 가능
+		LocalDate createdAt = trainDate;
+		LocalDate expiredAt = trainDate;
+		
 		for (ContentRequest.Plan.PlanTrain planTrain : planTrains) {
 			totalDays++;
 			totalTimes += planTrain.sessionTime() != null ? planTrain.sessionTime() : 0;
 			totalDistance += planTrain.sessionDistance() != null ? planTrain.sessionDistance() : 0;
+
+			trainDate = LocalDate.parse(planTrain.trainDate());
+			createdAt = trainDate.isBefore(createdAt) ? trainDate : createdAt;
+			expiredAt = trainDate.isAfter(expiredAt) ? trainDate : expiredAt;
 		}
 
 		return Plan.builder()
 			.user(userInfo)
-			.createdAt(LocalDate.parse(planTrains.getFirst().trainDate()))
-			.expiredAt(LocalDate.parse(planTrains.getLast().trainDate()))
+			.createdAt(createdAt)
+			.expiredAt(expiredAt)
 			.totalDays(totalDays)
 			.totalTimes(totalTimes)
 			.totalDistances(totalDistance)
