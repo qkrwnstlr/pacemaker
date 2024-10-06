@@ -7,19 +7,18 @@ import com.ssafy.presentation.core.exercise.ServiceState
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.takeWhile
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ActivityRetainedScoped
 class ExerciseNavigator @Inject constructor(private val exerciseRepository: ExerciseRepository) {
-    private var isConnected = false
+    private var navigationJob: Job? = null
 
     fun connect(navController: NavController) {
-        if (isConnected) return
-        isConnected = true
-        CoroutineScope(Dispatchers.Main).launch {
-            exerciseRepository.serviceState.takeWhile { isConnected }.collect {
+        if (navigationJob != null) return
+        navigationJob = CoroutineScope(Dispatchers.Main).launch {
+            exerciseRepository.serviceState.collect {
                 if (navController.currentDestination?.id != R.id.loginFragment) {
                     when (it) {
                         is ServiceState.Disconnected -> {
@@ -41,6 +40,7 @@ class ExerciseNavigator @Inject constructor(private val exerciseRepository: Exer
     }
 
     fun disconnect() {
-        isConnected = false
+        navigationJob?.cancel()
+        navigationJob = null
     }
 }

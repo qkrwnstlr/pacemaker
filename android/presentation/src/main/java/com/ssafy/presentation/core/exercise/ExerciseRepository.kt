@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -42,7 +41,7 @@ class ExerciseRepository @Inject constructor(
         trainStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::trainState)
 
         coroutineScope.launch {
-            exerciseServiceStateUpdates?.takeWhile { binderConnection != null }?.collect { exerciseServiceState ->
+            exerciseServiceStateUpdates?.collect { exerciseServiceState ->
                 serviceState.update { ServiceState.Connected(exerciseServiceState) }
                 if (exerciseServiceState.exerciseState == ExerciseState.ENDED) {
                     delay(100) // TODO : 연속으로 같은 state를 2번 update하니까 하나가 씹힘...
@@ -52,7 +51,7 @@ class ExerciseRepository @Inject constructor(
         }
 
         coroutineScope.launch {
-            trainStateUpdates?.takeWhile { binderConnection != null }?.collect { state ->
+            trainStateUpdates?.collect { state ->
                 trainState.update { state }
             }
         }
