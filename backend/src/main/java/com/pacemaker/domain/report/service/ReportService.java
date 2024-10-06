@@ -97,7 +97,7 @@ public class ReportService {
 		String heartZone = convertStringHeartZone(reportPlanCreateRequest.trainResult().heartZone());
 		String splitData = convertStringSplitData(reportPlanCreateRequest.trainResult().splitData());
 		String trainMap = convertStringTrainMap(reportPlanCreateRequest.trainResult().trainMap());
-		String stringCoachMessage = convertStringCoachMessage(reportPlanCreateRequest.trainResult().coachMessage());
+		String stringCoachMessage = convertStringCoachMessage(coachMessage);
 
 		Report report = reportRepository.save(Report.builder()
 			.user(user)
