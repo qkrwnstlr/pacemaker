@@ -34,6 +34,7 @@ class ConnectViewModel @Inject constructor(
         val user = userInfo.copy(
             height = height?.toInt() ?: userInfo.height,
             weight = weight?.toInt() ?: userInfo.weight,
+            uid = uid
         )
         dataStoreRepository.saveUser(user)
         modifyUserUseCase(uid, user)
