@@ -15,11 +15,16 @@ class ExerciseMonitor @Inject constructor(
     private val exerciseClientManager: ExerciseClientManager,
     private val coroutineScope: CoroutineScope
 ) : MessageClient.OnMessageReceivedListener {
+    private var isConnected = false
     fun connect() {
+        if (isConnected) return
+        isConnected = true
         wearableClientManager.messageClient.addListener(this)
     }
 
     fun disconnect() {
+        if (!isConnected) return
+        isConnected = false
         wearableClientManager.messageClient.removeListener(this)
     }
 

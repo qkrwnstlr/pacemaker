@@ -1,6 +1,7 @@
 package com.ssafy.presentation.runningUI
 
 import android.annotation.SuppressLint
+import android.app.Dialog
 import android.content.Context
 import android.content.Context.LOCATION_SERVICE
 import android.graphics.Bitmap
@@ -31,8 +32,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ssafy.presentation.R
 import com.ssafy.presentation.core.BaseFragment
+import com.ssafy.presentation.core.exercise.manager.TrainState
 import com.ssafy.presentation.databinding.FragmentRunningBinding
 import com.ssafy.presentation.utils.formatCadenceRate
 import com.ssafy.presentation.utils.formatDistance
@@ -56,16 +59,20 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
     private var timer: ActiveDurationTimerController? = null
 
+    private var skipDialog: Dialog? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         initCollect()
         initListener()
         initMapView()
-        timer = ActiveDurationTimerController(this, listOf(
-            binding.runningText.runningInfo.boxTime.tvRunningContent,
-            binding.runningMap.runningInfo.boxTime.tvRunningContent,
-        ))
+        timer = ActiveDurationTimerController(
+            this, listOf(
+                binding.runningText.runningInfo.boxTime.tvRunningContent,
+                binding.runningMap.runningInfo.boxTime.tvRunningContent,
+            )
+        )
     }
 
     private fun initListener() = with(binding) {
@@ -131,12 +138,18 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             collectTrainingState()
+            collectTrainState()
         }
     }
 
     private fun CoroutineScope.collectTrainingState() = launch {
         viewModel.uiState.collect {
-            it.exerciseState?.run { timer?.updateExerciseState(exerciseState, activeDurationCheckpoint) }
+            it.exerciseState?.run {
+                timer?.updateExerciseState(
+                    exerciseState,
+                    activeDurationCheckpoint
+                )
+            }
 
             if (it.isPaused) {
                 with(binding) {
@@ -160,17 +173,24 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
 
             if (it.isActive) {
                 it.exerciseState?.let { exerciseState ->
-                    binding.runningText.tvDistance.text = formatDistance(exerciseState.exerciseMetrics.distance)
+                    binding.runningText.tvDistance.text =
+                        formatDistance(exerciseState.exerciseMetrics.distance)
 
                     with(binding.runningText.runningInfo) {
-                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxCadence.tvRunningContent.text = formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
-                        boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
+                        boxBpm.tvRunningContent.text =
+                            formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxCadence.tvRunningContent.text =
+                            formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
+                        boxPace.tvRunningContent.text =
+                            formatSpeed(exerciseState.exerciseMetrics.speed)
                     }
                     with(binding.runningMap.runningInfo) {
-                        boxBpm.tvRunningContent.text = formatHeartRate(exerciseState.exerciseMetrics.heartRate)
-                        boxCadence.tvRunningContent.text = formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
-                        boxPace.tvRunningContent.text = formatSpeed(exerciseState.exerciseMetrics.speed)
+                        boxBpm.tvRunningContent.text =
+                            formatHeartRate(exerciseState.exerciseMetrics.heartRate)
+                        boxCadence.tvRunningContent.text =
+                            formatCadenceRate(exerciseState.exerciseMetrics.cadence?.toInt())
+                        boxPace.tvRunningContent.text =
+                            formatSpeed(exerciseState.exerciseMetrics.speed)
                         exerciseState.exerciseMetrics.location?.let { it1 -> addPolyline(it1) }
                     }
                 }
@@ -303,6 +323,50 @@ class RunningFragment : BaseFragment<FragmentRunningBinding>(FragmentRunningBind
                 if (!isShow) visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun CoroutineScope.collectTrainState() = launch {
+        viewModel.trainState.collect {
+            when (it) {
+                is TrainState.WarmUp -> showSkipWarmUpDialog()
+                is TrainState.CoolDown -> showSkipCoolDOwnDialog()
+                else -> skipDialog?.dismiss()
+            }
+        }
+    }
+
+    private fun showSkipWarmUpDialog() {
+        skipDialog = MaterialAlertDialogBuilder(
+            requireContext(),
+            R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog
+        )
+            .setMessage("Warm Up을 종료하시겠습니까?")
+            .setNegativeButton("취소") { dialog, _ ->
+                skipDialog = null
+                dialog.dismiss()
+            }.setPositiveButton("확인") { dialog, _ ->
+                viewModel.skipWarmUp()
+                skipDialog = null
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showSkipCoolDOwnDialog() {
+        skipDialog = MaterialAlertDialogBuilder(
+            requireContext(),
+            R.style.Body_ThemeOverlay_MaterialComponents_MaterialAlertDialog
+        )
+            .setMessage("Cool Down을 종료하시겠습니까?")
+            .setNegativeButton("취소") { dialog, _ ->
+                skipDialog = null
+                dialog.dismiss()
+            }.setPositiveButton("확인") { dialog, _ ->
+                viewModel.skipCoolDown()
+                skipDialog = null
+                dialog.dismiss()
+            }
+            .show()
     }
 
     companion object {
