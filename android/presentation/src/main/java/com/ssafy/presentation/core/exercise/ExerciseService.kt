@@ -80,7 +80,7 @@ class ExerciseService : LifecycleService() {
                     exerciseManager.connect()
                     voiceManager.connect()
                     collectTrainState()
-                    trainManager.connect(exerciseManager.currentSessionData)
+                    trainManager.connect()
                     collectExerciseServiceState()
                     collectCoachVoicePath()
                 }
@@ -102,40 +102,21 @@ class ExerciseService : LifecycleService() {
                 CoroutineScope(Dispatchers.IO).launch { speakMessage(it.message) }
 
                 when (it) {
-                    TrainState.None, TrainState.Before -> {}
+                    TrainState.None, TrainState.Before, TrainState.Default -> {}
 
-                    is TrainState.WarmUp -> {
-                        speakMessage(trainManager.train.message)
-                        exerciseManager.startJogging()
-                    }
+                    is TrainState.WarmUp -> speakMessage(trainManager.train.message)
 
                     is TrainState.During -> {
                         when (it.session) {
-                            is TrainSession.Running -> {
-                                exerciseManager.stopJogging()
-                                exerciseManager.startRunning()
-                                coachingManager.connect(trainManager.train)
-                            }
+                            is TrainSession.Running -> coachingManager.connect(trainManager.train)
 
-                            is TrainSession.Jogging -> {
-                                exerciseManager.stopRunning()
-                                exerciseManager.startJogging()
-                                coachingManager.disconnect()
-                            }
+                            is TrainSession.Jogging -> coachingManager.disconnect()
                         }
                     }
 
-                    is TrainState.CoolDown -> {
-                        coachingManager.disconnect()
-                        exerciseManager.startJogging()
-                    }
+                    is TrainState.CoolDown -> {}
 
-                    TrainState.Ended -> {
-                        endExercise()
-                        exerciseManager.stopJogging()
-                    }
-
-                    TrainState.Default -> exerciseManager.startJogging()
+                    TrainState.Ended -> endExercise()
                 }
             }
         }
@@ -233,7 +214,6 @@ class ExerciseService : LifecycleService() {
             trainManager.disconnect()
             exerciseManager.disconnect()
             coachingManager.disconnect()
-            voiceManager.disconnect()
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
@@ -247,8 +227,8 @@ class ExerciseService : LifecycleService() {
         val exerciseServiceState: Flow<ExerciseServiceState>
             get() = this@ExerciseService.exerciseManager.exerciseServiceState
 
-        val coachVoicePathState: Flow<String?>
-            get() = this@ExerciseService.coachingManager.coachVoicePath
+        val trainState: Flow<TrainState>
+            get() = this@ExerciseService.trainManager.trainState
     }
 
     private fun startForeground() {
@@ -280,6 +260,18 @@ class ExerciseService : LifecycleService() {
 
     suspend fun endExercise() {
         wearableClientManager.sendToWearableDevice(WearableClientManager.END_RUN_PATH)
+    }
+
+    fun skipWarmUp() {
+        voiceManager.disconnect()
+        trainManager.skipWarmUp()
+        voiceManager.connect()
+    }
+
+    fun skipCoolDown() {
+        voiceManager.disconnect()
+        trainManager.skipCoolDown()
+        voiceManager.connect()
     }
 
     companion object {

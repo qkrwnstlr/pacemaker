@@ -15,12 +15,8 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import com.ssafy.pacemaker.presentation.component.button.DesignedButton
 
 @Composable
-fun ResultRoute(
-    modifier: Modifier = Modifier,
-    onFinish: () -> Unit
-) {
+fun ResultRoute() {
     val viewModel = hiltViewModel<ResultViewModel>()
-    viewModel.collectServiceState(onFinish)
 
     ResultScreen(
         onFinish = { viewModel.onFinish() }

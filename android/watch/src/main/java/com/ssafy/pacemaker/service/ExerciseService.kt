@@ -43,15 +43,13 @@ class ExerciseService : LifecycleService() {
     private suspend fun isExerciseInProgress() = exerciseClientManager.isExerciseInProgress()
 
     suspend fun prepareExercise() {
-        exerciseServiceMonitor.connect()
         exerciseClientManager.prepareExercise()
     }
 
     suspend fun startExercise() {
         wearableClientManager.startMobileActivity()
         exerciseClientManager.startExercise()
-        exerciseServiceMonitor.connect()
-        exerciseMonitor.connect()
+        startForeground()
     }
 
     suspend fun pauseExercise() {
@@ -64,13 +62,13 @@ class ExerciseService : LifecycleService() {
 
     suspend fun endExercise() {
         exerciseClientManager.endExercise()
-        removeOngoingActivityNotification()
     }
 
     fun clearExercise() {
         exerciseServiceMonitor.disconnect()
         exerciseMonitor.disconnect()
         isStarted = false
+        removeOngoingActivityNotification()
         stopSelf()
     }
 
@@ -86,7 +84,6 @@ class ExerciseService : LifecycleService() {
         if (intent?.action == RUNNING_ACTION && !isStarted) {
             isStarted = true
 
-            startForeground()
             exerciseMonitor.connect()
             exerciseServiceMonitor.connect()
 
