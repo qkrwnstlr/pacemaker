@@ -80,7 +80,7 @@ class TrainManager @Inject constructor(
                         "time" -> checkIsAchieved(it.duration)
                         "distance" -> checkIsAchieved(it.distance)
                         else -> {
-                            exerciseManager.startJogging()
+                            exerciseManager.startRunning()
                             trainState.update { TrainState.Default }
                             return@collect
                         }
