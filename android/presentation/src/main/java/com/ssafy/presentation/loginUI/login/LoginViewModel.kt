@@ -27,21 +27,16 @@ class LoginViewModel @Inject constructor(
         goConnect: () -> Unit,
         goHome: () -> Unit,
         saveUid: suspend (String) -> Unit
-    ) =
-        viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                setProfileUrl(url)
-                signUpUseCase.invoke(uid, name)
-            }.onSuccess { result ->
-                saveUid(uid)
-                result.data?.let {
-                    dataStoreRepository.saveUser(it.userInfoResponse.copy(uid = uid))
-
-                    withContext(Dispatchers.Main) {
-                        if (it.isAlreadyExists) goHome()
-                        else goConnect()
-                    }
-                }
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        runCatching {
+            setProfileUrl(url)
+            signUpUseCase(uid, name)
+        }.onSuccess { result ->
+            saveUid(uid)
+            withContext(Dispatchers.Main) {
+                if (result.isAlreadyExists) goHome()
+                else goConnect()
             }
-        }
+        }.onFailure { it.printStackTrace() }
+    }
 }
