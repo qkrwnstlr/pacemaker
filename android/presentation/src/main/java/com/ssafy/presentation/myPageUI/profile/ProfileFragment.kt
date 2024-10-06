@@ -60,8 +60,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 with(binding) {
                     tvName.text = user.name
                     tvContentTrainCnt.text = user.trainCount.toCount()
-                    tvContentTrainTime.text = user.minute.toTime()
-                    tvContentTrainKm.text = user.distance.toDistance()
+                    tvContentTrainTime.text = user.trainTime.toTime()
+                    tvContentTrainKm.text = user.trainDistance.toDistance()
                     etAge.text = user.age.toAgeString()
                     etHeight.text = user.height.toHeight()
                     etWeight.text = user.weight.toWeight()
