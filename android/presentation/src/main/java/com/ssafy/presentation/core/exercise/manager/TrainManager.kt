@@ -2,14 +2,12 @@ package com.ssafy.presentation.core.exercise.manager
 
 import com.ssafy.domain.dto.plan.PlanTrain
 import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
-import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
 import com.ssafy.presentation.core.exercise.data.distance
 import com.ssafy.presentation.core.exercise.data.duration
 import com.ssafy.presentation.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.Duration
@@ -24,6 +22,8 @@ class TrainManager @Inject constructor(
     private var exerciseManager: ExerciseManager
 ) {
     private var isConnected = false
+
+    private var trainJob: Job? = null
 
     lateinit var train: PlanTrain
     private lateinit var running: TrainSession
@@ -68,12 +68,15 @@ class TrainManager @Inject constructor(
 
     fun disconnect() {
         isConnected = false
+        trainJob?.cancel()
+        trainJob = null
         trainState.update { TrainState.None }
     }
 
     private fun collectExerciseSessionData() {
-        coroutineScope.launch {
-            exerciseManager.currentSessionData.takeWhile { isConnected }.collect {
+        if (trainJob != null) return
+        trainJob = coroutineScope.launch {
+            exerciseManager.currentSessionData.collect {
                 if (!isUpdating) {
                     isUpdating = true
                     val isTrainAchieved = when (train.paramType) {
