@@ -178,10 +178,31 @@ public class PlanService {
 	public void updatePlan(UpdatePlanRequest updatePlanRequest) {
 
 		Plan plan = findActivePlan(updatePlanRequest.uid());
-
 		plan.removeBeforePlanTrains();
 
 		for (ContentRequest.Plan.PlanTrain newPlanTrain : updatePlanRequest.plan().planTrains()) {
+			LocalDate trainDate = LocalDate.parse(newPlanTrain.trainDate());
+
+			// trainDate가 오늘 이전이라면 추가하지 않음
+			if (trainDate.isBefore(LocalDate.now())) {
+				continue;
+			}
+
+			// trainDate가 오늘이라면 plan에 오늘 날짜의 planTrain이 이미 존재하면 추가하지 않음
+			if (trainDate.isEqual(LocalDate.now())) {
+				boolean alreadyExists = false;
+				for (PlanTrain existPlanTrain : plan.getPlanTrains()) {
+					if (existPlanTrain.getTrainDate().isEqual(LocalDate.now())) {
+						alreadyExists = true;
+						break;
+					}
+				}
+				if (alreadyExists) {
+					continue;
+				}
+			}
+
+			// trainDate가 오늘이면서 plan에 오늘 날짜의 planTrain이 없는 경우 & 오늘 이후라면 추가
 			PlanTrain planTrainEntity = createPlanTrainEntity(newPlanTrain);
 			plan.addPlanTrain(planTrainEntity);
 		}
