@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.domain.dto.User
 import com.ssafy.domain.repository.DataStoreRepository
-import com.ssafy.domain.response.ResponseResult
 import com.ssafy.domain.usecase.user.ModifyUserUseCase
 import com.ssafy.presentation.utils.ERROR
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,32 +52,11 @@ class ModifyViewModel @Inject constructor(
 
     fun modifyProfile(
         uid: String,
-        popBack: () -> Unit,
+        popBack: suspend () -> Unit,
         failToSetProfile: (String) -> Unit
     ) = viewModelScope.launch(Dispatchers.IO) {
-
         runCatching { modifyUserUseCase(uid, user) }
-            .onSuccess { response -> checkResponse(response, popBack, failToSetProfile) }
-            .onFailure { failToSetProfile(ERROR) }
-    }
-
-    private suspend fun checkResponse(
-        responseResult: ResponseResult<User>,
-        popBack: () -> Unit,
-        failToSetProfile: (String) -> Unit
-    ) = withContext(Dispatchers.Main) {
-        when (responseResult) {
-
-            is ResponseResult.Error -> {
-                failToSetProfile(responseResult.message)
-            }
-
-            is ResponseResult.Success -> {
-                responseResult.data?.let {
-                    dataStoreRepository.saveUser(it)
-                    popBack()
-                } ?: failToSetProfile(ERROR)
-            }
-        }
+            .onSuccess { popBack() }
+            .onFailure { failToSetProfile(it.message ?: ERROR) }
     }
 }
