@@ -27,6 +27,7 @@ public record Message(
 			5. Plan should be written in the "plan" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
 			7. All arrays within the plan objects must have the same array size of the "index" object.
+			8. Calculate the train pace by dividing the pace given in "###" or "####" from dividing by 60 to provide train paces in minutes and seconds. (e.g. if the pace is 300 seconds per kilometer, convert it to 5분 0초 per kilometer.)
 			
 			**INSTRUCTION**
 			1. You should make a running plan for the user.
@@ -226,6 +227,7 @@ public record Message(
 			5. Plan revisions should be written in the "plan" field. NOT in the "message" field.
 			6. Avoid including any information that is not explicitly mentioned in the user’s input.
 			7. All arrays within the plan objects must have the same array size of the "index" object.
+			8. Calculate the train pace by dividing the pace given in "###" or "####" from dividing by 60 to provide train paces in minutes and seconds. (e.g. if the pace is 300 seconds per kilometer, convert it to 5분 0초 per kilometer.)
 
 			**INSTRUCTION**
 			1. You should revise the running plan for the user based on the feedback provided in the "message" field.
