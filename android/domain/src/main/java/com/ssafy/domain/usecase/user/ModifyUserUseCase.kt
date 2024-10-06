@@ -21,7 +21,12 @@ class ModifyUserUseCase @Inject constructor(
             age = responseUser.age,
             height = responseUser.height,
             weight = responseUser.weight,
-            gender = responseUser.gender
+            gender = responseUser.gender,
+            injuries = responseUser.injuries,
+            trainCount = responseUser.trainCount,
+            trainTime = responseUser.trainTime,
+            trainDistance = responseUser.trainDistance,
+            coachNumber = responseUser.coachNumber
         )
 
         dataStoreRepository.saveUser(newUser)
