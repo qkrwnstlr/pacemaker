@@ -1,6 +1,5 @@
 package com.ssafy.presentation.core.exercise.manager
 
-import android.util.Log
 import androidx.health.connect.client.units.Energy
 import androidx.health.connect.client.units.Length
 import com.ssafy.presentation.core.exercise.ExerciseMonitor
@@ -8,9 +7,8 @@ import com.ssafy.presentation.core.exercise.data.ExerciseData
 import com.ssafy.presentation.core.exercise.data.ExerciseMetrics
 import com.ssafy.presentation.core.exercise.data.ExerciseSessionData
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +20,9 @@ class ExerciseManager @Inject constructor(
     private val coroutineScope: CoroutineScope,
 ) {
     private var isConnected = false
-    private var isDuringSession = false
+
+    private var updateCurrentSessionJob: Job? = null
+    private var updateExerciseDataJob: Job? = null
 
     val exerciseServiceState = exerciseMonitor.exerciseServiceState
 
@@ -44,33 +44,38 @@ class ExerciseManager @Inject constructor(
     }
 
     fun startRunning() {
-        isDuringSession = true
         currentSessionData.update { listOf() }
         collectExerciseSessionData()
         collectExerciseServiceState()
     }
 
     fun stopRunning() {
-        isDuringSession = false
         exerciseData.update {
             it.copy(sessions = it.sessions.toMutableList().apply { add(currentSessionData.value) })
         }
+        updateCurrentSessionJob?.cancel()
+        updateExerciseDataJob?.cancel()
+        updateCurrentSessionJob = null
+        updateExerciseDataJob = null
     }
 
     fun startJogging() {
-        isDuringSession = true
         currentSessionData.update { listOf() }
         collectExerciseSessionData()
         collectExerciseServiceState()
     }
 
     fun stopJogging() {
-        isDuringSession = false
+        updateCurrentSessionJob?.cancel()
+        updateExerciseDataJob?.cancel()
+        updateCurrentSessionJob = null
+        updateExerciseDataJob = null
     }
 
     private fun collectExerciseSessionData() {
-        coroutineScope.launch {
-            exerciseMonitor.exerciseSessionData.takeWhile { isDuringSession }.collect { exerciseSessionData ->
+        if (updateCurrentSessionJob != null) return
+        updateCurrentSessionJob = coroutineScope.launch {
+            exerciseMonitor.exerciseSessionData.collect { exerciseSessionData ->
                 currentSessionData.update {
                     currentSessionData.value.toMutableList().apply { add(exerciseSessionData) }
                 }
@@ -79,8 +84,9 @@ class ExerciseManager @Inject constructor(
     }
 
     private fun collectExerciseServiceState() {
-        coroutineScope.launch {
-            exerciseMonitor.exerciseServiceState.takeWhile { isDuringSession }.collect {
+        if (updateExerciseDataJob != null) return
+        updateExerciseDataJob = coroutineScope.launch {
+            exerciseMonitor.exerciseServiceState.collect {
                 updateExerciseData(it.exerciseMetrics)
             }
         }
@@ -91,7 +97,8 @@ class ExerciseManager @Inject constructor(
             it.copy(
                 totalSteps = exerciseMetrics.steps ?: it.totalSteps,
                 totalDistance = exerciseMetrics.distance?.let(Length::meters) ?: it.totalDistance,
-                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::kilocalories) ?: it.totalEnergyBurned,
+                totalEnergyBurned = exerciseMetrics.calories?.let(Energy::kilocalories)
+                    ?: it.totalEnergyBurned,
             )
         }
     }
