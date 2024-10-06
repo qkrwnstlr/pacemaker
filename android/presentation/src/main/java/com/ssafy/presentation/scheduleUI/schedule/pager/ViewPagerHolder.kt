@@ -44,6 +44,7 @@ class ViewPagerHolder(private val binding: PlanItemBinding) : ViewHolder(binding
             binding.lyTrainResult.isVisible = false
             binding.map.isVisible = false
             binding.lyTrainResultCoach.isVisible = false
+            binding.hv.isVisible = false
         }
     }
 
