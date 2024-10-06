@@ -19,7 +19,7 @@ import com.ssafy.presentation.utils.toCount
 import com.ssafy.presentation.utils.toDistance
 import com.ssafy.presentation.utils.toGenderString
 import com.ssafy.presentation.utils.toHeight
-import com.ssafy.presentation.utils.toTime
+import com.ssafy.presentation.utils.toTimeString
 import com.ssafy.presentation.utils.toWeight
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -60,7 +60,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>(FragmentProfileBind
                 with(binding) {
                     tvName.text = user.name
                     tvContentTrainCnt.text = user.trainCount.toCount()
-                    tvContentTrainTime.text = user.trainTime.toTime()
+                    tvContentTrainTime.text = user.trainTime.toTimeString()
                     tvContentTrainKm.text = user.trainDistance.toDistance()
                     etAge.text = user.age.toAgeString()
                     etHeight.text = user.height.toHeight()
