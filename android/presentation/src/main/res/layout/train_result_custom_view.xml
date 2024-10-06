@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -22,10 +23,11 @@
     <TextView
         android:id="@+id/tv_result_distance_content"
         style="@style/PlanText"
-        android:text="10km"
+        android:textSize="@dimen/text_14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_result_distance_title"
         app:layout_constraintStart_toEndOf="@id/tv_result_distance_title"
-        app:layout_constraintTop_toTopOf="@id/tv_result_distance_title" />
+        app:layout_constraintTop_toTopOf="@id/tv_result_distance_title"
+        tools:text="10km" />
 
     <TextView
         android:id="@+id/tv_result_time_title"
@@ -37,7 +39,8 @@
     <TextView
         android:id="@+id/tv_result_time_content"
         style="@style/PlanText"
-        android:text="01:08:48"
+        tools:text="01:08:48"
+        android:textSize="@dimen/text_14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_result_time_title"
         app:layout_constraintStart_toEndOf="@id/tv_result_time_title"
         app:layout_constraintTop_toTopOf="@id/tv_result_time_title" />
@@ -52,7 +55,8 @@
     <TextView
         android:id="@+id/tv_result_pace_content"
         style="@style/PlanText"
-        android:text="06'48''"
+        tools:text="06'48''"
+        android:textSize="@dimen/text_14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_result_pace_title"
         app:layout_constraintStart_toEndOf="@id/tv_result_pace_title"
         app:layout_constraintTop_toTopOf="@id/tv_result_pace_title" />
@@ -63,15 +67,16 @@
         android:layout_marginStart="@dimen/margin_100"
         android:layout_marginTop="@dimen/margin_16"
         android:text="@string/title_heart"
-        app:layout_constraintStart_toEndOf="@id/tv_result_distance_title"
+        app:layout_constraintEnd_toStartOf="@id/tv_result_heart_content"
         app:layout_constraintTop_toBottomOf="@id/tv_result_title" />
 
     <TextView
         android:id="@+id/tv_result_heart_content"
         style="@style/PlanText"
-        android:text="150bpm"
+        tools:text="150bpm"
+        android:textSize="@dimen/text_14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_result_heart_title"
-        app:layout_constraintStart_toEndOf="@id/tv_result_heart_title"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_result_heart_title" />
 
     <TextView
@@ -84,24 +89,26 @@
     <TextView
         android:id="@+id/tv_result_step_content"
         style="@style/PlanText"
-        android:text="130spm"
+        tools:text="130spm"
+        android:textSize="@dimen/text_14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_result_step_title"
-        app:layout_constraintStart_toEndOf="@id/tv_result_step_title"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_result_step_title" />
 
     <TextView
         android:id="@+id/tv_result_kcal_title"
         style="@style/ResultText"
         android:text="@string/title_kcal"
-        app:layout_constraintStart_toStartOf="@+id/tv_result_step_title"
+        app:layout_constraintStart_toStartOf="@id/tv_result_step_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_result_step_title" />
 
     <TextView
         android:id="@+id/tv_result_kcal_content"
         style="@style/PlanText"
-        android:text="310kcal"
+        tools:text="310kcal"
+        android:textSize="@dimen/text_14"
         app:layout_constraintBottom_toBottomOf="@+id/tv_result_kcal_title"
-        app:layout_constraintStart_toEndOf="@id/tv_result_kcal_title"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tv_result_kcal_title" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -132,7 +139,7 @@
         <TextView
             android:id="@+id/rank_pace"
             style="@style/RankText"
-            android:text="A"
+            tools:text="A"
             app:layout_constraintBottom_toBottomOf="@+id/chart_pace"
             app:layout_constraintEnd_toEndOf="@+id/chart_pace"
             app:layout_constraintStart_toStartOf="@+id/chart_pace"
@@ -157,7 +164,7 @@
         <TextView
             android:id="@+id/rank_heart"
             style="@style/RankText"
-            android:text="B"
+            tools:text="B"
             app:layout_constraintBottom_toBottomOf="@+id/chart_heart"
             app:layout_constraintEnd_toEndOf="@+id/chart_heart"
             app:layout_constraintStart_toStartOf="@+id/chart_heart"
@@ -182,7 +189,7 @@
         <TextView
             android:id="@+id/rank_step"
             style="@style/RankText"
-            android:text="A"
+            tools:text="A"
             app:layout_constraintBottom_toBottomOf="@+id/chart_step"
             app:layout_constraintEnd_toEndOf="@+id/chart_step"
             app:layout_constraintStart_toStartOf="@+id/chart_step"

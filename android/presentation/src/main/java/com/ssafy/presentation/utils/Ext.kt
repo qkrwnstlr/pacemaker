@@ -42,7 +42,7 @@ fun LocalDate.displayText(): String {
 fun Int.toCount(): String = "${toString()}회"
 fun Int.toHeight(): String = "${toString()}cm"
 fun Int.toWeight(): String = "${toString()}kg"
-fun Int.toDistance(): String = "${toString()}회"
+fun Float.toDistance(): String = "${toString()}km"
 fun Int.toAgeString(): String = "${toString()}세"
 fun Int.toTime(): String {
     val hour = this / 60
