@@ -78,8 +78,8 @@ class ExerciseMonitor @Inject constructor(
 
     private fun collectExerciseMetrics() {
         coroutineScope.launch {
+            var lastDistance = 0.0
             while (isRunning) {
-                var lastDistance = 0.0
                 val exerciseState = exerciseServiceState.value.exerciseState
                 when (exerciseState) {
                     ExerciseState.ACTIVE -> {
