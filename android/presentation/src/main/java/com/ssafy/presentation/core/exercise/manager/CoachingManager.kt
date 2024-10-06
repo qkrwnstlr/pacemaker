@@ -12,9 +12,9 @@ import com.ssafy.presentation.core.exercise.data.distance
 import com.ssafy.presentation.core.exercise.data.heartRate
 import com.ssafy.presentation.core.exercise.data.speed
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,6 +27,9 @@ class CoachingManager @Inject constructor(
     private val getCoachingUseCase: GetCoachingUseCase,
 ) {
     private var isConnected = false
+
+    private var collectSessionDataJob: Job? = null
+    private var getCoachingJob: Job? = null
 
     private lateinit var train: PlanTrain
 
@@ -42,12 +45,16 @@ class CoachingManager @Inject constructor(
 
     fun disconnect() {
         isConnected = false
+        getCoachingJob?.cancel()
+        collectSessionDataJob?.cancel()
+        getCoachingJob = null
+        collectSessionDataJob = null
     }
 
     private fun collectExerciseSessionData() {
         val collectedList = mutableListOf<ExerciseSessionData>()
 
-        coroutineScope.launch {
+        getCoachingJob = coroutineScope.launch {
             while (isConnected) {
                 delay(2 * 1_000 * 60)
                 if (!isConnected) break
@@ -66,8 +73,8 @@ class CoachingManager @Inject constructor(
             }
         }
 
-        coroutineScope.launch{
-            exerciseMonitor.exerciseSessionData.takeWhile { isConnected }.collect(collectedList::add)
+        collectSessionDataJob = coroutineScope.launch{
+            exerciseMonitor.exerciseSessionData.collect(collectedList::add)
         }
     }
 

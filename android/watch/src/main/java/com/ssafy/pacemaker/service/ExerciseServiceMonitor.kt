@@ -4,6 +4,7 @@ import androidx.health.services.client.data.ExerciseUpdate
 import com.ssafy.pacemaker.data.ExerciseClientManager
 import com.ssafy.pacemaker.data.ExerciseMessage
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -15,7 +16,7 @@ class ExerciseServiceMonitor @Inject constructor(
     private val coroutineScope: CoroutineScope,
     private val exerciseClientManager: ExerciseClientManager,
 ) {
-    private var isConnected = false
+    private var collectExerciseServiceStateJob: Job? = null
 
     val exerciseServiceState = MutableStateFlow(
         ExerciseServiceState(
@@ -25,9 +26,8 @@ class ExerciseServiceMonitor @Inject constructor(
     )
 
     fun connect() {
-        if (isConnected) return
-        isConnected = true
-        coroutineScope.launch {
+        if (collectExerciseServiceStateJob != null) return
+        collectExerciseServiceStateJob = coroutineScope.launch {
             exerciseClientManager.exerciseUpdateFlow.collect {
                 when (it) {
                     is ExerciseMessage.ExerciseUpdateMessage ->
@@ -64,8 +64,8 @@ class ExerciseServiceMonitor @Inject constructor(
     }
 
     fun disconnect() {
-        if (!isConnected) return
-        isConnected = false
+        collectExerciseServiceStateJob?.cancel()
+        collectExerciseServiceStateJob = null
         exerciseServiceState.update {
             ExerciseServiceState(
                 exerciseState = null,
