@@ -39,12 +39,12 @@
     <string name="fri">금</string>
     <string name="sat">토</string>
     <string name="title_result">훈련결과</string>
-    <string name="title_distance">이동 거리:</string>
-    <string name="title_time">소요 시간:</string>
-    <string name="title_pace">평균 페이스:</string>
-    <string name="title_heart">평균 심박수:</string>
-    <string name="title_step">케이던스:</string>
-    <string name="title_kcal">운동 칼로리:</string>
+    <string name="title_distance">이동 거리\u00A0:\u00A0</string>
+    <string name="title_time">소요 시간\u00A0:\u00A0</string>
+    <string name="title_pace">평균 페이스\u00A0:\u00A0</string>
+    <string name="title_heart">평균 심박수\u00A0:\u00A0</string>
+    <string name="title_step">케이던스\u00A0:\u00A0</string>
+    <string name="title_kcal">운동 칼로리\u00A0:\u00A0</string>
     <string name="coach_talk_title">코치의 한마디</string>
     <string name="pace">페이스</string>
     <string name="heart">심박수</string>
@@ -80,5 +80,10 @@
     <string name="send">전송</string>
     <string name="create">생성</string>
     <string name="nothing">진행중인 훈련이 없어요</string>
+    <string name="zone5">5. 최대 심박수 운동</string>
+    <string name="zone4">4. 무산소 운동</string>
+    <string name="zone3">3. 유산소 운동</string>
+    <string name="zone2">2. 체중 조절 운동</string>
+    <string name="zone1">1. 저강도 운동</string>
 
 </resources>

@@ -12,8 +12,9 @@ class GetTTSUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(message: String, coachIndex: Long? = null): String {
+        val koreanMessage = message.replace(Regex("km", RegexOption.IGNORE_CASE), "킬로미터")
         val coachNumber = coachIndex ?: dataStoreRepository.getUser().coachNumber
-        val newRequest = TTSRequest(message, coachNumber)
+        val newRequest = TTSRequest(koreanMessage, coachNumber)
         val response = coachingRepository.getTTS(newRequest)
         if (response is ResponseResult.Error) throw RuntimeException()
 
