@@ -2,8 +2,8 @@ package com.ssafy.presentation.myPageUI.selectCoach
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssafy.domain.usecase.train.GetTTSUseCase
 import com.ssafy.domain.usecase.user.SetCoachUseCase
+import com.ssafy.presentation.R
 import com.ssafy.presentation.utils.ERROR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,15 +19,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SelectCoachViewModel @Inject constructor(
-    private val setCoachUseCase: SetCoachUseCase,
-    private val getTTSUseCase: GetTTSUseCase
+    private val setCoachUseCase: SetCoachUseCase
 ) : ViewModel() {
 
     private val _selectCoachState: MutableStateFlow<Pair<Long, Int>> = MutableStateFlow(0L to 0)
     val selectCoachState: StateFlow<Pair<Long, Int>> = _selectCoachState.asStateFlow()
 
-    private val _voiceEvent: MutableSharedFlow<String> = MutableSharedFlow()
-    val voiceEvent: SharedFlow<String> = _voiceEvent.asSharedFlow()
+    private val _voiceEvent: MutableSharedFlow<Int> = MutableSharedFlow()
+    val voiceEvent: SharedFlow<Int> = _voiceEvent.asSharedFlow()
 
     fun setCoach(
         coachIndex: Long,
@@ -48,24 +47,18 @@ class SelectCoachViewModel @Inject constructor(
         if (coachIndex == index) _selectCoachState.update { prevState.copy(second = count + 1) }
         else _selectCoachState.update { coachIndex to 1 }
 
-        val message = getMessage()
-        if (message.first.isBlank() || message.second == 0L) return@launch
-
-        runCatching { getTTSUseCase(message = message.first, coachIndex = message.second) }
-            .onSuccess { voicePath -> _voiceEvent.emit(voicePath) }
-            .onFailure { it.printStackTrace() }
+        if (selectCoachState.value.second == INTRO) emitCoachPath(coachIndex)
     }
 
-    private fun getMessage(): Pair<String, Long> {
-        val (index, count) = selectCoachState.value
-        val isIntro = count == INTRO
-
-        return when (index) {
-            MIKE -> (if (isIntro) MIKE_INTRO else "") to MIKE
-            JAMIE -> (if (isIntro) JAMIE_INTRO else "") to JAMIE
-            DANNY -> (if (isIntro) DANNY_INTRO else "") to DANNY
-            else -> "" to 0
+    private suspend fun emitCoachPath(coachIndex: Long) {
+        val rawRes = when (coachIndex) {
+            MIKE -> R.raw.mike
+            JAMIE -> R.raw.jamie
+            DANNY -> R.raw.danny
+            else -> 0
         }
+
+        if (rawRes != 0) _voiceEvent.emit(rawRes)
     }
 
     companion object {
@@ -74,8 +67,5 @@ class SelectCoachViewModel @Inject constructor(
         const val DANNY = 3L
 
         const val INTRO = 1
-        const val MIKE_INTRO = "안녕하세요, 열정 넘치는 러닝 코치 마이크예요! 함께 달리며 한계를 넘어볼까요?"
-        const val JAMIE_INTRO = "안녕하세요! 저는 여러분의 든든한 러닝 파트너가 되고 싶은 제이미예요. 함께 즐겁고 건강한 러닝 습관을 만들어볼까요?"
-        const val DANNY_INTRO = "어이구! 반갑습니다, 반가워요! 제가 바로 뛰는 재미 알려드릴 도리스 러닝 코치입니다! 함께 뛰어볼랍니까?"
     }
 }
