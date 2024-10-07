@@ -39,6 +39,8 @@ public class RealTimeController {
 		@RequestBody RealTimeFeedbackRequest realTimeFeedbackRequest) {
 		Instant start = Instant.now();
 
+		System.out.println("realTimeFeedbackRequest = " + realTimeFeedbackRequest);
+
 		return openAiService.createRealTimeChatCompletions(realTimeFeedbackRequest)
 			.flatMap(response -> {
 				long timeElapsed = Duration.between(start, Instant.now()).toMillis();
