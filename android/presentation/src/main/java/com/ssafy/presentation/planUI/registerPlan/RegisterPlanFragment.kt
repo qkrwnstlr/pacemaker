@@ -1,8 +1,11 @@
 package com.ssafy.presentation.planUI.registerPlan
 
+import android.content.Context
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
@@ -76,7 +79,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         )
         viewModel.isModify = isFromPlanDetailFragment()
 
-        if(viewModel.isModify) binding.topSheetTrain.fabBlue.text = "수정"
+        if (viewModel.isModify) binding.topSheetTrain.fabBlue.text = "수정"
         tvTitle.startAnimation(slideDown)
         viewModel.initData(::setSendClickable, ::showSelectWeekDialog)
         rvPlanChat.adapter = adapter
@@ -103,6 +106,17 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
             if (text.isBlank()) return@setOnClickListener
             chatUi.etChat.text = null
             viewModel.sendMyMessage(text)
+        }
+
+        chatUi.rvPlanChat.setOnTouchListener { view, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                view?.let {
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                    view.clearFocus()
+                }
+            }
+            false
         }
 
         topSheetTrain.fabBlue.setOnClickListener {
