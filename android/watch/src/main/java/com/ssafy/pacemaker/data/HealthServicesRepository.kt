@@ -85,9 +85,3 @@ sealed class ServiceState {
 
     data class Connected(val exerciseServiceState: ExerciseServiceState) : ServiceState()
 }
-
-
-
-
-
-
