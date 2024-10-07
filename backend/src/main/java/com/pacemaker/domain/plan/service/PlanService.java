@@ -122,6 +122,7 @@ public class PlanService {
 			}
 
 			findActivePlan.getPlanTrains().remove(i);
+			size--;
 		}
 
 		if (findActivePlan.getPlanTrains().isEmpty()) {
