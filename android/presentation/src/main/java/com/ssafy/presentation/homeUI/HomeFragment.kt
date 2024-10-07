@@ -326,7 +326,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private fun setPeekHeight() = with(binding.topSheet) {
         val bodyHeight = if (topSheetBody.visibility == View.GONE) 0 else topSheetBody.height
-        val height = root.height - bodyHeight - 9
+        val height = root.height - bodyHeight - 10
         if (height > 0) behavior.peekHeight = height
     }
 
