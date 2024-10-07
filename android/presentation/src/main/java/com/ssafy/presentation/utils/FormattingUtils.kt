@@ -18,15 +18,16 @@ fun formatElapsedTime(
         val hours = elapsedDuration.toHours()
         if (hours > 0) {
             append(hours.toString())
-            append("h")
+            append(" : ")
         }
         val minutes = elapsedDuration.toMinutes() % MINUTES_PER_HOUR
         append("%02d".format(minutes))
-        append("m")
+        append(" : ")
         if (includeSeconds) {
             val seconds = elapsedDuration.seconds % SECONDS_PER_MINUTE
             append("%02d".format(seconds))
-            append("s")
+        } else {
+            append("00")
         }
     }
 }
@@ -36,7 +37,7 @@ fun formatCalories(calories: Double?) = buildSpannedString {
         append("--")
     } else {
         append(calories.roundToInt().toString())
-        append("kcal")
+        append(" kcal")
     }
 }
 
@@ -53,7 +54,7 @@ fun formatDistanceKm(meters: Double?) = buildSpannedString {
         append("--")
     } else {
         append("%02.2f".format(meters / 1_000))
-        append("km")
+        append(" km")
     }
 }
 
@@ -62,7 +63,7 @@ fun formatHeartRate(bpm: Double?) = buildSpannedString {
         append("--")
     } else {
         append("%.0f".format(bpm))
-        append("bpm")
+        append(" bpm")
     }
 }
 
@@ -71,7 +72,7 @@ fun formatCadenceRate(cadence: Int?) = buildSpannedString {
         append("--")
     } else {
         append("%d".format(cadence))
-        append("spm")
+        append(" spm")
     }
 }
 
