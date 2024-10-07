@@ -38,12 +38,12 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
 
     override fun onResume() {
         super.onResume()
-        if(this::exerciseNavigator.isInitialized) exerciseNavigator.connect(findNavController())
+        if (this::exerciseNavigator.isInitialized) exerciseNavigator.connect(findNavController())
     }
 
     override fun onPause() {
         super.onPause()
-        if(this::exerciseNavigator.isInitialized) exerciseNavigator.disconnect()
+        if (this::exerciseNavigator.isInitialized) exerciseNavigator.disconnect()
     }
 
     override fun onDestroyView() {
@@ -62,6 +62,10 @@ abstract class BaseFragment<VB : ViewBinding>(private val inflate: Inflate<VB>) 
 
     suspend fun showSnackBar(msg: String) = withContext(Dispatchers.Main) {
         Snackbar.make(binding.root, msg, Snackbar.LENGTH_SHORT).show()
+    }
+
+    suspend fun popBackStack() = withContext(Dispatchers.Main) {
+        findNavController().popBackStack()
     }
 
     fun getUid() = viewModel.uid.value

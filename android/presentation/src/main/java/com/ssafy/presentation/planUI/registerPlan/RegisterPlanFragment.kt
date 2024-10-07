@@ -76,6 +76,7 @@ class RegisterPlanFragment : BaseFragment<FragmentRegisterPlanBinding>(
         )
         viewModel.isModify = isFromPlanDetailFragment()
 
+        if(viewModel.isModify) binding.topSheetTrain.fabBlue.text = "수정"
         tvTitle.startAnimation(slideDown)
         viewModel.initData(::setSendClickable, ::showSelectWeekDialog)
         rvPlanChat.adapter = adapter
