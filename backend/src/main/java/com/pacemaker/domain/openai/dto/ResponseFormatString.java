@@ -108,7 +108,7 @@ public class ResponseFormatString {
 		                "items": {
 		                  "description": "parameter types of each train session, the array size must correspond with the array size of index object.",
 		                  "type": "string",
-		                  "enum": ["time", "distance"]
+		                  "enum": ["distance"]
 		                }
 		              },
 		              "repetition": {
@@ -123,7 +123,7 @@ public class ResponseFormatString {
 		                "description": "parameters of the main train of each train session",
 		                "type": "array",
 		                "items": {
-		                  "description": "time duration or distance of the main(repetition) train in seconds or meters",
+		                  "description": "distance of the main(repetition) train in meters",
 		                  "type": "integer"
 		                }
 		              },
@@ -139,7 +139,7 @@ public class ResponseFormatString {
 		                "description": "parameters of recovery jog in of each train session",
 		                "type": "array",
 		                "items": {
-		                  "description": "time duration or distance of recovery jog in between the repetition of the main train",
+		                  "description": "distance of recovery jog in between the repetition of the main train",
 		                  "type": "integer"
 		                }
 		              }
@@ -276,7 +276,7 @@ public class ResponseFormatString {
 		             },
 		             "paramType": {
 		               "type": "string",
-		               "enum": ["time", "distance"]
+		               "enum": ["distance"]
 		             },
 		             "repetition": {
 		               "type": "integer",
@@ -284,7 +284,7 @@ public class ResponseFormatString {
 		             },
 		             "trainParam": {
 		               "type": "integer",
-		               "description": "time duration or distance of the main(repetition) train in seconds or meters"
+		               "description": "distance of the main(repetition) train inor meters"
 		             },
 		             "trainPace": {
 		               "type": "integer",
@@ -292,7 +292,7 @@ public class ResponseFormatString {
 		             },
 		             "interParam": {
 		               "type": "integer",
-		               "description": "time duration or distance of recovery jog in between in repetition of the main train"
+		               "description": "distance of recovery jog in between in repetition of the main train"
 		             }
 		           },
 		           "required": ["index", "trainDate", "paramType", "repetition", "trainParam", "trainPace", "interParam"]
