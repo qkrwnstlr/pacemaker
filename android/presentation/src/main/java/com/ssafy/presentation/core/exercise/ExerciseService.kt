@@ -143,25 +143,23 @@ class ExerciseService : LifecycleService() {
                             }
                             trainManager.finishTrain()
                         }
-                        CoroutineScope(Dispatchers.IO).launch {
-                            if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
-                                runCatching {
-                                    reportsManager.createReports(
-                                        trainManager.train.id,
-                                        exerciseManager.exerciseData.value,
-                                    )
-                                }
-                                runCatching {
-                                    healthConnectManager.writeExerciseSession(
-                                        "${trainManager.train.id} (#${trainManager.train.index})",
-                                        exerciseManager.exerciseData.value,
-                                    )
-                                }
-                                trainManager.disconnect()
-                                exerciseManager.disconnect()
-                                coachingManager.disconnect()
+                        if (exerciseManager.exerciseData.value.duration >= Duration.ofSeconds(30)) {
+                            runCatching {
+                                reportsManager.createReports(
+                                    trainManager.train.id,
+                                    exerciseManager.exerciseData.value,
+                                )
+                            }
+                            runCatching {
+                                healthConnectManager.writeExerciseSession(
+                                    "${trainManager.train.id} (#${trainManager.train.index})",
+                                    exerciseManager.exerciseData.value,
+                                )
                             }
                         }
+                        trainManager.disconnect()
+                        exerciseManager.disconnect()
+                        coachingManager.disconnect()
                     }
                 }
             }
