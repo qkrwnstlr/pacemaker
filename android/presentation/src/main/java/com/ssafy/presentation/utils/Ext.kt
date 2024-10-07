@@ -77,6 +77,10 @@ fun List<String>.toInjuries(): String {
     return if (injuries.length > 15) "${injuries}..." else injuries
 }
 
+fun String.ifNotHuman(defaultValue: () -> String) =
+    if (this != "MALE" && this != "FEMALE") defaultValue()
+    else this
+
 fun Double.toPaceString(): String {
     val pace = roundToInt()
     val minute = pace / 60
