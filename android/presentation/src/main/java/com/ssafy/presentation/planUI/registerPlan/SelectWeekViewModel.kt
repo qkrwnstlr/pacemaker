@@ -7,15 +7,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.DayOfWeek
+import java.util.SortedSet
+import java.util.TreeSet
 
 
 class SelectWeekViewModel : ViewModel() {
 
-    private val _weekListState: MutableStateFlow<Set<DayOfWeek>> = MutableStateFlow(emptySet())
-    val weekListState: StateFlow<Set<DayOfWeek>> = _weekListState.asStateFlow()
+    private val _weekListState: MutableStateFlow<SortedSet<DayOfWeek>> = MutableStateFlow(TreeSet())
+    val weekListState: StateFlow<SortedSet<DayOfWeek>> = _weekListState.asStateFlow()
 
     fun selectDay(day: DayOfWeek, selected: Boolean, isNotValid: (DayOfWeek) -> Unit) {
-        val weekList = weekListState.value.toMutableSet()
+        val weekList = TreeSet(weekListState.value)
 
         if (selected) {
             val prevDay = day.minus(1)
@@ -32,7 +34,7 @@ class SelectWeekViewModel : ViewModel() {
     }
 
     fun addDays(days: List<String>) {
-        val weekList = weekListState.value.toMutableSet()
+        val weekList = TreeSet(weekListState.value)
 
         days.forEach { day -> weekMap[day]?.let { weekList.add(it) } }
         _weekListState.update { weekList }

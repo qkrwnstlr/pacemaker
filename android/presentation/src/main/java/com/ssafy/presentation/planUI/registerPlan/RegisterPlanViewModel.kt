@@ -237,7 +237,7 @@ class RegisterPlanViewModel @Inject constructor(
         _contextData.update { newContext }
 
         val chat = planWeek.joinToString(", ") { it.displayText(locale = Locale.KOREAN) }
-        sendMyMessage("훈련 날짜를 ${chat}으로 할게")
+        sendMyMessage("훈련 요일을 ${chat}으로 설정할게")
     }
 
     companion object {

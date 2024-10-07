@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.ssafy.presentation.core.BaseFragment
 import com.ssafy.presentation.databinding.FragmentModifyBinding
 import com.ssafy.presentation.utils.toGenderString
@@ -58,7 +57,7 @@ class ModifyFragment : BaseFragment<FragmentModifyBinding>(FragmentModifyBinding
 
         btnModify.setOnClickListener {
             val uid = getUid()
-            viewModel.modifyProfile(uid, ::popBack, ::failToSetProfile)
+            viewModel.modifyProfile(uid, ::popBackStack, ::failToSetProfile)
         }
     }
 
@@ -72,7 +71,6 @@ class ModifyFragment : BaseFragment<FragmentModifyBinding>(FragmentModifyBinding
         viewModel.setGender(gender)
     }
 
-    private fun popBack() = findNavController().popBackStack()
     private fun failToSetProfile(message: String) = showSnackStringBar(message)
 
 }
