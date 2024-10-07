@@ -12,12 +12,12 @@ import com.ssafy.domain.usecase.plan.ChatForPlanUseCase
 import com.ssafy.domain.usecase.plan.GetPlanInfoUseCase
 import com.ssafy.domain.usecase.plan.MakePlanUseCase
 import com.ssafy.domain.usecase.plan.ModifyPlanUseCase
-import com.ssafy.domain.utils.ifNotHuman
 import com.ssafy.domain.utils.ifZero
 import com.ssafy.presentation.core.healthConnect.HealthConnectManager
 import com.ssafy.presentation.planUI.registerPlan.adapter.ChatData
 import com.ssafy.presentation.utils.ERROR
 import com.ssafy.presentation.utils.displayText
+import com.ssafy.presentation.utils.ifNotHuman
 import com.ssafy.presentation.utils.toCoachMessage
 import com.ssafy.presentation.utils.toDayString
 import com.ssafy.presentation.utils.toPlan
