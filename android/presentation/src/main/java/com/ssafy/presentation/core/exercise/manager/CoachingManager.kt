@@ -56,7 +56,7 @@ class CoachingManager @Inject constructor(
 
         getCoachingJob = coroutineScope.launch {
             while (isConnected) {
-                delay((1.5 * 60 * 1_000).toLong())
+                delay((45 * 1_000).toLong())
                 if (!isConnected) break
 
                 val state = exerciseMonitor.exerciseServiceState.value
@@ -97,9 +97,9 @@ class CoachingManager @Inject constructor(
         return CoachingRequest(
             totalDistance,
             distance.toFloat(),
-            this.chunked(10).map { it.heartRate.map { it.beatsPerMinute }.average().toInt() },
-            this.chunked(10).map { it.speed.map { it.speed.pace }.average().toInt() },
-            this.chunked(10).map { it.cadence.map { it.rate }.average().toInt() },
+            this.chunked(5).map { it.heartRate.map { it.beatsPerMinute }.average().toInt() },
+            this.chunked(5).map { it.speed.map { it.speed.pace }.average().toInt() },
+            this.chunked(5).map { it.cadence.map { it.rate }.average().toInt() },
             train,
         )
     }
