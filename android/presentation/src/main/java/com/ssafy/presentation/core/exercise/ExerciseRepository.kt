@@ -43,10 +43,7 @@ class ExerciseRepository @Inject constructor(
         coroutineScope.launch {
             exerciseServiceStateUpdates?.collect { exerciseServiceState ->
                 serviceState.update { ServiceState.Connected(exerciseServiceState) }
-                if (exerciseServiceState.exerciseState == ExerciseState.ENDED) {
-                    delay(100) // TODO : 연속으로 같은 state를 2번 update하니까 하나가 씹힘...
-                    unbindService()
-                }
+                if (exerciseServiceState.exerciseState == ExerciseState.ENDED) unbindService()
             }
         }
 
@@ -62,7 +59,10 @@ class ExerciseRepository @Inject constructor(
         binderConnection = null
         exerciseServiceStateUpdates = null
         trainStateUpdates = null
-        serviceState.update { ServiceState.Disconnected }
+        coroutineScope.launch {
+            delay(100)
+            serviceState.update { ServiceState.Disconnected }
+        }
     }
 
     private fun serviceCall(function: suspend ExerciseService.() -> Unit) =
