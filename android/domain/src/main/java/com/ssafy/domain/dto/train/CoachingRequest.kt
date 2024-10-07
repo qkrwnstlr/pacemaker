@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName
 data class CoachingRequest(
     val totalDistance: Float,
     val nowDistance: Float,
-    val meanHeartRate: Int,
-    val meanPace: Int,
-    val meanCadence: Int,
+    val meanHeartRate: List<Int>,
+    val meanPace: List<Int>,
+    val meanCadence: List<Int>,
     val planTrain: PlanTrain,
     val coachTone: String = "",
     @SerializedName("coachNumber")

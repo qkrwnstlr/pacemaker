@@ -36,7 +36,7 @@ class CoachingManager @Inject constructor(
     val coachVoicePath = MutableStateFlow<String?>(null)
 
     fun connect(train: PlanTrain) {
-        if(isConnected) return
+        if (isConnected) return
         isConnected = true
         coachVoicePath.update { null }
         this.train = train
@@ -56,7 +56,7 @@ class CoachingManager @Inject constructor(
 
         getCoachingJob = coroutineScope.launch {
             while (isConnected) {
-                delay(2 * 1_000 * 60)
+                delay((1.5 * 60 * 1_000).toLong())
                 if (!isConnected) break
 
                 val state = exerciseMonitor.exerciseServiceState.value
@@ -65,7 +65,6 @@ class CoachingManager @Inject constructor(
                     ExerciseState.ACTIVE -> {
                         val distance = state.exerciseMetrics.distance?.toFloat() ?: 0f
                         getCoaching(distance, collectedList, train)
-                        collectedList.clear()
                     }
 
                     ExerciseState.ENDED -> break
@@ -73,7 +72,7 @@ class CoachingManager @Inject constructor(
             }
         }
 
-        collectSessionDataJob = coroutineScope.launch{
+        collectSessionDataJob = coroutineScope.launch {
             exerciseMonitor.exerciseSessionData.collect(collectedList::add)
         }
     }
@@ -98,9 +97,9 @@ class CoachingManager @Inject constructor(
         return CoachingRequest(
             totalDistance,
             distance.toFloat(),
-            heartRate.map { it.beatsPerMinute }.average().toInt(),
-            speed.map { it.speed.pace }.average().toInt(),
-            cadence.map { it.rate }.average().toInt(),
+            this.chunked(10).map { it.heartRate.map { it.beatsPerMinute }.average().toInt() },
+            this.chunked(10).map { it.speed.map { it.speed.pace }.average().toInt() },
+            this.chunked(10).map { it.cadence.map { it.rate }.average().toInt() },
             train,
         )
     }
