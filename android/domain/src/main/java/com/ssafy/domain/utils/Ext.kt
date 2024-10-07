@@ -13,6 +13,3 @@ const val MALE = "남성"
 const val FEMALE = "여성"
 
 fun Int.ifZero(defaultValue: () -> Int): Int = if (this == 0) defaultValue() else this
-fun String.ifNotHuman(defaultValue: () -> String) =
-    if (this != MALE && this != FEMALE) defaultValue()
-    else this
