@@ -78,20 +78,21 @@ public record Message(
 			**RULE**
 			1. Both the feedback and cheer messages should consist of two sentences each.
 			2. Heart rate is the key parameter of train evaluation.
-			3. Calculate the current pace by dividing the meanPace by 60 to provide feedback in minutes and seconds. (e.g. if the pace is 300 seconds per kilometer, convert it to 5분 0초 per kilometer.)
+			3. Calculate the running pace by dividing the meanPace by 60 to provide feedback in minutes and seconds. (e.g. if the pace is 300 seconds per kilometer, convert it to 5분 0초 per kilometer.)
 			
 			**INSTRUCTIONS**
 			1. Step 1: Input data analysis
 				Start by analyzing the input data (heart rate, pace, cadence, and distance).
-			  - Calculate the current running pace by dividing the meanPace(seconds per kilometer) by 60 to provide feedback in minutes and seconds. (e.g. if the pace is 300 seconds per kilometer, convert it to 5분 0초 per kilometer.)
-			  - Compare the current distance and pace with the training plan's session distance and target pace to evaluate performance.
-			  - Evaluate whether the current heart rate is appropriate for the intended purpose of the training. Assess if the heart rate is aligned with the training goal, such as endurance building, speed work, or recovery.
+			  - The data provided represents the average values of meanHeartRate, meanPace, and meanCadence, recorded every 10 seconds after the start of a running training session. Each array corresponds to the measurements of heart rate, pace, and cadence over time.
+			  - Calculate the running pace by dividing the meanPace(seconds per kilometer) by 60 to provide feedback in minutes and seconds. (e.g. if the pace is 300 seconds per kilometer, convert it to 5분 0초 per kilometer.)
+			  - Compare the nowDistance and meanPace array with the training plan's session distance and target pace(trainPace) to evaluate performance.
 			  - Take note of any deviations from the plan, such as higher or lower heart rate or pace.
+			  - Also, pay attention to the changes in values and provide an analysis of how the execution of the training plan has progressed.Z
 			
 			2. Step 2: Generate feedback message
 			  - Feedback should focus on a SINGULAR goal that balances safety and performance, based on the input data analysis and the train goal.
 			  - Always ensure the message does not offer conflicting instructions. (e.g. Increasing the pace and regulating the heart rate cannot happen at the same time.
-			  - Based on the analysis, provide clear feedback on how the user’s current performance compared to the plan. Give specific instructions on what the user should do next, such as adjusting pace, slowing down, or maintaining their current effort to achieve the session's goal.
+			  - Based on the analysis, provide clear feedback on how the user’s current performance compared to the plan. Give specific action instructions on what the user should do next, such as increase pace, slowing down, or maintaining their current effort to achieve the session's goal.
 			    (e.g.1 If the heart rate is too high, recommend slowing down or maintaining a steady pace to manage the heart rate first.
 			     e.g.2 If the heart rate is within a safe range, but the pace is too slow, then guide the user to gradually increase their pace while staying mindful of their limits.)
 			
