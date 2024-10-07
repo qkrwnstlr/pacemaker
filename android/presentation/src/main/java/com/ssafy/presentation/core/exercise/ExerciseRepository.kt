@@ -10,7 +10,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -32,36 +33,56 @@ class ExerciseRepository @Inject constructor(
     val serviceState: MutableStateFlow<ServiceState> = MutableStateFlow(ServiceState.Disconnected)
     val trainState: MutableStateFlow<TrainState> = MutableStateFlow(TrainState.None)
 
+    private var exerciseServiceStateJob: Job? = null
+    private var trainStateJob: Job? = null
+    private var unbindServiceJob: Job? = null
+
     private fun bindService() {
         if (binderConnection != null) return
 
-        binderConnection = lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
+        binderConnection =
+            lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
 
-        exerciseServiceStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
-        trainStateUpdates = binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::trainState)
+        exerciseServiceStateUpdates =
+            binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
+        trainStateUpdates =
+            binderConnection?.flowWhenConnected(ExerciseService.LocalBinder::trainState)
 
-        coroutineScope.launch {
+        exerciseServiceStateJob = coroutineScope.launch {
             exerciseServiceStateUpdates?.collect { exerciseServiceState ->
                 serviceState.update { ServiceState.Connected(exerciseServiceState) }
                 if (exerciseServiceState.exerciseState == ExerciseState.ENDED) unbindService()
             }
+            this.cancel()
         }
 
-        coroutineScope.launch {
+        trainStateJob = coroutineScope.launch {
             trainStateUpdates?.collect { state ->
                 trainState.update { state }
             }
+            this.cancel()
         }
     }
 
     private fun unbindService() {
-        binderConnection?.unbind()
-        binderConnection = null
-        exerciseServiceStateUpdates = null
-        trainStateUpdates = null
-        coroutineScope.launch {
-            delay(100)
-            serviceState.update { ServiceState.Disconnected }
+        unbindServiceJob = coroutineScope.launch {
+            trainStateUpdates?.collect { state ->
+                if (state == TrainState.None) {
+                    binderConnection?.unbind()
+                    binderConnection = null
+                    exerciseServiceStateUpdates = null
+                    trainStateUpdates = null
+
+                    exerciseServiceStateJob?.cancel()
+                    trainStateJob?.cancel()
+                    unbindServiceJob?.cancel()
+                    exerciseServiceStateJob = null
+                    trainStateJob = null
+                    unbindServiceJob = null
+
+                    serviceState.update { ServiceState.Disconnected }
+                }
+            }
         }
     }
 
