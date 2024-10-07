@@ -1,6 +1,5 @@
 package com.ssafy.presentation.scheduleUI.schedule
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -17,7 +16,6 @@ import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.nextMonth
 import com.kizitonwose.calendar.core.previousMonth
-import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.ssafy.domain.dto.schedule.ContentListDto
 import com.ssafy.domain.dto.schedule.ProgressData
@@ -36,18 +34,11 @@ import java.time.YearMonth
 @AndroidEntryPoint
 class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleBinding::inflate) {
     private val viewModel: ScheduleViewModel by viewModels()
-    private val monthCalendarView: CalendarView get() = binding.exOneCalendar
 
     private var selectedDate = LocalDate.now()
     private var predate = LocalDate.now()
     private val today = LocalDate.now()
-
     private var currentMonth = YearMonth.now()
-    private val startMonth = currentMonth.minusMonths(100)
-    private val endMonth = currentMonth.plusMonths(100)
-    private val daysOfWeek = daysOfWeek()
-    private lateinit var planStateView: PlanStateView
-    private var prevDateMap = emptyMap<String, List<ContentListDto>>()
     private var flag = true
     private val adapter = ViewPagerAdapter(emptyList()) { item, callback ->
         viewModel.getReport(item) { report ->
@@ -57,48 +48,36 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.legendLayout.root.children
+
+        initView()
+        initCollect()
+        initListener()
+
+        viewModel.setMonthHasTrain(getUid(), currentMonth.year, currentMonth.monthValue)
+        viewModel.dateProgressInfo(getUid(), selectedDate, ::setProgress)
+    }
+
+    private fun initView() = with(binding) {
+        val daysOfWeek = daysOfWeek()
+        val startMonth = currentMonth.minusMonths(100)
+        val endMonth = currentMonth.plusMonths(100)
+
+        legendLayout.root.children
             .map { it as TextView }
             .forEachIndexed { index, textView ->
                 textView.text = daysOfWeek[index].displayText(narrow = true)
             }
 
-        viewModel.setMonthHasTrain(getUid(), currentMonth.year, currentMonth.monthValue)
         setupMonthCalendar(startMonth, endMonth, currentMonth, daysOfWeek)
-        initCollect()
-        initListener()
-
-        binding.vpReport.adapter = adapter
-
-        planStateView = binding.lyPlan
-        viewModel.dateProgressInfo(getUid(), selectedDate, ::setProgress)
-
-
-        binding.exOneCalendar.monthScrollListener = { month ->
-            viewModel.setMonthHasTrain(getUid(), month.yearMonth.year, month.yearMonth.monthValue)
-            updateTitle()
-        }
-
-        binding.btnNextMonth.setOnClickListener {
-            binding.exOneCalendar.findFirstVisibleMonth()?.let {
-                binding.exOneCalendar.smoothScrollToMonth(it.yearMonth.nextMonth)
-            }
-        }
-
-        binding.btnPrevMonth.setOnClickListener {
-            binding.exOneCalendar.findFirstVisibleMonth()?.let {
-                binding.exOneCalendar.smoothScrollToMonth(it.yearMonth.previousMonth)
-            }
-        }
-
+        vpReport.adapter = adapter
     }
 
-    private fun setProgress(progressData: ProgressData?) {
+    private fun setProgress(progressData: ProgressData?) = with(binding.lyPlan) {
         if (progressData == null) {
-            planStateView.isVisible = false
+            isVisible = false
         } else {
-            planStateView.isVisible = true
-            planStateView.setPlanData(
+            isVisible = true
+            setPlanData(
                 progressData.context.goal,
                 progressData.completedCount,
                 progressData.totalDays,
@@ -110,17 +89,38 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
     }
 
     private fun initListener() = with(binding) {
-        lyPlan.setOnClickListener { moveToPlanDetailFragment() }
+        lyPlan.setOnClickListener {
+            moveToPlanDetailFragment()
+        }
+
+        exOneCalendar.monthScrollListener = { month ->
+            viewModel.setMonthHasTrain(getUid(), month.yearMonth.year, month.yearMonth.monthValue)
+            updateTitle()
+        }
+
+        btnNextMonth.setOnClickListener {
+            exOneCalendar.findFirstVisibleMonth()?.let {
+                exOneCalendar.smoothScrollToMonth(it.yearMonth.nextMonth)
+            }
+        }
+
+        btnPrevMonth.setOnClickListener {
+            exOneCalendar.findFirstVisibleMonth()?.let {
+                exOneCalendar.smoothScrollToMonth(it.yearMonth.previousMonth)
+            }
+        }
     }
 
     private fun initCollect() = viewLifecycleOwner.lifecycleScope.launch {
         viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            var prevDateMap = emptyMap<String, List<ContentListDto>>()
+
             viewModel.dateList.collectLatest { newDateList ->
                 val prevDates = prevDateMap.keys
                 val newDates = newDateList.keys
                 val commonDates = prevDates.union(newDates)
                 for (date in commonDates) {
-                    monthCalendarView.notifyDateChanged(LocalDate.parse(date))
+                    binding.exOneCalendar.notifyDateChanged(LocalDate.parse(date))
                 }
                 dateClicked(selectedDate)
                 prevDateMap = newDateList
@@ -138,8 +138,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         endMonth: YearMonth,
         currentMonth: YearMonth,
         daysOfWeek: List<DayOfWeek>
-    ) {
-        monthCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+    ) = with(binding.exOneCalendar) {
+        dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View) = DayViewContainer(view, ::dateClicked)
 
             override fun bind(container: DayViewContainer, data: CalendarDay) {
@@ -154,8 +154,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                 )
             }
         }
-        monthCalendarView.setup(startMonth, endMonth, daysOfWeek.first())
-        monthCalendarView.scrollToMonth(currentMonth)
+        setup(startMonth, endMonth, daysOfWeek.first())
+        scrollToMonth(currentMonth)
     }
 
     private fun bindDate(
@@ -182,11 +182,11 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
 
     }
 
-    private fun dateClicked(date: LocalDate) {
+    private fun dateClicked(date: LocalDate) = with(binding.exOneCalendar) {
         predate = selectedDate
         selectedDate = date
-        monthCalendarView.notifyDateChanged(predate)
-        monthCalendarView.notifyDateChanged(date)
+        notifyDateChanged(predate)
+        notifyDateChanged(date)
         viewModel.dateProgressInfo(getUid(), selectedDate, ::setProgress)
         viewModel.dateList.value.let { dateList ->
             flag = true
@@ -197,8 +197,7 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
                     break
                 }
             }
-            if (flag)
-                setResultView(selectedDate, emptyList())
+            if (flag) setResultView(selectedDate, emptyList())
         }
     }
 
@@ -220,9 +219,8 @@ class ScheduleFragment : BaseFragment<FragmentScheduleBinding>(FragmentScheduleB
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun updateTitle() {
-        val month = monthCalendarView.findFirstVisibleMonth()?.yearMonth ?: return
+    private fun updateTitle() = with(binding.exOneCalendar) {
+        val month = findFirstVisibleMonth()?.yearMonth ?: return
         binding.exOneYearText.text = month.year.toString()
         binding.exOneMonthText.text = month.month.displayText(short = true)
     }
