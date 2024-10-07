@@ -4,6 +4,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import androidx.annotation.RawRes
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,7 +22,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 @AndroidEntryPoint
 class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
@@ -72,22 +72,23 @@ class SelectCoachFragment : BaseFragment<FragmentSelectCoachBinding>(
     }
 
     private fun CoroutineScope.collectVoiceEvent() = launch {
-        viewModel.voiceEvent.collectLatest { voicePath ->
-            val file = File(voicePath)
-            if (!file.exists()) return@collectLatest
-
+        viewModel.voiceEvent.collectLatest { res ->
             showSnackBar(MAKE_TWICE)
-            mediaPlayer.apply {
-                reset()
-                setDataSource(file.path)
-                prepare()
-                start()
+            runCatching { setMediaPlay(res) }
+                .onFailure { it.printStackTrace() }
+        }
+    }
 
-                setOnCompletionListener {
-                    reset()
-                    file.delete()
-                }
-            }
+    private fun setMediaPlay(@RawRes resource: Int) = mediaPlayer.apply {
+        val fileDescriptor = resources.openRawResourceFd(resource)
+        reset()
+        setDataSource(fileDescriptor)
+        prepare()
+        start()
+
+        setOnCompletionListener {
+            reset()
+            fileDescriptor.close()
         }
     }
 
