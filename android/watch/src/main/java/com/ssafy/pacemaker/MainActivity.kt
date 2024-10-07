@@ -59,6 +59,11 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if (::exerciseNavigator.isInitialized) exerciseNavigator.disconnect()
