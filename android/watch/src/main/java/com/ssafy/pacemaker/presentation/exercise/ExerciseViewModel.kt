@@ -35,6 +35,8 @@ class ExerciseViewModel @Inject constructor(
         }
     )
 
+    suspend fun isExerciseInProgress() = healthServicesRepository.isExerciseInProgress()
+
     fun pauseExercise() {
         healthServicesRepository.pauseExercise()
     }

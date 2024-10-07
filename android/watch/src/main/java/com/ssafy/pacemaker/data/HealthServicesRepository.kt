@@ -24,17 +24,15 @@ class HealthServicesRepository @Inject constructor(
     private val coroutineScope: CoroutineScope,
     lifecycle: ActivityRetainedLifecycle
 ) {
-    private val binderConnection by lazy {
+    private val binderConnection =
         lifecycle.bindService<ExerciseService.LocalBinder, ExerciseService>(applicationContext)
-    }
 
-    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> by lazy {
+    private val exerciseServiceStateUpdates: Flow<ExerciseServiceState> =
         binderConnection.flowWhenConnected(ExerciseService.LocalBinder::exerciseServiceState)
-    }
 
     private var errorState: MutableStateFlow<String?> = MutableStateFlow(null)
 
-    val serviceState: StateFlow<ServiceState> by lazy {
+    val serviceState: StateFlow<ServiceState> =
         exerciseServiceStateUpdates.combine(errorState) { exerciseServiceState, errorString ->
             if (exerciseServiceState.exerciseState == null) {
                 ServiceState.Disconnected
@@ -46,7 +44,6 @@ class HealthServicesRepository @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = ServiceState.Disconnected
         )
-    }
 
     suspend fun hasExerciseCapability(): Boolean = getExerciseCapabilities() != null
 
