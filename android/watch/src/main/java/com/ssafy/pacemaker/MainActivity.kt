@@ -59,6 +59,16 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::exerciseNavigator.isInitialized) exerciseNavigator.disconnect()
+    }
+
     private suspend fun prepareIfNoExercise() {
         val isRegularLaunch = navController.currentDestination?.route == Screen.Home.route
         if (isRegularLaunch && exerciseViewModel.isExerciseInProgress()) {
