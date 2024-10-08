@@ -115,7 +115,7 @@ public class ResponseFormatString {
 		                "description": "number of repetition of the main train of each train session",
 		                "type": "array",
 		                "items": {
-		                  "description": "number of the repetition of the main train",
+`		                  "description": "number of the repetition of the main train, integer 1 to 6",
 		                  "type": "integer"
 		                }
 		              },
@@ -170,7 +170,7 @@ public class ResponseFormatString {
 		         },
 		         "textFeedback": {
 		           "type": "string",
-		           "description": "Feedback message about the user's run within 2 sentences in Korean"
+		           "description": "Feedback message about the user's run within 1 sentence in Korean"
 		         }
 		       }
 		     }
