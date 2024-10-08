@@ -15,7 +15,6 @@ class GetCoachingUseCase @Inject constructor(
     suspend operator fun invoke(coachingRequest: CoachingRequest): String {
         val user = dataStoreRepository.getUser()
         val newRequest = coachingRequest.copy(coachIndex = user.coachNumber, coachTone = user.toMakeFeature())
-        dataStoreRepository.saveLog(dataStoreRepository.getLog() + "\n" + newRequest.toString())
         val response = coachingRepository.getCoaching(newRequest)
         if (response is ResponseResult.Error) throw RuntimeException()
 
