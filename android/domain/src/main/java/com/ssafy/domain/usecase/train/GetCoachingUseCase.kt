@@ -4,6 +4,7 @@ import com.ssafy.domain.dto.train.CoachingRequest
 import com.ssafy.domain.repository.DataStoreRepository
 import com.ssafy.domain.repository.TrainRepository
 import com.ssafy.domain.response.ResponseResult
+import com.ssafy.domain.utils.toMakeFeature
 import javax.inject.Inject
 
 class GetCoachingUseCase @Inject constructor(
@@ -12,8 +13,9 @@ class GetCoachingUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(coachingRequest: CoachingRequest): String {
-        val coachIndex = dataStoreRepository.getUser().coachNumber
-        val newRequest = coachingRequest.copy(coachIndex = coachIndex)
+        val user = dataStoreRepository.getUser()
+        val newRequest = coachingRequest.copy(coachIndex = user.coachNumber, coachTone = user.toMakeFeature())
+        dataStoreRepository.saveLog(dataStoreRepository.getLog() + "\n" + newRequest.toString())
         val response = coachingRepository.getCoaching(newRequest)
         if (response is ResponseResult.Error) throw RuntimeException()
 
