@@ -115,7 +115,7 @@ public class ResponseFormatString {
 		                "description": "number of repetition of the main train of each train session",
 		                "type": "array",
 		                "items": {
-`		                  "description": "number of the repetition of the main train, integer 1 to 6",
+		                  "description": "number of the repetition of the main train, integer 1 to 6",
 		                  "type": "integer"
 		                }
 		              },
