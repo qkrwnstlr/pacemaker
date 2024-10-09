@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.content.res.Resources.NotFoundException
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.health.connect.client.HealthConnectClient
@@ -47,8 +46,6 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlin.reflect.KClass
-
-private const val TAG = "HealthConnectManager_PACEMAKER"
 
 class HealthConnectManager @Inject constructor(@ApplicationContext val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
@@ -169,7 +166,7 @@ class HealthConnectManager @Inject constructor(@ApplicationContext val context: 
             timeRangeFilter = TimeRangeFilter.between(start, end)
         )
         val response = healthConnectClient.readRecords(request)
-        return response.records
+        return response.records.filter { it.exerciseType == ExerciseSessionRecord.EXERCISE_TYPE_RUNNING }
     }
 
     suspend fun writeExerciseSession(

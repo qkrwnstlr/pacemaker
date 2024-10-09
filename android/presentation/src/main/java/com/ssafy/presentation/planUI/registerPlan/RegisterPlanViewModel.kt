@@ -107,13 +107,17 @@ class RegisterPlanViewModel @Inject constructor(
                         val running = healthConnectManager.readExerciseSessions(
                             start.toInstant(),
                             end.toInstant()
-                        ).firstOrNull()?.run {
-                            healthConnectManager.readAssociatedSessionData(metadata.id)
+                        ).map { session ->
+                            healthConnectManager.readAssociatedSessionData(session.metadata.id)
+                        }.lastOrNull { sessionData ->
+                            sessionData.totalActiveTime != null && sessionData.totalDistance != null && sessionData.totalDistance.inKilometers != 0.0
                         }
 
                         userInfo = userInfo.copy(
-                            recentRunDistance = running?.totalDistance?.inKilometers?.toInt() ?: userInfo.recentRunDistance,
-                            recentRunHeartRate = running?.avgHeartRate?.toInt() ?: userInfo.recentRunHeartRate,
+                            recentRunDistance = running?.totalDistance?.inMeters?.toInt()
+                                ?: userInfo.recentRunDistance,
+                            recentRunHeartRate = running?.avgHeartRate?.toInt()
+                                ?: userInfo.recentRunHeartRate,
                             recentRunPace = if (running?.totalActiveTime != null && running.totalDistance != null) {
                                 (running.totalActiveTime.seconds / running.totalDistance.inKilometers).toInt()
                             } else {
