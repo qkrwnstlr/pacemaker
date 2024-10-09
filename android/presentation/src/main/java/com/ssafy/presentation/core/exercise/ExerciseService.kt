@@ -104,7 +104,7 @@ class ExerciseService : LifecycleService() {
                 when (it) {
                     TrainState.None, TrainState.Before, TrainState.Default -> {}
 
-                    is TrainState.WarmUp -> speakMessage(trainManager.train.message)
+                    is TrainState.WarmUp -> {} // speakMessage(trainManager.train.message)
 
                     is TrainState.During -> {
                         when (it.session) {

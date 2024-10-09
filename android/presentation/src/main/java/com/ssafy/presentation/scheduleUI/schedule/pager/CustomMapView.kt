@@ -52,7 +52,7 @@ class CustomMapView(context: Context, attrs: AttributeSet) : ConstraintLayout(co
         drawPathOnMap(path)
 
         if (locations.isNotEmpty()) {
-            val firstLocation = locations.first()
+            val firstLocation = locations.average()
             val latLng = LatLng(firstLocation[0], firstLocation[1])
             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
@@ -66,4 +66,10 @@ class CustomMapView(context: Context, attrs: AttributeSet) : ConstraintLayout(co
 
         map?.addPolyline(polylineOptions)
     }
+}
+
+fun List<List<Double>>.average(): List<Double> {
+    val result = mutableListOf<Double>()
+    for (i in 0 until this[0].size) result.add(this.map { it[i] }.average())
+    return result
 }
