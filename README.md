@@ -54,6 +54,7 @@
 
 ## 4. 설치 방법
 
+apk 파일은 FE/develop 브랜치에 있습니다.
 <details>
 <summary>앱 설치</summary>
 
