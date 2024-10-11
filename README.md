@@ -52,7 +52,63 @@
     - 복잡한 SQL 쿼리 없이도 간단하게 데이터를 조회하고 조작할 수 있습니다.
     - 엔티티 간의 관계를 쉽게 표현하고 관리할 수 있어, 강의와 사용자 간의 관계 등을 효과적으로 모델링할 수 있습니다.
 
-## 4. 기능
+## 4. 설치 방법
+
+## 앱 설치
+### 모바일 앱 설치
+1. 모바일에서 위의 파일을 다운받고, 압축을 해제해 주세요.
+    - 예시
+          
+        ![title](/image/install_app_1.png)
+        ![title](/image/install_app_2.png)
+
+2. app-debug.apk 파일을 설치해 주세요.
+    - 예시
+          
+        ![title](/image/install_app_3.png) 
+        ![title](/image/install_app_4.png) 
+        
+3. 설치가 완료된 후 앱의 모든 권한을 허용합니다. 권한은 총 2개 입니다.
+    - 예시
+          
+        ![title](/image/install_app_5.png) 
+        ![title](/image/install_app_6.png) 
+        
+4. 구글 로그인 후 앱을 사용할 수 있습니다.
+    - 예시
+          
+        ![title](/image/install_app_7.png) 
+        ![title](/image/install_app_8.png) 
+        
+
+### 워치 앱 설치
+
+1. 모바일에서 위의 파일을 다운받고, 압축을 해제합니다.
+    - 예시
+          
+        ![title](/image/install_watch_1.png) 
+        ![title](/image/install_watch_2.png) 
+        
+2. 그 후 아래 링크를 따라 워치와 폰을 연결하고,  wath-debug.apk를 설치해 주세요.
+    [워치 앱 설치](https://menofpassion.tistory.com/332)
+    
+3. 설치가 완료된 후 앱의 모든 권한을 허용합니다. 권한은 총 4개 입니다.
+    - 예시
+          
+        ![title](/image/install_watch_3.png) 
+        ![title](/image/install_watch_4.png) 
+        ![title](/image/install_watch_5.png) 
+        ![title](/image/install_watch_6.png) 
+        ![title](/image/install_watch_7.png) 
+        ![title](/image/install_watch_8.png) 
+        ![title](/image/install_watch_9.png) 
+
+### 주의 사항
+1. 실시간 러닝은 워치와 모바일이 서로 연결되어있지 않으면 실행이 되지 않습니다.
+2. 반드시 모든 권한이 있어야 실시간 러닝이 정상적으로 동작합니다.
+3. 헬스 커넥트의 경우 권한 재설정이 필요하시면 마이페이지의 권한 설정에서 하실 수 있습니다.
+4. 긴 시간(현재는 30분까지) 사용하면 워치에서 ANR이 발생할 수 있습니다.
+5. 워치 화면이 어두워지면(AOD) 센서 데이터가 수집되지 않습니다. 기본적으로는 손으로 워치 화면을 덮지 않으면 항상 화면이 켜지는 것으로 설정되어 있습니다. 혹시 워치 화면이 어두워지면 앱을 왼쪽에서 오른쪽으로 슬라이드(뒤로 가기) 하여 종료한 후 재 실행하시면 됩니다.
 
 ## 5. 트러블 슈팅
 
