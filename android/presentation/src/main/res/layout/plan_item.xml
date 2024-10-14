@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_inst"
+        style="@style/PlanText"
+        android:paddingHorizontal="@dimen/padding_20" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.TrainInfoView
+        android:id="@+id/ly_result_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_20" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.TrainResultView
+        android:id="@+id/ly_train_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_36"
+        android:padding="@dimen/padding_20" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.pager.CustomMapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_20" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.HeartView
+        android:id="@+id/hv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_20"
+        android:visibility="gone" />
+
+    <com.ssafy.presentation.scheduleUI.schedule.TrainResultCoachView
+        android:id="@+id/ly_train_result_coach"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/padding_20" />
+
+</LinearLayout>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="stoke_2">2dp</dimen>
+
+    <dimen name="text_82">82sp</dimen>
+    <dimen name="text_36">36sp</dimen>
+    <dimen name="text_30">30sp</dimen>
+    <dimen name="text_26">26sp</dimen>
+    <dimen name="text_24">24sp</dimen>
+    <dimen name="text_22">22sp</dimen>
+    <dimen name="text_32">32sp</dimen>
+
+    <dimen name="margin_30">30dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_4">4dp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="margin_24">24dp</dimen>
+    <dimen name="margin_100">100dp</dimen>
+    <dimen name="margin_36">36dp</dimen>
+    <dimen name="margin_48">48dp</dimen>
+    <dimen name="margin_80">80dp</dimen>
+
+    <dimen name="text_18">18sp</dimen>
+    <dimen name="text_16">16sp</dimen>
+    <dimen name="text_14">14sp</dimen>
+    <dimen name="text_12">12sp</dimen>
+    <dimen name="text_10">10sp</dimen>
+
+    <dimen name="padding_48">48dp</dimen>
+    <dimen name="padding_42">42dp</dimen>
+    <dimen name="padding_36">36dp</dimen>
+    <dimen name="padding_24">24dp</dimen>
+    <dimen name="padding_22">22dp</dimen>
+    <dimen name="padding_32">32dp</dimen>
+    <dimen name="padding_18">18dp</dimen>
+    <dimen name="padding_16">16dp</dimen>
+    <dimen name="padding_14">14dp</dimen>
+    <dimen name="padding_20">20dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+
+    <dimen name="image_196">196dp</dimen>
+    <dimen name="image_96">96dp</dimen>
+    <dimen name="image_56">56dp</dimen>
+    <dimen name="image_50">50dp</dimen>
+    <dimen name="image_64">64dp</dimen>
+    <dimen name="image_44">44dp</dimen>
+    <dimen name="image_36">36dp</dimen>
+    <dimen name="image_24">24dp</dimen>
+    <dimen name="image_128">128dp</dimen>
+    <dimen name="image_300">300dp</dimen>
+
+    <dimen name="radius_10">10dp</dimen>
+    <dimen name="radius_18">18dp</dimen>
+    <dimen name="radius_20">20dp</dimen>
+    <dimen name="radius_28">28dp</dimen>
+
+    <dimen name="elevation_4">4dp</dimen>
+    <dimen name="elevation_6">6dp</dimen>
+    <dimen name="elevation_8">8dp</dimen>
+
+    <dimen name="max_height_128">128dp</dimen>
+</resources>

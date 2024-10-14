@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_result_title"
+        style="@style/BoldLargeText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="2024.09.02" />
+
+    <TextView
+        android:id="@+id/tv_count"
+        style="@style/PlanText"
+        android:layout_marginStart="@dimen/margin_16"
+        android:text="훈련3회차"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/tv_result_title"
+        app:layout_constraintStart_toEndOf="@id/tv_result_title"
+        app:layout_constraintTop_toTopOf="@id/tv_result_title" />
+
+    <TextView
+        android:id="@+id/tv_plan_inst"
+        style="@style/PlanText"
+        android:layout_marginTop="@dimen/margin_8"
+        app:layout_constraintStart_toStartOf="@+id/tv_result_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_result_title"
+        tools:text="진행중인 훈련이 없어요" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/top_sheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/top_sheet_background"
+    android:clickable="true"
+    android:elevation="@dimen/elevation_8"
+    android:focusable="true"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="175dp"
+    app:layout_behavior="com.ssafy.presentation.homeUI.TopSheetBehavior">
+
+    <com.kizitonwose.calendar.view.WeekCalendarView
+        android:id="@+id/week_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cv_dayViewResource="@layout/calendar_day_month"
+        app:layout_constraintBottom_toTopOf="@+id/top_sheet_title"
+        app:layout_constraintEnd_toEndOf="@+id/top_sheet_title"
+        app:layout_constraintStart_toStartOf="@+id/top_sheet_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <LinearLayout
+        android:id="@+id/top_sheet_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_16"
+        android:paddingVertical="@dimen/padding_16"
+        app:layout_constraintBottom_toTopOf="@+id/top_sheet_body"
+        app:layout_constraintEnd_toEndOf="@+id/top_sheet_body"
+        app:layout_constraintStart_toStartOf="@+id/top_sheet_body"
+        app:layout_constraintTop_toBottomOf="@id/week_calendar">
+
+        <include
+            android:id="@+id/train_info_title"
+            layout="@layout/train_info_title_custom_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/top_sheet_body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/padding_16"
+        android:paddingBottom="@dimen/padding_16"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/top_sheet_handle"
+        app:layout_constraintEnd_toEndOf="@+id/top_sheet_handle"
+        app:layout_constraintStart_toStartOf="@+id/top_sheet_handle"
+        app:layout_constraintTop_toBottomOf="@id/top_sheet_title">
+        <!-- TODO : Add Layout Here -->
+    </LinearLayout>
+
+    <View
+        android:id="@+id/top_sheet_handle"
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center"
+        android:background="@drawable/top_sheet_control_bar"
+        android:paddingTop="@dimen/padding_18"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_sheet_body" />
+</androidx.constraintlayout.widget.ConstraintLayout>

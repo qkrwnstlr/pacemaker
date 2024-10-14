@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/it_fix"
+        android:title="@string/inst_fix_profile" />
+    <item
+        android:id="@+id/it_can"
+        android:title="@string/inst_set_can" />
+    <item
+        android:id="@+id/it_logout"
+        android:title="@string/inst_logout" />
+</menu>
