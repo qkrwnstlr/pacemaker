@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="@android:color/transparent"
+    tools:context=".homeUI.HomeFragment">
+
+    <FrameLayout
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/profile_button"
+            android:layout_width="@dimen/image_64"
+            android:layout_height="@dimen/image_64"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
+            android:contentDescription="Profile"
+            android:elevation="2dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@id/start_run_button"
+            app:layout_constraintEnd_toStartOf="@+id/start_run_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/start_run_button"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/start_run_button"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/margin_48"
+            android:background="@drawable/circle_background"
+            android:elevation="2dp"
+            android:text="START"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintEnd_toStartOf="@+id/plan_button"
+            app:layout_constraintStart_toEndOf="@+id/profile_button" />
+
+        <ImageButton
+            android:id="@+id/plan_button"
+            android:layout_width="@dimen/image_64"
+            android:layout_height="@dimen/image_64"
+            android:background="@drawable/circle_background"
+            android:backgroundTint="@color/white"
+            android:elevation="2dp"
+            android:padding="@dimen/padding_12"
+            android:scaleType="fitCenter"
+            android:src="@drawable/baseline_subject_24"
+            app:layout_constraintBottom_toBottomOf="@+id/start_run_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/start_run_button"
+            app:layout_constraintTop_toTopOf="@+id/start_run_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include android:id="@+id/top_sheet"
+        layout="@layout/top_sheet" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

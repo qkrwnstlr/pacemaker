@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_explain"
+        style="@style/TitleText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_16"
+        android:layout_marginTop="@dimen/padding_48"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="여기에 뭘 적을지는 다들 알고있제 ㅎㅎ" />
+
+    <ImageView
+        android:id="@+id/iv_runner"
+        android:layout_width="@dimen/image_196"
+        android:layout_height="@dimen/image_196"
+        android:src="@drawable/runner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_health_connect"
+        android:layout_width="196dp"
+        android:layout_height="196dp"
+        android:src="@drawable/health_connect"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_red"
+        style="@style/CustomFAB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_16"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:backgroundTint="@color/reversePrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/fab_blue"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="여기도 뭐 대충 알아서 잘 쓰쇼" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_blue"
+        style="@style/CustomFAB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/padding_16"
+        android:layout_marginBottom="@dimen/margin_30"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="여기도 뭐 대충 알아서 잘 쓰쇼" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

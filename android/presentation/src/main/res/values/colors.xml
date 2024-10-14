@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="primary">#5973FF</color>
+    <color name="secondPrimary">#889AFF</color>
+    <color name="thirdPrimary">#B1BDFF</color>
+    <color name="fourthPrimary">#CFD7FF</color>
+    <color name="fifthPrimary">#EFF2FF</color>
+    <color name="reversePrimary">#FF76A0</color>
+    <color name="reversePrimary2">#E8348B</color>
+    <color name="gray">#9F9F9F</color>
+    <color name="lightGray">#D5D5D5</color>
+    <color name="red">#FF0000</color>
+    <color name="blue">#0000FF</color>
+</resources>

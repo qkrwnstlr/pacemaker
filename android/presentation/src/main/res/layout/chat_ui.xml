@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/padding_18">
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/TitleText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_42"
+        android:text="@string/set_goal"
+        app:layout_constraintBottom_toTopOf="@id/user_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_week_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/plan_week_title"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_week"
+        app:layout_constraintEnd_toStartOf="@id/tv_week"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toTopOf="@id/tv_week" />
+
+    <TextView
+        android:id="@+id/tv_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/user_info"
+        app:layout_constraintEnd_toStartOf="@id/iv_week_modify"
+        app:layout_constraintStart_toEndOf="@id/tv_week_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <ImageView
+        android:id="@+id/iv_week_modify"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingHorizontal="@dimen/padding_10"
+        android:src="@drawable/baseline_arrow_forward_24"
+        app:layout_constraintBottom_toBottomOf="@id/tv_week"
+        app:layout_constraintStart_toEndOf="@id/tv_week"
+        app:layout_constraintTop_toTopOf="@id/tv_week" />
+
+    <include
+        android:id="@+id/user_info"
+        layout="@layout/user_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_30"
+        android:layout_marginTop="@dimen/margin_10"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/rv_plan_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_week" />
+
+    <!--  list-item-coach, list-item-student, list-item-schedule   -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_plan_chat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_10"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/cv_chat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_info"
+        tools:listitem="@layout/list_item_student" />
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cv_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_24"
+        android:layout_marginBottom="@dimen/margin_10"
+        android:backgroundTint="@color/fifthPrimary"
+        android:elevation="0dp"
+        android:outlineProvider="none"
+        android:paddingVertical="@dimen/padding_10"
+        app:cardCornerRadius="@dimen/radius_20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/rv_plan_chat"
+        app:strokeWidth="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_chat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_chat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:inputType="textMultiLine"
+                android:maxHeight="@dimen/max_height_128"
+                android:padding="@dimen/padding_10"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/iv_send"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:paddingStart="@dimen/padding_32"
+                android:paddingEnd="@dimen/padding_10"
+                android:src="@drawable/baseline_send_24"
+                app:layout_constraintBottom_toBottomOf="@id/et_chat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/et_chat"
+                app:layout_constraintTop_toTopOf="@id/et_chat" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
